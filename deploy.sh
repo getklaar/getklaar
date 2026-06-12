@@ -21,8 +21,9 @@ else
 fi
 
 # Push naar GitHub (force: lokale versie is leidend)
+# -c credential.helper= forceert gebruik van token in remote URL, niet Keychain
 echo "⬆  Pushen naar GitHub..."
-git push --force origin main
+git -c credential.helper= push --force origin main
 
 echo ""
 echo "✅ Live! Vercel deployt automatisch."
