@@ -1,0 +1,2879 @@
+<!DOCTYPE html>
+<html lang="nl">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>KLAAR — HACCP & Voedselveiligheid</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Bebas+Neue&family=DM+Mono:wght@400;500&family=DM+Sans:wght@400;500;600&display=swap" rel="stylesheet">
+<style>
+  :root {
+    --black: #0a0a0a;
+    --border: #222222;
+    --lime: #e8ff47;
+    --bg: #f5f5f3;
+    --surface: #ffffff;
+    --text: #111111;
+    --muted: #888888;
+    --green: #22c55e;
+    --orange: #f97316;
+    --red: #ef4444;
+    --blue: #3b82f6;
+  }
+
+  * { box-sizing: border-box; margin: 0; padding: 0; }
+
+  body {
+    font-family: 'DM Sans', sans-serif;
+    background: var(--bg);
+    color: var(--text);
+    height: 100vh;
+    overflow: hidden;
+  }
+
+  /* ── HEADER ── */
+  .header {
+    position: sticky;
+    top: 0;
+    z-index: 100;
+    height: 60px;
+    background: var(--black);
+    border-bottom: 1px solid var(--border);
+    display: flex;
+    align-items: center;
+    padding: 0 24px;
+    gap: 20px;
+  }
+
+  .header-back {
+    font-family: 'DM Mono', monospace;
+    font-size: 11px;
+    color: var(--muted);
+    text-decoration: none;
+    letter-spacing: 0.05em;
+    transition: color 0.15s;
+  }
+  .header-back:hover { color: #fff; }
+
+  .header-logo {
+    font-family: 'Bebas Neue', sans-serif;
+    font-size: 28px;
+    color: var(--lime);
+    letter-spacing: 0.02em;
+    line-height: 1;
+  }
+
+  .header-module {
+    font-family: 'DM Mono', monospace;
+    font-size: 11px;
+    color: var(--muted);
+    letter-spacing: 0.05em;
+    border-left: 1px solid var(--border);
+    padding-left: 16px;
+    margin-left: 4px;
+  }
+
+  .header-spacer { flex: 1; }
+
+  .header-badge {
+    font-family: 'DM Mono', monospace;
+    font-size: 10px;
+    color: var(--green);
+    border: 1px solid var(--green);
+    padding: 3px 8px;
+    border-radius: 4px;
+    letter-spacing: 0.08em;
+  }
+
+  /* ── TAB BAR ── */
+  .tab-bar {
+    background: var(--surface);
+    border-bottom: 1px solid #e5e5e5;
+    display: flex;
+    overflow-x: auto;
+    scrollbar-width: none;
+    -webkit-overflow-scrolling: touch;
+    height: 48px;
+    flex-shrink: 0;
+  }
+  .tab-bar::-webkit-scrollbar { display: none; }
+
+  .tab-btn {
+    font-family: 'DM Mono', monospace;
+    font-size: 11px;
+    letter-spacing: 0.06em;
+    color: var(--muted);
+    background: none;
+    border: none;
+    border-bottom: 2px solid transparent;
+    padding: 0 20px;
+    height: 48px;
+    white-space: nowrap;
+    cursor: pointer;
+    transition: color 0.15s, border-color 0.15s;
+    text-transform: uppercase;
+  }
+  .tab-btn:hover { color: var(--text); }
+  .tab-btn.active {
+    color: var(--text);
+    border-bottom-color: var(--lime);
+  }
+
+  /* ── CONTENT SCROLL ── */
+  .content-scroll {
+    overflow-y: auto;
+    max-height: calc(100vh - 60px - 48px);
+    padding: 32px 24px;
+  }
+
+  /* ── TAB PANELS ── */
+  .tab-panel { display: none; }
+  .tab-panel.active { display: block; }
+
+  /* ── SECTION HEADER ── */
+  .section-title {
+    font-family: 'Bebas Neue', sans-serif;
+    font-size: 22px;
+    letter-spacing: 0.04em;
+    color: var(--text);
+    margin-bottom: 4px;
+  }
+  .section-sub {
+    font-size: 13px;
+    color: var(--muted);
+    margin-bottom: 24px;
+  }
+
+  /* ── CARDS ── */
+  .card {
+    background: var(--surface);
+    border: 1px solid #e5e5e5;
+    border-radius: 8px;
+    padding: 20px;
+    margin-bottom: 16px;
+  }
+  .card-title {
+    font-family: 'DM Mono', monospace;
+    font-size: 11px;
+    letter-spacing: 0.08em;
+    text-transform: uppercase;
+    color: var(--muted);
+    margin-bottom: 12px;
+  }
+
+  /* ── GRID ── */
+  .grid-2 { display: grid; grid-template-columns: 1fr 1fr; gap: 16px; }
+  .grid-3 { display: grid; grid-template-columns: 1fr 1fr 1fr; gap: 16px; }
+  @media (max-width: 768px) {
+    .grid-2, .grid-3 { grid-template-columns: 1fr; }
+    .content-scroll { padding: 16px; }
+  }
+
+  /* ── STATUS CHIPS ── */
+  .chip {
+    display: inline-flex;
+    align-items: center;
+    gap: 5px;
+    font-family: 'DM Mono', monospace;
+    font-size: 10px;
+    letter-spacing: 0.06em;
+    padding: 3px 8px;
+    border-radius: 20px;
+    font-weight: 500;
+  }
+  .chip-green { background: #dcfce7; color: #16a34a; }
+  .chip-orange { background: #ffedd5; color: #c2410c; }
+  .chip-red { background: #fee2e2; color: #dc2626; }
+  .chip-gray { background: #f3f4f6; color: var(--muted); }
+  .chip-blue { background: #dbeafe; color: #1d4ed8; }
+
+  /* ── FORMS ── */
+  .form-group { margin-bottom: 14px; }
+  .form-label {
+    font-family: 'DM Mono', monospace;
+    font-size: 11px;
+    letter-spacing: 0.06em;
+    text-transform: uppercase;
+    color: var(--muted);
+    display: block;
+    margin-bottom: 6px;
+  }
+  .form-input, .form-select, .form-textarea {
+    width: 100%;
+    font-family: 'DM Sans', sans-serif;
+    font-size: 14px;
+    color: var(--text);
+    background: #fafafa;
+    border: 1px solid #e5e5e5;
+    border-radius: 6px;
+    padding: 10px 12px;
+    transition: border-color 0.15s;
+    -webkit-appearance: none;
+  }
+  .form-input:focus, .form-select:focus, .form-textarea:focus {
+    outline: none;
+    border-color: var(--text);
+    background: #fff;
+  }
+  .form-textarea { resize: vertical; min-height: 80px; }
+  .form-input.error { border-color: var(--red); }
+
+  .form-row { display: grid; grid-template-columns: 1fr 1fr; gap: 12px; }
+  @media (max-width: 600px) { .form-row { grid-template-columns: 1fr; } }
+
+  /* ── BUTTONS ── */
+  .btn {
+    font-family: 'DM Mono', monospace;
+    font-size: 12px;
+    letter-spacing: 0.06em;
+    font-weight: 500;
+    padding: 10px 18px;
+    border-radius: 6px;
+    border: none;
+    cursor: pointer;
+    transition: opacity 0.15s, transform 0.1s;
+    white-space: nowrap;
+  }
+  .btn:active { transform: scale(0.98); }
+  .btn-primary { background: var(--text); color: #fff; }
+  .btn-primary:hover { opacity: 0.85; }
+  .btn-lime { background: var(--lime); color: var(--text); }
+  .btn-lime:hover { opacity: 0.88; }
+  .btn-ghost {
+    background: none;
+    border: 1px solid #e5e5e5;
+    color: var(--text);
+  }
+  .btn-ghost:hover { border-color: var(--text); }
+  .btn-danger { background: var(--red); color: #fff; }
+  .btn-danger:hover { opacity: 0.85; }
+  .btn-sm { font-size: 11px; padding: 7px 12px; }
+  .btn-icon { padding: 8px; font-size: 14px; background: none; border: 1px solid #e5e5e5; color: var(--muted); }
+  .btn-icon:hover { border-color: var(--text); color: var(--text); }
+
+  .btn-group { display: flex; gap: 8px; flex-wrap: wrap; }
+
+  /* ── TABLES ── */
+  .table-wrap { overflow-x: auto; border-radius: 8px; border: 1px solid #e5e5e5; }
+  table {
+    width: 100%;
+    border-collapse: collapse;
+    font-size: 13px;
+  }
+  thead th {
+    position: sticky;
+    top: 0;
+    background: #f8f8f7;
+    font-family: 'DM Mono', monospace;
+    font-size: 10px;
+    letter-spacing: 0.08em;
+    text-transform: uppercase;
+    color: var(--muted);
+    padding: 10px 14px;
+    text-align: left;
+    border-bottom: 1px solid #e5e5e5;
+    font-weight: 500;
+  }
+  tbody tr { border-bottom: 1px solid #f0f0f0; transition: background 0.1s; }
+  tbody tr:last-child { border-bottom: none; }
+  tbody tr:hover { background: #fafafa; }
+  tbody td { padding: 11px 14px; color: var(--text); }
+  .td-mono { font-family: 'DM Mono', monospace; font-size: 12px; }
+
+  /* ── EMPTY STATE ── */
+  .empty {
+    text-align: center;
+    padding: 48px 24px;
+    color: var(--muted);
+  }
+  .empty-icon { font-size: 32px; margin-bottom: 12px; }
+  .empty-title { font-size: 15px; font-weight: 600; color: var(--text); margin-bottom: 6px; }
+  .empty-text { font-size: 13px; line-height: 1.5; }
+
+  /* ── DASHBOARD WIDGETS ── */
+  .dash-date {
+    font-family: 'Bebas Neue', sans-serif;
+    font-size: 36px;
+    color: var(--text);
+    letter-spacing: 0.04em;
+    margin-bottom: 4px;
+  }
+  .dash-day {
+    font-family: 'DM Mono', monospace;
+    font-size: 12px;
+    color: var(--muted);
+    letter-spacing: 0.06em;
+    margin-bottom: 28px;
+    text-transform: uppercase;
+  }
+
+  .dash-stat {
+    background: var(--surface);
+    border: 1px solid #e5e5e5;
+    border-radius: 8px;
+    padding: 18px 20px;
+    display: flex;
+    align-items: center;
+    gap: 16px;
+    cursor: pointer;
+    transition: border-color 0.15s, box-shadow 0.15s;
+  }
+  .dash-stat:hover { border-color: var(--text); box-shadow: 0 2px 8px rgba(0,0,0,0.06); }
+  .dash-stat-icon { font-size: 24px; flex-shrink: 0; }
+  .dash-stat-label { font-size: 12px; color: var(--muted); margin-bottom: 2px; }
+  .dash-stat-value { font-size: 18px; font-weight: 600; color: var(--text); }
+  .dash-stat-chip { margin-top: 4px; }
+
+  /* ── TEMP INPUT (big, tablet-friendly) ── */
+  .temp-input-big {
+    font-family: 'DM Mono', monospace;
+    font-size: 28px;
+    text-align: center;
+    padding: 16px;
+    border: 2px solid #e5e5e5;
+    border-radius: 8px;
+    background: #fafafa;
+    width: 100%;
+    transition: border-color 0.15s;
+  }
+  .temp-input-big:focus { outline: none; border-color: var(--text); background: #fff; }
+  .temp-input-big.ok { border-color: var(--green); }
+  .temp-input-big.warn { border-color: var(--orange); }
+  .temp-input-big.err { border-color: var(--red); }
+
+  .temp-norm {
+    font-family: 'DM Mono', monospace;
+    font-size: 11px;
+    color: var(--muted);
+    text-align: center;
+    margin-top: 6px;
+  }
+
+  /* ── TOGGLE ── */
+  .toggle-group { display: flex; border: 1px solid #e5e5e5; border-radius: 6px; overflow: hidden; }
+  .toggle-btn {
+    flex: 1;
+    font-family: 'DM Mono', monospace;
+    font-size: 11px;
+    letter-spacing: 0.06em;
+    padding: 9px 12px;
+    border: none;
+    background: none;
+    cursor: pointer;
+    transition: background 0.15s, color 0.15s;
+    color: var(--muted);
+  }
+  .toggle-btn.active-ok { background: #dcfce7; color: #16a34a; }
+  .toggle-btn.active-err { background: #fee2e2; color: #dc2626; }
+
+  /* ── PROGRESS BAR ── */
+  .progress-bar-wrap {
+    background: #f0f0f0;
+    border-radius: 4px;
+    height: 6px;
+    overflow: hidden;
+    margin-top: 8px;
+  }
+  .progress-bar-fill {
+    height: 100%;
+    border-radius: 4px;
+    transition: width 0.3s;
+    background: var(--green);
+  }
+  .progress-bar-fill.warn { background: var(--orange); }
+  .progress-bar-fill.err { background: var(--red); }
+
+  /* ── SCHOONMAAK GRID ── */
+  .clean-task {
+    background: var(--surface);
+    border: 1px solid #e5e5e5;
+    border-radius: 8px;
+    padding: 16px;
+    display: flex;
+    align-items: flex-start;
+    gap: 12px;
+    margin-bottom: 10px;
+    transition: border-color 0.15s;
+  }
+  .clean-task.done { border-color: var(--green); background: #f0fdf4; }
+  .clean-task.late { border-color: var(--orange); background: #fff7ed; }
+  .clean-task.missed { border-color: var(--red); background: #fef2f2; }
+  .clean-check {
+    width: 24px;
+    height: 24px;
+    border: 2px solid #e5e5e5;
+    border-radius: 6px;
+    flex-shrink: 0;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    cursor: pointer;
+    transition: all 0.15s;
+    font-size: 14px;
+    background: #fff;
+  }
+  .clean-check.done { border-color: var(--green); background: var(--green); color: #fff; }
+
+  /* ── CCP CARDS ── */
+  .ccp-card {
+    background: var(--surface);
+    border: 1px solid #e5e5e5;
+    border-radius: 8px;
+    padding: 20px;
+    margin-bottom: 12px;
+    border-left: 4px solid var(--lime);
+  }
+  .ccp-recipe { font-size: 11px; color: var(--muted); font-family: 'DM Mono', monospace; margin-bottom: 6px; }
+  .ccp-name { font-size: 16px; font-weight: 600; margin-bottom: 12px; }
+  .ccp-point {
+    display: flex;
+    gap: 10px;
+    padding: 10px;
+    background: #f8f8f7;
+    border-radius: 6px;
+    margin-bottom: 8px;
+    font-size: 13px;
+  }
+  .ccp-point-icon { flex-shrink: 0; }
+  .ccp-point-label { font-weight: 600; margin-bottom: 2px; }
+  .ccp-point-value { color: var(--muted); font-size: 12px; }
+
+  /* ── GREEN KEY ── */
+  .gk-theme {
+    background: var(--surface);
+    border: 1px solid #e5e5e5;
+    border-radius: 8px;
+    margin-bottom: 12px;
+    overflow: hidden;
+  }
+  .gk-theme-header {
+    padding: 14px 18px;
+    display: flex;
+    align-items: center;
+    gap: 12px;
+    cursor: pointer;
+    user-select: none;
+  }
+  .gk-theme-header:hover { background: #fafafa; }
+  .gk-theme-title { font-weight: 600; font-size: 14px; flex: 1; }
+  .gk-theme-score { font-family: 'DM Mono', monospace; font-size: 12px; color: var(--muted); }
+  .gk-theme-chevron { transition: transform 0.2s; }
+  .gk-theme.open .gk-theme-chevron { transform: rotate(180deg); }
+  .gk-theme-body { padding: 0 18px 14px; display: none; }
+  .gk-theme.open .gk-theme-body { display: block; }
+  .gk-norm {
+    padding: 10px 0;
+    border-top: 1px solid #f0f0f0;
+    display: flex;
+    align-items: flex-start;
+    gap: 10px;
+  }
+  .gk-norm-text { flex: 1; font-size: 13px; }
+  .gk-norm-toggle { display: flex; border: 1px solid #e5e5e5; border-radius: 5px; overflow: hidden; flex-shrink: 0; }
+  .gk-toggle-btn {
+    font-family: 'DM Mono', monospace;
+    font-size: 10px;
+    padding: 5px 9px;
+    border: none;
+    background: none;
+    cursor: pointer;
+    transition: background 0.1s, color 0.1s;
+    color: var(--muted);
+  }
+  .gk-toggle-btn.sel-yes { background: #dcfce7; color: #16a34a; }
+  .gk-toggle-btn.sel-partial { background: #fef3c7; color: #b45309; }
+  .gk-toggle-btn.sel-no { background: #fee2e2; color: #dc2626; }
+
+  /* ══════════════════════════════════════════
+     MODULE 07 — ONTVANGST-CONTROLES
+  ══════════════════════════════════════════ */
+  .ontvangst-badge {
+    display: inline-flex; align-items: center; justify-content: center;
+    background: var(--orange); color: #fff;
+    font-family: 'DM Mono', monospace; font-size: 10px; font-weight: 600;
+    min-width: 20px; height: 20px; padding: 0 6px;
+    border-radius: 20px; margin-left: 8px; vertical-align: middle;
+  }
+  .ontvangst-taak {
+    border: 1px solid #e5e5e5; border-radius: 8px;
+    margin-bottom: 12px; overflow: hidden;
+    transition: border-color 0.15s;
+  }
+  .ontvangst-taak.done { border-color: var(--green); background: #f0fdf4; }
+  .ontvangst-taak-header {
+    display: flex; align-items: center; gap: 12px;
+    padding: 14px 16px; cursor: pointer;
+    background: #fafafa; transition: background 0.15s;
+  }
+  .ontvangst-taak.done .ontvangst-taak-header { background: #f0fdf4; cursor: default; }
+  .ontvangst-taak-header:hover:not(.done-header) { background: #f0f0ee; }
+  .ontvangst-del-btn {
+    width: 28px; height: 28px; border-radius: 50%;
+    border: 1px solid #e0e0de; background: white;
+    color: #aaa; font-size: 13px; cursor: pointer;
+    display: flex; align-items: center; justify-content: center;
+    transition: all 0.15s; flex-shrink: 0;
+  }
+  .ontvangst-del-btn:hover { background: var(--red); border-color: var(--red); color: white; }
+  .ontvangst-taak-icon { font-size: 20px; flex-shrink: 0; }
+  .ontvangst-taak-info { flex: 1; }
+  .ontvangst-taak-naam {
+    font-weight: 600; font-size: 14px; margin-bottom: 3px;
+  }
+  .ontvangst-taak-meta {
+    font-family: 'DM Mono', monospace; font-size: 11px;
+    color: var(--muted); letter-spacing: 0.03em;
+  }
+  .ontvangst-taak-arrow {
+    font-size: 12px; color: var(--muted);
+    transition: transform 0.2s;
+  }
+  .ontvangst-taak-arrow.open { transform: rotate(180deg); }
+  .ontvangst-taak-body {
+    display: none; padding: 16px; border-top: 1px solid #e5e5e5;
+    background: #fff;
+  }
+  .ontvangst-taak-body.open { display: block; }
+
+  /* Check list */
+  .check-item {
+    display: flex; align-items: flex-start; gap: 12px;
+    padding: 10px 0; border-bottom: 1px solid #f5f5f5;
+  }
+  .check-item:last-of-type { border-bottom: none; }
+  .check-item-label {
+    flex: 1; font-size: 13px; line-height: 1.4;
+  }
+  .check-item-input { flex-shrink: 0; margin-top: 2px; }
+  .check-temp-input {
+    width: 90px; font-family: 'DM Sans', sans-serif; font-size: 13px;
+    border: 1px solid #e5e5e5; border-radius: 5px;
+    padding: 5px 8px; background: #fafafa;
+    transition: border-color 0.15s;
+  }
+  .check-temp-input:focus { outline: none; border-color: var(--text); background: #fff; }
+  .check-temp-input.over-norm { border-color: var(--red); background: #fef2f2; }
+  .check-datum-input {
+    font-family: 'DM Sans', sans-serif; font-size: 13px;
+    border: 1px solid #e5e5e5; border-radius: 5px;
+    padding: 5px 8px; background: #fafafa;
+    transition: border-color 0.15s;
+  }
+  .check-datum-input:focus { outline: none; border-color: var(--text); background: #fff; }
+
+  .ontvangst-bevestig-form {
+    margin-top: 14px; padding-top: 14px;
+    border-top: 1px solid #e5e5e5;
+    display: grid; grid-template-columns: 1fr 1fr; gap: 10px;
+  }
+  @media (max-width: 600px) { .ontvangst-bevestig-form { grid-template-columns: 1fr; } }
+
+  .haccp-disclaimer {
+    margin-top: 14px; padding: 10px 14px;
+    background: #fef9c3; border: 1px solid #fde68a;
+    border-radius: 6px; font-size: 12px;
+    color: #92400e; line-height: 1.5;
+  }
+
+  /* Dashboard badge on ingangscontrole stat */
+  .dash-ontvangst-open {
+    font-family: 'DM Mono', monospace; font-size: 11px;
+    color: var(--orange); margin-top: 4px;
+  }
+
+  /* ── PRINT ── */
+  @media print {
+    .header, .tab-bar, .btn, .btn-group, .no-print { display: none !important; }
+    body, .content-scroll { overflow: visible; max-height: none; height: auto; }
+    .tab-panel { display: block !important; }
+    .card, .ccp-card, .gk-theme { break-inside: avoid; }
+    .print-header { display: block !important; font-family: 'DM Mono', monospace; font-size: 12px; margin-bottom: 16px; border-bottom: 1px solid #ccc; padding-bottom: 8px; }
+  }
+  .print-header { display: none; }
+
+  /* ── DIVIDER ── */
+  .divider { border: none; border-top: 1px solid #e5e5e5; margin: 20px 0; }
+
+  /* ── ALERTS ── */
+  .alert {
+    padding: 12px 16px;
+    border-radius: 6px;
+    font-size: 13px;
+    margin-bottom: 16px;
+    display: flex;
+    align-items: flex-start;
+    gap: 10px;
+  }
+  .alert-info { background: #eff6ff; border: 1px solid #bfdbfe; color: #1e40af; }
+  .alert-warn { background: #fff7ed; border: 1px solid #fed7aa; color: #c2410c; }
+  .alert-success { background: #f0fdf4; border: 1px solid #bbf7d0; color: #15803d; }
+
+  /* ── MODAL ── */
+  .modal-overlay {
+    display: none;
+    position: fixed;
+    inset: 0;
+    background: rgba(0,0,0,0.5);
+    z-index: 200;
+    align-items: center;
+    justify-content: center;
+    padding: 20px;
+  }
+  .modal-overlay.open { display: flex; }
+  .modal {
+    background: var(--surface);
+    border-radius: 10px;
+    padding: 28px;
+    width: 100%;
+    max-width: 480px;
+    max-height: 80vh;
+    overflow-y: auto;
+  }
+  .modal-title {
+    font-family: 'Bebas Neue', sans-serif;
+    font-size: 20px;
+    margin-bottom: 20px;
+    letter-spacing: 0.04em;
+  }
+  .modal-footer { display: flex; gap: 8px; justify-content: flex-end; margin-top: 20px; }
+
+  /* ── LOADING ── */
+  .loading {
+    display: flex;
+    align-items: center;
+    gap: 10px;
+    padding: 20px;
+    color: var(--muted);
+    font-size: 13px;
+  }
+  .spinner {
+    width: 18px;
+    height: 18px;
+    border: 2px solid #e5e5e5;
+    border-top-color: var(--text);
+    border-radius: 50%;
+    animation: spin 0.7s linear infinite;
+    flex-shrink: 0;
+  }
+  @keyframes spin { to { transform: rotate(360deg); } }
+
+  /* ── AFWIJKING STATUS ── */
+  .afw-open { font-weight: 600; color: var(--red); }
+  .afw-closed { color: var(--green); }
+
+  /* ── HELP KNOP ── */
+  .btn-help {
+    background: transparent; border: 1px solid #333;
+    color: #aaa; cursor: pointer; padding: 5px 10px;
+    border-radius: 4px; font-size: 13px;
+    font-family: 'DM Mono', monospace; letter-spacing: 0.06em;
+    transition: all 0.15s; margin-right: 8px;
+  }
+  .btn-help:hover { border-color: var(--lime); color: var(--lime); }
+
+  /* ── HELP MODAL ── */
+  .help-overlay {
+    position: fixed; inset: 0; background: rgba(0,0,0,0.6);
+    z-index: 999; display: none; align-items: center; justify-content: center;
+  }
+  .help-overlay.open { display: flex; }
+  .help-modal-box {
+    background: white; border-radius: 14px;
+    width: 560px; max-width: 94vw; max-height: 88vh;
+    overflow: hidden; display: flex; flex-direction: column;
+    box-shadow: 0 24px 64px rgba(0,0,0,0.3);
+    animation: slideUp 0.2s ease;
+  }
+  @keyframes slideUp { from { transform: translateY(16px); opacity: 0; } to { transform: translateY(0); opacity: 1; } }
+  .help-modal-head {
+    background: var(--black); padding: 22px 28px 18px;
+    position: relative; flex-shrink: 0;
+  }
+  .help-modal-head h2 {
+    font-family: 'Bebas Neue', sans-serif; font-size: 22px;
+    color: var(--lime); letter-spacing: 0.05em; margin: 0 0 4px;
+  }
+  .help-modal-head p { font-size: 13px; color: rgba(255,255,255,0.5); margin: 0; }
+  .help-modal-x {
+    position: absolute; top: 16px; right: 18px;
+    background: rgba(255,255,255,0.1); border: none; color: white;
+    width: 30px; height: 30px; border-radius: 50%; cursor: pointer;
+    font-size: 16px; display: flex; align-items: center; justify-content: center;
+  }
+  .help-modal-x:hover { background: rgba(255,255,255,0.2); }
+  .help-modal-body { padding: 24px 28px; overflow-y: auto; flex: 1; }
+  .help-section { margin-bottom: 22px; }
+  .help-section:last-child { margin-bottom: 0; }
+  .help-section-title {
+    font-size: 11px; font-weight: 700; text-transform: uppercase;
+    letter-spacing: 0.08em; color: var(--black); margin-bottom: 10px;
+    padding-bottom: 6px; border-bottom: 2px solid var(--lime); display: inline-block;
+  }
+  .help-row { display: flex; gap: 12px; margin-bottom: 9px; align-items: flex-start; }
+  .help-num {
+    min-width: 24px; height: 24px; background: var(--black); color: var(--lime);
+    border-radius: 50%; font-size: 11px; font-weight: 800;
+    display: flex; align-items: center; justify-content: center; margin-top: 1px; flex-shrink: 0;
+  }
+  .help-text { font-size: 13px; line-height: 1.65; color: #333; }
+  .help-text strong { color: var(--black); }
+  .help-card {
+    background: #f7f7f5; border-radius: 9px;
+    padding: 12px 14px; margin-bottom: 9px;
+    border-left: 3px solid var(--black);
+  }
+  .help-card-title { font-size: 13px; font-weight: 700; margin-bottom: 3px; }
+  .help-card-desc { font-size: 13px; color: #555; line-height: 1.5; }
+  .help-card.warn { border-left-color: var(--orange); }
+  .help-card.warn .help-card-title { color: #92400e; }
+  .help-card.green { border-left-color: var(--green); }
+  .help-card.green .help-card-title { color: #166534; }
+</style>
+  <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2/dist/umd/supabase.min.js"></script>
+  <script src="../klaar-client.js"></script>
+</head>
+<body>
+
+<!-- ── HEADER ── -->
+<header class="header">
+  <a href="../index.html" class="header-back">← TERUG</a>
+  <div class="header-logo">KLAAR</div>
+  <div class="header-module">03 — HACCP & VOEDSELVEILIGHEID</div>
+  <div class="header-spacer"></div>
+  <button class="btn-help" onclick="document.getElementById('helpOverlay').classList.add('open')" title="Uitleg & handleiding">?</button>
+  <div class="header-badge">● LIVE</div>
+</header>
+
+<!-- ── HELP MODAL ── -->
+<div class="help-overlay" id="helpOverlay" onclick="if(event.target===this)this.classList.remove('open')">
+  <div class="help-modal-box">
+    <div class="help-modal-head">
+      <h2>HACCP &amp; Voedselveiligheid</h2>
+      <p>Uitleg over alle functies van Module 03</p>
+      <button class="help-modal-x" onclick="document.getElementById('helpOverlay').classList.remove('open')">×</button>
+    </div>
+    <div class="help-modal-body">
+
+      <div class="help-section">
+        <div class="help-section-title">📊 Dashboard</div>
+        <div class="help-text" style="margin-bottom:10px;">Het dashboard geeft een dagelijks overzicht: hoeveel temperatuurmetingen zijn gedaan, welke leveringen zijn geregistreerd en hoeveel open afwijkingen er zijn. Klik op een tegel om direct naar die functie te gaan.</div>
+        <div class="help-card warn">
+          <div class="help-card-title">⚠️ Ontvangst-controles (Module 07)</div>
+          <div class="help-card-desc">Als je in Leveranciers &amp; Voorraad (Module 07) een pakbon inlaadt, worden producten die koeling nodig hebben hier automatisch als controletaak aangemaakt. Vink ze af na ontvangst.</div>
+        </div>
+      </div>
+
+      <div class="help-section">
+        <div class="help-section-title">🌡️ Temperatuurregistratie</div>
+        <div class="help-row"><div class="help-num">1</div><div class="help-text">Beheer je <strong>koeleenheden</strong> (koelkast, vriezer, bain-marie) via "Koeleenheden beheren". Stel per eenheid de normtemperatuur in.</div></div>
+        <div class="help-row"><div class="help-num">2</div><div class="help-text">Voer dagelijks metingen in. Het systeem vergelijkt automatisch met de norm:<br>Koelkast ≤ 7°C · Vlees/vis ≤ 4°C · Vriezer ≤ −18°C · Warmhoud ≥ 60°C</div></div>
+        <div class="help-row"><div class="help-num">3</div><div class="help-text">Bij een afwijking is een <strong>corrigerende maatregel verplicht</strong>. De afwijking wordt automatisch opgeslagen in het Afwijkingenlog.</div></div>
+      </div>
+
+      <div class="help-section">
+        <div class="help-section-title">🚚 Ingangscontrole Leveranciers</div>
+        <div class="help-row"><div class="help-num">1</div><div class="help-text">Registreer elke levering: leverancier, product, temperatuur bij ontvangst en naam medewerker.</div></div>
+        <div class="help-row"><div class="help-num">2</div><div class="help-text">Kies <strong>Geaccepteerd</strong> of <strong>Afgekeurd</strong>. Bij afkeuring is een reden verplicht — dit maakt automatisch een afwijking aan.</div></div>
+        <div class="help-row"><div class="help-num">3</div><div class="help-text">Statistieken per leverancier tonen hoeveel leveringen zijn afgekeurd — handig voor evaluaties.</div></div>
+      </div>
+
+      <div class="help-section">
+        <div class="help-section-title">🧹 Schoonmaakrooster</div>
+        <div class="help-row"><div class="help-num">1</div><div class="help-text">Maak taken aan per frequentie: <strong>dagelijks</strong>, <strong>wekelijks</strong> of <strong>maandelijks</strong>.</div></div>
+        <div class="help-row"><div class="help-num">2</div><div class="help-text">Vink taken af met naam medewerker. Het tijdstip wordt automatisch geregistreerd.</div></div>
+        <div class="help-row"><div class="help-num">3</div><div class="help-text">Voortgangsscores per categorie laten zien hoe goed het schoonmaakschema gevolgd wordt.</div></div>
+      </div>
+
+      <div class="help-section">
+        <div class="help-section-title">⚡ Afwijkingenlog</div>
+        <div class="help-text" style="margin-bottom:8px;">Afwijkingen worden automatisch aangemaakt vanuit temperatuurmetingen en afgekeurde leveringen. Je kunt ook handmatig afwijkingen toevoegen.</div>
+        <div class="help-row"><div class="help-num">!</div><div class="help-text">Sluit een afwijking zodra de corrigerende maatregel is uitgevoerd. Open afwijkingen zijn zichtbaar op het dashboard.</div></div>
+      </div>
+
+      <div class="help-section">
+        <div class="help-section-title">🤖 CCP Analyse (AI)</div>
+        <div class="help-card green">
+          <div class="help-card-title">Automatische HACCP-analyse via Claude AI</div>
+          <div class="help-card-desc">Selecteer een recept uit Module 01 en Claude analyseert alle kritieke controlepunten (CCP's) — met grenswaarden, meetmethodes en risico's. Resultaten worden gecached zodat je ze offline kunt bekijken.</div>
+        </div>
+        <div class="help-row"><div class="help-num">!</div><div class="help-text">Vereist een Claude API-sleutel in je instellingen. Stel deze in via Module 08.</div></div>
+      </div>
+
+      <div class="help-section">
+        <div class="help-section-title">🌿 Green Key Checklist</div>
+        <div class="help-text" style="margin-bottom:8px;">12 duurzaamheidsthema's (energie, water, afval, etc.) met Ja / Deels / Nee per norm. Het systeem berekent je score en indicatieniveau:</div>
+        <div class="help-card">
+          <div class="help-card-title">Scores</div>
+          <div class="help-card-desc">&lt;50% Nog niet klaar · 50–75% Brons · 75–90% Zilver · &gt;90% Goud (indicatief, geen officiële certificering)</div>
+        </div>
+      </div>
+
+      <div class="help-section">
+        <div class="help-section-title">⚖️ Wettelijk kader</div>
+        <div class="help-text">Registraties zijn gebaseerd op EU Verordening 852/2004 en de Hygiënecode KHN. Bewaarplicht: minimaal 1–2 jaar. Dit systeem ondersteunt je HACCP-registratie maar vervangt geen gecertificeerd HACCP-plan of NVWA-inspectie.</div>
+      </div>
+
+    </div>
+  </div>
+</div>
+
+<!-- ── TAB BAR ── -->
+<nav class="tab-bar" id="tabBar">
+  <button class="tab-btn active" data-tab="dashboard">Dashboard</button>
+  <button class="tab-btn" data-tab="temperatuur">Temperatuur</button>
+  <button class="tab-btn" data-tab="leveranciers">Leveranciers</button>
+  <button class="tab-btn" data-tab="schoonmaak">Schoonmaak</button>
+  <button class="tab-btn" data-tab="afwijkingen">Afwijkingen</button>
+  <button class="tab-btn" data-tab="ccp">CCP Analyse</button>
+  <button class="tab-btn" data-tab="greenkey">Green Key</button>
+</nav>
+
+<!-- ── CONTENT ── -->
+<div class="content-scroll" id="contentScroll">
+
+  <!-- ══════════════ DASHBOARD ══════════════ -->
+  <div class="tab-panel active" id="tab-dashboard">
+    <div class="print-header">KLAAR — HACCP Overzicht | Afgedrukt op <span id="printDate"></span></div>
+    <div id="dashDate" class="dash-date"></div>
+    <div id="dashDay" class="dash-day"></div>
+
+    <div class="grid-3" style="margin-bottom:24px">
+      <div class="dash-stat" onclick="goTab('temperatuur')">
+        <div class="dash-stat-icon">🌡️</div>
+        <div>
+          <div class="dash-stat-label">Temperatuur koeling</div>
+          <div class="dash-stat-value" id="dash-temp-value">—</div>
+          <div class="dash-stat-chip" id="dash-temp-chip"></div>
+        </div>
+      </div>
+      <div class="dash-stat" onclick="goTab('leveranciers')">
+        <div class="dash-stat-icon">🚚</div>
+        <div>
+          <div class="dash-stat-label">Ingangscontrole</div>
+          <div class="dash-stat-value" id="dash-lev-value">—</div>
+          <div class="dash-stat-chip" id="dash-lev-chip"></div>
+          <div class="dash-ontvangst-open" id="dash-ontvangst-open" style="display:none;"></div>
+        </div>
+      </div>
+      <div class="dash-stat" onclick="goTab('schoonmaak')">
+        <div class="dash-stat-icon">🧹</div>
+        <div>
+          <div class="dash-stat-label">Schoonmaak vandaag</div>
+          <div class="dash-stat-value" id="dash-clean-value">—</div>
+          <div class="dash-stat-chip" id="dash-clean-chip"></div>
+        </div>
+      </div>
+    </div>
+
+    <div id="dash-afwijkingen-alert"></div>
+
+    <div class="grid-2">
+      <div class="card">
+        <div class="card-title">Open afwijkingen</div>
+        <div id="dash-afw-list">
+          <div class="empty">
+            <div class="empty-icon">✅</div>
+            <div class="empty-title">Geen open afwijkingen</div>
+          </div>
+        </div>
+      </div>
+      <div class="card">
+        <div class="card-title">Vandaag geregistreerd</div>
+        <div id="dash-today-list">
+          <div class="empty">
+            <div class="empty-icon">📋</div>
+            <div class="empty-title">Nog niets geregistreerd</div>
+            <div class="empty-text">Voeg temperatuurmetingen en leverancierscontroles toe.</div>
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <!-- ══════════════ TEMPERATUUR ══════════════ -->
+  <div class="tab-panel" id="tab-temperatuur">
+    <div class="print-header">KLAAR — Temperatuurregistratie | <span class="printDate2"></span></div>
+    <div class="section-title">Temperatuurregistratie</div>
+    <div class="section-sub">Dagelijkse metingen per koeleenheid — wettelijk vereist (HACCP CCP)</div>
+
+    <div class="btn-group no-print" style="margin-bottom:20px">
+      <button class="btn btn-lime" onclick="openModal('modal-meting')">+ Nieuwe meting</button>
+      <button class="btn btn-ghost" onclick="openModal('modal-eenheid')">Koeleenheden beheren</button>
+      <button class="btn btn-ghost btn-sm" onclick="printTab()">🖨 Afdrukken</button>
+    </div>
+
+    <div id="temp-vandaag-section">
+      <div class="card">
+        <div class="card-title">Vandaag</div>
+        <div id="temp-vandaag-list">
+          <div class="empty">
+            <div class="empty-icon">🌡️</div>
+            <div class="empty-title">Nog geen metingen vandaag</div>
+            <div class="empty-text">Klik op "+ Nieuwe meting" om te beginnen.</div>
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <div class="card">
+      <div class="card-title">Geschiedenis</div>
+      <div id="temp-history">
+        <div class="empty">
+          <div class="empty-icon">📊</div>
+          <div class="empty-title">Geen historische data</div>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <!-- ══════════════ LEVERANCIERS ══════════════ -->
+  <div class="tab-panel" id="tab-leveranciers">
+    <div class="print-header">KLAAR — Ingangscontrole Leveranciers | <span class="printDate3"></span></div>
+    <div class="section-title">Ingangscontrole Leveranciers</div>
+    <div class="section-sub">Registreer elke levering — temperatuur, kwaliteit, acceptatie</div>
+
+    <div class="btn-group no-print" style="margin-bottom:20px">
+      <button class="btn btn-lime" onclick="openModal('modal-levering')">+ Nieuwe levering</button>
+      <button class="btn btn-ghost" onclick="openModal('modal-leverancier')">Leveranciers beheren</button>
+      <button class="btn btn-ghost btn-sm" onclick="printTab()">🖨 Afdrukken</button>
+    </div>
+
+    <!-- ── ONTVANGST-CONTROLES (Module 07) ── -->
+    <div class="card no-print" id="card-ontvangst-taken" style="display:none;">
+      <div class="card-title">
+        Ontvangst-controles (Module 07)
+        <span class="ontvangst-badge" id="ontvangst-open-badge" style="display:none;"></span>
+      </div>
+      <p style="font-size:13px;color:var(--muted);margin-bottom:16px;">
+        Automatisch aangemaakt bij inboeken van pakbonnen in Leveranciers &amp; Voorraad.
+        Bevestig elke controle handmatig — inclusief gemeten waarden.
+      </p>
+      <div id="ontvangst-taken-list"></div>
+    </div>
+
+    <div class="card">
+      <div class="card-title">Overzicht leveringen</div>
+      <div class="table-wrap">
+        <table id="lev-table">
+          <thead>
+            <tr>
+              <th>Datum</th>
+              <th>Leverancier</th>
+              <th>Product</th>
+              <th>Temp (°C)</th>
+              <th>Medewerker</th>
+              <th>Status</th>
+              <th class="no-print">Acties</th>
+            </tr>
+          </thead>
+          <tbody id="lev-tbody">
+            <tr><td colspan="7"><div class="empty"><div class="empty-icon">🚚</div><div class="empty-title">Nog geen leveringen geregistreerd</div></div></td></tr>
+          </tbody>
+        </table>
+      </div>
+    </div>
+
+    <div class="card">
+      <div class="card-title">Statistieken per leverancier</div>
+      <div id="lev-stats">
+        <div class="empty"><div class="empty-title">Voeg leveringen toe om statistieken te zien</div></div>
+      </div>
+    </div>
+  </div>
+
+  <!-- ══════════════ SCHOONMAAK ══════════════ -->
+  <div class="tab-panel" id="tab-schoonmaak">
+    <div class="print-header">KLAAR — Schoonmaakrooster | <span class="printDate4"></span></div>
+    <div class="section-title">Schoonmaakrooster</div>
+    <div class="section-sub">Dagelijkse, wekelijkse en maandelijkse taken bijhouden</div>
+
+    <div class="btn-group no-print" style="margin-bottom:20px">
+      <button class="btn btn-lime" onclick="openModal('modal-taak')">+ Nieuwe taak</button>
+      <button class="btn btn-ghost btn-sm" onclick="printTab()">🖨 Afdrukken</button>
+    </div>
+
+    <div id="schoon-dagelijks" class="card" style="margin-bottom:12px">
+      <div class="card-title">Dagelijks <span id="schoon-dag-score" style="float:right;font-weight:600;"></span></div>
+      <div id="schoon-dag-list">
+        <div class="empty"><div class="empty-title">Geen dagelijkse taken</div><div class="empty-text">Voeg taken toe via "+ Nieuwe taak".</div></div>
+      </div>
+    </div>
+
+    <div id="schoon-wekelijks" class="card" style="margin-bottom:12px">
+      <div class="card-title">Wekelijks <span id="schoon-week-score" style="float:right;font-weight:600;"></span></div>
+      <div id="schoon-week-list">
+        <div class="empty"><div class="empty-title">Geen wekelijkse taken</div></div>
+      </div>
+    </div>
+
+    <div id="schoon-maandelijks" class="card">
+      <div class="card-title">Maandelijks <span id="schoon-maand-score" style="float:right;font-weight:600;"></span></div>
+      <div id="schoon-maand-list">
+        <div class="empty"><div class="empty-title">Geen maandelijkse taken</div></div>
+      </div>
+    </div>
+  </div>
+
+  <!-- ══════════════ AFWIJKINGEN ══════════════ -->
+  <div class="tab-panel" id="tab-afwijkingen">
+    <div class="print-header">KLAAR — Afwijkingenlog | <span class="printDate5"></span></div>
+    <div class="section-title">Afwijkingenlog</div>
+    <div class="section-sub">Automatisch aangevuld bij temperatuurafwijkingen — ook handmatig toe te voegen</div>
+
+    <div class="btn-group no-print" style="margin-bottom:20px">
+      <button class="btn btn-lime" onclick="openModal('modal-afwijking')">+ Handmatige afwijking</button>
+      <button class="btn btn-ghost btn-sm" onclick="filterAfwijkingen('open')" id="filter-open-btn">Toon open</button>
+      <button class="btn btn-ghost btn-sm" onclick="filterAfwijkingen('all')" id="filter-all-btn">Toon alles</button>
+      <button class="btn btn-ghost btn-sm" onclick="printTab()">🖨 Afdrukken</button>
+    </div>
+
+    <div class="table-wrap">
+      <table>
+        <thead>
+          <tr>
+            <th>Datum</th>
+            <th>Type</th>
+            <th>Waarde</th>
+            <th>Maatregel</th>
+            <th>Medewerker</th>
+            <th>Status</th>
+            <th class="no-print">Actie</th>
+          </tr>
+        </thead>
+        <tbody id="afw-tbody">
+          <tr><td colspan="7"><div class="empty"><div class="empty-icon">✅</div><div class="empty-title">Geen afwijkingen geregistreerd</div></div></td></tr>
+        </tbody>
+      </table>
+    </div>
+  </div>
+
+  <!-- ══════════════ CCP ANALYSE ══════════════ -->
+  <div class="tab-panel" id="tab-ccp">
+    <div class="section-title">CCP Analyse via Claude AI</div>
+    <div class="section-sub">Koppelt aan jouw recepten uit de Recept Studio — automatische detectie van kritische controlepunten</div>
+
+    <div class="alert alert-info">
+      <span>ℹ️</span>
+      <div>Claude analyseert elk recept en benoemt de CCP's, kritische grenswaarden en wat je moet meten. Resultaten worden lokaal opgeslagen zodat je dit niet elke keer opnieuw hoeft te doen.</div>
+    </div>
+
+    <div id="ccp-api-warn" class="alert alert-warn" style="display:none">
+      <span>⚠️</span>
+      <div>Geen API-sleutel ingesteld. Voer eerst je Claude API-sleutel in via de Recept Studio (Module 01), of hieronder.</div>
+    </div>
+
+    <div class="card no-print" id="ccp-controls">
+      <div class="card-title">Instellingen</div>
+
+      <div id="ccp-recipe-count" style="font-size:13px;color:var(--muted);margin-bottom:12px"></div>
+      <button class="btn btn-lime" onclick="runCcpAnalysis()" id="ccp-analyse-btn">🔍 Analyseer mijn recepten op CCP's</button>
+    </div>
+
+    <div id="ccp-loading" style="display:none" class="loading"><div class="spinner"></div> Claude analyseert je recepten...</div>
+
+    <div id="ccp-results"></div>
+  </div>
+
+  <!-- ══════════════ GREEN KEY ══════════════ -->
+  <div class="tab-panel" id="tab-greenkey">
+    <div class="section-title">Green Key Checklist</div>
+    <div class="section-sub">Indicatieve zelfevaluatie — officiële beoordeling via greenkey.nl</div>
+
+    <div class="alert alert-info">
+      <span>🌿</span>
+      <div>Green Key is een internationaal duurzaamheidskeurmerk voor de horeca. Deze checklist is <strong>indicatief</strong> — de officiële beoordeling en certificering verloopt via <a href="https://greenkey.nl" target="_blank" style="color:inherit">greenkey.nl</a>.</div>
+    </div>
+
+    <div class="card" style="margin-bottom:20px">
+      <div class="card-title">Totaalscore</div>
+      <div id="gk-total-score" style="font-size:28px;font-family:'Bebas Neue',sans-serif;letter-spacing:0.04em;margin-bottom:4px">0%</div>
+      <div id="gk-level" style="font-size:13px;color:var(--muted);margin-bottom:8px">Vul de checklist in voor een indicatie</div>
+      <div class="progress-bar-wrap"><div class="progress-bar-fill" id="gk-total-bar" style="width:0%"></div></div>
+      <div style="display:flex;gap:16px;margin-top:12px;font-size:12px;color:var(--muted);font-family:'DM Mono',monospace">
+        <span>&lt;50% = Niet klaar</span>
+        <span>50–75% = 🥉 Brons</span>
+        <span>75–90% = 🥈 Zilver</span>
+        <span>&gt;90% = 🥇 Goud</span>
+      </div>
+    </div>
+
+    <div id="gk-themes"></div>
+  </div>
+
+</div><!-- /content-scroll -->
+
+<!-- ══════════════ MODALS ══════════════ -->
+
+<!-- Modal: Nieuwe temperatuurmeting -->
+<div class="modal-overlay" id="modal-meting">
+  <div class="modal">
+    <div class="modal-title">Nieuwe Temperatuurmeting</div>
+    <div class="form-group">
+      <label class="form-label">Koeleenheid</label>
+      <select id="meting-eenheid" class="form-select"></select>
+    </div>
+    <div class="form-group">
+      <label class="form-label">Gemeten temperatuur (°C)</label>
+      <input type="number" id="meting-temp" class="temp-input-big" step="0.1" placeholder="0.0" oninput="checkMetingTemp()">
+      <div class="temp-norm" id="meting-norm-text"></div>
+    </div>
+    <div id="meting-afwijking-section" style="display:none">
+      <div class="alert alert-warn">⚠️ Temperatuur wijkt af van de norm. Noteer een corrigerende maatregel.</div>
+      <div class="form-group">
+        <label class="form-label">Corrigerende maatregel (verplicht)</label>
+        <textarea id="meting-maatregel" class="form-textarea" placeholder="Beschrijf wat je hebt gedaan om de afwijking te corrigeren..."></textarea>
+      </div>
+    </div>
+    <div class="form-row">
+      <div class="form-group">
+        <label class="form-label">Medewerker</label>
+        <input type="text" id="meting-medewerker" class="form-input" placeholder="Naam">
+      </div>
+      <div class="form-group">
+        <label class="form-label">Tijdstip</label>
+        <input type="time" id="meting-tijd" class="form-input">
+      </div>
+    </div>
+    <div class="modal-footer">
+      <button class="btn btn-ghost" onclick="closeModal('modal-meting')">Annuleren</button>
+      <button class="btn btn-primary" onclick="saveMeting()">Opslaan</button>
+    </div>
+  </div>
+</div>
+
+<!-- Modal: Koeleenheden beheren -->
+<div class="modal-overlay" id="modal-eenheid">
+  <div class="modal">
+    <div class="modal-title">Koeleenheden Beheren</div>
+    <div id="eenheid-list" style="margin-bottom:16px"></div>
+    <hr class="divider">
+    <div class="form-row">
+      <div class="form-group">
+        <label class="form-label">Naam</label>
+        <input type="text" id="eenheid-naam" class="form-input" placeholder="Koelkast 1">
+      </div>
+      <div class="form-group">
+        <label class="form-label">Type</label>
+        <select id="eenheid-type" class="form-select" onchange="updateEenheidNorm()">
+          <option value="koelkast">Koelkast (max 7°C)</option>
+          <option value="koelkast-vis">Koelkast vlees/vis (max 4°C)</option>
+          <option value="vriezer">Vriezer (max -18°C)</option>
+          <option value="custom">Aangepast</option>
+        </select>
+      </div>
+    </div>
+    <div class="form-group" id="eenheid-norm-group">
+      <label class="form-label">Max. norm (°C)</label>
+      <input type="number" id="eenheid-norm" class="form-input" step="0.5" value="7">
+    </div>
+    <div class="modal-footer">
+      <button class="btn btn-ghost" onclick="closeModal('modal-eenheid')">Sluiten</button>
+      <button class="btn btn-primary" onclick="saveEenheid()">Eenheid toevoegen</button>
+    </div>
+  </div>
+</div>
+
+<!-- Modal: Nieuwe levering -->
+<div class="modal-overlay" id="modal-levering">
+  <div class="modal">
+    <div class="modal-title">Nieuwe Levering Registreren</div>
+    <div class="form-row">
+      <div class="form-group">
+        <label class="form-label">Datum</label>
+        <input type="date" id="lev-datum" class="form-input">
+      </div>
+      <div class="form-group">
+        <label class="form-label">Tijdstip</label>
+        <input type="time" id="lev-tijd" class="form-input">
+      </div>
+    </div>
+    <div class="form-group">
+      <label class="form-label">Leverancier</label>
+      <select id="lev-leverancier" class="form-select"></select>
+    </div>
+    <div class="form-group">
+      <label class="form-label">Product / categorie</label>
+      <input type="text" id="lev-product" class="form-input" placeholder="Bijv. verse groenten, vlees...">
+    </div>
+    <div class="form-group">
+      <label class="form-label">Temperatuur bij ontvangst (°C)</label>
+      <input type="number" id="lev-temp" class="form-input" step="0.1" placeholder="4.0">
+    </div>
+    <div class="form-group">
+      <label class="form-label">Medewerker</label>
+      <input type="text" id="lev-medewerker" class="form-input" placeholder="Naam">
+    </div>
+    <div class="form-group">
+      <label class="form-label">Acceptatie</label>
+      <div class="toggle-group">
+        <button class="toggle-btn active-ok" id="lev-accept-ja" onclick="setLevAccept('ja')">✓ Geaccepteerd</button>
+        <button class="toggle-btn" id="lev-accept-nee" onclick="setLevAccept('nee')">✗ Afgekeurd</button>
+      </div>
+    </div>
+    <div id="lev-reden-section" style="display:none">
+      <div class="form-group">
+        <label class="form-label">Reden afkeuring (verplicht)</label>
+        <textarea id="lev-reden" class="form-textarea" placeholder="Beschrijf waarom deze levering is afgekeurd..."></textarea>
+      </div>
+    </div>
+    <div class="modal-footer">
+      <button class="btn btn-ghost" onclick="closeModal('modal-levering')">Annuleren</button>
+      <button class="btn btn-primary" onclick="saveLevering()">Registreren</button>
+    </div>
+  </div>
+</div>
+
+<!-- Modal: Leveranciers beheren -->
+<div class="modal-overlay" id="modal-leverancier">
+  <div class="modal">
+    <div class="modal-title">Leveranciers Beheren</div>
+    <div id="leverancier-list" style="margin-bottom:16px"></div>
+    <hr class="divider">
+    <div class="form-row">
+      <div class="form-group">
+        <label class="form-label">Naam leverancier</label>
+        <input type="text" id="lev-naam" class="form-input" placeholder="Naam">
+      </div>
+      <div class="form-group">
+        <label class="form-label">Type producten</label>
+        <input type="text" id="lev-type-prod" class="form-input" placeholder="Vlees, zuivel, groenten...">
+      </div>
+    </div>
+    <div class="modal-footer">
+      <button class="btn btn-ghost" onclick="closeModal('modal-leverancier')">Sluiten</button>
+      <button class="btn btn-primary" onclick="saveLeverancier()">Toevoegen</button>
+    </div>
+  </div>
+</div>
+
+<!-- Modal: Schoonmaaktaak -->
+<div class="modal-overlay" id="modal-taak">
+  <div class="modal">
+    <div class="modal-title">Schoonmaaktaak Toevoegen</div>
+    <div class="form-group">
+      <label class="form-label">Omschrijving</label>
+      <input type="text" id="taak-naam" class="form-input" placeholder="Bijv. Friteuse schoonmaken">
+    </div>
+    <div class="form-row">
+      <div class="form-group">
+        <label class="form-label">Frequentie</label>
+        <select id="taak-freq" class="form-select">
+          <option value="dagelijks">Dagelijks</option>
+          <option value="wekelijks">Wekelijks</option>
+          <option value="maandelijks">Maandelijks</option>
+        </select>
+      </div>
+      <div class="form-group">
+        <label class="form-label">Verantwoordelijke</label>
+        <input type="text" id="taak-verantw" class="form-input" placeholder="Naam of functie">
+      </div>
+    </div>
+    <div class="modal-footer">
+      <button class="btn btn-ghost" onclick="closeModal('modal-taak')">Annuleren</button>
+      <button class="btn btn-primary" onclick="saveTaak()">Toevoegen</button>
+    </div>
+  </div>
+</div>
+
+<!-- Modal: Schoonmaak afvinken -->
+<div class="modal-overlay" id="modal-afvink">
+  <div class="modal">
+    <div class="modal-title" id="afvink-title">Taak afvinken</div>
+    <input type="hidden" id="afvink-taak-id">
+    <div class="form-row">
+      <div class="form-group">
+        <label class="form-label">Medewerker</label>
+        <input type="text" id="afvink-medewerker" class="form-input" placeholder="Naam">
+      </div>
+      <div class="form-group">
+        <label class="form-label">Tijdstip</label>
+        <input type="time" id="afvink-tijd" class="form-input">
+      </div>
+    </div>
+    <div class="form-group">
+      <label class="form-label">Opmerking (optioneel)</label>
+      <input type="text" id="afvink-opmerking" class="form-input" placeholder="Bijzonderheden...">
+    </div>
+    <div class="modal-footer">
+      <button class="btn btn-ghost" onclick="closeModal('modal-afvink')">Annuleren</button>
+      <button class="btn btn-primary" onclick="saveAfvink()">Bevestigen ✓</button>
+    </div>
+  </div>
+</div>
+
+<!-- Modal: Handmatige afwijking -->
+<div class="modal-overlay" id="modal-afwijking">
+  <div class="modal">
+    <div class="modal-title">Afwijking Registreren</div>
+    <div class="form-group">
+      <label class="form-label">Type afwijking</label>
+      <input type="text" id="afw-type" class="form-input" placeholder="Bijv. Koeling te warm, Bederf product...">
+    </div>
+    <div class="form-row">
+      <div class="form-group">
+        <label class="form-label">Gemeten waarde</label>
+        <input type="text" id="afw-waarde" class="form-input" placeholder="Bijv. 12°C">
+      </div>
+      <div class="form-group">
+        <label class="form-label">Medewerker</label>
+        <input type="text" id="afw-medewerker" class="form-input" placeholder="Naam">
+      </div>
+    </div>
+    <div class="form-group">
+      <label class="form-label">Corrigerende maatregel</label>
+      <textarea id="afw-maatregel" class="form-textarea" placeholder="Wat heb je gedaan om het probleem op te lossen?"></textarea>
+    </div>
+    <div class="modal-footer">
+      <button class="btn btn-ghost" onclick="closeModal('modal-afwijking')">Annuleren</button>
+      <button class="btn btn-primary" onclick="saveAfwijking()">Registreren</button>
+    </div>
+  </div>
+</div>
+
+<script>
+// ═══════════════════════════════════════════════════
+//  UTILS
+// ═══════════════════════════════════════════════════
+const ls = {
+  get: (k, def = null) => { try { const v = localStorage.getItem(k); return v ? JSON.parse(v) : def; } catch { return def; } },
+  set: (k, v) => { try { localStorage.setItem(k, JSON.stringify(v)); } catch {} }
+};
+
+const today = () => new Date().toISOString().slice(0, 10);
+const now = () => new Date().toTimeString().slice(0, 5);
+const fmtDate = d => new Date(d + 'T00:00:00').toLocaleDateString('nl-NL', { day:'numeric', month:'long', year:'numeric' });
+const fmtDateShort = d => new Date(d + 'T00:00:00').toLocaleDateString('nl-NL', { day:'2-digit', month:'2-digit', year:'numeric' });
+const fmtDayName = d => new Date(d + 'T00:00:00').toLocaleDateString('nl-NL', { weekday:'long' });
+const genId = () => Math.random().toString(36).slice(2, 9);
+
+function openModal(id) {
+  document.getElementById(id).classList.add('open');
+  const firstInput = document.querySelector(`#${id} input:not([type=hidden]), #${id} select, #${id} textarea`);
+  if (firstInput) setTimeout(() => firstInput.focus(), 50);
+}
+function closeModal(id) { document.getElementById(id).classList.remove('open'); }
+document.querySelectorAll('.modal-overlay').forEach(o => {
+  o.addEventListener('click', e => { if (e.target === o) o.classList.remove('open'); });
+});
+
+function goTab(name) {
+  document.querySelectorAll('.tab-btn').forEach(b => b.classList.toggle('active', b.dataset.tab === name));
+  document.querySelectorAll('.tab-panel').forEach(p => p.classList.toggle('active', p.id === 'tab-' + name));
+}
+
+document.querySelectorAll('.tab-btn').forEach(b => b.addEventListener('click', () => goTab(b.dataset.tab)));
+
+function printTab() { window.print(); }
+
+// ═══════════════════════════════════════════════════
+//  DASHBOARD
+// ═══════════════════════════════════════════════════
+function initDashboard() {
+  const d = today();
+  document.getElementById('dashDate').textContent = fmtDate(d).toUpperCase();
+  document.getElementById('dashDay').textContent = fmtDayName(d).toUpperCase();
+  document.querySelectorAll('.printDate2,.printDate3,.printDate4,.printDate5').forEach(el => el.textContent = fmtDateShort(d));
+  document.getElementById('printDate').textContent = fmtDateShort(d);
+
+  // Temperatuur status
+  const koeling = ls.get('klaar_haccp_koeling', []).filter(m => m.datum === d);
+  const eenheden = ls.get('klaar_haccp_koeleenheden', []);
+  if (eenheden.length === 0) {
+    setDashStat('temp', '—', 'gray', 'Geen eenheden');
+  } else {
+    const gedaan = koeling.length;
+    const afwijkingen = koeling.filter(m => m.afwijking).length;
+    setDashStat('temp', `${gedaan}/${eenheden.length}`, afwijkingen > 0 ? 'red' : gedaan === eenheden.length ? 'green' : 'orange',
+      afwijkingen > 0 ? `${afwijkingen} afwijking(en)` : gedaan === eenheden.length ? 'Compleet' : 'Open');
+  }
+
+  // Leveranciers
+  const leveringen = ls.get('klaar_haccp_leveranciers', []).filter(l => l.datum === d);
+  setDashStat('lev', leveringen.length > 0 ? `${leveringen.length} lev.` : '—', leveringen.length > 0 ? 'green' : 'gray',
+    leveringen.filter(l => l.status === 'afgekeurd').length > 0 ? '⚠ Afgekeurde lev.' : leveringen.length > 0 ? 'Geregistreerd' : 'Nog niets');
+
+  // Schoonmaak
+  const taken = ls.get('klaar_haccp_schoonmaak_taken', []).filter(t => t.frequentie === 'dagelijks');
+  const log = ls.get('klaar_haccp_schoonmaak_log', []).filter(l => l.datum === d);
+  if (taken.length === 0) {
+    setDashStat('clean', '—', 'gray', 'Geen taken');
+  } else {
+    const gedaan = taken.filter(t => log.some(l => l.taakId === t.id)).length;
+    setDashStat('clean', `${gedaan}/${taken.length}`, gedaan === taken.length ? 'green' : 'orange',
+      gedaan === taken.length ? 'Alles gedaan' : 'Openstaand');
+  }
+
+  // Open afwijkingen
+  const afw = ls.get('klaar_haccp_afwijkingen', []).filter(a => a.status === 'open');
+  const afwList = document.getElementById('dash-afw-list');
+  if (afw.length === 0) {
+    afwList.innerHTML = '<div class="empty"><div class="empty-icon">✅</div><div class="empty-title">Geen open afwijkingen</div></div>';
+  } else {
+    afwList.innerHTML = afw.slice(0, 5).map(a =>
+      `<div style="padding:8px 0;border-bottom:1px solid #f0f0f0;display:flex;justify-content:space-between;align-items:center">
+        <div><div style="font-size:13px;font-weight:500">${a.type}</div><div style="font-size:11px;color:var(--muted);font-family:'DM Mono',monospace">${fmtDateShort(a.datum)}</div></div>
+        <span class="chip chip-red">Open</span>
+      </div>`).join('') +
+      (afw.length > 5 ? `<div style="font-size:12px;color:var(--muted);padding-top:8px">+${afw.length - 5} meer</div>` : '');
+  }
+
+  // Vandaag geregistreerd
+  const todayList = document.getElementById('dash-today-list');
+  const items = [
+    ...koeling.map(m => ({ icon: '🌡️', label: `${m.eenheidNaam}: ${m.temperatuur}°C`, chip: m.afwijking ? 'red' : 'green', chipLabel: m.afwijking ? 'Afwijking' : 'OK' })),
+    ...leveringen.map(l => ({ icon: '🚚', label: `${l.leverancier}: ${l.product}`, chip: l.status === 'geaccepteerd' ? 'green' : 'red', chipLabel: l.status === 'geaccepteerd' ? 'Geaccepteerd' : 'Afgekeurd' }))
+  ];
+  if (items.length === 0) {
+    todayList.innerHTML = '<div class="empty"><div class="empty-icon">📋</div><div class="empty-title">Nog niets geregistreerd</div></div>';
+  } else {
+    todayList.innerHTML = items.map(i =>
+      `<div style="padding:8px 0;border-bottom:1px solid #f0f0f0;display:flex;justify-content:space-between;align-items:center">
+        <div style="display:flex;gap:8px;align-items:center"><span>${i.icon}</span><span style="font-size:13px">${i.label}</span></div>
+        <span class="chip chip-${i.chip}">${i.chipLabel}</span>
+      </div>`).join('');
+  }
+}
+
+function setDashStat(id, value, color, label) {
+  document.getElementById(`dash-${id}-value`).textContent = value;
+  const chipEl = document.getElementById(`dash-${id}-chip`);
+  const map = { green: 'chip-green', red: 'chip-red', orange: 'chip-orange', gray: 'chip-gray' };
+  chipEl.innerHTML = `<span class="chip ${map[color] || 'chip-gray'}">${label}</span>`;
+}
+
+// ═══════════════════════════════════════════════════
+//  TEMPERATUUR
+// ═══════════════════════════════════════════════════
+const EENHEID_NORMEN = { koelkast: 7, 'koelkast-vis': 4, vriezer: -18 };
+
+function updateEenheidNorm() {
+  const type = document.getElementById('eenheid-type').value;
+  const normEl = document.getElementById('eenheid-norm');
+  const normGroup = document.getElementById('eenheid-norm-group');
+  if (type !== 'custom') {
+    normEl.value = EENHEID_NORMEN[type] ?? 7;
+    normGroup.style.opacity = '0.6';
+    normEl.readOnly = true;
+  } else {
+    normGroup.style.opacity = '1';
+    normEl.readOnly = false;
+  }
+}
+
+function saveEenheid() {
+  const naam = document.getElementById('eenheid-naam').value.trim();
+  if (!naam) { alert('Vul een naam in'); return; }
+  const eenheden = ls.get('klaar_haccp_koeleenheden', []);
+  eenheden.push({
+    id: genId(),
+    naam,
+    type: document.getElementById('eenheid-type').value,
+    maxNorm: parseFloat(document.getElementById('eenheid-norm').value)
+  });
+  ls.set('klaar_haccp_koeleenheden', eenheden);
+  document.getElementById('eenheid-naam').value = '';
+  renderEenheidList();
+  renderMetingEenheidSelect();
+  renderTempVandaag();
+}
+
+function deleteEenheid(id) {
+  if (!confirm('Eenheid verwijderen?')) return;
+  ls.set('klaar_haccp_koeleenheden', ls.get('klaar_haccp_koeleenheden', []).filter(e => e.id !== id));
+  renderEenheidList();
+  renderMetingEenheidSelect();
+  renderTempVandaag();
+}
+
+function renderEenheidList() {
+  const eenheden = ls.get('klaar_haccp_koeleenheden', []);
+  const el = document.getElementById('eenheid-list');
+  if (eenheden.length === 0) {
+    el.innerHTML = '<div style="font-size:13px;color:var(--muted)">Nog geen koeleenheden toegevoegd.</div>';
+    return;
+  }
+  el.innerHTML = eenheden.map(e =>
+    `<div style="display:flex;align-items:center;gap:8px;padding:8px 0;border-bottom:1px solid #f0f0f0">
+      <div style="flex:1"><strong style="font-size:14px">${e.naam}</strong><span style="font-size:11px;color:var(--muted);font-family:'DM Mono',monospace;margin-left:8px">max ${e.maxNorm}°C</span></div>
+      <button class="btn btn-ghost btn-sm" onclick="deleteEenheid('${e.id}')">✕</button>
+    </div>`).join('');
+}
+
+function renderMetingEenheidSelect() {
+  const eenheden = ls.get('klaar_haccp_koeleenheden', []);
+  const sel = document.getElementById('meting-eenheid');
+  if (eenheden.length === 0) {
+    sel.innerHTML = '<option value="">Eerst koeleenheden toevoegen</option>';
+  } else {
+    sel.innerHTML = eenheden.map(e => `<option value="${e.id}" data-norm="${e.maxNorm}" data-naam="${e.naam}">${e.naam} (max ${e.maxNorm}°C)</option>`).join('');
+  }
+  checkMetingTemp();
+}
+
+function checkMetingTemp() {
+  const sel = document.getElementById('meting-eenheid');
+  const opt = sel.options[sel.selectedIndex];
+  const norm = opt ? parseFloat(opt.dataset.norm) : null;
+  const temp = parseFloat(document.getElementById('meting-temp').value);
+  const inp = document.getElementById('meting-temp');
+  const normText = document.getElementById('meting-norm-text');
+  const afwSection = document.getElementById('meting-afwijking-section');
+
+  if (norm !== null) normText.textContent = `Norm: max ${norm}°C`;
+
+  inp.classList.remove('ok', 'warn', 'err');
+  if (!isNaN(temp) && norm !== null) {
+    if (temp <= norm) {
+      inp.classList.add('ok');
+      afwSection.style.display = 'none';
+    } else {
+      inp.classList.add('err');
+      afwSection.style.display = 'block';
+    }
+  }
+}
+
+function saveMeting() {
+  const sel = document.getElementById('meting-eenheid');
+  const opt = sel.options[sel.selectedIndex];
+  if (!opt || !opt.value) { alert('Selecteer een koeleenheid'); return; }
+  const tempVal = document.getElementById('meting-temp').value;
+  if (tempVal === '') { alert('Vul een temperatuur in'); return; }
+  const temp = parseFloat(tempVal);
+  const norm = parseFloat(opt.dataset.norm);
+  const afwijking = temp > norm;
+  const maatregel = document.getElementById('meting-maatregel').value.trim();
+  if (afwijking && !maatregel) { alert('Vul een corrigerende maatregel in'); return; }
+  const medewerker = document.getElementById('meting-medewerker').value.trim();
+  if (!medewerker) { alert('Vul een medewerker in'); return; }
+
+  const meting = {
+    id: genId(),
+    datum: today(),
+    tijd: document.getElementById('meting-tijd').value || now(),
+    eenheidId: opt.value,
+    eenheidNaam: opt.dataset.naam,
+    temperatuur: temp,
+    norm,
+    afwijking,
+    maatregel,
+    medewerker
+  };
+
+  const koeling = ls.get('klaar_haccp_koeling', []);
+  koeling.push(meting);
+  ls.set('klaar_haccp_koeling', koeling);
+
+  if (afwijking) {
+    const afw = ls.get('klaar_haccp_afwijkingen', []);
+    afw.push({
+      id: genId(),
+      datum: today(),
+      type: `Temperatuurafwijking: ${meting.eenheidNaam}`,
+      waarde: `${temp}°C (norm: max ${norm}°C)`,
+      maatregel,
+      medewerker,
+      status: 'open',
+      bron: 'temperatuur'
+    });
+    ls.set('klaar_haccp_afwijkingen', afw);
+  }
+
+  document.getElementById('meting-temp').value = '';
+  document.getElementById('meting-maatregel').value = '';
+  document.getElementById('meting-medewerker').value = '';
+  document.getElementById('meting-afwijking-section').style.display = 'none';
+  document.getElementById('meting-temp').classList.remove('ok','warn','err');
+  closeModal('modal-meting');
+  renderTempVandaag();
+  renderTempHistory();
+  renderAfwijkingen();
+  initDashboard();
+}
+
+function renderTempVandaag() {
+  const d = today();
+  const koeling = ls.get('klaar_haccp_koeling', []).filter(m => m.datum === d);
+  const el = document.getElementById('temp-vandaag-list');
+  if (koeling.length === 0) {
+    el.innerHTML = '<div class="empty"><div class="empty-icon">🌡️</div><div class="empty-title">Nog geen metingen vandaag</div><div class="empty-text">Klik op "+ Nieuwe meting" om te beginnen.</div></div>';
+    return;
+  }
+  el.innerHTML = '<div class="table-wrap"><table><thead><tr><th>Tijd</th><th>Koeleenheid</th><th>Temp (°C)</th><th>Norm</th><th>Status</th><th>Medewerker</th><th>Maatregel</th></tr></thead><tbody>' +
+    koeling.map(m => `<tr>
+      <td class="td-mono">${m.tijd}</td>
+      <td>${m.eenheidNaam}</td>
+      <td class="td-mono" style="font-weight:600;color:${m.afwijking ? 'var(--red)' : 'var(--green)'}">${m.temperatuur}°C</td>
+      <td class="td-mono">max ${m.norm}°C</td>
+      <td>${m.afwijking ? '<span class="chip chip-red">Afwijking</span>' : '<span class="chip chip-green">OK</span>'}</td>
+      <td>${m.medewerker}</td>
+      <td style="font-size:12px;color:var(--muted)">${m.maatregel || '—'}</td>
+    </tr>`).join('') +
+    '</tbody></table></div>';
+}
+
+function renderTempHistory() {
+  const koeling = ls.get('klaar_haccp_koeling', []);
+  const el = document.getElementById('temp-history');
+  const past = koeling.filter(m => m.datum !== today());
+  if (past.length === 0) {
+    el.innerHTML = '<div class="empty"><div class="empty-icon">📊</div><div class="empty-title">Geen historische data</div></div>';
+    return;
+  }
+  const byDate = {};
+  past.forEach(m => { (byDate[m.datum] = byDate[m.datum] || []).push(m); });
+  el.innerHTML = Object.keys(byDate).sort().reverse().slice(0, 14).map(d =>
+    `<div style="margin-bottom:12px">
+      <div style="font-family:'DM Mono',monospace;font-size:11px;color:var(--muted);margin-bottom:6px;text-transform:uppercase">${fmtDateShort(d)} — ${fmtDayName(d)}</div>
+      <div style="display:flex;flex-wrap:wrap;gap:8px">
+        ${byDate[d].map(m => `<span class="chip ${m.afwijking ? 'chip-red' : 'chip-green'}" title="${m.medewerker}">${m.eenheidNaam}: ${m.temperatuur}°C</span>`).join('')}
+      </div>
+    </div>`).join('');
+}
+
+// ═══════════════════════════════════════════════════
+//  LEVERANCIERS
+// ═══════════════════════════════════════════════════
+let levAccept = 'ja';
+function setLevAccept(val) {
+  levAccept = val;
+  document.getElementById('lev-accept-ja').className = 'toggle-btn' + (val === 'ja' ? ' active-ok' : '');
+  document.getElementById('lev-accept-nee').className = 'toggle-btn' + (val === 'nee' ? ' active-err' : '');
+  document.getElementById('lev-reden-section').style.display = val === 'nee' ? 'block' : 'none';
+}
+
+function renderLeverancierSelect() {
+  const lijst = ls.get('klaar_haccp_leverancierslijst', []);
+  const sel = document.getElementById('lev-leverancier');
+  sel.innerHTML = lijst.length === 0
+    ? '<option value="">Eerst leveranciers toevoegen →</option>'
+    : lijst.map(l => `<option value="${l.naam}">${l.naam}</option>`).join('');
+}
+
+function saveLeverancier() {
+  const naam = document.getElementById('lev-naam').value.trim();
+  if (!naam) { alert('Vul een naam in'); return; }
+  const lijst = ls.get('klaar_haccp_leverancierslijst', []);
+  lijst.push({ id: genId(), naam, type: document.getElementById('lev-type-prod').value.trim() });
+  ls.set('klaar_haccp_leverancierslijst', lijst);
+  document.getElementById('lev-naam').value = '';
+  document.getElementById('lev-type-prod').value = '';
+  renderLeverancierListModal();
+  renderLeverancierSelect();
+}
+
+function deleteLeverancier(id) {
+  ls.set('klaar_haccp_leverancierslijst', ls.get('klaar_haccp_leverancierslijst', []).filter(l => l.id !== id));
+  renderLeverancierListModal();
+  renderLeverancierSelect();
+}
+
+function renderLeverancierListModal() {
+  const lijst = ls.get('klaar_haccp_leverancierslijst', []);
+  const el = document.getElementById('leverancier-list');
+  el.innerHTML = lijst.length === 0
+    ? '<div style="font-size:13px;color:var(--muted)">Nog geen leveranciers.</div>'
+    : lijst.map(l => `<div style="display:flex;align-items:center;gap:8px;padding:8px 0;border-bottom:1px solid #f0f0f0">
+        <div style="flex:1"><strong>${l.naam}</strong><span style="font-size:11px;color:var(--muted);margin-left:8px">${l.type}</span></div>
+        <button class="btn btn-ghost btn-sm" onclick="deleteLeverancier('${l.id}')">✕</button>
+      </div>`).join('');
+}
+
+function saveLevering() {
+  const lev = document.getElementById('lev-leverancier').value;
+  if (!lev) { alert('Selecteer een leverancier'); return; }
+  const prod = document.getElementById('lev-product').value.trim();
+  if (!prod) { alert('Vul een product in'); return; }
+  const medewerker = document.getElementById('lev-medewerker').value.trim();
+  if (!medewerker) { alert('Vul een medewerker in'); return; }
+  const reden = document.getElementById('lev-reden').value.trim();
+  if (levAccept === 'nee' && !reden) { alert('Vul een reden voor afkeuring in'); return; }
+
+  const entry = {
+    id: genId(),
+    datum: document.getElementById('lev-datum').value || today(),
+    tijd: document.getElementById('lev-tijd').value || now(),
+    leverancier: lev,
+    product: prod,
+    temperatuur: document.getElementById('lev-temp').value,
+    medewerker,
+    status: levAccept === 'ja' ? 'geaccepteerd' : 'afgekeurd',
+    reden
+  };
+
+  const arr = ls.get('klaar_haccp_leveranciers', []);
+  arr.push(entry);
+  ls.set('klaar_haccp_leveranciers', arr);
+
+  if (levAccept === 'nee') {
+    const afw = ls.get('klaar_haccp_afwijkingen', []);
+    afw.push({
+      id: genId(),
+      datum: entry.datum,
+      type: `Levering afgekeurd: ${lev}`,
+      waarde: `${prod}${entry.temperatuur ? ', ' + entry.temperatuur + '°C' : ''}`,
+      maatregel: reden,
+      medewerker,
+      status: 'open',
+      bron: 'levering'
+    });
+    ls.set('klaar_haccp_afwijkingen', afw);
+  }
+
+  ['lev-datum','lev-tijd','lev-product','lev-temp','lev-medewerker','lev-reden'].forEach(id => document.getElementById(id).value = '');
+  setLevAccept('ja');
+  closeModal('modal-levering');
+  renderLeveringenTable();
+  renderLeverancierStats();
+  renderAfwijkingen();
+  initDashboard();
+}
+
+function renderLeveringenTable() {
+  const arr = ls.get('klaar_haccp_leveranciers', []);
+  const tbody = document.getElementById('lev-tbody');
+  if (arr.length === 0) {
+    tbody.innerHTML = '<tr><td colspan="7"><div class="empty"><div class="empty-icon">🚚</div><div class="empty-title">Nog geen leveringen geregistreerd</div></div></td></tr>';
+    return;
+  }
+  tbody.innerHTML = [...arr].reverse().map(l => `<tr>
+    <td class="td-mono">${fmtDateShort(l.datum)}</td>
+    <td>${l.leverancier}</td>
+    <td>${l.product}</td>
+    <td class="td-mono">${l.temperatuur ? l.temperatuur + '°C' : '—'}</td>
+    <td>${l.medewerker}</td>
+    <td>${l.status === 'geaccepteerd' ? '<span class="chip chip-green">✓ OK</span>' : '<span class="chip chip-red">✗ Afgekeurd</span>'}</td>
+    <td class="no-print"><button class="btn btn-ghost btn-sm" onclick="deleteLevering('${l.id}')">✕</button></td>
+  </tr>`).join('');
+}
+
+function deleteLevering(id) {
+  if (!confirm('Levering verwijderen?')) return;
+  ls.set('klaar_haccp_leveranciers', ls.get('klaar_haccp_leveranciers', []).filter(l => l.id !== id));
+  renderLeveringenTable();
+  renderLeverancierStats();
+  initDashboard();
+}
+
+function renderLeverancierStats() {
+  const arr = ls.get('klaar_haccp_leveranciers', []);
+  const el = document.getElementById('lev-stats');
+  if (arr.length === 0) { el.innerHTML = '<div class="empty"><div class="empty-title">Voeg leveringen toe</div></div>'; return; }
+  const byLev = {};
+  arr.forEach(l => {
+    if (!byLev[l.leverancier]) byLev[l.leverancier] = { total: 0, afgekeurd: 0 };
+    byLev[l.leverancier].total++;
+    if (l.status === 'afgekeurd') byLev[l.leverancier].afgekeurd++;
+  });
+  el.innerHTML = '<div style="display:flex;flex-wrap:wrap;gap:12px">' +
+    Object.entries(byLev).map(([naam, s]) => `
+      <div style="padding:14px 18px;background:#f8f8f7;border-radius:8px;min-width:160px">
+        <div style="font-weight:600;font-size:14px;margin-bottom:4px">${naam}</div>
+        <div style="font-size:12px;color:var(--muted)">${s.total} leveringen</div>
+        <div style="font-size:12px;color:${s.afgekeurd > 0 ? 'var(--red)' : 'var(--green)'}">${s.afgekeurd} afgekeurd</div>
+      </div>`).join('') + '</div>';
+}
+
+// ═══════════════════════════════════════════════════
+//  SCHOONMAAK
+// ═══════════════════════════════════════════════════
+function saveTaak() {
+  const naam = document.getElementById('taak-naam').value.trim();
+  if (!naam) { alert('Vul een omschrijving in'); return; }
+  const taken = ls.get('klaar_haccp_schoonmaak_taken', []);
+  taken.push({
+    id: genId(),
+    naam,
+    frequentie: document.getElementById('taak-freq').value,
+    verantwoordelijke: document.getElementById('taak-verantw').value.trim()
+  });
+  ls.set('klaar_haccp_schoonmaak_taken', taken);
+  document.getElementById('taak-naam').value = '';
+  document.getElementById('taak-verantw').value = '';
+  closeModal('modal-taak');
+  renderSchoonmaak();
+}
+
+function openAfvink(taakId, taakNaam) {
+  document.getElementById('afvink-taak-id').value = taakId;
+  document.getElementById('afvink-title').textContent = taakNaam;
+  document.getElementById('afvink-tijd').value = now();
+  document.getElementById('afvink-medewerker').value = '';
+  document.getElementById('afvink-opmerking').value = '';
+  openModal('modal-afvink');
+}
+
+function saveAfvink() {
+  const taakId = document.getElementById('afvink-taak-id').value;
+  const medewerker = document.getElementById('afvink-medewerker').value.trim();
+  if (!medewerker) { alert('Vul een medewerker in'); return; }
+  const log = ls.get('klaar_haccp_schoonmaak_log', []);
+  log.push({
+    id: genId(),
+    taakId,
+    datum: today(),
+    tijd: document.getElementById('afvink-tijd').value || now(),
+    medewerker,
+    opmerking: document.getElementById('afvink-opmerking').value.trim()
+  });
+  ls.set('klaar_haccp_schoonmaak_log', log);
+  closeModal('modal-afvink');
+  renderSchoonmaak();
+  initDashboard();
+}
+
+function deleteTaak(id) {
+  if (!confirm('Taak verwijderen?')) return;
+  ls.set('klaar_haccp_schoonmaak_taken', ls.get('klaar_haccp_schoonmaak_taken', []).filter(t => t.id !== id));
+  renderSchoonmaak();
+}
+
+function renderSchoonmaak() {
+  const taken = ls.get('klaar_haccp_schoonmaak_taken', []);
+  const log = ls.get('klaar_haccp_schoonmaak_log', []);
+  const d = today();
+  ['dagelijks','wekelijks','maandelijks'].forEach(freq => {
+    const prefix = freq === 'dagelijks' ? 'dag' : freq === 'wekelijks' ? 'week' : 'maand';
+    const groep = taken.filter(t => t.frequentie === freq);
+    const listEl = document.getElementById(`schoon-${prefix}-list`);
+    const scoreEl = document.getElementById(`schoon-${prefix}-score`);
+    if (groep.length === 0) {
+      listEl.innerHTML = `<div class="empty"><div class="empty-title">Geen ${freq}e taken</div><div class="empty-text">Voeg taken toe via "+ Nieuwe taak".</div></div>`;
+      scoreEl.textContent = '';
+      return;
+    }
+    let gedaan = 0;
+    listEl.innerHTML = groep.map(t => {
+      const logEntry = log.find(l => l.taakId === t.id && l.datum === d);
+      if (logEntry) gedaan++;
+      return `<div class="clean-task ${logEntry ? 'done' : ''}">
+        <div class="clean-check ${logEntry ? 'done' : ''}" onclick="${logEntry ? '' : `openAfvink('${t.id}','${t.naam.replace(/'/g,"\\'")}')` }" style="${logEntry ? 'cursor:default' : 'cursor:pointer'}">
+          ${logEntry ? '✓' : ''}
+        </div>
+        <div style="flex:1">
+          <div style="font-weight:500;font-size:14px">${t.naam}</div>
+          <div style="font-size:12px;color:var(--muted)">${t.verantwoordelijke || 'Geen verantwoordelijke'}
+            ${logEntry ? ` · Gedaan om ${logEntry.tijd} door ${logEntry.medewerker}` : ''}
+          </div>
+        </div>
+        <button class="btn btn-icon btn-sm no-print" onclick="deleteTaak('${t.id}')" title="Verwijderen">✕</button>
+      </div>`;
+    }).join('');
+    scoreEl.innerHTML = `<span class="chip ${gedaan === groep.length ? 'chip-green' : gedaan > 0 ? 'chip-orange' : 'chip-gray'}">${gedaan}/${groep.length}</span>`;
+  });
+}
+
+// ═══════════════════════════════════════════════════
+//  AFWIJKINGEN
+// ═══════════════════════════════════════════════════
+let afwFilter = 'all';
+
+function filterAfwijkingen(filter) {
+  afwFilter = filter;
+  document.getElementById('filter-open-btn').className = 'btn btn-ghost btn-sm' + (filter === 'open' ? ' btn-primary' : '');
+  document.getElementById('filter-all-btn').className = 'btn btn-ghost btn-sm' + (filter === 'all' ? ' btn-primary' : '');
+  renderAfwijkingen();
+}
+
+function saveAfwijking() {
+  const type = document.getElementById('afw-type').value.trim();
+  if (!type) { alert('Vul een type afwijking in'); return; }
+  const medewerker = document.getElementById('afw-medewerker').value.trim();
+  if (!medewerker) { alert('Vul een medewerker in'); return; }
+  const afw = ls.get('klaar_haccp_afwijkingen', []);
+  afw.push({
+    id: genId(),
+    datum: today(),
+    type,
+    waarde: document.getElementById('afw-waarde').value.trim(),
+    maatregel: document.getElementById('afw-maatregel').value.trim(),
+    medewerker,
+    status: 'open',
+    bron: 'handmatig'
+  });
+  ls.set('klaar_haccp_afwijkingen', afw);
+  ['afw-type','afw-waarde','afw-medewerker','afw-maatregel'].forEach(id => document.getElementById(id).value = '');
+  closeModal('modal-afwijking');
+  renderAfwijkingen();
+  initDashboard();
+}
+
+function closeAfwijking(id) {
+  const afw = ls.get('klaar_haccp_afwijkingen', []);
+  const a = afw.find(a => a.id === id);
+  if (a) a.status = 'gesloten';
+  ls.set('klaar_haccp_afwijkingen', afw);
+  renderAfwijkingen();
+  initDashboard();
+}
+
+function deleteAfwijking(id) {
+  if (!confirm('Afwijking verwijderen?')) return;
+  ls.set('klaar_haccp_afwijkingen', ls.get('klaar_haccp_afwijkingen', []).filter(a => a.id !== id));
+  renderAfwijkingen();
+  initDashboard();
+}
+
+function renderAfwijkingen() {
+  let arr = ls.get('klaar_haccp_afwijkingen', []);
+  if (afwFilter === 'open') arr = arr.filter(a => a.status === 'open');
+  const tbody = document.getElementById('afw-tbody');
+  if (arr.length === 0) {
+    tbody.innerHTML = '<tr><td colspan="7"><div class="empty"><div class="empty-icon">✅</div><div class="empty-title">Geen afwijkingen</div></div></td></tr>';
+    return;
+  }
+  tbody.innerHTML = [...arr].reverse().map(a => `<tr>
+    <td class="td-mono">${fmtDateShort(a.datum)}</td>
+    <td>${a.type}</td>
+    <td class="td-mono">${a.waarde || '—'}</td>
+    <td style="font-size:12px;max-width:200px">${a.maatregel || '—'}</td>
+    <td>${a.medewerker}</td>
+    <td>${a.status === 'open' ? '<span class="chip chip-red afw-open">Open</span>' : '<span class="chip chip-green">Gesloten</span>'}</td>
+    <td class="no-print" style="white-space:nowrap">
+      ${a.status === 'open' ? `<button class="btn btn-ghost btn-sm" onclick="closeAfwijking('${a.id}')">✓ Sluiten</button>` : ''}
+      <button class="btn btn-ghost btn-sm" onclick="deleteAfwijking('${a.id}')">✕</button>
+    </td>
+  </tr>`).join('');
+}
+
+// ═══════════════════════════════════════════════════
+//  CCP ANALYSE
+// ═══════════════════════════════════════════════════
+function saveCcpApiKey() { /* API key niet meer nodig via Supabase proxy */ }
+
+function initCcp() {
+  // API key niet meer nodig — hide warn if present
+  const warn = document.getElementById('ccp-api-warn');
+  if (warn) warn.style.display = 'none';
+  const recipes = ls.get('klaar_recipes', []);
+  document.getElementById('ccp-recipe-count').textContent = recipes.length > 0
+    ? `${recipes.length} recept(en) gevonden in Recept Studio`
+    : 'Geen recepten gevonden. Voeg recepten toe via Module 01 — Recept Studio.';
+
+  const cached = ls.get('klaar_haccp_ccp_analyse');
+  if (cached) renderCcpResults(cached);
+}
+
+async function runCcpAnalysis() {
+  const recipes = ls.get('klaar_recipes', []);
+  if (recipes.length === 0) { alert('Geen recepten gevonden. Voeg recepten toe via de Recept Studio.'); return; }
+
+  document.getElementById('ccp-loading').style.display = 'flex';
+  document.getElementById('ccp-results').innerHTML = '';
+  document.getElementById('ccp-analyse-btn').disabled = true;
+
+  const prompt = `Je bent een HACCP-expert voor de Nederlandse horeca. Analyseer de volgende recepten en geef voor elk recept de kritische controlepunten (CCP's) terug.
+
+RECEPTEN:
+${JSON.stringify(recipes.map(r => ({ titel: r.title || r.recipe?.title, type: r.type, allergenen: r.recipe?.allergens })), null, 2)}
+
+Geef je antwoord als JSON-array. Elk object heeft:
+- recipeTitle: naam van het recept
+- ccps: array van CCP-objecten met:
+  - naam: naam van het CCP (bijv. "Kerntemperatuur verhitten")
+  - grenswaarde: de kritische grenswaarde (bijv. "min. 75°C")
+  - watMeten: wat je praktisch moet meten/controleren
+  - risico: het voedselrisico als je dit niet meet
+  - emoji: een passende emoji
+
+Geef ALLEEN het JSON-array terug, geen markdown codeblokken of uitleg eromheen.`;
+
+  try {
+    const data = await klaarAI({
+      model: 'claude-haiku-4-5-20251001',
+      max_tokens: 2048,
+      messages: [{ role: 'user', content: prompt }]
+    }, '03-haccp');
+    let text = data.content[0].text.trim();
+    // Strip markdown code fences if present
+    text = text.replace(/^```json\s*/i, '').replace(/^```\s*/i, '').replace(/\s*```$/i, '');
+    const results = JSON.parse(text);
+    ls.set('klaar_haccp_ccp_analyse', results);
+    renderCcpResults(results);
+  } catch (e) {
+    document.getElementById('ccp-results').innerHTML = `<div class="alert alert-warn">⚠️ Fout bij analyseren: ${e.message}</div>`;
+  } finally {
+    document.getElementById('ccp-loading').style.display = 'none';
+    document.getElementById('ccp-analyse-btn').disabled = false;
+  }
+}
+
+function renderCcpResults(results) {
+  if (!results || results.length === 0) {
+    document.getElementById('ccp-results').innerHTML = '<div class="empty"><div class="empty-title">Geen resultaten</div></div>';
+    return;
+  }
+  document.getElementById('ccp-results').innerHTML =
+    `<div style="font-family:'DM Mono',monospace;font-size:11px;color:var(--muted);margin-bottom:16px;text-transform:uppercase">CCP Analyse — ${results.length} recept(en) geanalyseerd</div>` +
+    results.map(r =>
+      `<div class="ccp-card">
+        <div class="ccp-recipe">RECEPT</div>
+        <div class="ccp-name">${r.recipeTitle}</div>
+        ${(r.ccps || []).map(c => `
+          <div class="ccp-point">
+            <div class="ccp-point-icon">${c.emoji || '🎯'}</div>
+            <div style="flex:1">
+              <div class="ccp-point-label">${c.naam}</div>
+              <div style="font-size:13px;margin-bottom:4px"><strong>Grenswaarde:</strong> ${c.grenswaarde}</div>
+              <div class="ccp-point-value"><strong>Meten:</strong> ${c.watMeten}</div>
+              <div class="ccp-point-value" style="color:var(--red)"><strong>Risico:</strong> ${c.risico}</div>
+            </div>
+          </div>`).join('')}
+        ${(!r.ccps || r.ccps.length === 0) ? '<div style="font-size:13px;color:var(--muted)">Geen specifieke CCP\'s geïdentificeerd voor dit recept.</div>' : ''}
+      </div>`).join('') +
+    `<div style="font-size:12px;color:var(--muted);margin-top:12px">Analyse opgeslagen op ${new Date().toLocaleDateString('nl-NL')}. <button class="btn btn-ghost btn-sm" onclick="ls.set('klaar_haccp_ccp_analyse',null);document.getElementById('ccp-results').innerHTML='';alert('Cache gewist')">Cache wissen</button></div>`;
+}
+
+// ═══════════════════════════════════════════════════
+//  GREEN KEY
+// ═══════════════════════════════════════════════════
+const GK_THEMES = [
+  { id: 'energie', naam: 'Energie', icon: '⚡', normen: [
+    'We meten ons energieverbruik (elektriciteit, gas)',
+    'We hebben minimaal één energiebesparende maatregel genomen in het afgelopen jaar',
+    'We gebruiken energiezuinige verlichting (LED)',
+    'Apparatuur wordt uitgeschakeld buiten openingstijden',
+  ]},
+  { id: 'water', naam: 'Water', icon: '💧', normen: [
+    'We meten ons waterverbruik',
+    'We hebben waterbesparende maatregelen (bijv. sparende kranen, toiletten)',
+    'Lekkages worden direct gemeld en verholpen',
+  ]},
+  { id: 'afval', naam: 'Afval', icon: '♻️', normen: [
+    'We scheiden afval (papier, plastic, glas, GFT, restafval)',
+    'We meten onze afvalproductie',
+    'We nemen maatregelen om voedselverspilling te beperken',
+    'We gebruiken geen onnodig wegwerpmateriaal',
+  ]},
+  { id: 'chemicalie', naam: 'Chemicaliën', icon: '🧪', normen: [
+    'We gebruiken milieuvriendelijke reinigingsmiddelen',
+    'We hebben een overzicht van alle gebruikte chemicaliën (veiligheidsinformatiebladen)',
+    'Medewerkers zijn geïnstrueerd over veilig gebruik van schoonmaakmiddelen',
+  ]},
+  { id: 'milieu', naam: 'Milieu', icon: '🌍', normen: [
+    'We hebben een milieubeleid of -doelstelling vastgelegd',
+    'We communiceren onze duurzaamheidsinspanningen intern',
+  ]},
+  { id: 'communicatie', naam: 'Communicatie', icon: '📢', normen: [
+    'Gasten worden geïnformeerd over onze milieu-inspanningen',
+    'We communiceren onze Green Key-status (of ambitie) extern',
+  ]},
+  { id: 'medewerkers', naam: 'Medewerkers', icon: '👥', normen: [
+    'Medewerkers zijn getraind op duurzaamheidsonderwerpen',
+    'Duurzaamheid is onderdeel van het inwerkprogramma',
+    'Medewerkers worden betrokken bij verduurzaming',
+  ]},
+  { id: 'inkoop', naam: 'Lokale inkoop', icon: '🏪', normen: [
+    'We geven voorkeur aan lokale en/of seizoensgebonden producten',
+    'We hebben minstens één biologisch of Fairtrade product in het assortiment',
+    'We beoordelen leveranciers op duurzaamheidscriteria',
+  ]},
+  { id: 'fauna', naam: 'Fauna & Flora', icon: '🌿', normen: [
+    'We vermijden producten van beschermde soorten (CITES)',
+    'We hebben geen decoratieve elementen van kwetsbare ecosystemen',
+  ]},
+  { id: 'activiteiten', naam: 'Activiteiten', icon: '🎯', normen: [
+    'We bieden duurzame activiteiten of ervaringen aan',
+    'We promoten duurzaam vervoer bij gasten (OV, fiets)',
+  ]},
+  { id: 'maatregelen', naam: 'Maatregelen', icon: '🔧', normen: [
+    'We hebben een jaarlijks actieplan voor verduurzaming',
+    'We meten de voortgang op onze duurzaamheidsdoelen',
+    'We rapporteren intern over resultaten',
+  ]},
+  { id: 'maatschappij', naam: 'Maatschappij', icon: '🤝', normen: [
+    'We ondersteunen lokale initiatieven of goede doelen',
+    'We hanteren een eerlijk en inclusief personeelsbeleid',
+  ]},
+];
+
+function initGreenKey() {
+  const data = ls.get('klaar_haccp_greenkey', {});
+  const el = document.getElementById('gk-themes');
+  el.innerHTML = GK_THEMES.map(theme => `
+    <div class="gk-theme" id="gk-theme-${theme.id}">
+      <div class="gk-theme-header" onclick="toggleGkTheme('${theme.id}')">
+        <span>${theme.icon}</span>
+        <span class="gk-theme-title">${theme.naam}</span>
+        <span class="gk-theme-score" id="gk-score-${theme.id}"></span>
+        <span class="gk-theme-chevron">▼</span>
+      </div>
+      <div class="gk-theme-body">
+        ${theme.normen.map((norm, i) => {
+          const key = `${theme.id}_${i}`;
+          const val = data[key] || 'nvt';
+          return `<div class="gk-norm">
+            <div class="gk-norm-text">${norm}</div>
+            <div class="gk-norm-toggle">
+              <button class="gk-toggle-btn ${val === 'ja' ? 'sel-yes' : ''}" onclick="setGkNorm('${theme.id}',${i},'ja')">Ja</button>
+              <button class="gk-toggle-btn ${val === 'deels' ? 'sel-partial' : ''}" onclick="setGkNorm('${theme.id}',${i},'deels')">Deels</button>
+              <button class="gk-toggle-btn ${val === 'nee' ? 'sel-no' : ''}" onclick="setGkNorm('${theme.id}',${i},'nee')">Nee</button>
+            </div>
+          </div>`;
+        }).join('')}
+        <div style="margin-top:10px">
+          <input type="text" class="form-input" placeholder="Notitie voor dit thema (optioneel)" value="${data[theme.id + '_note'] || ''}"
+            oninput="saveGkNote('${theme.id}', this.value)" style="font-size:12px;padding:8px 10px">
+        </div>
+      </div>
+    </div>`).join('');
+
+  updateGkScores();
+}
+
+function toggleGkTheme(id) {
+  document.getElementById('gk-theme-' + id).classList.toggle('open');
+}
+
+function setGkNorm(themeId, idx, val) {
+  const key = `${themeId}_${idx}`;
+  const data = ls.get('klaar_haccp_greenkey', {});
+  data[key] = val;
+  ls.set('klaar_haccp_greenkey', data);
+  // Re-render buttons
+  const theme = GK_THEMES.find(t => t.id === themeId);
+  const norm = theme.normen[idx];
+  const body = document.getElementById('gk-theme-' + themeId).querySelector('.gk-theme-body');
+  const norms = body.querySelectorAll('.gk-norm');
+  const normEl = norms[idx];
+  normEl.querySelectorAll('.gk-toggle-btn').forEach((btn, bi) => {
+    const vals = ['ja', 'deels', 'nee'];
+    const selClass = { ja: 'sel-yes', deels: 'sel-partial', nee: 'sel-no' };
+    btn.className = 'gk-toggle-btn' + (vals[bi] === val ? ' ' + selClass[vals[bi]] : '');
+  });
+  updateGkScores();
+}
+
+function saveGkNote(themeId, val) {
+  const data = ls.get('klaar_haccp_greenkey', {});
+  data[themeId + '_note'] = val;
+  ls.set('klaar_haccp_greenkey', data);
+}
+
+function updateGkScores() {
+  const data = ls.get('klaar_haccp_greenkey', {});
+  let totalPts = 0, totalMax = 0;
+
+  GK_THEMES.forEach(theme => {
+    let pts = 0, max = theme.normen.length * 2;
+    theme.normen.forEach((_, i) => {
+      const val = data[`${theme.id}_${i}`] || 'nvt';
+      if (val === 'ja') pts += 2;
+      else if (val === 'deels') pts += 1;
+    });
+    totalPts += pts;
+    totalMax += max;
+    const pct = max > 0 ? Math.round(pts / max * 100) : 0;
+    const scoreEl = document.getElementById('gk-score-' + theme.id);
+    if (scoreEl) scoreEl.textContent = `${pct}%`;
+    // Update theme bar if exists
+    const themeEl = document.getElementById('gk-theme-' + theme.id);
+    const fill = themeEl.querySelector('.progress-bar-fill');
+    if (fill) { fill.style.width = pct + '%'; }
+  });
+
+  const total = totalMax > 0 ? Math.round(totalPts / totalMax * 100) : 0;
+  document.getElementById('gk-total-score').textContent = total + '%';
+  const bar = document.getElementById('gk-total-bar');
+  bar.style.width = total + '%';
+  bar.className = 'progress-bar-fill' + (total >= 90 ? '' : total >= 75 ? '' : total >= 50 ? ' warn' : ' err');
+
+  let level, levelColor;
+  if (total >= 90) { level = '🥇 Goud (indicatief)'; levelColor = '#ca8a04'; }
+  else if (total >= 75) { level = '🥈 Zilver (indicatief)'; levelColor = '#6b7280'; }
+  else if (total >= 50) { level = '🥉 Brons (indicatief)'; levelColor = '#92400e'; }
+  else { level = 'Nog niet klaar — werk aan de normen'; levelColor = 'var(--muted)'; }
+  const lvlEl = document.getElementById('gk-level');
+  lvlEl.textContent = level;
+  lvlEl.style.color = levelColor;
+}
+
+// ═══════════════════════════════════════════════════
+//  INIT
+// ═══════════════════════════════════════════════════
+// ═══════════════════════════════════════════════════
+//  MODULE 07 — ONTVANGST-CONTROLES
+// ═══════════════════════════════════════════════════
+
+const HACCP_ONTVANGST_KEY = 'klaar_haccp_ontvangst_taken';
+
+const CHECK_ICONS = {
+  temperatuur_ontvangst:     '🌡️',
+  verpakking_intact:         '📦',
+  houdbaarheidsdatum:        '📅',
+  bevroren_bij_ontvangst:    '🧊',
+  geen_dooi_sporen:          '❄️',
+  allergeen_bewaar_gescheiden:'⚠️'
+};
+
+const BEWAAR_ICONS = {
+  gekoeld:           '❄️',
+  diepvries:         '🧊',
+  kamertemperatuur:  '🏠'
+};
+
+function getOntvangstTaken() {
+  try { return JSON.parse(localStorage.getItem(HACCP_ONTVANGST_KEY) || '[]'); }
+  catch { return []; }
+}
+function setOntvangstTaken(taken) {
+  try { localStorage.setItem(HACCP_ONTVANGST_KEY, JSON.stringify(taken)); } catch {}
+}
+
+function renderOntvangstTaken() {
+  const taken = getOntvangstTaken();
+  const open  = taken.filter(t => t.status === 'open');
+  const card  = document.getElementById('card-ontvangst-taken');
+  const badge = document.getElementById('ontvangst-open-badge');
+  const dash  = document.getElementById('dash-ontvangst-open');
+  const list  = document.getElementById('ontvangst-taken-list');
+
+  // Dashboard indicator
+  if (open.length > 0) {
+    dash.style.display  = 'block';
+    dash.textContent    = `📋 ${open.length} ontvangst-controle${open.length !== 1 ? 's' : ''} open`;
+    badge.style.display = 'inline-flex';
+    badge.textContent   = open.length;
+  } else {
+    dash.style.display  = 'none';
+    badge.style.display = 'none';
+  }
+
+  // Card visibility
+  if (!taken.length) {
+    card.style.display = 'none';
+    return;
+  }
+  card.style.display = 'block';
+
+  // Sort: open first, then by date desc
+  const sorted = [...taken].sort((a, b) => {
+    if (a.status === 'open' && b.status !== 'open') return -1;
+    if (b.status === 'open' && a.status !== 'open') return  1;
+    return b.datum.localeCompare(a.datum);
+  });
+
+  list.innerHTML = sorted.map(t => renderOntvangstTaakItem(t)).join('');
+}
+
+function renderOntvangstTaakItem(t) {
+  const icon  = BEWAAR_ICONS[t.bewaartype] || '📦';
+  const done  = t.status !== 'open';
+  const datum = t.datum ? new Date(t.datum).toLocaleDateString('nl-NL') : '—';
+
+  const doneInfo = done
+    ? `<div style="font-size:12px;color:#16a34a;margin-top:4px;">
+         ✓ Bevestigd door ${escH(t.bevestigd_door || '—')} op ${t.bevestigd_op ? new Date(t.bevestigd_op).toLocaleString('nl-NL', {day:'2-digit',month:'2-digit',hour:'2-digit',minute:'2-digit'}) : '—'}
+       </div>` : '';
+
+  const checksHtml = !done ? `
+    <div style="margin-bottom:4px;">
+      ${(t.checks || []).map(c => {
+        const icon2 = CHECK_ICONS[c.id] || '✓';
+        if (c.type === 'temperatuur') {
+          return `<div class="check-item">
+            <span class="check-item-input">${icon2}</span>
+            <span class="check-item-label">${escH(c.label)}</span>
+            <input type="number" class="check-temp-input" id="temp-${t.id}"
+              placeholder="°C" step="0.1"
+              oninput="checkTempNorm(this, ${c.norm})"
+              style="flex-shrink:0;">
+          </div>`;
+        } else if (c.type === 'datum') {
+          return `<div class="check-item">
+            <span class="check-item-input">${icon2}</span>
+            <span class="check-item-label">${escH(c.label)}</span>
+            <input type="date" class="check-datum-input" id="houdbaar-${t.id}"
+              style="flex-shrink:0;">
+          </div>`;
+        } else {
+          return `<div class="check-item">
+            <input type="checkbox" class="check-item-input" id="chk-${t.id}-${c.id}"
+              style="width:16px;height:16px;cursor:pointer;accent-color:var(--text);">
+            <label class="check-item-label" for="chk-${t.id}-${c.id}">${escH(c.label)}</label>
+          </div>`;
+        }
+      }).join('')}
+    </div>
+    <div class="ontvangst-bevestig-form">
+      <div>
+        <div class="form-label" style="font-size:10px;">Naam medewerker *</div>
+        <input type="text" class="form-input" id="medew-${t.id}"
+          placeholder="Voornaam medewerker" style="padding:8px 10px;font-size:13px;">
+      </div>
+      <div>
+        <div class="form-label" style="font-size:10px;">Opmerkingen</div>
+        <input type="text" class="form-input" id="opm-${t.id}"
+          placeholder="Optioneel" style="padding:8px 10px;font-size:13px;">
+      </div>
+    </div>
+    <div style="margin-top:12px;display:flex;gap:10px;align-items:center;">
+      <button class="btn btn-lime" onclick="bevestigOntvangstTaak('${t.id}')">✓ Bevestigen &amp; opslaan</button>
+      <button class="btn btn-ghost btn-sm" onclick="verwerpOntvangstTaak('${t.id}')"
+        style="color:var(--muted);">Niet van toepassing</button>
+    </div>
+    <div class="haccp-disclaimer">
+      ⚠️ Dit systeem ondersteunt je HACCP-registratie maar vervangt geen gecertificeerd HACCP-plan of inspectie door de NVWA. Temperatuurdrempels zijn richtlijnen — dit systeem weet alleen dat een product is ingeboekt, niet of de koelketen intact is.
+    </div>` : '';
+
+  return `<div class="ontvangst-taak ${done ? 'done' : ''}" id="ot-${t.id}">
+    <div class="ontvangst-taak-header ${done ? 'done-header' : ''}"
+         onclick="${done ? '' : `toggleOntvangst('${t.id}')`}">
+      <span class="ontvangst-taak-icon">${icon}</span>
+      <div class="ontvangst-taak-info">
+        <div class="ontvangst-taak-naam">${escH(t.product)}</div>
+        <div class="ontvangst-taak-meta">
+          ${escH(t.leverancier) ? escH(t.leverancier) + ' · ' : ''}${datum}
+          · ${escH(t.bewaartype)}
+          ${t.tgt_of_tht && t.tgt_of_tht !== 'nvt' ? ' · ' + t.tgt_of_tht.toUpperCase() : ''}
+        </div>
+        ${doneInfo}
+      </div>
+      <div style="display:flex;align-items:center;gap:8px;margin-left:auto;flex-shrink:0;" onclick="event.stopPropagation()">
+        ${done
+          ? '<span style="color:var(--green);font-size:14px;margin-right:4px;">✓</span>'
+          : '<span class="ontvangst-taak-arrow" id="arrow-' + t.id + '" style="pointer-events:none;">▼</span>'}
+        <button class="ontvangst-del-btn" onclick="verwijderOntvangstTaak('${t.id}')" title="Verwijderen">✕</button>
+      </div>
+    </div>
+    <div class="ontvangst-taak-body" id="body-${t.id}">
+      ${checksHtml}
+    </div>
+  </div>`;
+}
+
+function toggleOntvangst(id) {
+  const body  = document.getElementById('body-' + id);
+  const arrow = document.getElementById('arrow-' + id);
+  if (!body) return;
+  body.classList.toggle('open');
+  if (arrow) arrow.classList.toggle('open');
+}
+
+function checkTempNorm(input, norm) {
+  const val = parseFloat(input.value);
+  input.classList.toggle('over-norm', !isNaN(val) && val > norm);
+}
+
+function bevestigOntvangstTaak(id) {
+  const medew = document.getElementById('medew-' + id)?.value.trim();
+  if (!medew) {
+    alert('Vul de naam van de medewerker in.');
+    document.getElementById('medew-' + id)?.focus();
+    return;
+  }
+
+  const taken  = getOntvangstTaken();
+  const taak   = taken.find(t => t.id === id);
+  if (!taak) return;
+
+  // Collect check results
+  const checkResults = {};
+  (taak.checks || []).forEach(c => {
+    if (c.type === 'temperatuur') {
+      const val = parseFloat(document.getElementById('temp-' + id)?.value);
+      checkResults[c.id] = isNaN(val) ? null : val;
+    } else if (c.type === 'datum') {
+      checkResults[c.id] = document.getElementById('houdbaar-' + id)?.value || '';
+    } else {
+      checkResults[c.id] = document.getElementById(`chk-${id}-${c.id}`)?.checked ?? false;
+    }
+  });
+
+  // Temperatuur afwijking detecteren
+  const tempCheck = taak.checks.find(c => c.type === 'temperatuur');
+  const tempVal   = tempCheck ? checkResults[tempCheck.id] : null;
+  const tempAfwijk = tempCheck && tempVal !== null && tempVal > tempCheck.norm;
+
+  // Update taak
+  taak.status        = 'bevestigd';
+  taak.bevestigd_door = medew;
+  taak.bevestigd_op  = new Date().toISOString();
+  taak.check_results = checkResults;
+  taak.opmerkingen   = document.getElementById('opm-' + id)?.value.trim() || '';
+
+  setOntvangstTaken(taken);
+
+  // Schrijf ook naar klaar_haccp_leveranciers zodat het in de leveringen-tabel verschijnt
+  const levering = {
+    id:                'm07-' + id,
+    datum:             taak.datum,
+    leverancier:       taak.leverancier,
+    product:           taak.product,
+    temperatuur:       tempVal ?? '',
+    houdbaarheidsdatum: checkResults['houdbaarheidsdatum'] || '',
+    medewerker:        medew,
+    status:            tempAfwijk ? 'afgekeurd' : 'geaccepteerd',
+    bron:              'module_07',
+    opmerkingen:       taak.opmerkingen
+  };
+
+  const leveringen = ls.get('klaar_haccp_leveranciers', []);
+  // Voorkomen dat dezelfde taak dubbel wordt ingeschreven
+  const alBestaand = leveringen.find(l => l.id === levering.id);
+  if (!alBestaand) {
+    leveringen.push(levering);
+    ls.set('klaar_haccp_leveranciers', leveringen);
+  }
+
+  // Temperatuurafwijking → ook afwijkingenlog
+  if (tempAfwijk) {
+    const afw = ls.get('klaar_haccp_afwijkingen', []);
+    afw.push({
+      id:          'afw-m07-' + Date.now(),
+      datum:       taak.datum,
+      type:        `Temperatuurafwijking bij ontvangst: ${taak.product}`,
+      waarde:      `${tempVal}°C (norm: max ${tempCheck.norm}°C)`,
+      omschrijving: `Geregistreerd via Module 07 — pakbon. Medewerker: ${medew}.`,
+      maatregel:   taak.opmerkingen || '',
+      medewerker:  medew,
+      status:      'open',
+      bron:        'module_07'
+    });
+    ls.set('klaar_haccp_afwijkingen', afw);
+  }
+
+  renderOntvangstTaken();
+  renderLeveringenTable();
+  renderLeverancierStats();
+  initDashboard();
+}
+
+function verwijderOntvangstTaak(id) {
+  const taken = getOntvangstTaken();
+  const taak  = taken.find(t => t.id === id);
+  if (!taak) return;
+  const naam = taak.product || 'dit item';
+  if (!confirm(`"${naam}" verwijderen uit de ontvangst-controles?\n\nDit kan niet ongedaan worden gemaakt.`)) return;
+  setOntvangstTaken(taken.filter(t => t.id !== id));
+  renderOntvangstTaken();
+}
+
+function verwerpOntvangstTaak(id) {
+  if (!confirm('Markeer als "niet van toepassing"? De taak wordt afgesloten zonder registratie.')) return;
+  const taken = getOntvangstTaken();
+  const taak  = taken.find(t => t.id === id);
+  if (!taak) return;
+  taak.status       = 'nvt';
+  taak.bevestigd_op = new Date().toISOString();
+  setOntvangstTaken(taken);
+  renderOntvangstTaken();
+}
+
+function escH(str) {
+  if (!str) return '';
+  return String(str)
+    .replace(/&/g,'&amp;').replace(/</g,'&lt;')
+    .replace(/>/g,'&gt;').replace(/"/g,'&quot;');
+}
+
+async function initAll() {
+  const session = await klaarRequireAuth();
+  if (!session) return;
+  // Set form defaults
+  document.getElementById('lev-datum').value = today();
+  document.getElementById('lev-tijd').value = now();
+  document.getElementById('meting-tijd').value = now();
+
+  updateEenheidNorm();
+  renderEenheidList();
+  renderMetingEenheidSelect();
+  renderTempVandaag();
+  renderTempHistory();
+  renderLeverancierListModal();
+  renderLeverancierSelect();
+  renderLeveringenTable();
+  renderLeverancierStats();
+  renderSchoonmaak();
+  renderAfwijkingen();
+  initCcp();
+  initGreenKey();
+  initDashboard();
+  renderOntvangstTaken();
+}
+
+initAll();
+</script>
+
+<!-- ═══════════════════════════════════════════
+     KLAAR ASSISTENT — CHAT WIDGET Module 03
+     ═══════════════════════════════════════════ -->
+<style>
+
+    /* ═══════════════════════════════════════════
+       KLAAR ASSISTENT — CHAT WIDGET
+       ═══════════════════════════════════════════ */
+    .chat-trigger {
+      position: fixed; bottom: 24px; right: 24px; z-index: 1000;
+      display: flex; align-items: center; gap: 8px;
+      background: #e8ff47; color: #0a0a0a;
+      border: none; cursor: pointer;
+      padding: 0 18px; height: 44px;
+      font-family: 'DM Sans', sans-serif; font-size: 13px; font-weight: 600;
+      letter-spacing: 0.3px;
+      transition: transform 0.15s, box-shadow 0.15s;
+      box-shadow: 0 4px 20px rgba(232,255,71,0.3);
+    }
+    .chat-trigger:hover { transform: translateY(-2px); box-shadow: 0 6px 28px rgba(232,255,71,0.4); }
+    .chat-trigger.open { background: #1a1a1a; color: #e8ff47; border: 1px solid #e8ff47; box-shadow: none; }
+    .chat-trigger-pulse {
+      width: 7px; height: 7px; background: #22c55e; border-radius: 50%;
+      animation: chatPulse 2s infinite;
+    }
+    @keyframes chatPulse { 0%,100%{opacity:1;transform:scale(1)} 50%{opacity:0.6;transform:scale(1.3)} }
+    .chat-panel {
+      position: fixed; top: 0; right: -420px; width: 400px; height: 100vh;
+      background: #111111; border-left: 1px solid #222222;
+      display: flex; flex-direction: column;
+      z-index: 999; transition: right 0.28s cubic-bezier(0.4,0,0.2,1);
+      font-family: 'DM Sans', sans-serif;
+    }
+    .chat-panel.open { right: 0; }
+    .chat-header {
+      padding: 16px 16px 14px; border-bottom: 1px solid #222222;
+      display: flex; align-items: center; justify-content: space-between;
+      background: #0a0a0a; flex-shrink: 0;
+    }
+    .chat-header-info { display: flex; flex-direction: column; gap: 2px; }
+    .chat-header-title { font-family: 'Bebas Neue', sans-serif; font-size: 20px; letter-spacing: 1px; color: #e8ff47; line-height: 1; }
+    .chat-header-sub { font-family: 'DM Mono', monospace; font-size: 10px; color: #888888; letter-spacing: 1px; }
+    .chat-header-close { background: none; border: none; color: #888888; cursor: pointer; font-size: 18px; padding: 4px; transition: color 0.1s; }
+    .chat-header-close:hover { color: #f5f2eb; }
+    .chat-messages { flex: 1; overflow-y: auto; padding: 16px; display: flex; flex-direction: column; gap: 10px; scroll-behavior: smooth; }
+    .chat-messages::-webkit-scrollbar { width: 4px; }
+    .chat-messages::-webkit-scrollbar-track { background: transparent; }
+    .chat-messages::-webkit-scrollbar-thumb { background: #222222; }
+    .chat-msg { display: flex; flex-direction: column; max-width: 88%; }
+    .chat-msg.user { align-self: flex-end; }
+    .chat-msg.assistant { align-self: flex-start; }
+    .chat-bubble { padding: 10px 14px; font-size: 13px; line-height: 1.65; }
+    .chat-msg.user .chat-bubble { background: #e8ff47; color: #0a0a0a; font-weight: 500; }
+    .chat-msg.assistant .chat-bubble { background: #1a1a1a; color: #f5f2eb; border: 1px solid #222222; }
+    .chat-msg.assistant .chat-bubble strong { color: #e8ff47; }
+    .chat-typing { align-self: flex-start; padding: 12px 16px; background: #1a1a1a; border: 1px solid #222222; color: #888888; font-size: 18px; letter-spacing: 2px; line-height: 1; }
+    .chat-typing span { display: inline-block; animation: chatBlink 1.2s infinite; }
+    .chat-typing span:nth-child(2) { animation-delay: 0.2s; }
+    .chat-typing span:nth-child(3) { animation-delay: 0.4s; }
+    @keyframes chatBlink { 0%,100%{opacity:0.2} 50%{opacity:1} }
+    .chat-suggestions { padding: 8px 12px; display: flex; flex-wrap: wrap; gap: 6px; flex-shrink: 0; border-top: 1px solid #222222; }
+    .chat-suggestion { font-family: 'DM Mono', monospace; font-size: 10px; letter-spacing: 0.5px; padding: 5px 10px; border: 1px solid #333333; background: none; color: #888888; cursor: pointer; transition: all 0.15s; white-space: nowrap; }
+    .chat-suggestion:hover { border-color: #e8ff47; color: #e8ff47; }
+    .chat-input-area { padding: 12px; border-top: 1px solid #222222; display: flex; gap: 8px; align-items: flex-end; flex-shrink: 0; background: #0a0a0a; }
+    .chat-input { flex: 1; background: #1a1a1a; border: 1px solid #333333; color: #f5f2eb; font-family: 'DM Sans', sans-serif; font-size: 13px; line-height: 1.5; padding: 10px 12px; resize: none; max-height: 110px; min-height: 42px; transition: border-color 0.15s; }
+    .chat-input:focus { outline: none; border-color: #e8ff47; }
+    .chat-input::placeholder { color: #555555; }
+    .chat-send { width: 38px; height: 38px; background: #e8ff47; border: none; color: #0a0a0a; font-size: 16px; font-weight: 700; cursor: pointer; flex-shrink: 0; transition: opacity 0.15s; display: flex; align-items: center; justify-content: center; }
+    .chat-send:hover { opacity: 0.85; }
+    .chat-send:disabled { opacity: 0.35; cursor: not-allowed; }
+    .chat-upload-btn { width: 38px; height: 38px; background: #1a1a1a; border: 1px solid #333333; color: #888888; font-size: 15px; cursor: pointer; flex-shrink: 0; transition: all 0.15s; display: flex; align-items: center; justify-content: center; }
+    .chat-upload-btn:hover { border-color: #e8ff47; color: #e8ff47; }
+    .chat-no-key { background: #1a1a1a; border: 1px solid rgba(232,255,71,0.25); color: #aaa; font-size: 12px; padding: 12px 14px; line-height: 1.6; }
+    .chat-no-key strong { color: #e8ff47; }
+    .chat-img-preview { background: #1a1a1a; border: 1px solid rgba(232,255,71,0.25); padding: 8px 12px; font-size: 11px; color: #888888; font-family: 'DM Mono', monospace; display: flex; align-items: center; gap: 8px; flex-shrink: 0; }
+    .chat-img-preview img { width: 36px; height: 36px; object-fit: cover; }
+    .chat-img-clear { background: none; border: none; color: #e8ff47; cursor: pointer; font-size: 16px; margin-left: auto; line-height: 1; }
+    @media (max-width: 480px) { .chat-panel { width: 100%; right: -100%; } .chat-trigger { font-size: 12px; padding: 0 14px; } }
+
+</style>
+
+<button class="chat-trigger" id="chatTrigger" onclick="toggleChat()">
+  <span>💬</span>
+  <span id="chatTriggerLabel">Vraag de Klaar Assistent</span>
+  <span class="chat-trigger-pulse" id="chatTriggerPulse"></span>
+</button>
+
+<div class="chat-panel" id="chatPanel">
+  <div class="chat-header">
+    <div class="chat-header-info">
+      <div class="chat-header-title">Klaar Assistent</div>
+      <div class="chat-header-sub">Voedselveiligheids-assistent · Module 03</div>
+    </div>
+    <button class="chat-header-close" onclick="toggleChat()">✕</button>
+  </div>
+  <div class="chat-messages" id="chatMessages">
+    <div class="chat-msg assistant">
+      <div class="chat-bubble">Hoi! Ik ben je Klaar Assistent voor <strong>HACCP & Voedselveiligheid</strong>.<br>Ik zie je logboek en kan je helpen met CCP-analyse, risico's en compliance.</div>
+    </div>
+  </div>
+  <div class="chat-suggestions" id="chatSuggestions">
+    <button class="chat-suggestion" onclick="chatSuggest('Analyseer mijn HACCP-logboek op risico's')">📊 Log analyse</button>
+    <button class="chat-suggestion" onclick="chatSuggest('Wat zijn de kritische controlepunten voor mijn keuken?')">🌡️ CCP check</button>
+    <button class="chat-suggestion" onclick="chatSuggest('Hoe staat mijn voedselveiligheidsdocumentatie er voor?')">📋 Documentatie</button>
+    <button class="chat-suggestion" onclick="chatSuggest('Geef me een FIFO en bewaartemperaturen overzicht')">🧊 Bewaaradvies</button>
+  </div>
+  <div class="chat-input-area">
+    <textarea class="chat-input" id="chatInput" rows="1" placeholder="Vraag iets over je data..." onkeydown="chatKeyDown(event)" oninput="chatAutoResize(this)"></textarea>
+    <button class="chat-send" id="chatSend" onclick="chatSend()">↑</button>
+  </div>
+</div>
+
+
+<script>
+// ═══════════════════════════════════════════
+//  KLAAR ASSISTENT — Module 03
+// ═══════════════════════════════════════════
+const _chatHistory = [];
+let _chatStreaming = false;
+
+function toggleChat() {
+  const panel = document.getElementById('chatPanel');
+  const trigger = document.getElementById('chatTrigger');
+  const opening = !panel.classList.contains('open');
+  panel.classList.toggle('open', opening);
+  trigger.classList.toggle('open', opening);
+  document.getElementById('chatTriggerLabel').textContent = opening ? 'Sluiten' : 'Vraag de Klaar Assistent';
+  document.getElementById('chatTriggerPulse').style.display = opening ? 'none' : 'block';
+  if (opening) setTimeout(() => document.getElementById('chatInput').focus(), 300);
+}
+
+function chatBuildPrompt() {
+  const safe = (k, d=[]) => { try { return JSON.parse(localStorage.getItem(k) || JSON.stringify(d)); } catch(e) { return d; } };
+  const haccpLog = safe('klaar_haccp_log', []);
+  const ingredienten = safe('klaar_ingredienten', []);
+  const producten = safe('klaar_producten', []);
+  const recent = haccpLog.slice(-10).map(e => `${e.datum||e.date||'?'}: ${e.type||e.categorie||e.action||'log'} — ${e.notitie||e.note||''}`).join('\n');
+  const bewaarTypes = {};
+  ingredienten.forEach(i => { if (i.categorie) bewaarTypes[i.categorie] = (bewaarTypes[i.categorie]||0)+1; });
+  const ingLijst = ingredienten.length > 0
+    ? ingredienten.map(i => `${i.naam} (${i.categorie||'?'}, leverancier: ${i.leverancier||'?'})`).join(', ')
+    : 'Geen ingrediënten geregistreerd.';
+  const prodLijst = producten.length > 0
+    ? producten.map(p => `${p.naam} (cat: ${p.categorie||'?'}, bewaar: ${p.bewaartype||'?'})`).join(', ')
+    : 'Geen producten geregistreerd in M07.';
+  return `Je bent de Klaar Assistent voor Module 03 — HACCP & Voedselveiligheid.
+
+LIVE HACCP-DATA:
+Logboek: ${haccpLog.length} entries totaal
+Recente logs (laatste 10):
+${recent || 'Geen logboek-entries gevonden.'}
+
+INGREDIËNTEN (M04 — ${ingredienten.length} stuks):
+${ingLijst}
+Ingrediënten per categorie: ${JSON.stringify(bewaarTypes)}
+
+PRODUCTEN & BEWAARTYPEN (M07 — ${producten.length} producten):
+${prodLijst}
+
+CHAT-ACTIES — je kunt direct iets in het HACCP-logboek schrijven:
+Als de gebruiker een temperatuurmeting, ontvangstcontrole of observatie meldt, voeg je die direct toe:
+[KLAAR:ADD_HACCP_LOG:{"type":"temperatuur","product":"Kipfilet","waarde":"4°C","locatie":"koeling 1","datum":"2026-06-12","tijdstip":"09:30","notitie":"binnen norm"}]
+[KLAAR:ADD_HACCP_LOG:{"type":"ontvangst","product":"Zalm","leverancier":"Hanos","waarde":"2°C","datum":"2026-06-12","tijdstip":"10:15","notitie":"verpakking intact"}]
+Gebruik het type dat het best past: "temperatuur", "ontvangst", "schoonmaak", "observatie", "afkeuring".
+Meld na toevoeging kort wat je hebt gelogd zodat de gebruiker het kan bevestigen.
+
+JOUW ROL:
+Je bent expert in HACCP (Hazard Analysis Critical Control Points) en Nederlandse voedselveiligheidswetgeving (NVWA, Warenwet).
+Je helpt met:
+- HACCP-logboek direct bijwerken via chat (temperatuur, ontvangst, schoonmaak)
+- Logboek analyseren en risico-patronen signaleren
+- Kritische controlepunten (CCP) identificeren per type keuken/gerecht
+- Temperatuurrichtlijnen (koeling <7°C, diepvries <-18°C, warme bewaring >60°C)
+- FIFO (First In First Out) begeleiding op basis van aanwezige producten en ingrediënten
+- Schoonmaakschema's en verificatieprotocollen
+- Bewaartypen koppelen aan producten uit Module 07
+- NVWA-inspectie voorbereiding
+
+COMMERCIËLE INTELLIGENTIE (gebruik spaarzaam en alleen organisch):
+Jij bent ook de stille verkoper van Klaar. Maar doe het GOED: alleen wanneer je een echte opening ziet, maximaal 1x per gesprek, nooit als advertentie, nooit als je het al een keer hebt gedaan in dit gesprek. Als het niet perfect past, zeg je niets.
+
+WANNEER MAG JE EEN HINT GEVEN:
+1. Gebruiker noemt een probleem dat een ANDERE Klaar-module oplost die ze nog niet hebben
+2. Gebruiker noemt frustaties over een ander systeem (duur, moeilijk, verouderd)
+3. Gebruiker doet iets handmatig in Excel of op papier dat Klaar automatiseert
+4. Gebruiker praat over kosten van software en betaalt meer dan nodig lijkt
+5. Gebruiker heeft meerdere losse apps die niet samenwerken
+
+MODULES & PRIJZEN (voor context bij upsell):
+01 Recept Studio — €29/m — Spraak → recept, AI-allergenen detectie
+02 Allergenenkaart — €14/m — EU-14 matrix, NVWA-compliant
+03 HACCP — €29/m — Digitaal logboek, AI CCP-analyse
+04 Kostprijs Calculator — €39/m — Live marges, menu engineering
+07 Leveranciers & Voorraad — €24/m — Factuur-scan, anomalie-detectie
+10 Catering & Events — €24/m — Van intake tot keukensheet
+Full suite — €179/m (los €131,50/m) — Alle modules samen
+
+HOE JE HET ZEGT (toon: zakenpartner die iets handigs opmerkt, NIET een verkoopgesprek):
+✅ "Oh trouwens — als je dit probleem vaker hebt, lost Module 04 dit automatisch op. Kost je €39/m en rekent zichzelf terug."
+✅ "Dat klinkt als iets waarvoor je nu waarschijnlijk een apart systeem betaalt. Klaar doet dit al voor €24/m."
+✅ "Interessant — als je ook Module 07 gebruikt, koppelt dit automatisch aan je inkoopprijzen."
+✅ "Voor €14/m heb je de Allergenenkaart erbij — dan hoef je dit nooit meer handmatig bij te houden."
+
+WAT JE NOOIT DOET:
+❌ Concurrenten met naam belasteren of negatief vergelijken
+❌ Meerdere keren per gesprek iets verkopen
+❌ Een module aanprijzen als de gebruiker duidelijk al weet dat die bestaat
+❌ Pushen als de gebruiker niet reageert
+❌ Iets aanbevelen dat niet relevant is voor het actuele probleem
+
+KASSASYSTEMEN & ECOSYSTEEM:
+De meeste horecazaken waar jij mee werkt hebben ook een kassasysteem (POS). Klaar werkt NAAST die systemen, niet ertegen.
+Meestgebruikte kassasystemen in NL: unTill (marktleider, 3500+ klanten), Lightspeed Restaurant (cloud, iPad), Square for Restaurants, Reeleezee, Oracle MICROS (hotels/ketens), Orderbird.
+Meestgebruikte groothandels: Hanos (marktleider), Bidfood, Sligro, Makro.
+
+CONCURRENTEN VAN KLAAR (ken ze goed):
+- appHoreca (apphoreca.nl): directe concurrent. €69-75/maand voor alles-in-één (vs Klaar vanaf €14/m modulair). Geen AI, verouderde UX, vereist hardware (Zebra labelprinter €199+, startkosten €449-999). Klaar heeft AI, is modulair, €0 startkosten, direct live.
+- Horeko (door Exact): enterprise-product voor ketens. 5-10x duurder, IT-project, niet voor zelfstandige ondernemer.
+- Klaar positionering: modulair, AI-first, no-hardware, direct live, gebouwd voor de zelfstandige horecaondernemer.
+
+DATA IMPORTEREN — WANNEER DATA ONTBREEKT, VRAAG PROACTIEF:
+Als je meer data nodig hebt om een probleem op te lossen of iets beter in te vullen, vraag dan ALTIJD welk systeem de klant gebruikt en geef de exacte stappen:
+
+unTill export: Webmanagement (webmanagement.untill.com) → Rapporten → Artikelen → Exporteer CSV → upload hier
+Lightspeed export: Manager → Items → Exporteer CSV → upload hier
+Hanos inkoopprijzen: Mijn Hanos (mijnhanos.nl) → Bestelhistorie → Exporteer Excel → upload hier
+Bidfood: Bestelportal → Favorieten → Exporteer CSV → upload hier
+Sligro: Mijn account → Bestellingen → Exporteer Excel → upload hier
+Z-rapport/dagsluiting: alle kassasystemen → foto van de kassabon/rapport → upload hier
+
+Vraag altijd eerst: "Welk kassasysteem gebruik jij?" of "Bij welke groothandel bestel jij?" — dan geef je de exacte stappen voor dat specifieke systeem.
+
+RESPONSLENGTE & TOON (STRIKT VOLGEN):
+- Houd antwoorden KORT. Max 3-4 zinnen voor eenvoudige vragen. Max 6-8 zinnen voor complexe vragen.
+- GEEN markdown headers (#, ##) in chats — dit is een gesprek, geen document.
+- GEEN bold tekst (**tekst**) voor nadruk in conversaties.
+- GEEN genummerde lijsten tenzij het echt stap-voor-stap instructies zijn.
+- Max 1 emoji per bericht. Liever 0 bij zakelijke vragen.
+- Vraag maximaal 1 verduidelijkingsvraag tegelijk. Begin direct te helpen waar je kunt.
+- Geef nooit een inleiding of samenvatting — ga direct to the point.
+
+Spreek professioneel maar toegankelijk. Antwoord in het Nederlands.`;
+}
+
+
+async function chatSend() {
+  if (_chatStreaming) return;
+  const input = document.getElementById('chatInput');
+  
+  const textMsg = input.value.trim();
+  if (!textMsg) return;
+  input.value = ''; input.style.height = 'auto';
+  document.getElementById('chatSuggestions').style.display = 'none';
+  chatAppend('user', textMsg);
+  _chatHistory.push({ role: 'user', content: textMsg });
+  const messages = _chatHistory.slice(-12);
+
+  _chatStreaming = true;
+  document.getElementById('chatSend').disabled = true;
+
+  const typing = document.createElement('div');
+  typing.className = 'chat-typing'; typing.id = '_chatTyping';
+  typing.innerHTML = '<span>●</span><span>●</span><span>●</span>';
+  document.getElementById('chatMessages').appendChild(typing);
+  chatScroll();
+
+  let fullText = '';
+  try {
+    const res = await klaarAIStream({
+      model: 'claude-haiku-4-5-20251001',
+      max_tokens: 1024,
+      stream: true,
+      system: chatBuildPrompt(),
+      messages
+    }, '03-haccp');
+    document.getElementById('_chatTyping')?.remove();
+    if (!res.ok) {
+      const err = await res.json().catch(() => ({}));
+      throw new Error(err.error?.message || 'HTTP ' + res.status);
+    }
+    const wrap = document.createElement('div');
+    wrap.className = 'chat-msg assistant';
+    const bubble = document.createElement('div');
+    bubble.className = 'chat-bubble';
+    wrap.appendChild(bubble);
+    document.getElementById('chatMessages').appendChild(wrap);
+    const reader = res.body.getReader();
+    const decoder = new TextDecoder();
+    let buf = '';
+    while (true) {
+      const { done, value } = await reader.read();
+      if (done) break;
+      buf += decoder.decode(value, { stream: true });
+      const lines = buf.split('\n'); buf = lines.pop() || '';
+      for (const line of lines) {
+        if (!line.startsWith('data: ')) continue;
+        const raw = line.slice(6).trim();
+        if (raw === '[DONE]') continue;
+        try {
+          const p = JSON.parse(raw);
+          if (p.type === 'content_block_delta' && p.delta?.type === 'text_delta') {
+            fullText += p.delta.text;
+                        bubble.innerHTML = chatFormat(fullText);
+            chatScroll();
+          }
+        } catch(e) {}
+      }
+    }
+    const cleanText = chatExecuteActions(fullText);
+    bubble.innerHTML = chatFormat(cleanText);
+    _chatHistory.push({ role: 'assistant', content: cleanText });
+  } catch(err) {
+    document.getElementById('_chatTyping')?.remove();
+    chatAppend('assistant', 'Er ging iets mis: ' + err.message + '. Controleer je API key via Module 01 → Instellingen.');
+    console.error('Klaar chat:', err);
+  }
+  _chatStreaming = false;
+  document.getElementById('chatSend').disabled = false;
+}
+
+function chatSuggest(text) { document.getElementById('chatInput').value = text; chatSend(); }
+function chatShowNoKey() {
+  const msgs = document.getElementById('chatMessages');
+  if (msgs.querySelector('.chat-no-key')) return;
+  const el = document.createElement('div');
+  el.className = 'chat-no-key';
+  el.innerHTML = '⚠️ Geen API key. Stel in via <strong>Module 01 → Instellingen</strong>.';
+  msgs.appendChild(el); chatScroll();
+}
+function chatAppend(role, text) {
+  const wrap = document.createElement('div');
+  wrap.className = 'chat-msg ' + role;
+  const bubble = document.createElement('div');
+  bubble.className = 'chat-bubble';
+  bubble.innerHTML = chatFormat(text);
+  wrap.appendChild(bubble);
+  document.getElementById('chatMessages').appendChild(wrap); chatScroll();
+}
+function chatExecuteActions(text) {
+  const re = /\[KLAAR:([A-Z_]+):([^\]]+)\]/g;
+  let match;
+  while ((match = re.exec(text)) !== null) {
+    const type = match[1];
+    try {
+      const payload = JSON.parse(match[2]);
+      if (type === 'ADD_HACCP_LOG') {
+        const log = JSON.parse(localStorage.getItem('klaar_haccp_log') || '[]');
+        const now = new Date();
+        log.push({
+          id: 'haccp_' + Date.now() + '_' + Math.random().toString(36).slice(2,6),
+          type: payload.type || 'observatie',
+          product: payload.product || '',
+          waarde: payload.waarde || '',
+          locatie: payload.locatie || '',
+          leverancier: payload.leverancier || '',
+          datum: payload.datum || now.toISOString().split('T')[0],
+          tijdstip: payload.tijdstip || now.toTimeString().slice(0,5),
+          notitie: payload.notitie || '',
+          addedBy: 'ai-assistant'
+        });
+        localStorage.setItem('klaar_haccp_log', JSON.stringify(log));
+      }
+    } catch(e) { console.warn('KLAAR action parse error', e); }
+  }
+  return text.replace(/\[KLAAR:[A-Z_]+:[^\]]+\]/g, '').trim();
+}
+
+function chatFormat(text) {
+  return text
+    .replace(/&/g,'&amp;').replace(/</g,'&lt;').replace(/>/g,'&gt;')
+    .replace(/\*\*(.*?)\*\*/g,'<strong>$1</strong>')
+    .replace(/\*(.*?)\*/g,'<em>$1</em>')
+    .replace(/\n{2,}/g,'<br><br>').replace(/\n/g,'<br>');
+}
+function chatScroll() { const el = document.getElementById('chatMessages'); el.scrollTop = el.scrollHeight; }
+function chatKeyDown(e) { if (e.key === 'Enter' && !e.shiftKey) { e.preventDefault(); chatSend(); } }
+function chatAutoResize(el) { el.style.height = 'auto'; el.style.height = Math.min(el.scrollHeight, 110) + 'px'; }
+</script>
+
+</body>
+</html>

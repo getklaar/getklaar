@@ -1,0 +1,1643 @@
+<!DOCTYPE html>
+<html lang="nl">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Klaar — Operating System for the Serving Industry</title>
+  <link href="https://fonts.googleapis.com/css2?family=Bebas+Neue&family=DM+Sans:ital,wght@0,300;0,400;0,500;0,600;1,400&family=DM+Mono:wght@400;500&display=swap" rel="stylesheet">
+  <style>
+    :root {
+      --black:   #0a0a0a;
+      --surface: #111111;
+      --muted:   #1a1a1a;
+      --border:  #222222;
+      --accent:  #e8ff47;
+      --white:   #f5f2eb;
+      --gray:    #888888;
+    }
+
+    * { margin: 0; padding: 0; box-sizing: border-box; }
+
+    body {
+      background: var(--black);
+      color: var(--white);
+      font-family: 'DM Sans', sans-serif;
+      font-size: 15px;
+      line-height: 1.6;
+      min-height: 100vh;
+    }
+
+    /* HEADER */
+    header {
+      position: fixed; top: 0; left: 0; right: 0; z-index: 100;
+      background: var(--black);
+      border-bottom: 1px solid var(--border);
+      padding: 0 32px;
+      height: 60px;
+      display: flex; align-items: center; justify-content: space-between;
+    }
+    .logo {
+      font-family: 'Bebas Neue', sans-serif;
+      font-size: 32px; color: var(--accent); letter-spacing: 2px; line-height: 1;
+    }
+    .header-right { display: flex; align-items: center; gap: 16px; }
+    .version-tag {
+      font-family: 'DM Mono', monospace; font-size: 11px;
+      color: var(--gray); background: var(--muted);
+      border: 1px solid var(--border); padding: 3px 10px;
+      border-radius: 20px; letter-spacing: 1px;
+    }
+    .domain-tag {
+      font-family: 'DM Mono', monospace; font-size: 11px;
+      color: var(--accent); letter-spacing: 1px;
+    }
+
+    /* HERO */
+    .hero { padding: 120px 32px 64px; max-width: 900px; }
+    .hero-label {
+      font-family: 'DM Mono', monospace; font-size: 11px;
+      color: var(--gray); text-transform: uppercase; letter-spacing: 4px;
+      margin-bottom: 20px; display: flex; align-items: center; gap: 12px;
+    }
+    .hero-label::before { content: ''; width: 24px; height: 1px; background: var(--accent); }
+    .hero-title {
+      font-family: 'Bebas Neue', sans-serif;
+      font-size: clamp(52px, 8vw, 92px);
+      line-height: 0.95; letter-spacing: 2px; margin-bottom: 24px;
+    }
+    .hero-title em { color: var(--accent); font-style: normal; }
+    .hero-sub { font-size: 16px; color: var(--gray); max-width: 520px; line-height: 1.7; }
+
+    /* STATS */
+    .stats-bar {
+      display: flex; border-top: 1px solid var(--border); border-bottom: 1px solid var(--border);
+      margin: 0 32px;
+    }
+    .stat { flex: 1; padding: 20px 24px; border-right: 1px solid var(--border); }
+    .stat:last-child { border-right: none; }
+    .stat-number {
+      font-family: 'Bebas Neue', sans-serif; font-size: 32px;
+      color: var(--accent); line-height: 1; margin-bottom: 2px;
+    }
+    .stat-label { font-size: 11px; color: var(--gray); text-transform: uppercase; letter-spacing: 2px; }
+
+    /* MODULES */
+    .section { padding: 56px 32px; }
+    .section-header { display: flex; align-items: baseline; gap: 16px; margin-bottom: 28px; }
+    .section-title { font-family: 'Bebas Neue', sans-serif; font-size: 28px; letter-spacing: 1px; }
+    .section-meta { font-family: 'DM Mono', monospace; font-size: 11px; color: var(--gray); }
+
+    .module-grid {
+      display: grid;
+      grid-template-columns: repeat(auto-fill, minmax(280px, 1fr));
+      gap: 1px; background: var(--border); border: 1px solid var(--border);
+    }
+
+    .module-card {
+      background: var(--surface); padding: 24px;
+      display: flex; flex-direction: column; gap: 10px;
+      transition: background 0.15s; position: relative;
+      text-decoration: none; color: inherit; cursor: default;
+    }
+    .module-card.active { cursor: pointer; }
+    .module-card.active:hover { background: var(--muted); }
+
+    .module-card-top { display: flex; align-items: flex-start; justify-content: space-between; }
+    .module-icon { font-size: 22px; line-height: 1; }
+
+    .module-status {
+      font-family: 'DM Mono', monospace; font-size: 10px;
+      padding: 3px 8px; border-radius: 20px;
+      text-transform: uppercase; letter-spacing: 1px;
+    }
+    .status-live { background: rgba(232,255,71,0.12); color: var(--accent); border: 1px solid rgba(232,255,71,0.3); }
+    .status-next { background: rgba(255,165,0,0.1); color: #ffa500; border: 1px solid rgba(255,165,0,0.3); }
+    .status-soon { background: rgba(136,136,136,0.1); color: var(--gray); border: 1px solid var(--border); }
+
+    .module-number { font-family: 'DM Mono', monospace; font-size: 10px; color: var(--gray); letter-spacing: 2px; }
+    .module-name { font-size: 15px; font-weight: 600; line-height: 1.3; color: var(--white); }
+    .module-card.coming-soon .module-name { color: var(--gray); }
+    .module-price { font-family: 'DM Mono', monospace; font-size: 13px; color: var(--accent); }
+    .module-card.coming-soon .module-price { color: var(--gray); }
+    .module-desc { font-size: 12px; color: var(--gray); line-height: 1.5; flex: 1; }
+
+    .module-arrow {
+      font-size: 13px; color: var(--accent); margin-top: 4px;
+      opacity: 0; transform: translateX(-4px); transition: all 0.15s;
+      font-family: 'DM Mono', monospace;
+    }
+    .module-card.active:hover .module-arrow { opacity: 1; transform: translateX(0); }
+
+    /* DATA FLOW */
+    .flow-section { padding: 0 32px 56px; }
+    .flow-grid { display: flex; flex-wrap: wrap; border: 1px solid var(--border); }
+    .flow-step {
+      flex: 1; min-width: 140px; padding: 18px 20px;
+      border-right: 1px solid var(--border);
+    }
+    .flow-step:last-child { border-right: none; }
+    .flow-num { font-family: 'DM Mono', monospace; font-size: 10px; color: var(--accent); margin-bottom: 6px; letter-spacing: 2px; }
+    .flow-name { font-size: 13px; font-weight: 600; margin-bottom: 3px; }
+    .flow-desc { font-size: 11px; color: var(--gray); line-height: 1.4; }
+    .flow-step.active-flow { background: rgba(232,255,71,0.04); }
+    .flow-step.active-flow .flow-name { color: var(--accent); }
+
+    /* FOOTER */
+    footer {
+      border-top: 1px solid var(--border); padding: 24px 32px;
+      display: flex; align-items: center; justify-content: space-between; flex-wrap: wrap; gap: 12px;
+    }
+    .footer-logo { font-family: 'Bebas Neue', sans-serif; font-size: 24px; color: var(--accent); letter-spacing: 2px; }
+    .footer-note { font-family: 'DM Mono', monospace; font-size: 11px; color: var(--gray); }
+
+    /* HOE HET WERKT */
+    .stap-grid {
+      display: grid;
+      grid-template-columns: 1fr auto 1fr auto 1fr;
+      gap: 0;
+      border: 1px solid var(--border);
+    }
+    .stap {
+      background: var(--surface); padding: 28px 24px;
+    }
+    .stap-arrow {
+      display: flex; align-items: center; justify-content: center;
+      padding: 0 8px; background: var(--black);
+      color: var(--accent); font-family: 'DM Mono', monospace; font-size: 18px;
+      border-top: 1px solid var(--border); border-bottom: 1px solid var(--border);
+    }
+    .stap-num { font-family: 'DM Mono', monospace; font-size: 10px; color: var(--accent); letter-spacing: 2px; margin-bottom: 8px; }
+    .stap-name { font-size: 15px; font-weight: 600; margin-bottom: 6px; }
+    .stap-desc { font-size: 12px; color: var(--gray); line-height: 1.5; }
+
+    /* INTERESSE KNOP */
+    .interest-btn {
+      display: inline-block; margin-top: 4px;
+      font-family: 'DM Mono', monospace; font-size: 10px;
+      color: var(--gray); text-decoration: none;
+      border: 1px solid var(--border); padding: 4px 10px;
+      letter-spacing: 1px; transition: all 0.15s;
+    }
+    .interest-btn:hover { color: var(--accent); border-color: var(--accent); }
+
+    /* PRIJSOVERZICHT */
+    .pricing-grid {
+      display: grid;
+      grid-template-columns: repeat(auto-fill, minmax(200px, 1fr));
+      gap: 1px; background: var(--border); border: 1px solid var(--border);
+    }
+    .price-card {
+      background: var(--surface); padding: 20px;
+      display: flex; flex-direction: column; gap: 6px;
+    }
+    .price-card.price-live { background: rgba(232,255,71,0.03); }
+    .price-num { font-family: 'DM Mono', monospace; font-size: 10px; color: var(--gray); letter-spacing: 2px; }
+    .price-name { font-size: 13px; font-weight: 600; }
+    .price-card.price-live .price-name { color: var(--white); }
+    .price-card:not(.price-live) .price-name { color: var(--gray); }
+    .price-amount { font-family: 'DM Mono', monospace; font-size: 18px; color: var(--accent); margin-top: 4px; }
+    .price-card:not(.price-live) .price-amount { color: var(--gray); font-size: 14px; }
+    .price-status { font-family: 'DM Mono', monospace; font-size: 10px; color: var(--gray); margin-top: 2px; }
+    .price-total {
+      border-top: 1px solid var(--border); padding: 16px 20px;
+      display: flex; align-items: center; justify-content: space-between;
+      background: var(--muted);
+    }
+    .price-total-label { font-family: 'DM Mono', monospace; font-size: 11px; color: var(--gray); letter-spacing: 2px; text-transform: uppercase; }
+    .price-total-amount { font-family: 'Bebas Neue', sans-serif; font-size: 28px; color: var(--accent); }
+
+    /* VERGELIJKING */
+    .compare-section {}
+    .compare-wrapper { border: 1px solid var(--border); overflow: hidden; }
+    .compare-table { width: 100%; border-collapse: collapse; }
+    .compare-table th, .compare-table td {
+      padding: 14px 20px; text-align: left;
+      border-bottom: 1px solid var(--border);
+      border-right: 1px solid var(--border);
+      vertical-align: top;
+    }
+    .compare-table th:last-child, .compare-table td:last-child { border-right: none; }
+    .compare-table thead th {
+      background: var(--muted);
+      font-family: 'DM Mono', monospace; font-size: 11px;
+      text-transform: uppercase; letter-spacing: 2px; color: var(--gray);
+      font-weight: 500;
+    }
+    .compare-table thead th.col-klaar {
+      background: rgba(232,255,71,0.08);
+      color: var(--accent);
+      border-bottom: 2px solid var(--accent);
+    }
+    .compare-table .row-label {
+      font-family: 'DM Mono', monospace; font-size: 11px;
+      color: var(--gray); letter-spacing: 1px; background: var(--surface);
+      white-space: nowrap;
+    }
+    .compare-table td { background: var(--surface); font-size: 13px; color: var(--gray); }
+    .compare-table td.col-klaar { background: rgba(232,255,71,0.03); color: var(--white); }
+    .compare-table .val-good { color: var(--accent); font-weight: 500; }
+    .compare-table .val-bad { color: #ff6b6b; }
+    .compare-table .val-neutral { color: var(--gray); }
+    .compare-source {
+      font-family: 'DM Mono', monospace; font-size: 10px; color: var(--gray);
+      padding: 10px 20px; background: var(--muted); border-top: 1px solid var(--border);
+      letter-spacing: 0.5px;
+    }
+    @media (max-width: 600px) {
+      .compare-table th, .compare-table td { padding: 10px 12px; font-size: 11px; }
+    }
+
+    /* FOUNDER SECTIE */
+    .founder-section { background: var(--muted); border-top: 1px solid var(--border); border-bottom: 1px solid var(--border); }
+    .founder-label {
+      font-family: 'DM Mono', monospace; font-size: 10px;
+      color: var(--accent); background: rgba(232,255,71,0.08);
+      border: 1px solid rgba(232,255,71,0.2); padding: 3px 10px;
+      letter-spacing: 2px; text-transform: uppercase;
+    }
+    .progress-list { display: flex; flex-direction: column; gap: 12px; margin-top: 4px; }
+    .progress-item { display: flex; flex-direction: column; gap: 5px; }
+    .progress-meta { display: flex; align-items: center; justify-content: space-between; }
+    .progress-name { font-size: 13px; font-weight: 500; }
+    .progress-pct { font-family: 'DM Mono', monospace; font-size: 11px; color: var(--accent); }
+    .progress-bar-track {
+      height: 3px; background: var(--border); position: relative;
+    }
+    .progress-bar-fill {
+      position: absolute; top: 0; left: 0; height: 100%;
+      background: var(--accent); transition: width 0.3s;
+    }
+    .progress-bar-fill.dim { background: var(--gray); }
+    .progress-note { font-size: 11px; color: var(--gray); }
+
+    .tech-grid {
+      display: grid; grid-template-columns: repeat(auto-fill, minmax(180px, 1fr));
+      gap: 1px; background: var(--border); border: 1px solid var(--border); margin-top: 0;
+    }
+    .tech-card { background: var(--surface); padding: 16px 18px; }
+    .tech-layer { font-family: 'DM Mono', monospace; font-size: 10px; color: var(--gray); letter-spacing: 2px; margin-bottom: 4px; }
+    .tech-name { font-size: 13px; font-weight: 600; margin-bottom: 2px; }
+    .tech-status { font-size: 11px; color: var(--gray); }
+    .tech-status.live { color: var(--accent); }
+    .tech-status.planned { color: #ffa500; }
+
+    .founder-cols { display: grid; grid-template-columns: 1fr 1fr; gap: 32px; }
+
+    /* ═══════════════════════════════════════
+       KLAAR ASSISTENT — CHAT WIDGET
+    ═══════════════════════════════════════ */
+    .chat-trigger {
+      position: fixed; bottom: 24px; right: 24px; z-index: 600;
+      height: 48px; padding: 0 20px;
+      background: var(--accent); color: var(--black);
+      border: none; cursor: pointer;
+      display: flex; align-items: center; gap: 10px;
+      font-family: 'DM Sans', sans-serif; font-weight: 600; font-size: 13px;
+      transition: transform 0.15s, background 0.15s;
+      box-shadow: 0 4px 24px rgba(232,255,71,0.3);
+      white-space: nowrap;
+    }
+    .chat-trigger:hover { transform: translateY(-2px); box-shadow: 0 6px 28px rgba(232,255,71,0.4); }
+    .chat-trigger.open { background: var(--muted); color: var(--accent); border: 1px solid var(--accent); box-shadow: none; }
+    .chat-trigger-icon { font-size: 18px; }
+    .chat-trigger-label { letter-spacing: 0.3px; }
+    .chat-trigger-pulse {
+      width: 8px; height: 8px; background: var(--black);
+      border-radius: 50%; animation: pulse 2s infinite;
+    }
+    @keyframes pulse { 0%,100%{opacity:1; transform:scale(1)} 50%{opacity:0.5; transform:scale(0.8)} }
+
+    .chat-panel {
+      position: fixed; top: 0; right: -420px; bottom: 0; z-index: 500;
+      width: 400px;
+      background: var(--surface);
+      border-left: 1px solid var(--border);
+      display: flex; flex-direction: column;
+      transition: right 0.28s cubic-bezier(0.4,0,0.2,1);
+    }
+    .chat-panel.open { right: 0; }
+
+    .chat-header {
+      padding: 16px 20px;
+      border-bottom: 1px solid var(--border);
+      background: var(--muted);
+      display: flex; align-items: center; justify-content: space-between;
+      flex-shrink: 0;
+    }
+    .chat-header-info { display: flex; flex-direction: column; gap: 2px; }
+    .chat-header-title { font-family: 'Bebas Neue', sans-serif; font-size: 20px; letter-spacing: 1px; color: var(--accent); line-height: 1; }
+    .chat-header-sub { font-family: 'DM Mono', monospace; font-size: 10px; color: var(--gray); letter-spacing: 1px; }
+    .chat-header-close { background: none; border: none; color: var(--gray); cursor: pointer; font-size: 18px; padding: 4px; transition: color 0.1s; }
+    .chat-header-close:hover { color: var(--white); }
+
+    .chat-messages {
+      flex: 1; overflow-y: auto; padding: 16px 16px 8px;
+      display: flex; flex-direction: column; gap: 10px;
+      scroll-behavior: smooth;
+    }
+    .chat-messages::-webkit-scrollbar { width: 4px; }
+    .chat-messages::-webkit-scrollbar-track { background: transparent; }
+    .chat-messages::-webkit-scrollbar-thumb { background: var(--border); }
+
+    .chat-msg { display: flex; flex-direction: column; max-width: 88%; }
+    .chat-msg.user { align-self: flex-end; }
+    .chat-msg.assistant { align-self: flex-start; }
+
+    .chat-bubble { padding: 10px 14px; font-size: 13px; line-height: 1.65; }
+    .chat-msg.user .chat-bubble { background: var(--accent); color: var(--black); font-weight: 500; }
+    .chat-msg.assistant .chat-bubble { background: var(--muted); color: var(--white); border: 1px solid var(--border); }
+    .chat-msg.assistant .chat-bubble strong { color: var(--accent); }
+
+    .chat-typing {
+      align-self: flex-start;
+      padding: 10px 16px;
+      background: var(--muted); border: 1px solid var(--border);
+      font-family: 'DM Mono', monospace; font-size: 11px; color: var(--gray);
+    }
+    @keyframes blink { 0%,100%{opacity:0.3} 50%{opacity:1} }
+    .chat-typing span { display: inline-block; animation: blink 1.2s infinite; }
+    .chat-typing span:nth-child(2) { animation-delay: 0.2s; }
+    .chat-typing span:nth-child(3) { animation-delay: 0.4s; }
+
+    .chat-suggestions {
+      padding: 8px 16px 4px; display: flex; flex-wrap: wrap; gap: 6px; flex-shrink: 0;
+    }
+    .chat-suggestion {
+      font-family: 'DM Mono', monospace; font-size: 10px; letter-spacing: 0.5px;
+      border: 1px solid var(--border); color: var(--gray); background: none;
+      padding: 5px 10px; cursor: pointer; transition: all 0.1s; text-align: left;
+    }
+    .chat-suggestion:hover { border-color: var(--accent); color: var(--accent); }
+
+    .chat-input-area {
+      padding: 10px 14px 14px; border-top: 1px solid var(--border);
+      display: flex; gap: 8px; align-items: flex-end;
+      background: var(--black); flex-shrink: 0;
+    }
+    .chat-input {
+      flex: 1; background: var(--muted); border: 1px solid var(--border);
+      color: var(--white); font-family: 'DM Sans', sans-serif; font-size: 13px;
+      padding: 10px 12px; resize: none; outline: none; line-height: 1.5;
+      max-height: 110px; min-height: 40px;
+    }
+    .chat-input:focus { border-color: var(--accent); }
+    .chat-input::placeholder { color: var(--gray); }
+
+    .chat-send {
+      width: 40px; height: 40px; flex-shrink: 0;
+      background: var(--accent); color: var(--black);
+      border: none; cursor: pointer;
+      display: flex; align-items: center; justify-content: center;
+      font-size: 17px; font-weight: 700; transition: opacity 0.15s;
+    }
+    .chat-send:hover { opacity: 0.85; }
+    .chat-send:disabled { opacity: 0.35; cursor: not-allowed; }
+
+    .chat-no-key {
+      margin: 12px 16px; padding: 12px 14px;
+      background: rgba(255,165,0,0.07); border: 1px solid rgba(255,165,0,0.3);
+      font-size: 12px; color: #ffa500; line-height: 1.6;
+    }
+
+    /* RESPONSIVE */
+    @media (max-width: 600px) {
+      .chat-panel { width: 100%; right: -100%; }
+      .chat-trigger { font-size: 12px; padding: 0 14px; }
+    }
+
+    /* RESPONSIVE */
+    @media (max-width: 600px) {
+      header { padding: 0 20px; }
+      .hero { padding: 100px 20px 48px; }
+      .stats-bar { margin: 0 20px; flex-wrap: wrap; }
+      .stat { min-width: 50%; }
+      .section, .flow-section { padding: 40px 20px; }
+      footer { padding: 20px; }
+      .module-grid { grid-template-columns: 1fr; }
+      .stap-grid { grid-template-columns: 1fr; }
+      .stap-arrow { padding: 8px; border: none; border-left: none; border-right: none; }
+      .pricing-grid { grid-template-columns: 1fr 1fr; }
+      .founder-cols { grid-template-columns: 1fr; }
+      .tech-grid { grid-template-columns: 1fr 1fr; }
+    }
+
+    /* HEADER CTA */
+    .header-cta {
+      font-family: 'DM Mono', monospace; font-size: 11px; letter-spacing: 1px;
+      background: var(--accent); color: var(--black); border: none;
+      padding: 8px 16px; cursor: pointer; font-weight: 600;
+      transition: opacity 0.15s; text-transform: uppercase;
+    }
+    .header-cta:hover { opacity: 0.85; }
+    .header-cta.hidden { display: none !important; }
+
+    /* HERO CTA BUTTONS */
+    .hero-ctas { display: flex; gap: 16px; align-items: center; margin-top: 32px; flex-wrap: wrap; }
+    .hero-cta-primary {
+      font-family: 'DM Mono', monospace; font-size: 13px;
+      background: var(--accent); color: var(--black); border: none;
+      padding: 14px 28px; cursor: pointer; font-weight: 600;
+      letter-spacing: 0.5px; transition: all 0.15s; line-height: 1.3;
+    }
+    .hero-cta-primary:hover { opacity: 0.9; transform: translateY(-1px); box-shadow: 0 4px 20px rgba(232,255,71,0.3); }
+    .hero-cta-secondary {
+      font-family: 'DM Mono', monospace; font-size: 12px;
+      color: var(--gray); text-decoration: none; letter-spacing: 1px;
+      transition: color 0.15s; padding: 14px 0;
+    }
+    .hero-cta-secondary:hover { color: var(--white); }
+
+    /* HERO DEMO */
+    .hero-demo { margin-top: 48px; max-width: 540px; }
+    .hero-demo-label {
+      font-family: 'DM Mono', monospace; font-size: 10px;
+      color: var(--gray); text-transform: uppercase; letter-spacing: 3px;
+      margin-bottom: 14px;
+    }
+    .hero-demo-window {
+      background: var(--surface); border: 1px solid var(--border);
+      padding: 20px; min-height: 90px;
+    }
+    .demo-pair { display: none; flex-direction: column; gap: 10px; }
+    .demo-pair.active { display: flex; }
+    .demo-user {
+      font-size: 13px; color: var(--white);
+      background: rgba(232,255,71,0.06); border: 1px solid rgba(232,255,71,0.15);
+      padding: 8px 12px; align-self: flex-end; max-width: 85%;
+      font-style: italic;
+    }
+    .demo-bot {
+      font-size: 12px; color: var(--gray); line-height: 1.5;
+      padding: 8px 12px; border-left: 2px solid var(--accent);
+      max-width: 90%;
+    }
+    .demo-dots { display: flex; gap: 8px; margin-top: 14px; }
+    .demo-dot {
+      width: 6px; height: 6px; background: var(--border);
+      border-radius: 50%; cursor: pointer; transition: background 0.2s;
+    }
+    .demo-dot.active { background: var(--accent); }
+
+    /* MODULE ROI */
+    .module-roi {
+      font-family: 'DM Mono', monospace; font-size: 10px;
+      color: var(--accent); letter-spacing: 0.5px; line-height: 1.4;
+      border-top: 1px solid var(--border); padding-top: 10px;
+      margin-top: auto;
+    }
+
+    /* EMAIL GATE MODAL */
+    .gate-overlay {
+      position: fixed; inset: 0; z-index: 1000;
+      background: rgba(10,10,10,0.92);
+      display: flex; align-items: center; justify-content: center;
+      padding: 20px;
+      opacity: 0; pointer-events: none; transition: opacity 0.25s;
+    }
+    .gate-overlay.visible { opacity: 1; pointer-events: all; }
+    .gate-card {
+      background: var(--surface); border: 1px solid var(--border);
+      max-width: 480px; width: 100%; padding: 48px 40px;
+      position: relative;
+    }
+    .gate-close {
+      position: absolute; top: 16px; right: 20px;
+      background: none; border: none; color: var(--gray);
+      font-size: 20px; cursor: pointer; line-height: 1;
+    }
+    .gate-close:hover { color: var(--white); }
+    .gate-label {
+      font-family: 'DM Mono', monospace; font-size: 10px;
+      color: var(--accent); text-transform: uppercase; letter-spacing: 3px;
+      margin-bottom: 16px;
+    }
+    .gate-title {
+      font-family: 'Bebas Neue', sans-serif; font-size: 38px;
+      letter-spacing: 1px; line-height: 1; margin-bottom: 12px;
+    }
+    .gate-sub { font-size: 13px; color: var(--gray); line-height: 1.6; margin-bottom: 32px; }
+    .gate-input {
+      width: 100%; background: var(--muted); border: 1px solid var(--border);
+      color: var(--white); font-family: 'DM Sans', sans-serif;
+      font-size: 15px; padding: 14px 16px; outline: none; margin-bottom: 12px;
+      transition: border-color 0.15s;
+    }
+    .gate-input:focus { border-color: var(--accent); }
+    .gate-input::placeholder { color: var(--gray); }
+    .gate-submit {
+      width: 100%; background: var(--accent); color: var(--black);
+      font-family: 'DM Mono', monospace; font-size: 13px; font-weight: 600;
+      letter-spacing: 1px; text-transform: uppercase;
+      border: none; padding: 16px; cursor: pointer;
+      transition: opacity 0.15s;
+    }
+    .gate-submit:hover { opacity: 0.9; }
+    .gate-fine {
+      font-family: 'DM Mono', monospace; font-size: 10px;
+      color: var(--gray); text-align: center; margin-top: 14px;
+      letter-spacing: 0.5px; line-height: 1.5;
+    }
+    .gate-benefits {
+      display: flex; flex-direction: column; gap: 6px; margin-bottom: 28px;
+    }
+    .gate-benefit {
+      font-size: 12px; color: var(--gray);
+      display: flex; align-items: flex-start; gap: 8px;
+    }
+    .gate-benefit::before { content: '✓'; color: var(--accent); flex-shrink: 0; font-weight: 700; }
+
+    /* TRIAL BANNER */
+    #trialBanner {
+      background: rgba(255,165,0,0.06); border-bottom: 1px solid rgba(255,165,0,0.2);
+      padding: 10px 32px; display: none;
+      font-family: 'DM Mono', monospace; font-size: 11px;
+      color: #ffa500; letter-spacing: 0.5px; text-align: center;
+    }
+
+  </style>
+  <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2/dist/umd/supabase.min.js"></script>
+  <script src="./klaar-client.js"></script>
+</head>
+<body>
+
+<header>
+  <div class="logo">Klaar</div>
+  <div class="header-right">
+    <span class="domain-tag">getklaar.app</span>
+    <div id="trialBadge" style="display:none; font-family:'DM Mono',monospace; font-size:11px; color:#ffa500; background:rgba(255,165,0,0.08); border:1px solid rgba(255,165,0,0.3); padding:3px 10px; border-radius:20px; letter-spacing:1px;"></div>
+    <button onclick="showAuthGate()" class="header-cta" id="headerCta">Gratis starten →</button>
+  </div>
+</header>
+
+<div class="hero">
+  <div class="hero-label">The Operating System for the Serving Industry</div>
+  <h1 class="hero-title">Spreek.<br>Scan. <em>Klaar.</em></h1>
+  <p class="hero-sub">De eerste horeca-app die je begrijpt en direct actie onderneemt. Geen formulieren invullen. Geen handleiding. Gewoon zeggen wat je wil — en het is geregeld.</p>
+  <div class="hero-ctas">
+    <button class="hero-cta-primary" onclick="showAuthGate()">Gratis starten — 14 dagen <span style="opacity:.7; font-size:13px;">geen creditcard</span></button>
+    <a href="#modules" class="hero-cta-secondary">Bekijk modules ↓</a>
+  </div>
+  <div class="hero-demo">
+    <div class="hero-demo-label">Zo werkt de AI-assistent</div>
+    <div class="hero-demo-window">
+      <div class="demo-msg-container" id="demoMessages">
+        <div class="demo-pair active" data-idx="0">
+          <div class="demo-user">"koeling nr. 2 staat op 8 graden, al 2 uur"</div>
+          <div class="demo-bot">⚠️ 8°C overschrijdt de HACCP-norm (&lt;7°C). Ik heb dit gelogd als afwijking. Verplaats bederfelijke producten en laat de technicus bellen. Wil ik ook een correctieve actie vastleggen?</div>
+        </div>
+        <div class="demo-pair" data-idx="1">
+          <div class="demo-user">"scan deze factuur van Hanos" [foto geüpload]</div>
+          <div class="demo-bot">✅ 23 producten gevonden en opgeslagen. Let op: kipfilet €10,20/kg — dat is +18% vs jouw vorige levering van €8,60. Wil je de kostprijs van je kipgerechten herberekenen?</div>
+        </div>
+        <div class="demo-pair" data-idx="2">
+          <div class="demo-user">"mijn foodcost zit te hoog, ik weet niet waar het zit"</div>
+          <div class="demo-bot">Je drie duurste gerechten zijn: Ribeye (foodcost 41%), Zalmtartaar (38%) en Gamba's (36%). Je target is 28%. De Ribeye alleen al kost je €340/maand extra marge. Wil ik concrete prijssuggesties berekenen?</div>
+        </div>
+        <div class="demo-pair" data-idx="3">
+          <div class="demo-user">"heeft de NVWA iets te zoeken bij mijn allergenenkaart?"</div>
+          <div class="demo-bot">3 recepten missen allergeendata: Huissalade, Dagsoep en Kindermenu. Dit zijn direct risico's bij een inspectie — boetes lopen op tot €1.500. Zal ik een checklist maken van wat ontbreekt?</div>
+        </div>
+        <div class="demo-pair" data-idx="4">
+          <div class="demo-user">"bruiloft zaterdag 80 personen, budget €3.200"</div>
+          <div class="demo-bot">✅ Event aangemaakt. Op basis van je ingrediëntenprijzen: kostprijs geschat op €18,40/pp → marge €21,60/pp (54%). Dat is ruim boven je target. Wil ik een keukensheet en boodschappenlijst genereren?</div>
+        </div>
+        <div class="demo-pair" data-idx="5">
+          <div class="demo-user">"zet mijn foodcost target op 29%"</div>
+          <div class="demo-bot">✅ Foodcost target bijgewerkt naar 29%. 4 gerechten zitten nu net boven target: Carpaccio (31%), Kaassoufflé (30%), Tonijnsalade (33%) en Vegaburger (30%). Wil ik je een aangepaste menukaart-analyse sturen?</div>
+        </div>
+        <div class="demo-pair" data-idx="6">
+          <div class="demo-user">"spreek recept in" [spreekt Bolognese in]</div>
+          <div class="demo-bot">✅ Recept aangemaakt: Klassieke Bolognese — 14 ingrediënten, bereidingstijd 45 min. Allergenen gedetecteerd: gluten, melk, selderij. Kostprijs berekend: €2,18/portie bij 4 personen. Opgeslagen in je bibliotheek.</div>
+        </div>
+        <div class="demo-pair" data-idx="7">
+          <div class="demo-user">"wat moet ik morgen bestellen voor het weekend?"</div>
+          <div class="demo-bot">Op basis van je weekend-recepten en huidige voorraad: bestel bij Hanos — kipfilet 8kg, rundergehakt 5kg, zalmfilet 4kg, verse basilicum 500g. Totaalprijs geschat: €187. Wil ik een bestelbonnetje opmaken?</div>
+        </div>
+      </div>
+      <div class="demo-dots">
+        <span class="demo-dot active" onclick="setDemo(0)"></span>
+        <span class="demo-dot" onclick="setDemo(1)"></span>
+        <span class="demo-dot" onclick="setDemo(2)"></span>
+        <span class="demo-dot" onclick="setDemo(3)"></span>
+        <span class="demo-dot" onclick="setDemo(4)"></span>
+        <span class="demo-dot" onclick="setDemo(5)"></span>
+        <span class="demo-dot" onclick="setDemo(6)"></span>
+        <span class="demo-dot" onclick="setDemo(7)"></span>
+      </div>
+    </div>
+  </div>
+</div>
+
+<div class="stats-bar">
+  <div class="stat"><div class="stat-number">3+</div><div class="stat-label">Uur bespaard per week</div></div>
+  <div class="stat"><div class="stat-number">€0</div><div class="stat-label">Startkosten</div></div>
+  <div class="stat"><div class="stat-number">5 min</div><div class="stat-label">Van nul naar live</div></div>
+  <div class="stat"><div class="stat-number">5</div><div class="stat-label">Modules live</div></div>
+</div>
+
+<div class="section">
+  <div class="section-header">
+    <div class="section-title">Hoe het werkt</div>
+  </div>
+  <div class="stap-grid">
+    <div class="stap">
+      <div class="stap-num">STAP 01</div>
+      <div class="stap-name">Email invullen</div>
+      <div class="stap-desc">Geen installatie, geen creditcard. Direct in je browser — ook op tablet of telefoon. Live in 2 minuten.</div>
+    </div>
+    <div class="stap-arrow">→</div>
+    <div class="stap">
+      <div class="stap-num">STAP 02</div>
+      <div class="stap-name">Open een module</div>
+      <div class="stap-desc">Start met wat jij vandaag nodig hebt — kostprijs, HACCP, of recepten. De AI-assistent staat direct klaar.</div>
+    </div>
+    <div class="stap-arrow">→</div>
+    <div class="stap">
+      <div class="stap-num">STAP 03</div>
+      <div class="stap-name">Zeg wat je wil</div>
+      <div class="stap-desc">Spreek in, scan een factuur, of typ je vraag. De assistent regelt de rest — en slaat alles automatisch op.</div>
+    </div>
+  </div>
+</div>
+
+<div class="section">
+  <div class="section-header">
+    <div class="section-title">Modules</div>
+    <div class="section-meta">5 live — elk met eigen AI-assistent</div>
+  </div>
+  <div class="module-grid">
+
+    <a class="module-card active" href="./01-recept-studio/klaar-recept-studio.html">
+      <div class="module-card-top">
+        <span class="module-icon">🍳</span>
+        <span class="module-status status-live">● Live</span>
+      </div>
+      <div class="module-number">MODULE 01 + 02</div>
+      <div class="module-name">Recepten &amp; Allergenen</div>
+      <div class="module-price">€22 / maand</div>
+      <div class="module-desc">Spreek een recept in — de AI schrijft het receptkaartje én genereert automatisch de EU-14 allergenenmatrix. NVWA-klaar zonder extra handwerk. Spar met de assistent om recepten direct aan te passen.</div>
+      <div class="module-roi">🛡️ Bespaart 1–2 uur/week + vervangt €1.500–€10.000 NVWA-boeticorisico</div>
+      <div class="module-arrow">→ Open module</div>
+    </a>
+
+    <a class="module-card active" href="./03-haccp/klaar-haccp.html">
+      <div class="module-card-top"><span class="module-icon">🌡️</span><span class="module-status status-live">● Live</span></div>
+      <div class="module-number">MODULE 03</div>
+      <div class="module-name">HACCP & Voedselveiligheid</div>
+      <div class="module-price">€22 / maand</div>
+      <div class="module-desc">Digitale temperatuurlijsten, ontvangstcontroles en CCP-analyse. Zeg "log koeling 4 graden" en de assistent schrijft het direct in het logboek. Klaar voor de NVWA-inspectie.</div>
+      <div class="module-roi">⏱️ Van 30 naar 3 minuten HACCP-logging per dag — bespaart €2.000+/jaar</div>
+      <div class="module-arrow">→ Open module</div>
+    </a>
+
+    <a class="module-card active" href="./04-kostprijs/klaar-kostprijs.html">
+      <div class="module-card-top"><span class="module-icon">📊</span><span class="module-status status-live">● Live</span></div>
+      <div class="module-number">MODULE 04</div>
+      <div class="module-name">Kostprijs Calculator</div>
+      <div class="module-price">€22 / maand</div>
+      <div class="module-desc">Live kostprijs per gerecht, menu engineering matrix en ingrediëntenbibliotheek. Scan een factuur — de assistent vult de inkoopprijzen automatisch bij. Geen Excel meer.</div>
+      <div class="module-roi">📈 Gemiddeld 3–7% margeverbtering — op €200k omzet is dat €6.000–€14.000/jaar</div>
+      <div class="module-arrow">→ Open module</div>
+    </a>
+
+    <div class="module-card coming-soon">
+      <div class="module-card-top"><span class="module-icon">🔥</span><span class="module-status status-soon">Binnenkort</span></div>
+      <div class="module-number">MODULE 05</div>
+      <div class="module-name">Drukte Heatmap</div>
+      <div class="module-price">€49 / maand</div>
+      <div class="module-desc">POS + weersverwachting + geschiedenis → druktekaart per shift. Nooit meer verrast worden.</div>
+      <a href="mailto:info@getklaar.app?subject=Interesse%20in%20Drukte%20Heatmap" class="interest-btn">Meld interesse →</a>
+    </div>
+
+    <div class="module-card coming-soon">
+      <div class="module-card-top"><span class="module-icon">📅</span><span class="module-status status-soon">Binnenkort</span></div>
+      <div class="module-number">MODULE 06</div>
+      <div class="module-name">Personeelsplanning</div>
+      <div class="module-price">€49 / maand</div>
+      <div class="module-desc">Auto-roster op basis van de heatmap + exact de euro-impact van elke personeelsbeslissing.</div>
+      <a href="mailto:info@getklaar.app?subject=Interesse%20in%20Personeelsplanning" class="interest-btn">Meld interesse →</a>
+    </div>
+
+    <a class="module-card active" href="./07-leveranciers/klaar-leveranciers.html">
+      <div class="module-card-top"><span class="module-icon">📦</span><span class="module-status status-live">● Live</span></div>
+      <div class="module-number">MODULE 07</div>
+      <div class="module-name">Leveranciers &amp; Voorraad</div>
+      <div class="module-price">€22 / maand</div>
+      <div class="module-desc">Scan pakbonnen via foto, AI leest alle producten en prijzen uit. Automatische anomalie-detectie waarschuwt bij prijsstijgingen. Koppelt direct met HACCP en kostprijs.</div>
+      <div class="module-roi">🔍 Pakt overcharging automatisch op — gemiddeld €800–€2.400/jaar teruggevonden</div>
+      <div class="module-arrow">→ Open module</div>
+    </a>
+
+    <div class="module-card coming-soon">
+      <div class="module-card-top"><span class="module-icon">📋</span><span class="module-status status-soon">Binnenkort</span></div>
+      <div class="module-number">MODULE 08</div>
+      <div class="module-name">Menu Builder</div>
+      <div class="module-price">€24 / maand</div>
+      <div class="module-desc">Bouw winstgevende menu's direct gekoppeld aan live kostprijsdata en allergeneninformatie.</div>
+      <a href="mailto:info@getklaar.app?subject=Interesse%20in%20Menu%20Builder" class="interest-btn">Meld interesse →</a>
+    </div>
+
+    <div class="module-card coming-soon">
+      <div class="module-card-top"><span class="module-icon">🪑</span><span class="module-status status-soon">Binnenkort</span></div>
+      <div class="module-number">MODULE 09</div>
+      <div class="module-name">Reserveringen</div>
+      <div class="module-price">€24 / maand</div>
+      <div class="module-desc">Reserveringsdata voedt de heatmap voor nóg betere druktevoorspellingen.</div>
+      <a href="mailto:info@getklaar.app?subject=Interesse%20in%20Reserveringen" class="interest-btn">Meld interesse →</a>
+    </div>
+
+    <a href="./10-catering-events/klaar-catering.html" class="module-card active">
+      <div class="module-card-top"><span class="module-icon">🍽️</span><span class="module-status status-live">● Live</span></div>
+      <div class="module-number">MODULE 10</div>
+      <div class="module-name">Catering &amp; Events</div>
+      <div class="module-price">€22 / maand</div>
+      <div class="module-desc">Van intake tot keukensheet. Zeg "voeg bruiloft 80 personen 15 juli €2.400 toe" — de assistent registreert het event en berekent de kostprijs per persoon.</div>
+      <div class="module-roi">⚡ Van 3 uur naar 30 minuten event-planning — bespaart 60+ uur per seizoen</div>
+      <div class="module-arrow">→ Open module</div>
+    </a>
+
+  </div>
+</div>
+
+<div class="section">
+  <div class="section-header">
+    <div class="section-title">Prijsoverzicht</div>
+    <div class="section-meta">Alle modules — combineer wat jij nodig hebt</div>
+  </div>
+  <div class="pricing-grid">
+    <div class="price-card price-live">
+      <div class="price-num">MODULE 01 + 02</div>
+      <div class="price-name">Recepten & Allergenen</div>
+      <div class="price-amount">€22/m</div>
+      <div class="price-status status-live">● Live</div>
+    </div>
+    <div class="price-card price-live">
+      <div class="price-num">MODULE 03</div>
+      <div class="price-name">HACCP & Voedselveiligheid</div>
+      <div class="price-amount">€22/m</div>
+      <div class="price-status status-live">● Live</div>
+    </div>
+    <div class="price-card price-live">
+      <div class="price-num">MODULE 04</div>
+      <div class="price-name">Kostprijs Calculator</div>
+      <div class="price-amount">€22/m</div>
+      <div class="price-status status-live">● Live</div>
+    </div>
+    <div class="price-card">
+      <div class="price-num">MODULE 05</div>
+      <div class="price-name">Drukte Heatmap</div>
+      <div class="price-amount">€49/m</div>
+      <div class="price-status">Binnenkort</div>
+    </div>
+    <div class="price-card">
+      <div class="price-num">MODULE 06</div>
+      <div class="price-name">Personeelsplanning</div>
+      <div class="price-amount">€49/m</div>
+      <div class="price-status">Binnenkort</div>
+    </div>
+    <div class="price-card price-live">
+      <div class="price-num">MODULE 07</div>
+      <div class="price-name">Leveranciers &amp; Voorraad</div>
+      <div class="price-amount">€22/m</div>
+      <div class="price-status status-live">● Live</div>
+    </div>
+    <div class="price-card">
+      <div class="price-num">MODULE 08</div>
+      <div class="price-name">Menu Builder</div>
+      <div class="price-amount">€24/m</div>
+      <div class="price-status">Binnenkort</div>
+    </div>
+    <div class="price-card">
+      <div class="price-num">MODULE 09</div>
+      <div class="price-name">Reserveringen</div>
+      <div class="price-amount">€24/m</div>
+      <div class="price-status">Binnenkort</div>
+    </div>
+    <div class="price-card price-live">
+      <div class="price-num">MODULE 10</div>
+      <div class="price-name">Catering &amp; Events</div>
+      <div class="price-amount">€22/m</div>
+      <div class="price-status status-live">● Live</div>
+    </div>
+  </div>
+  <div class="price-total">
+    <div style="display:flex; flex-direction:column; gap:4px;">
+      <div class="price-total-label">Full suite</div>
+      <div style="font-family:'DM Mono',monospace; font-size:11px; color:var(--gray);">
+        Losse modules samen: <span style="text-decoration:line-through;">€110/m</span>
+      </div>
+    </div>
+    <div style="display:flex; flex-direction:column; align-items:flex-end; gap:4px;">
+      <div class="price-total-amount">€89 / maand</div>
+      <div style="font-family:'DM Mono',monospace; font-size:11px; background:rgba(232,255,71,0.12); color:var(--accent); border:1px solid rgba(232,255,71,0.3); padding:2px 10px; letter-spacing:1px;">
+        JE BESPAART €21/M — €252/JAAR
+      </div>
+    </div>
+  </div>
+</div>
+
+<div class="section compare-section">
+  <div class="section-header">
+    <div class="section-title">Waarom Klaar?</div>
+    <div class="section-meta">Klaar is gebouwd voor de horeca — niet achteraf aangepast voor de horeca</div>
+  </div>
+
+  <!-- 3 key stats above table -->
+  <div style="display:grid; grid-template-columns:repeat(3,1fr); gap:1px; background:var(--border); border:1px solid var(--border); margin-bottom:24px;">
+    <div style="background:var(--surface); padding:22px 24px;">
+      <div style="font-family:'Bebas Neue',sans-serif; font-size:36px; color:var(--accent); letter-spacing:1px; line-height:1;">€0</div>
+      <div style="font-size:13px; color:var(--white); font-weight:500; margin:6px 0 4px;">Startkosten</div>
+      <div style="font-size:11px; color:var(--gray); font-family:'DM Mono',monospace; line-height:1.5;">Geen hardware. Geen implementatie. Geen demo nodig. Open browser en begin.</div>
+    </div>
+    <div style="background:var(--surface); padding:22px 24px;">
+      <div style="font-family:'Bebas Neue',sans-serif; font-size:36px; color:var(--accent); letter-spacing:1px; line-height:1;">Direct</div>
+      <div style="font-size:13px; color:var(--white); font-weight:500; margin:6px 0 4px;">Live in 5 minuten</div>
+      <div style="font-size:11px; color:var(--gray); font-family:'DM Mono',monospace; line-height:1.5;">Concurrenten vragen weken. Klaar werkt direct — ook zonder IT-kennis.</div>
+    </div>
+    <div style="background:var(--surface); padding:22px 24px;">
+      <div style="font-family:'Bebas Neue',sans-serif; font-size:36px; color:var(--accent); letter-spacing:1px; line-height:1;">Enige</div>
+      <div style="font-size:13px; color:var(--white); font-weight:500; margin:6px 0 4px;">Met AI ingebouwd</div>
+      <div style="font-size:11px; color:var(--gray); font-family:'DM Mono',monospace; line-height:1.5;">Spreek recepten in. AI detecteert allergenen én CCP's automatisch. Niemand anders doet dit.</div>
+    </div>
+  </div>
+
+  <div class="compare-wrapper">
+    <table class="compare-table">
+      <thead>
+        <tr>
+          <th style="width:22%">Vergelijking</th>
+          <th class="col-klaar" style="width:26%">✦ Klaar</th>
+          <th style="width:26%">appHoreca</th>
+          <th style="width:26%">Horeko (Exact)</th>
+        </tr>
+      </thead>
+      <tbody>
+        <tr>
+          <td class="row-label">Prijs / maand</td>
+          <td class="col-klaar val-good">Vanaf €22/m — full suite €89/m — prijs staat online</td>
+          <td>€75/m (€69 bij jaarbetaling)</td>
+          <td class="val-bad">Op aanvraag — geen publieke prijzen, verwacht €200–€500+</td>
+        </tr>
+        <tr>
+          <td class="row-label">Startkosten</td>
+          <td class="col-klaar val-good">€0 — geen hardware, geen implementatiekosten</td>
+          <td class="val-bad">€449+ — labelprinter €199 + printserver €179 verplicht</td>
+          <td class="val-bad">€1.000+ — eigen hardware + betaald implementatietraject</td>
+        </tr>
+        <tr>
+          <td class="row-label">Opstarttijd</td>
+          <td class="col-klaar val-good">Direct — open browser, meteen aan de slag</td>
+          <td class="val-bad">Dagen — demo + 1–5 werkdagen inrichting + training</td>
+          <td class="val-bad">Weken — demo + implementatie + training per module</td>
+        </tr>
+        <tr>
+          <td class="row-label">Hardware nodig</td>
+          <td class="col-klaar val-good">Nee — werkt op elke browser, ook tablet en telefoon</td>
+          <td class="val-bad">Ja — labelprinter + printserver verplicht bij aanschaf</td>
+          <td class="val-bad">Ja — eigen hardware: labelprinters, timekeepers, touchscreens</td>
+        </tr>
+        <tr>
+          <td class="row-label">Modules koppelen</td>
+          <td class="col-klaar val-good">Automatisch — recept → allergenenkaart → HACCP → kostprijs, geen dubbele invoer</td>
+          <td class="val-neutral">Deels — allergenen en recepten gekoppeld, rest apart</td>
+          <td class="val-neutral">Deels — aparte producten, handmatige koppeling vereist</td>
+        </tr>
+        <tr>
+          <td class="row-label">Modulair betalen</td>
+          <td class="col-klaar val-good">Ja — betaal alleen de modules die jij gebruikt</td>
+          <td>Nee — vast alles-in-één pakket</td>
+          <td>Beperkt — Kitchen Manager of Employee Manager</td>
+        </tr>
+        <tr>
+          <td class="row-label">AI — recept inspreken</td>
+          <td class="col-klaar val-good">Ja — spreek in, AI structureert recept en detecteert allergenen</td>
+          <td class="val-bad">Nee — volledig handmatig invoeren</td>
+          <td class="val-bad">Nee — volledig handmatig invoeren</td>
+        </tr>
+        <tr>
+          <td class="row-label">AI — CCP analyse</td>
+          <td class="col-klaar val-good">Ja — AI benoemt automatisch de HACCP-controlepunten per gerecht, klaar voor NVWA</td>
+          <td class="val-bad">Nee — handmatig invullen per gerecht</td>
+          <td class="val-bad">Nee — handmatig invullen per gerecht</td>
+        </tr>
+        <tr>
+          <td class="row-label">Live inkoopprijzen</td>
+          <td class="col-klaar val-good">Ja — dagelijkse Hanos-prijzen, marge-impact direct zichtbaar</td>
+          <td>Ja — leverancierskoppeling (Hanos, Bidfood)</td>
+          <td>Ja — leverancierskoppelingen inbegrepen</td>
+        </tr>
+        <tr>
+          <td class="row-label">Tijdsbesparing personeel</td>
+          <td class="col-klaar val-good">Uren per week — geen training, geen handleiding, intuïtief voor keukenpersoneel. Implementatie: 5 minuten.</td>
+          <td class="val-bad">Tientallen uren per jaar — aparte training per afdeling (keuken, bar, bediening) + handmatig bijhouden</td>
+          <td class="val-bad">Weken implementatie + betaalde training per module + hertraining bij updates</td>
+        </tr>
+        <tr>
+          <td class="row-label">Unieke extra modules</td>
+          <td class="col-klaar val-good">Drukte Heatmap, Personeelsplanning, Menu Builder, Reserveringen — operationeel gereedschap dat andere keukentools niet bieden</td>
+          <td class="val-bad">Alleen keuken & HACCP — geen bezetting, planning of reserveringen</td>
+          <td class="val-bad">Employee Manager apart product, extra kosten — geen heatmap of menu builder</td>
+        </tr>
+        <tr style="border-top:2px solid var(--border);">
+          <td class="row-label" style="font-weight:700; color:var(--white);">Doelgroep</td>
+          <td class="col-klaar" style="color:var(--accent); font-weight:500;">Elk horecabedrijf — frituur, café, restaurant, hotel, catering, maaltijdservice — van ZZP tot grote keten. Minimaal 1 module is altijd relevant.</td>
+          <td style="color:var(--gray);">Middelgrote restaurants met eigen keuken</td>
+          <td style="color:var(--gray);">Enterprise — grote professionele keukens met IT-afdeling</td>
+        </tr>
+      </tbody>
+    </table>
+    <div class="compare-source">
+      Bronnen (geraadpleegd juni 2026): apphoreca.nl/functionaliteiten · horeko.com/nl/functies · getapp.com/retail-consumer-services-software/a/horeko
+    </div>
+  </div>
+</div>
+
+<div class="flow-section">
+  <div class="section-header">
+    <div class="section-title">Hoe de modules samenwerken</div>
+  </div>
+  <div class="flow-grid">
+    <div class="flow-step active-flow">
+      <div class="flow-num">01</div>
+      <div class="flow-name">Recept Studio</div>
+      <div class="flow-desc">Stem → receptkaart + allergenen</div>
+    </div>
+    <div class="flow-step">
+      <div class="flow-num">02</div>
+      <div class="flow-name">Allergenenkaart</div>
+      <div class="flow-desc">Auto vanuit recepten</div>
+    </div>
+    <div class="flow-step">
+      <div class="flow-num">03</div>
+      <div class="flow-name">HACCP</div>
+      <div class="flow-desc">Recepten → CCP's + temperatuurlijsten</div>
+    </div>
+    <div class="flow-step">
+      <div class="flow-num">04</div>
+      <div class="flow-name">Kostprijs</div>
+      <div class="flow-desc">Ingrediënten → live prijs</div>
+    </div>
+    <div class="flow-step">
+      <div class="flow-num">05 → 09</div>
+      <div class="flow-name">Planning & Meer</div>
+      <div class="flow-desc">Alles stroomt door</div>
+    </div>
+  </div>
+</div>
+
+<div class="section founder-section">
+  <div class="section-header">
+    <div class="section-title">Founder Overzicht</div>
+    <span class="founder-label">Intern</span>
+  </div>
+  <div class="founder-cols">
+    <div>
+      <div class="section-meta" style="margin-bottom:16px;">MODULE VOORTGANG</div>
+      <div class="progress-list">
+        <div class="progress-item">
+          <div class="progress-meta">
+            <span class="progress-name">01 — Recept Studio</span>
+            <span class="progress-pct">100%</span>
+          </div>
+          <div class="progress-bar-track"><div class="progress-bar-fill" style="width:100%"></div></div>
+          <div class="progress-note">Live op getklaar.vercel.app</div>
+        </div>
+        <div class="progress-item">
+          <div class="progress-meta">
+            <span class="progress-name">02 — Allergenenkaart</span>
+            <span class="progress-pct">100%</span>
+          </div>
+          <div class="progress-bar-track"><div class="progress-bar-fill" style="width:100%"></div></div>
+          <div class="progress-note">Live — auto-gegenereerd vanuit recepten</div>
+        </div>
+        <div class="progress-item">
+          <div class="progress-meta">
+            <span class="progress-name">03 — HACCP & Voedselveiligheid</span>
+            <span class="progress-pct">100%</span>
+          </div>
+          <div class="progress-bar-track"><div class="progress-bar-fill" style="width:100%"></div></div>
+          <div class="progress-note">Live — temperatuur, leveranciers, schoonmaak, CCP AI</div>
+        </div>
+        <div class="progress-item">
+          <div class="progress-meta">
+            <span class="progress-name">04 — Kostprijs Calculator</span>
+            <span class="progress-pct">100%</span>
+          </div>
+          <div class="progress-bar-track"><div class="progress-bar-fill" style="width:100%"></div></div>
+          <div class="progress-note">Live — dashboard, ingrediënten, recepten doorrekenen, losse berekening</div>
+        </div>
+        <div class="progress-item">
+          <div class="progress-meta">
+            <span class="progress-name">05 — Drukte Heatmap</span>
+            <span class="progress-pct">0%</span>
+          </div>
+          <div class="progress-bar-track"><div class="progress-bar-fill dim" style="width:0%"></div></div>
+          <div class="progress-note">Vereist POS-koppeling</div>
+        </div>
+        <div class="progress-item">
+          <div class="progress-meta">
+            <span class="progress-name">06 — Personeelsplanning</span>
+            <span class="progress-pct">0%</span>
+          </div>
+          <div class="progress-bar-track"><div class="progress-bar-fill dim" style="width:0%"></div></div>
+          <div class="progress-note">Gebouwd op heatmap data</div>
+        </div>
+        <div class="progress-item">
+          <div class="progress-meta">
+            <span class="progress-name">07 — Leveranciers &amp; Voorraad</span>
+            <span class="progress-pct">85%</span>
+          </div>
+          <div class="progress-bar-track"><div class="progress-bar-fill" style="width:85%"></div></div>
+          <div class="progress-note">Live — pakbonnen, voorraad, anomalie-detectie. Hanos live-koppeling nog in onderzoek.</div>
+        </div>
+        <div class="progress-item">
+          <div class="progress-meta">
+            <span class="progress-name">08 — Menu Builder</span>
+            <span class="progress-pct">0%</span>
+          </div>
+          <div class="progress-bar-track"><div class="progress-bar-fill dim" style="width:0%"></div></div>
+          <div class="progress-note">Vereist kostprijs + allergenen</div>
+        </div>
+        <div class="progress-item">
+          <div class="progress-meta">
+            <span class="progress-name">09 — Reserveringen</span>
+            <span class="progress-pct">0%</span>
+          </div>
+          <div class="progress-bar-track"><div class="progress-bar-fill dim" style="width:0%"></div></div>
+          <div class="progress-note">Koppeling met heatmap</div>
+        </div>
+        <div class="progress-item">
+          <div class="progress-meta">
+            <span class="progress-name">10 — Catering &amp; Events</span>
+            <span class="progress-pct">80%</span>
+          </div>
+          <div class="progress-bar-track"><div class="progress-bar-fill" style="width:80%"></div></div>
+          <div class="progress-note">Live — intake tot keuken- en bedieningssheet. Verdere uitbouw gepland.</div>
+        </div>
+      </div>
+    </div>
+    <div>
+      <div class="section-meta" style="margin-bottom:16px;">TECH STACK</div>
+      <div class="tech-grid">
+        <div class="tech-card">
+          <div class="tech-layer">Frontend</div>
+          <div class="tech-name">Statische HTML</div>
+          <div class="tech-status live">● Live</div>
+        </div>
+        <div class="tech-card">
+          <div class="tech-layer">Hosting</div>
+          <div class="tech-name">Vercel</div>
+          <div class="tech-status live">● Auto-deploy</div>
+        </div>
+        <div class="tech-card">
+          <div class="tech-layer">Versioning</div>
+          <div class="tech-name">GitHub</div>
+          <div class="tech-status live">● getklaar/getklaar</div>
+        </div>
+        <div class="tech-card">
+          <div class="tech-layer">Domein</div>
+          <div class="tech-name">getklaar.app</div>
+          <div class="tech-status planned">⚡ Koppelen aan Vercel</div>
+        </div>
+        <div class="tech-card">
+          <div class="tech-layer">Backend / Auth</div>
+          <div class="tech-name">Supabase</div>
+          <div class="tech-status planned">⚡ Roadmap — multi-user</div>
+        </div>
+        <div class="tech-card">
+          <div class="tech-layer">AI</div>
+          <div class="tech-name">Claude API</div>
+          <div class="tech-status live">● Recept Studio</div>
+        </div>
+      </div>
+    </div>
+  </div>
+</div>
+
+<!-- KLAAR ASSISTENT SECTIE -->
+<div class="section" style="background: rgba(232,255,71,0.03); border-top: 1px solid rgba(232,255,71,0.15);">
+  <div style="display:grid; grid-template-columns: 1fr 1fr; gap: 40px; align-items: center;">
+    <div>
+      <div class="hero-label" style="margin-bottom:16px;">Ingebouwde AI-assistent</div>
+      <h2 style="font-family:'Bebas Neue',sans-serif; font-size:clamp(32px,5vw,52px); line-height:0.95; letter-spacing:2px; margin-bottom:18px;">
+        Stel je vragen.<br><span style="color:var(--accent);">Krijg antwoorden<br>op basis van jouw data.</span>
+      </h2>
+      <p style="font-size:14px; color:var(--gray); line-height:1.7; max-width:420px; margin-bottom:24px;">
+        De Klaar Assistent kent al je recepten, ingrediënten, kostprijzen, HACCP-logs en leveranciers. Vraag om een margeanalyse, laat hem knelpunten zoeken, of spar gewoon over je bedrijf — hij reageert op basis van jouw echte data.
+      </p>
+      <button onclick="toggleChat()" style="
+        display:inline-flex; align-items:center; gap:12px;
+        background:var(--accent); color:var(--black);
+        border:none; cursor:pointer; padding:14px 28px;
+        font-family:'DM Sans',sans-serif; font-weight:600; font-size:14px;
+        transition: transform 0.15s;
+      " onmouseover="this.style.transform='translateY(-2px)'" onmouseout="this.style.transform='none'">
+        💬 &nbsp;Open de Klaar Assistent
+      </button>
+    </div>
+    <div style="display:flex; flex-direction:column; gap:1px; background:var(--border); border:1px solid var(--border);">
+      <div style="background:var(--surface); padding:14px 18px; border-bottom:1px solid var(--border);">
+        <div style="font-size:11px; color:var(--gray); font-family:'DM Mono',monospace; margin-bottom:5px;">VOORBEELD VRAAG</div>
+        <div style="font-size:13px; color:var(--white);">"Waarom is mijn marge op de biefstuk gedaald?"</div>
+      </div>
+      <div style="background:rgba(232,255,71,0.04); padding:14px 18px; border-bottom:1px solid var(--border);">
+        <div style="font-size:11px; color:var(--accent); font-family:'DM Mono',monospace; margin-bottom:5px;">KLAAR ASSISTENT</div>
+        <div style="font-size:13px; color:var(--white); line-height:1.6;">Je inkoopprijs voor rundvlees is gestegen van €16 naar €19/kg. Bij je huidige verkoopprijs is je foodcost 34% — boven je target van 30%. Oplossing: prijs €1,50 omhoog of portie 20g kleiner.</div>
+      </div>
+      <div style="background:var(--surface); padding:14px 18px; border-bottom:1px solid var(--border);">
+        <div style="font-size:11px; color:var(--gray); font-family:'DM Mono',monospace; margin-bottom:5px;">VOORBEELD VRAAG</div>
+        <div style="font-size:13px; color:var(--white);">"Welke modules gebruik ik nog niet optimaal?"</div>
+      </div>
+      <div style="background:rgba(232,255,71,0.04); padding:14px 18px;">
+        <div style="font-size:11px; color:var(--accent); font-family:'DM Mono',monospace; margin-bottom:5px;">KLAAR ASSISTENT</div>
+        <div style="font-size:13px; color:var(--white); line-height:1.6;">Module 07 heeft 0 producten gekoppeld aan Module 04 — je inkoopprijzen worden dus niet automatisch bijgewerkt. Koppel je Hanos-producten en je kostprijs klopt altijd live.</div>
+      </div>
+    </div>
+  </div>
+</div>
+
+<footer>
+  <div class="footer-logo">Klaar.</div>
+  <div class="footer-note">getklaar.app · Beta v0.1 · NL First · Then Europe</div>
+</footer>
+
+
+<!-- ═══════════════════════════════════════
+     KLAAR ASSISTENT — CHAT WIDGET
+═══════════════════════════════════════ -->
+<button class="chat-trigger" id="chatTrigger" onclick="toggleChat()" title="Klaar Assistent openen">
+  <span class="chat-trigger-icon">💬</span>
+  <span class="chat-trigger-label" id="chatTriggerLabel">Vraag de Klaar Assistent</span>
+  <span class="chat-trigger-pulse" id="chatTriggerPulse"></span>
+</button>
+
+<div class="chat-panel" id="chatPanel">
+  <div class="chat-header">
+    <div class="chat-header-info">
+      <div class="chat-header-title">Klaar Assistent</div>
+      <div class="chat-header-sub">Powered by Claude · Alle modules · Live data</div>
+    </div>
+    <button class="chat-header-close" onclick="toggleChat()">✕</button>
+  </div>
+
+  <div class="chat-messages" id="chatMessages">
+    <div class="chat-msg assistant">
+      <div class="chat-bubble">
+        Hallo! Ik ben je Klaar assistent. Ik heb toegang tot al je live data — recepten, ingrediënten, kostprijzen, HACCP-logs en leveranciers.<br><br>
+        Stel me een vraag of laat me je data analyseren.
+      </div>
+    </div>
+  </div>
+
+  <div class="chat-suggestions" id="chatSuggestions">
+    <button class="chat-suggestion" onclick="chatSuggest('Analyseer mijn marges en geef concrete aanbevelingen')">📊 Analyseer marges</button>
+    <button class="chat-suggestion" onclick="chatSuggest('Welke gerechten zijn het winstgevendst en welke kosten me geld?')">🍽️ Winstgevendheid</button>
+    <button class="chat-suggestion" onclick="chatSuggest('Hoe staat mijn HACCP-documentatie er voor?')">🌡️ HACCP check</button>
+    <button class="chat-suggestion" onclick="chatSuggest('Geef me een volledig overzicht van mijn app-data en wat me opvalt')">📋 App overzicht</button>
+  </div>
+
+  <div class="chat-input-area">
+    <textarea
+      class="chat-input" id="chatInput"
+      placeholder="Vraag iets over je data of modules..."
+      rows="1"
+      onkeydown="chatKeyDown(event)"
+      oninput="chatAutoResize(this)"
+    ></textarea>
+    <button class="chat-send" id="chatSend" onclick="chatSend()">↑</button>
+  </div>
+</div>
+
+<script>
+// ═══════════════════════════════════════════════════════
+//  KLAAR ASSISTENT — chat met streaming Claude API
+// ═══════════════════════════════════════════════════════
+
+const _chatHistory = [];
+let _chatStreaming = false;
+
+function toggleChat() {
+  const panel = document.getElementById('chatPanel');
+  const trigger = document.getElementById('chatTrigger');
+  const opening = !panel.classList.contains('open');
+  panel.classList.toggle('open', opening);
+  trigger.classList.toggle('open', opening);
+  document.getElementById('chatTriggerIcon') && (document.getElementById('chatTriggerIcon').textContent = opening ? '✕' : '💬');
+  document.getElementById('chatTriggerLabel').textContent = opening ? 'Sluiten' : 'Vraag de Klaar Assistent';
+  document.getElementById('chatTriggerPulse').style.display = opening ? 'none' : 'block';
+  if (opening) {
+    setTimeout(() => document.getElementById('chatInput').focus(), 300);
+  }
+}
+
+// ── Systeemprompt: lees alle localStorage-data en bouw context ──
+function chatBuildPrompt() {
+  const safe = (key, fallback = []) => {
+    try { return JSON.parse(localStorage.getItem(key) || JSON.stringify(fallback)); }
+    catch(e) { return fallback; }
+  };
+
+  const recepten     = safe('klaar_recipes', []);
+  const ingredienten = safe('klaar_ingredienten', []);
+  const instellingen = safe('klaar_kostprijs_settings', {});
+  const populariteit = safe('klaar_populariteit', {});
+  const producten    = safe('klaar_producten', []);
+  const haccpLog     = safe('klaar_haccp_log', []);
+  const receptLinks  = safe('klaar_recept_links', {});
+
+  // Bouw compacte ingrediënten-samenvatting
+  const ingLijst = ingredienten.slice(0, 60).map(i =>
+    `${i.naam}: €${i.inkoopprijs}/${i.eenheid}${i.leverancier ? ' ('+i.leverancier+')' : ''}`
+  ).join(' | ');
+
+  // Recepten met populariteit
+  const recLijst = recepten.slice(0, 30).map(r => {
+    const pop = populariteit[r.id] || 'onbekend';
+    return `${r.title || r.naam || 'naamloos'} (populariteit: ${pop})`;
+  }).join(', ');
+
+  // HACCP recente logs
+  const haccpRecent = haccpLog.slice(-5).map(e =>
+    `${e.datum || '?'}: ${e.type || e.categorie || 'log'}`
+  ).join(', ');
+
+  return `Je bent de Klaar Assistent — een ingebouwde AI voor Klaar, het operationele platform voor de Nederlandse horecasector.
+
+OVER KLAAR:
+Klaar is een modulaire SaaS ("The Operating System for the Serving Industry") met 10 modules voor horecaondernemers in Nederland. De modules werken samen via gedeelde data.
+
+LIVE MODULES:
+01 Recept Studio — Spraak → receptkaart + allergenen (AI)
+02 Allergenenkaart — EU-14 allergenenmatrix, auto vanuit recepten, NVWA-gereed
+03 HACCP & Voedselveiligheid — Temperatuurlijsten, CCP AI-analyse, schoonmaakroosters
+04 Kostprijs Calculator — Live kostprijs per gerecht, foodcost dashboard, menu engineering matrix
+07 Leveranciers & Voorraad — Pakbonnen scannen, anomalie-detectie, voorraad, Hanos-koppeling
+10 Catering & Events — Van intake tot keuken- en bedieningssheet
+
+LIVE DATA UIT DE APP:
+Recepten (${recepten.length}): ${recLijst || 'Geen recepten aangemaakt'}
+Ingrediënten (${ingredienten.length}): ${ingLijst || 'Geen ingrediënten'}
+Kostprijs instellingen: foodcost-target=${instellingen.defaultFoodcost || '?'}%, BTW=${instellingen.btwPercentage || '?'}%, factor=${instellingen.factor || '?'}, type zaak=${instellingen.typeZaak || '?'}
+Leveranciersproducten: ${producten.length} producten geregistreerd
+HACCP logs: ${haccpLog.length} entries${haccpLog.length > 0 ? ', recent: ' + haccpRecent : ''}
+
+JOUW ROL:
+- Je bent een slimme zakenpartner die de horecaondernemer echt helpt
+- Spreek professioneel maar toegankelijk — concrete taal, geen managementjargon
+
+RESPONSLENGTE & TOON (STRIKT VOLGEN):
+- Houd antwoorden KORT. Max 3-4 zinnen voor eenvoudige vragen. Max 6-8 zinnen voor complexe vragen.
+- GEEN markdown headers (#, ##) in chats — dit is een gesprek, geen document.
+- GEEN bold tekst (**tekst**) voor nadruk in conversaties.
+- GEEN genummerde lijsten tenzij het echt stap-voor-stap instructies zijn.
+- Max 1 emoji per bericht. Liever 0 bij zakelijke vragen.
+- Vraag maximaal 1 verduidelijkingsvraag tegelijk. Begin direct te helpen waar je kunt.
+- Geef nooit een inleiding of samenvatting — ga direct to the point.
+- Gebruik de live data om specifieke inzichten te geven, niet generieke adviezen
+- Als je een probleem of kans ziet in de data, benoem het proactief
+- Geef altijd een concrete aanbeveling of volgende stap
+- Antwoord beknopt maar volledig — niet te kort, niet te lang
+- Mag doorvragen als je meer context nodig hebt
+- Altijd in het Nederlands
+COMMERCIËLE INTELLIGENTIE (gebruik spaarzaam en alleen organisch):
+Jij bent ook de stille verkoper van Klaar. Maar doe het GOED: alleen wanneer je een echte opening ziet, maximaal 1x per gesprek, nooit als advertentie, nooit als je het al een keer hebt gedaan in dit gesprek. Als het niet perfect past, zeg je niets.
+
+WANNEER MAG JE EEN HINT GEVEN:
+1. Gebruiker noemt een probleem dat een ANDERE Klaar-module oplost die ze nog niet hebben
+2. Gebruiker noemt frustaties over een ander systeem (duur, moeilijk, verouderd)
+3. Gebruiker doet iets handmatig in Excel of op papier dat Klaar automatiseert
+4. Gebruiker praat over kosten van software en betaalt meer dan nodig lijkt
+5. Gebruiker heeft meerdere losse apps die niet samenwerken
+
+MODULES & PRIJZEN (voor context bij upsell):
+01+02 Recepten & Allergenen — €22/m — Spraak → recept + EU-14 allergenenmatrix, NVWA-compliant
+03 HACCP — €22/m — Digitaal logboek, AI CCP-analyse
+04 Kostprijs Calculator — €22/m — Live marges, menu engineering
+07 Leveranciers & Voorraad — €22/m — Factuur-scan, anomalie-detectie
+10 Catering & Events — €22/m — Van intake tot keukensheet
+Full suite — €89/m (los €110/m) — Alle modules samen
+
+HOE JE HET ZEGT (toon: zakenpartner die iets handigs opmerkt, NIET een verkoopgesprek):
+✅ "Oh trouwens — als je dit probleem vaker hebt, lost Module 04 dit automatisch op. Kost je €22/m en rekent zichzelf terug."
+✅ "Dat klinkt als iets waarvoor je nu waarschijnlijk een apart systeem betaalt. Klaar doet dit al voor €22/m."
+✅ "Interessant — als je ook Module 07 gebruikt, koppelt dit automatisch aan je inkoopprijzen."
+✅ "Voor €22/m heb je meteen ook de Allergenenkaart erbij — nooit meer handmatig bijhouden."
+
+WAT JE NOOIT DOET:
+❌ Concurrenten met naam belasteren of negatief vergelijken
+❌ Meerdere keren per gesprek iets verkopen
+❌ Een module aanprijzen als de gebruiker duidelijk al weet dat die bestaat
+❌ Pushen als de gebruiker niet reageert
+❌ Iets aanbevelen dat niet relevant is voor het actuele probleem
+
+KASSASYSTEMEN & ECOSYSTEEM:
+De meeste horecazaken waar jij mee werkt hebben ook een kassasysteem (POS). Klaar werkt NAAST die systemen, niet ertegen.
+Meestgebruikte kassasystemen in NL: unTill (marktleider, 3500+ klanten), Lightspeed Restaurant (cloud, iPad), Square for Restaurants, Reeleezee, Oracle MICROS (hotels/ketens), Orderbird.
+Meestgebruikte groothandels: Hanos (marktleider), Bidfood, Sligro, Makro.
+
+CONCURRENTEN VAN KLAAR (ken ze goed):
+- appHoreca (apphoreca.nl): directe concurrent. €69-75/maand voor alles-in-één (vs Klaar vanaf €22/m modulair). Geen AI, verouderde UX, vereist hardware (Zebra labelprinter €199+, startkosten €449-999). Klaar heeft AI, is modulair, €0 startkosten, direct live.
+- Horeko (door Exact): enterprise-product voor ketens. 5-10x duurder, IT-project, niet voor zelfstandige ondernemer.
+- Klaar positionering: modulair, AI-first, no-hardware, direct live, gebouwd voor de zelfstandige horecaondernemer.
+
+DATA IMPORTEREN — WANNEER DATA ONTBREEKT, VRAAG PROACTIEF:
+Als je meer data nodig hebt om een probleem op te lossen of iets beter in te vullen, vraag dan ALTIJD welk systeem de klant gebruikt en geef de exacte stappen:
+
+unTill export: Webmanagement (webmanagement.untill.com) → Rapporten → Artikelen → Exporteer CSV → upload hier
+Lightspeed export: Manager → Items → Exporteer CSV → upload hier
+Hanos inkoopprijzen: Mijn Hanos (mijnhanos.nl) → Bestelhistorie → Exporteer Excel → upload hier
+Bidfood: Bestelportal → Favorieten → Exporteer CSV → upload hier
+Sligro: Mijn account → Bestellingen → Exporteer Excel → upload hier
+Z-rapport/dagsluiting: alle kassasystemen → foto van de kassabon/rapport → upload hier
+
+Vraag altijd eerst: "Welk kassasysteem gebruik jij?" of "Bij welke groothandel bestel jij?" — dan geef je de exacte stappen voor dat specifieke systeem.`;
+}
+
+// ── Verstuur bericht ──
+async function chatSend() {
+  if (_chatStreaming) return;
+
+  const input = document.getElementById('chatInput');
+  const msg = input.value.trim();
+  if (!msg) return;
+
+  input.value = '';
+  input.style.height = 'auto';
+  document.getElementById('chatSuggestions').style.display = 'none';
+
+  chatAppend('user', msg);
+  _chatHistory.push({ role: 'user', content: msg });
+
+  _chatStreaming = true;
+  document.getElementById('chatSend').disabled = true;
+
+  // Typing indicator
+  const typing = document.createElement('div');
+  typing.className = 'chat-typing'; typing.id = '_chatTyping';
+  typing.innerHTML = '<span>●</span><span>●</span><span>●</span>';
+  document.getElementById('chatMessages').appendChild(typing);
+  chatScroll();
+
+  let fullText = '';
+
+  try {
+    const res = await klaarAIStream({
+      model: 'claude-haiku-4-5-20251001',
+      max_tokens: 1024,
+      stream: true,
+      system: chatBuildPrompt(),
+      messages: _chatHistory.slice(-12)
+    }, 'index');
+
+    document.getElementById('_chatTyping')?.remove();
+
+    if (!res.ok) {
+      const err = await res.json().catch(() => ({}));
+      throw new Error(err.error?.message || `HTTP ${res.status}`);
+    }
+
+    // Maak assistent-bubble aan voor streaming output
+    const wrap = document.createElement('div');
+    wrap.className = 'chat-msg assistant';
+    const bubble = document.createElement('div');
+    bubble.className = 'chat-bubble';
+    wrap.appendChild(bubble);
+    document.getElementById('chatMessages').appendChild(wrap);
+
+    // Lees streaming SSE
+    const reader = res.body.getReader();
+    const decoder = new TextDecoder();
+    let buf = '';
+
+    while (true) {
+      const { done, value } = await reader.read();
+      if (done) break;
+      buf += decoder.decode(value, { stream: true });
+
+      // Verwerk volledige regels
+      const lines = buf.split('\n');
+      buf = lines.pop() || '';
+
+      for (const line of lines) {
+        if (!line.startsWith('data: ')) continue;
+        const raw = line.slice(6).trim();
+        if (raw === '[DONE]') continue;
+        try {
+          const parsed = JSON.parse(raw);
+          if (parsed.type === 'content_block_delta' && parsed.delta?.type === 'text_delta') {
+            fullText += parsed.delta.text;
+            bubble.innerHTML = chatFormat(fullText);
+            chatScroll();
+          }
+        } catch(e) {}
+      }
+    }
+
+    _chatHistory.push({ role: 'assistant', content: fullText });
+
+  } catch(err) {
+    document.getElementById('_chatTyping')?.remove();
+    chatAppend('assistant', `Er ging iets mis: ${err.message}`);
+    console.error('Klaar chat error:', err);
+  }
+
+  _chatStreaming = false;
+  document.getElementById('chatSend').disabled = false;
+}
+
+function chatSuggest(text) {
+  document.getElementById('chatInput').value = text;
+  chatSend();
+}
+
+function chatShowNoKey() {
+  const msgs = document.getElementById('chatMessages');
+  if (msgs.querySelector('.chat-no-key')) return;
+  const el = document.createElement('div');
+  el.className = 'chat-no-key';
+  el.innerHTML = '⚠️ Geen API key gevonden. Stel je Claude API key in via <strong>Module 01 (Recept Studio) → Instellingen</strong>. Daarna werkt de chat automatisch.';
+  msgs.appendChild(el);
+  chatScroll();
+}
+
+function chatAppend(role, text) {
+  const wrap = document.createElement('div');
+  wrap.className = `chat-msg ${role}`;
+  const bubble = document.createElement('div');
+  bubble.className = 'chat-bubble';
+  bubble.innerHTML = chatFormat(text);
+  wrap.appendChild(bubble);
+  document.getElementById('chatMessages').appendChild(wrap);
+  chatScroll();
+}
+
+function chatFormat(text) {
+  return text
+    .replace(/&/g,'&amp;').replace(/</g,'&lt;').replace(/>/g,'&gt;')
+    .replace(/\*\*(.*?)\*\*/g,'<strong>$1</strong>')
+    .replace(/\*(.*?)\*/g,'<em>$1</em>')
+    .replace(/\n{2,}/g,'<br><br>')
+    .replace(/\n/g,'<br>');
+}
+
+function chatScroll() {
+  const el = document.getElementById('chatMessages');
+  el.scrollTop = el.scrollHeight;
+}
+
+function chatKeyDown(e) {
+  if (e.key === 'Enter' && !e.shiftKey) { e.preventDefault(); chatSend(); }
+}
+
+function chatAutoResize(el) {
+  el.style.height = 'auto';
+  el.style.height = Math.min(el.scrollHeight, 110) + 'px';
+}
+
+// =====================================================================
+// AUTH GATE (Supabase OTP)
+// =====================================================================
+async function showAuthGate() {
+  // Al ingelogd? Ga direct naar de app
+  const session = await klaarGetSession();
+  if (session) {
+    window.location.href = './01-recept-studio/klaar-recept-studio.html';
+    return;
+  }
+  document.getElementById('emailGate').classList.add('visible');
+  document.getElementById('gateStepEmail').style.display = '';
+  document.getElementById('gateStepCode').style.display = 'none';
+  setTimeout(() => document.getElementById('gateEmail').focus(), 100);
+}
+
+function hideEmailGate() {
+  document.getElementById('emailGate').classList.remove('visible');
+}
+
+let _gateEmail = '';
+
+async function gateSubmitEmail() {
+  const emailEl = document.getElementById('gateEmail');
+  const email = emailEl.value.trim();
+  if (!email || !email.includes('@')) {
+    emailEl.style.borderColor = '#ff4444';
+    setTimeout(() => { emailEl.style.borderColor = ''; }, 2000);
+    return;
+  }
+  const btn = document.querySelector('#gateStepEmail .gate-submit');
+  btn.disabled = true;
+  btn.textContent = 'Code sturen...';
+  try {
+    await klaarSignInWithOTP(email);
+    _gateEmail = email;
+    document.getElementById('gateStepEmail').style.display = 'none';
+    document.getElementById('gateStepCode').style.display = '';
+    document.getElementById('gateCodeHint').textContent = `Code gestuurd naar ${email}`;
+    setTimeout(() => document.getElementById('gateCode').focus(), 100);
+  } catch(e) {
+    btn.disabled = false;
+    btn.textContent = 'Code ontvangen →';
+    alert('Er ging iets mis: ' + e.message);
+  }
+}
+
+async function gateSubmitCode() {
+  const codeEl = document.getElementById('gateCode');
+  const code = codeEl.value.replace(/\s/g, '');
+  if (code.length < 6) {
+    codeEl.style.borderColor = '#ff4444';
+    setTimeout(() => { codeEl.style.borderColor = ''; }, 2000);
+    return;
+  }
+  const btn = document.querySelector('#gateStepCode .gate-submit');
+  btn.disabled = true;
+  btn.textContent = 'Inloggen...';
+  try {
+    await klaarVerifyOTP(_gateEmail, code);
+    window.location.href = './01-recept-studio/klaar-recept-studio.html';
+  } catch(e) {
+    btn.disabled = false;
+    btn.textContent = 'Inloggen →';
+    codeEl.value = '';
+    codeEl.style.borderColor = '#ff4444';
+    setTimeout(() => { codeEl.style.borderColor = ''; }, 2000);
+  }
+}
+
+async function initSession() {
+  const session = await klaarGetSession();
+  if (!session) return;
+
+  // Al ingelogd: verberg CTA, toon gebruikersnaam in header
+  const headerCta = document.getElementById('headerCta');
+  if (headerCta) headerCta.classList.add('hidden');
+
+  const badge = document.getElementById('trialBadge');
+  if (badge) {
+    badge.style.display = 'block';
+    badge.textContent = (session.user?.email || '').split('@')[0].toUpperCase().slice(0, 12);
+  }
+}
+
+// Demo rotatie
+let _demoIdx = 0, _demoTimer;
+function setDemo(idx) {
+  document.querySelectorAll('.demo-pair').forEach((el, i) => el.classList.toggle('active', i === idx));
+  document.querySelectorAll('.demo-dot').forEach((el, i) => el.classList.toggle('active', i === idx));
+  _demoIdx = idx;
+  clearInterval(_demoTimer);
+  _demoTimer = setInterval(() => setDemo((_demoIdx + 1) % 8), 4500);
+}
+
+document.addEventListener('DOMContentLoaded', () => {
+  initSession();
+  _demoTimer = setInterval(() => setDemo((_demoIdx + 1) % 8), 4500);
+});
+</script>
+
+<!-- TRIAL BANNER -->
+<div id="trialBanner">
+  <span id="trialBannerText"></span>
+  &nbsp;·&nbsp;
+  <a href="mailto:info@getklaar.app?subject=Klaar%20abonnement" style="color:#ffa500; text-decoration:underline;">Activeer volledig account →</a>
+</div>
+
+<!-- AUTH GATE MODAL (Supabase OTP — 2 stappen) -->
+<div class="gate-overlay" id="emailGate">
+  <div class="gate-card">
+    <button class="gate-close" onclick="hideEmailGate()">×</button>
+    <div class="gate-label">14 dagen gratis</div>
+    <div class="gate-title">Start gratis.<br>Vandaag nog.</div>
+
+    <!-- STAP 1: e-mail invullen -->
+    <div id="gateStepEmail">
+      <p class="gate-sub">Vul je e-mail in. We sturen je een inlogcode — geen wachtwoord nodig.</p>
+      <div class="gate-benefits">
+        <div class="gate-benefit">Alle 6 live modules direct beschikbaar</div>
+        <div class="gate-benefit">AI-assistent in elke module inbegrepen</div>
+        <div class="gate-benefit">Scan facturen, spreek recepten in, log HACCP direct via chat</div>
+        <div class="gate-benefit">Werkt op elke browser, ook tablet en telefoon</div>
+      </div>
+      <input type="email" class="gate-input" id="gateEmail" placeholder="jouw@email.nl" onkeydown="if(event.key==='Enter')gateSubmitEmail()" />
+      <button class="gate-submit" onclick="gateSubmitEmail()">Code ontvangen →</button>
+      <div class="gate-fine">Na 14 dagen stuur je ons een mailtje om door te gaan. Geen automatische afschrijving.</div>
+    </div>
+
+    <!-- STAP 2: OTP code invoeren -->
+    <div id="gateStepCode" style="display:none">
+      <p class="gate-sub" id="gateCodeHint">Code gestuurd naar jouw e-mail.</p>
+      <p class="gate-sub" style="opacity:.55; font-size:13px; margin-top:6px;">Controleer ook je spam-map. De code is 10 minuten geldig.</p>
+      <input type="text" class="gate-input" id="gateCode" placeholder="123456" maxlength="6" inputmode="numeric"
+             onkeydown="if(event.key==='Enter')gateSubmitCode()"
+             style="letter-spacing:6px; text-align:center; font-size:24px; font-family:'DM Mono',monospace;" />
+      <button class="gate-submit" onclick="gateSubmitCode()">Inloggen →</button>
+      <button onclick="document.getElementById('gateStepEmail').style.display='';document.getElementById('gateStepCode').style.display='none';"
+              style="display:block;background:none;border:none;color:var(--gray);cursor:pointer;font-size:13px;margin-top:10px;padding:0;">
+        ← Ander e-mailadres
+      </button>
+    </div>
+  </div>
+</div>
+
+</body>
+</html>

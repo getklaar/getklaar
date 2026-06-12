@@ -1,0 +1,2719 @@
+<!DOCTYPE html>
+<html lang="nl">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Klaar — Allergenenkaart</title>
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Bebas+Neue&family=DM+Mono:wght@400;500&family=DM+Sans:wght@300;400;500;600&display=swap" rel="stylesheet">
+  <style>
+    /* ─── RESET & BASE ─────────────────────────────────────────────── */
+    *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
+
+    :root {
+      --lime:    #e8ff47;
+      --black:   #0a0a0a;
+      --border:  #222222;
+      --surface: #ffffff;
+      --bg:      #f5f5f3;
+      --muted:   #888888;
+      --text:    #111111;
+      --tag-bg:  #f0f0ee;
+      --danger:  #ff4d4d;
+      --present: #ff6b1a;
+      --present-bg: #fff3ec;
+      --absent:  #e8e8e6;
+    }
+
+    body {
+      font-family: 'DM Sans', sans-serif;
+      background: var(--bg);
+      color: var(--text);
+      min-height: 100vh;
+      -webkit-font-smoothing: antialiased;
+    }
+
+    /* ─── HELP MODAL ───────────────────────────────────────────────── */
+    .help-modal {
+      background: white; border-radius: 14px; padding: 0;
+      width: 540px; max-width: 92vw; max-height: 85vh; overflow: hidden;
+      display: flex; flex-direction: column;
+      box-shadow: 0 24px 64px rgba(0,0,0,0.25);
+      transform: translateY(16px); transition: transform 0.2s;
+    }
+    .modal-overlay { position: fixed; inset: 0; background: rgba(0,0,0,0.55);
+      z-index: 1000; display: none; align-items: center; justify-content: center; }
+    .modal-overlay.open { display: flex; }
+    .modal-overlay.open .help-modal { transform: translateY(0); }
+    .help-modal-header {
+      background: #0a0a0a; color: white;
+      padding: 22px 28px 18px; position: relative;
+    }
+    .help-modal-header h2 { font-size: 20px; margin: 0 0 4px; color: #e8ff47; font-family: 'Bebas Neue', sans-serif; letter-spacing: 0.05em; }
+    .help-modal-header p { font-size: 13px; color: rgba(255,255,255,0.55); margin: 0; }
+    .help-modal-close {
+      position: absolute; top: 16px; right: 18px;
+      background: rgba(255,255,255,0.1); border: none; color: white;
+      width: 30px; height: 30px; border-radius: 50%; cursor: pointer;
+      font-size: 16px; display: flex; align-items: center; justify-content: center;
+    }
+    .help-modal-close:hover { background: rgba(255,255,255,0.2); }
+    .help-modal-body { padding: 24px 28px; overflow-y: auto; flex: 1; }
+    .help-section { margin-bottom: 22px; }
+    .help-section:last-child { margin-bottom: 0; }
+    .help-section-title {
+      font-size: 11px; font-weight: 700; text-transform: uppercase;
+      letter-spacing: 0.08em; color: #0a0a0a; margin-bottom: 10px;
+      padding-bottom: 6px; border-bottom: 2px solid #e8ff47; display: inline-block;
+    }
+    .help-step { display: flex; gap: 12px; margin-bottom: 10px; align-items: flex-start; }
+    .help-step-num {
+      min-width: 24px; height: 24px; background: #0a0a0a; color: #e8ff47;
+      border-radius: 50%; font-size: 11px; font-weight: 800;
+      display: flex; align-items: center; justify-content: center; margin-top: 1px;
+    }
+    .help-step-text { font-size: 13px; line-height: 1.6; color: #333; }
+    .help-step-text strong { color: #0a0a0a; }
+    .help-card {
+      background: #f7f7f5; border-radius: 10px; padding: 14px 16px;
+      margin-bottom: 10px; border-left: 3px solid #0a0a0a;
+    }
+    .help-card-title { font-size: 13px; font-weight: 700; margin-bottom: 4px; }
+    .help-card-desc { font-size: 13px; color: #555; line-height: 1.5; }
+    .help-card.emergency { border-left-color: #e53e3e; }
+    .help-card.emergency .help-card-title { color: #e53e3e; }
+
+    /* btn-icon (? button in header) */
+    .btn-icon {
+      background: transparent; border: 1px solid #333333;
+      color: #aaaaaa; cursor: pointer; padding: 5px 10px;
+      border-radius: 4px; font-size: 13px;
+      font-family: 'DM Mono', monospace; letter-spacing: 0.06em;
+      transition: all 0.15s;
+    }
+    .btn-icon:hover { border-color: #e8ff47; color: #e8ff47; }
+
+    /* ─── HEADER ───────────────────────────────────────────────────── */
+    .site-header {
+      position: sticky;
+      top: 0;
+      z-index: 100;
+      height: 60px;
+      background: var(--black);
+      border-bottom: 1px solid var(--border);
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      padding: 0 20px;
+      gap: 16px;
+    }
+
+    .header-left {
+      display: flex;
+      align-items: center;
+      gap: 16px;
+    }
+
+    .btn-back {
+      display: flex;
+      align-items: center;
+      gap: 6px;
+      color: #666666;
+      font-family: 'DM Mono', monospace;
+      font-size: 11px;
+      text-decoration: none;
+      letter-spacing: 0.05em;
+      transition: color 0.15s;
+      white-space: nowrap;
+    }
+    .btn-back:hover { color: #ffffff; }
+    .btn-back svg { flex-shrink: 0; }
+
+    .logo {
+      font-family: 'Bebas Neue', sans-serif;
+      font-size: 26px;
+      color: var(--lime);
+      letter-spacing: 0.04em;
+      line-height: 1;
+      text-decoration: none;
+    }
+
+    .header-divider {
+      width: 1px;
+      height: 20px;
+      background: var(--border);
+    }
+
+    .header-label {
+      font-family: 'DM Mono', monospace;
+      font-size: 10px;
+      color: #555555;
+      letter-spacing: 0.12em;
+      text-transform: uppercase;
+    }
+
+    .header-right {
+      display: flex;
+      align-items: center;
+      gap: 8px;
+    }
+
+    .btn-print {
+      display: flex;
+      align-items: center;
+      gap: 6px;
+      padding: 7px 14px;
+      background: transparent;
+      border: 1px solid #333333;
+      border-radius: 4px;
+      color: #aaaaaa;
+      font-family: 'DM Mono', monospace;
+      font-size: 11px;
+      letter-spacing: 0.06em;
+      cursor: pointer;
+      transition: all 0.15s;
+      white-space: nowrap;
+    }
+    .btn-print:hover {
+      border-color: var(--lime);
+      color: var(--lime);
+    }
+
+    /* ─── MAIN WRAPPER ─────────────────────────────────────────────── */
+    .main {
+      padding: 32px 24px 64px;
+      max-width: 1400px;
+      margin: 0 auto;
+    }
+
+    /* ─── PAGE TITLE ───────────────────────────────────────────────── */
+    .page-title-row {
+      display: flex;
+      align-items: flex-end;
+      justify-content: space-between;
+      margin-bottom: 28px;
+      gap: 16px;
+      flex-wrap: wrap;
+    }
+
+    .page-title {
+      font-family: 'Bebas Neue', sans-serif;
+      font-size: 40px;
+      color: var(--black);
+      letter-spacing: 0.03em;
+      line-height: 1;
+    }
+
+    .page-subtitle {
+      font-family: 'DM Mono', monospace;
+      font-size: 11px;
+      color: var(--muted);
+      letter-spacing: 0.08em;
+      margin-top: 4px;
+    }
+
+    .recipe-count-badge {
+      font-family: 'DM Mono', monospace;
+      font-size: 11px;
+      color: var(--muted);
+      background: var(--tag-bg);
+      border: 1px solid #e0e0de;
+      border-radius: 20px;
+      padding: 4px 12px;
+      letter-spacing: 0.06em;
+      white-space: nowrap;
+    }
+
+    /* ─── FILTER TABS ──────────────────────────────────────────────── */
+    .filter-bar {
+      display: flex;
+      gap: 6px;
+      margin-bottom: 20px;
+      flex-wrap: wrap;
+    }
+
+    .filter-btn {
+      padding: 6px 14px;
+      border-radius: 20px;
+      border: 1px solid #e0e0de;
+      background: var(--surface);
+      color: #666666;
+      font-family: 'DM Mono', monospace;
+      font-size: 11px;
+      letter-spacing: 0.08em;
+      cursor: pointer;
+      transition: all 0.15s;
+    }
+    .filter-btn:hover {
+      border-color: var(--black);
+      color: var(--black);
+    }
+    .filter-btn.active {
+      background: var(--black);
+      border-color: var(--black);
+      color: var(--lime);
+    }
+
+    /* ─── MATRIX TABLE WRAPPER ─────────────────────────────────────── */
+    .matrix-wrapper {
+      background: var(--surface);
+      border: 1px solid #e0e0de;
+      border-radius: 8px;
+      overflow: hidden;
+      box-shadow: 0 1px 4px rgba(0,0,0,0.06);
+    }
+
+    .matrix-scroll {
+      overflow-x: auto;
+      overflow-y: auto;
+      -webkit-overflow-scrolling: touch;
+      /* Eigen scroll-container: tabel scrolt binnen deze box, sticky thead werkt t.o.v. deze box */
+      max-height: calc(100vh - 240px);
+      min-height: 200px;
+    }
+
+    .matrix-table {
+      width: 100%;
+      border-collapse: collapse;
+      min-width: 900px;
+    }
+
+    /* ─── TABLE HEADER ─────────────────────────────────────────────── */
+    .matrix-table thead th {
+      background: var(--black);
+      color: #ffffff;
+      font-family: 'DM Mono', monospace;
+      font-size: 10px;
+      letter-spacing: 0.1em;
+      padding: 0;
+      white-space: nowrap;
+      border-right: 1px solid var(--border);
+      position: sticky;
+      top: 0; /* sticky t.o.v. .matrix-scroll (de eigen scroll-container), niet viewport */
+      z-index: 10;
+    }
+
+    .matrix-table thead th:last-child { border-right: none; }
+
+    /* specificity 0-2-2 — wint van .matrix-table thead th (0-1-2) */
+    .matrix-table thead th.th-dish {
+      text-align: left;
+      padding: 21px 20px 21px 24px;
+      min-width: 220px;
+      position: sticky;
+      left: 0;
+      z-index: 20;
+      background: var(--black);
+      font-family: 'DM Mono', monospace;
+      font-size: 13px;
+      font-weight: 700;
+      letter-spacing: 0.1em;
+      text-transform: uppercase;
+      color: var(--lime);
+      vertical-align: middle;
+    }
+
+    .th-allergen {
+      width: 54px;
+      text-align: center;
+    }
+
+    .th-allergen-inner {
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      padding: 10px 4px;
+      gap: 3px;
+      cursor: help;
+    }
+
+    .allergen-code {
+      font-family: 'DM Mono', monospace;
+      font-size: 11px;
+      font-weight: 500;
+      color: #ffffff;
+    }
+
+    .allergen-icon {
+      width: 22px;
+      height: 22px;
+    }
+
+    /* ─── CATEGORY HEADER ROW ──────────────────────────────────────── */
+    .row-category td {
+      background: #f7f7f5;
+      border-top: 2px solid #e0e0de;
+      border-bottom: 1px solid #e8e8e6;
+      padding: 8px 20px;
+      font-family: 'DM Mono', monospace;
+      font-size: 10px;
+      color: var(--muted);
+      letter-spacing: 0.14em;
+      text-transform: uppercase;
+    }
+    .row-category td:first-child {
+      position: sticky;
+      left: 0;
+      background: #f7f7f5;
+      z-index: 5;
+    }
+
+    /* ─── DISH ROWS ────────────────────────────────────────────────── */
+    .row-dish {
+      cursor: pointer;
+      transition: background 0.1s;
+    }
+    .row-dish:hover { background: #fafaf8; }
+    .row-dish:hover td.td-dish { background: #fafaf8; }
+
+    .row-dish td {
+      border-bottom: 1px solid #f0f0ee;
+      border-right: 1px solid #f0f0ee;
+      vertical-align: middle;
+    }
+    .row-dish td:last-child { border-right: none; }
+
+    .td-dish {
+      position: sticky;
+      left: 0;
+      background: var(--surface);
+      z-index: 5;
+      padding: 12px 20px;
+      border-right: 1px solid #e8e8e6 !important;
+    }
+
+    .dish-name {
+      font-size: 13px;
+      font-weight: 500;
+      color: var(--text);
+      line-height: 1.3;
+    }
+
+    .dish-servings {
+      font-family: 'DM Mono', monospace;
+      font-size: 10px;
+      color: var(--muted);
+      margin-top: 2px;
+    }
+
+    .td-allergen {
+      text-align: center;
+      padding: 8px 4px;
+    }
+
+    /* ─── ALLERGEN CELL ────────────────────────────────────────────── */
+    .allergen-present {
+      display: inline-flex;
+      align-items: center;
+      justify-content: center;
+      width: 26px;
+      height: 26px;
+      border-radius: 50%;
+      background: var(--present);
+      color: #ffffff;
+      font-family: 'DM Mono', monospace;
+      font-size: 9px;
+      font-weight: 500;
+      line-height: 1;
+    }
+
+    .allergen-absent {
+      display: inline-block;
+      width: 12px;
+      height: 2px;
+      background: #e0e0de;
+      border-radius: 1px;
+    }
+
+    /* ─── SUMMARY FOOTER ───────────────────────────────────────────── */
+    .matrix-footer {
+      padding: 12px 20px;
+      border-top: 1px solid #f0f0ee;
+      background: #fafaf8;
+      display: flex;
+      align-items: center;
+      gap: 16px;
+      flex-wrap: wrap;
+    }
+
+    .footer-legend {
+      display: flex;
+      align-items: center;
+      gap: 20px;
+    }
+
+    .legend-item {
+      display: flex;
+      align-items: center;
+      gap: 7px;
+      font-family: 'DM Mono', monospace;
+      font-size: 10px;
+      color: var(--muted);
+      letter-spacing: 0.06em;
+    }
+
+    /* ─── EMPTY STATE ──────────────────────────────────────────────── */
+    .empty-state {
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      justify-content: center;
+      padding: 80px 20px;
+      text-align: center;
+      background: var(--surface);
+      border: 1px solid #e0e0de;
+      border-radius: 8px;
+    }
+
+    .empty-icon {
+      width: 64px;
+      height: 64px;
+      margin-bottom: 20px;
+      color: #d0d0ce;
+    }
+
+    .empty-title {
+      font-family: 'Bebas Neue', sans-serif;
+      font-size: 28px;
+      color: var(--black);
+      letter-spacing: 0.04em;
+      margin-bottom: 8px;
+    }
+
+    .empty-text {
+      font-size: 14px;
+      color: var(--muted);
+      max-width: 340px;
+      line-height: 1.6;
+      margin-bottom: 24px;
+    }
+
+    .btn-to-module1 {
+      display: inline-flex;
+      align-items: center;
+      gap: 8px;
+      padding: 11px 22px;
+      background: var(--black);
+      color: var(--lime);
+      font-family: 'DM Mono', monospace;
+      font-size: 12px;
+      letter-spacing: 0.08em;
+      border-radius: 4px;
+      text-decoration: none;
+      transition: opacity 0.15s;
+    }
+    .btn-to-module1:hover { opacity: 0.85; }
+
+    /* ─── DETAIL PANEL ─────────────────────────────────────────────── */
+    .panel-overlay {
+      display: none;
+      position: fixed;
+      inset: 0;
+      background: rgba(0,0,0,0.3);
+      z-index: 200;
+      backdrop-filter: blur(2px);
+    }
+    .panel-overlay.open { display: block; }
+
+    .detail-panel {
+      position: fixed;
+      top: 0;
+      right: 0;
+      height: 100vh;
+      width: 380px;
+      max-width: 95vw;
+      background: var(--surface);
+      border-left: 1px solid #e0e0de;
+      z-index: 201;
+      transform: translateX(100%);
+      transition: transform 0.28s cubic-bezier(0.4,0,0.2,1);
+      display: flex;
+      flex-direction: column;
+      overflow: hidden;
+      box-shadow: -8px 0 32px rgba(0,0,0,0.12);
+    }
+    .detail-panel.open { transform: translateX(0); }
+
+    .panel-header {
+      padding: 20px 24px 16px;
+      border-bottom: 1px solid #f0f0ee;
+      display: flex;
+      align-items: flex-start;
+      justify-content: space-between;
+      gap: 12px;
+    }
+
+    .panel-title {
+      font-family: 'Bebas Neue', sans-serif;
+      font-size: 26px;
+      color: var(--black);
+      letter-spacing: 0.03em;
+      line-height: 1.1;
+      flex: 1;
+    }
+
+    .panel-close {
+      width: 32px;
+      height: 32px;
+      border: none;
+      background: var(--tag-bg);
+      border-radius: 50%;
+      cursor: pointer;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      color: var(--muted);
+      flex-shrink: 0;
+      transition: all 0.15s;
+    }
+    .panel-close:hover { background: var(--black); color: #ffffff; }
+
+    .panel-meta {
+      padding: 16px 24px;
+      display: flex;
+      gap: 10px;
+      flex-wrap: wrap;
+    }
+
+    .meta-badge {
+      padding: 4px 10px;
+      background: var(--tag-bg);
+      border: 1px solid #e0e0de;
+      border-radius: 20px;
+      font-family: 'DM Mono', monospace;
+      font-size: 10px;
+      color: var(--muted);
+      letter-spacing: 0.08em;
+      text-transform: uppercase;
+    }
+
+    .panel-body {
+      flex: 1;
+      overflow-y: auto;
+      padding: 8px 24px 32px;
+    }
+
+    .panel-section-title {
+      font-family: 'DM Mono', monospace;
+      font-size: 10px;
+      color: var(--muted);
+      letter-spacing: 0.14em;
+      text-transform: uppercase;
+      margin-bottom: 12px;
+      margin-top: 20px;
+    }
+
+    .allergen-list {
+      display: flex;
+      flex-direction: column;
+      gap: 8px;
+    }
+
+    .allergen-row {
+      display: flex;
+      align-items: center;
+      gap: 12px;
+      padding: 10px 12px;
+      border-radius: 6px;
+    }
+    .allergen-row.present {
+      background: var(--present-bg);
+      border: 1px solid #ffd4b8;
+    }
+    .allergen-row.absent {
+      background: #fafaf8;
+      border: 1px solid #f0f0ee;
+    }
+
+    .allergen-dot {
+      width: 28px;
+      height: 28px;
+      border-radius: 50%;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      flex-shrink: 0;
+      font-family: 'DM Mono', monospace;
+      font-size: 9px;
+      font-weight: 500;
+    }
+    .allergen-dot.present { background: var(--present); color: #ffffff; }
+    .allergen-dot.absent { background: var(--absent); color: #aaaaaa; }
+
+    .allergen-row-name {
+      flex: 1;
+      font-size: 13px;
+      font-weight: 500;
+      color: var(--text);
+    }
+    .allergen-row.absent .allergen-row-name { color: var(--muted); }
+
+    .allergen-row-status {
+      font-family: 'DM Mono', monospace;
+      font-size: 10px;
+      letter-spacing: 0.06em;
+    }
+    .allergen-row.present .allergen-row-status { color: var(--present); }
+    .allergen-row.absent .allergen-row-status { color: #cccccc; }
+
+    .no-allergens-msg {
+      padding: 20px;
+      background: #f7fff7;
+      border: 1px solid #c8e6c9;
+      border-radius: 6px;
+      font-size: 13px;
+      color: #388e3c;
+      text-align: center;
+    }
+
+    /* ─── TOOLTIP ──────────────────────────────────────────────────── */
+    [data-tooltip] {
+      position: relative;
+    }
+    [data-tooltip]::after {
+      content: attr(data-tooltip);
+      position: absolute;
+      bottom: calc(100% + 6px);
+      left: 50%;
+      transform: translateX(-50%);
+      background: var(--black);
+      color: #ffffff;
+      font-family: 'DM Mono', monospace;
+      font-size: 10px;
+      padding: 4px 8px;
+      border-radius: 3px;
+      white-space: nowrap;
+      opacity: 0;
+      pointer-events: none;
+      transition: opacity 0.15s;
+      z-index: 50;
+    }
+    [data-tooltip]:hover::after { opacity: 1; }
+
+    /* ─── PRINT STYLES ─────────────────────────────────────────────── */
+    @media print {
+      @page {
+        size: A4 landscape;
+        margin: 12mm 10mm;
+      }
+
+      body {
+        background: #ffffff;
+        -webkit-print-color-adjust: exact;
+        print-color-adjust: exact;
+      }
+
+      .site-header {
+        position: relative;
+        background: #000000 !important;
+        -webkit-print-color-adjust: exact;
+        print-color-adjust: exact;
+      }
+
+      .btn-back, .btn-print, .filter-bar,
+      .panel-overlay, .detail-panel { display: none !important; }
+
+      .main { padding: 16px 0 0; max-width: none; }
+
+      .page-title { font-size: 28px; }
+
+      .matrix-wrapper {
+        border: 1.5px solid #cccccc;
+        box-shadow: none;
+      }
+
+      .matrix-scroll { overflow-x: visible; overflow-y: visible; max-height: none; }
+
+      .matrix-table { min-width: 0; font-size: 11px; }
+
+      .matrix-table thead th {
+        background: #000000 !important;
+        -webkit-print-color-adjust: exact;
+        print-color-adjust: exact;
+        position: relative;
+        top: auto;
+      }
+
+      .matrix-table thead th.th-dish { position: relative; left: auto; }
+      .td-dish { position: relative; left: auto; }
+      .row-category td:first-child { position: relative; left: auto; }
+
+      .allergen-present {
+        background: #333333 !important;
+        color: #ffffff !important;
+        -webkit-print-color-adjust: exact;
+        print-color-adjust: exact;
+        width: 20px;
+        height: 20px;
+        font-size: 8px;
+      }
+
+      .row-dish { break-inside: avoid; }
+
+      .print-watermark {
+        display: block !important;
+        font-family: 'DM Mono', monospace;
+        font-size: 9px;
+        color: #999999;
+        text-align: right;
+        margin-top: 8px;
+        letter-spacing: 0.06em;
+      }
+    }
+
+    .print-watermark { display: none; }
+
+    /* ─── EXTRA KOLOM (niet EU-14) ─────────────────────────────────── */
+    .th-extra {
+      background: #111111 !important;
+      opacity: 0.75;
+    }
+    .th-extra .allergen-code { color: #888 !important; }
+    .td-extra { background: #fafaf8; }
+    .row-dish:hover .td-extra { background: #f5f5f3; }
+
+    /* ─── NO-DATA BADGE ────────────────────────────────────────────── */
+    .no-data-badge {
+      display: inline-block;
+      font-family: 'DM Mono', monospace;
+      font-size: 9px;
+      color: #cc7700;
+      background: #fff8ec;
+      border: 1px solid #ffd580;
+      border-radius: 3px;
+      padding: 1px 5px;
+      margin-left: 6px;
+      letter-spacing: 0.04em;
+      vertical-align: middle;
+      cursor: help;
+    }
+    .row-no-data .td-dish { background: #fffdf7; }
+    .row-no-data:hover .td-dish { background: #fff9ee; }
+
+    /* ─── SCROLL INDICATOR ─────────────────────────────────────────── */
+    .scroll-hint {
+      display: none;
+      align-items: center;
+      gap: 6px;
+      font-family: 'DM Mono', monospace;
+      font-size: 10px;
+      color: var(--muted);
+      letter-spacing: 0.06em;
+      padding: 8px 20px;
+      background: #fafaf8;
+      border-top: 1px solid #f0f0ee;
+    }
+
+    @media (max-width: 768px) {
+      .scroll-hint { display: flex; }
+      .page-title { font-size: 28px; }
+    }
+
+    /* ─── FLOATING ALLERGEN TOOLTIP ───────────────────────────────── */
+    #allergen-tip {
+      position: fixed;
+      background: #111111;
+      color: #ffffff;
+      padding: 5px 11px;
+      border-radius: 6px;
+      font-size: 12px;
+      font-family: 'DM Sans', sans-serif;
+      font-weight: 600;
+      white-space: nowrap;
+      pointer-events: none;
+      display: none;
+      z-index: 9999;
+      box-shadow: 0 4px 14px rgba(0,0,0,0.3);
+    }
+    #allergen-tip::after {
+      content: '';
+      position: absolute;
+      top: 100%;
+      left: 50%;
+      transform: translateX(-50%);
+      border: 5px solid transparent;
+      border-top-color: #111111;
+    }
+
+    /* ─── TAB BAR ─────────────────────────────────────────────────── */
+    .tab-bar {
+      background: #111111;
+      border-bottom: 1px solid #222222;
+      display: flex;
+      align-items: center;
+      padding: 0 20px;
+      gap: 0;
+    }
+    .tab-btn {
+      padding: 12px 20px;
+      font-family: 'DM Mono', monospace;
+      font-size: 11px;
+      letter-spacing: 0.1em;
+      text-transform: uppercase;
+      color: #555555;
+      border: none;
+      background: none;
+      cursor: pointer;
+      border-bottom: 2px solid transparent;
+      margin-bottom: -1px;
+      transition: color 0.15s;
+      white-space: nowrap;
+    }
+    .tab-btn:hover { color: #888888; }
+    .tab-btn.active { color: var(--lime); border-bottom-color: var(--lime); }
+
+    /* ─── KOK ASSISTENT ────────────────────────────────────────────── */
+    #view-allergens { display: block; }
+    #view-assistent { display: none; height: calc(100vh - 98px); }
+    .asst-layout { display: flex; height: 100%; }
+
+    /* Sidebar */
+    .asst-sidebar {
+      width: 300px; min-width: 300px;
+      background: #ffffff;
+      border-right: 1px solid #e8e8e6;
+      display: flex; flex-direction: column;
+      overflow: hidden;
+    }
+    .asst-sidebar-top {
+      padding: 18px 18px 14px;
+      border-bottom: 1px solid #f0f0ee;
+      flex-shrink: 0;
+    }
+    .asst-label {
+      font-family: 'DM Mono', monospace;
+      font-size: 9px;
+      letter-spacing: 0.12em;
+      text-transform: uppercase;
+      color: #aaaaaa;
+      margin-bottom: 10px;
+      display: block;
+    }
+    .dish-search-wrap { position: relative; }
+    .dish-search-input {
+      width: 100%; box-sizing: border-box;
+      padding: 9px 13px; border: 1px solid #e0e0de;
+      border-radius: 7px; font-family: inherit;
+      font-size: 14px; outline: none; color: var(--text);
+      transition: border-color 0.15s;
+    }
+    .dish-search-input:focus { border-color: #888; }
+    .dish-dropdown {
+      position: absolute; left: 0; right: 0; top: calc(100% + 4px);
+      background: white; border: 1px solid #e0e0de;
+      border-radius: 8px; box-shadow: 0 8px 20px rgba(0,0,0,0.1);
+      z-index: 50; max-height: 200px; overflow-y: auto;
+    }
+    .dish-option {
+      padding: 10px 14px; cursor: pointer; font-size: 13px;
+      border-bottom: 1px solid #f5f5f3; transition: background 0.1s;
+    }
+    .dish-option:hover { background: #f7f7f5; }
+    .dish-option:last-child { border-bottom: none; }
+    .dish-option-title { font-weight: 600; }
+    .dish-option-cat { font-size: 11px; color: #aaa; font-family: 'DM Mono', monospace; }
+
+    /* Dish info in sidebar */
+    .asst-dish-info {
+      flex: 1; overflow-y: auto; padding: 18px;
+      display: flex; flex-direction: column; gap: 14px;
+    }
+    .asst-no-dish {
+      flex: 1; display: flex; flex-direction: column;
+      align-items: center; justify-content: center;
+      text-align: center; color: #cccccc; padding: 20px; gap: 10px;
+    }
+    .asst-no-dish-icon { font-size: 36px; }
+    .asst-no-dish p { font-size: 13px; line-height: 1.5; }
+    .dish-info-name {
+      font-size: 16px; font-weight: 700; color: var(--text);
+      line-height: 1.2;
+    }
+    .dish-info-allergens { display: flex; flex-wrap: wrap; gap: 5px; }
+    .dish-allergen-pill {
+      padding: 3px 9px; border-radius: 4px;
+      font-size: 10px; font-weight: 700; color: white;
+      font-family: 'DM Mono', monospace; letter-spacing: 0.04em;
+    }
+    .dish-no-allergens {
+      font-size: 12px; color: #27ae60; font-weight: 600;
+      font-family: 'DM Mono', monospace;
+    }
+    .dish-info-ingredients li {
+      font-size: 13px; color: var(--text);
+      padding: 3px 0; border-bottom: 1px solid #f5f5f3;
+      list-style: none;
+    }
+    .dish-info-ingredients li:last-child { border-bottom: none; }
+    .dish-info-steps { font-size: 13px; color: #555; line-height: 1.6; }
+    .dish-info-steps li { padding: 4px 0; border-bottom: 1px solid #f5f5f3; list-style: decimal inside; }
+    .dish-info-steps li:last-child { border-bottom: none; }
+
+    /* Mode bar */
+    .chat-mode-bar {
+      display: flex; gap: 8px; padding: 12px 16px 0;
+      background: var(--bg); flex-shrink: 0;
+    }
+    .mode-btn {
+      flex: 1; padding: 10px 14px; border-radius: 9px;
+      border: 1.5px solid #e0e0de; background: white;
+      font-family: 'DM Sans', sans-serif; font-size: 13px; font-weight: 600;
+      cursor: pointer; transition: all 0.15s;
+      color: #555; display: flex; align-items: center;
+      justify-content: center; gap: 7px;
+    }
+    .mode-btn:hover { border-color: #aaa; color: #222; }
+    .mode-btn.active { border-color: var(--black); background: var(--black); color: var(--lime); }
+    .mode-btn.emergency { }
+    .mode-btn.emergency.active { border-color: #e53e3e; background: #e53e3e; color: white; }
+
+    /* Chat panel */
+    .asst-chat {
+      flex: 1; display: flex; flex-direction: column;
+      background: var(--bg);
+    }
+    .chat-messages {
+      flex: 1; overflow-y: auto;
+      padding: 24px 28px;
+      display: flex; flex-direction: column; gap: 14px;
+    }
+    .chat-empty {
+      margin: auto; text-align: center;
+      color: #bbbbbb; max-width: 300px;
+    }
+    .chat-empty-icon { font-size: 44px; margin-bottom: 14px; }
+    .chat-empty p { font-size: 14px; line-height: 1.6; }
+    .chat-empty small { font-size: 12px; color: #ccc; }
+    .msg-row { display: flex; }
+    .msg-row.user { justify-content: flex-end; }
+    .msg-row.claude { justify-content: flex-start; }
+    .msg-bubble {
+      max-width: 72%; padding: 12px 16px;
+      border-radius: 14px; font-size: 14px; line-height: 1.65;
+      white-space: pre-wrap;
+    }
+    .msg-bubble.user {
+      background: var(--black); color: white;
+      border-bottom-right-radius: 4px;
+    }
+    .msg-bubble.claude {
+      background: white; color: var(--text);
+      border-bottom-left-radius: 4px;
+      box-shadow: 0 1px 4px rgba(0,0,0,0.07);
+    }
+    .msg-bubble.thinking {
+      background: white; color: #aaa;
+      border-bottom-left-radius: 4px; font-style: italic;
+      box-shadow: 0 1px 4px rgba(0,0,0,0.07);
+    }
+    .chat-input-bar {
+      padding: 14px 20px; background: white;
+      border-top: 1px solid #e8e8e6;
+      display: flex; gap: 10px; align-items: flex-end;
+    }
+    .chat-textarea {
+      flex: 1; resize: none; border: 1px solid #e0e0de;
+      border-radius: 8px; padding: 10px 14px;
+      font-family: inherit; font-size: 14px; line-height: 1.5;
+      outline: none; min-height: 42px; max-height: 110px;
+      overflow-y: auto; transition: border-color 0.15s;
+    }
+    .chat-textarea:focus { border-color: #888; }
+    .chat-mic-btn {
+      width: 42px; height: 42px; border-radius: 50%;
+      border: 1px solid #e0e0de; background: white;
+      cursor: pointer; font-size: 18px;
+      display: flex; align-items: center; justify-content: center;
+      transition: all 0.15s; flex-shrink: 0;
+    }
+    .chat-mic-btn:hover { background: #f0f0ee; }
+    .chat-mic-btn.recording {
+      background: #ff4d4d; border-color: #ff4d4d; color: white;
+      animation: pulse-red 1.5s infinite;
+    }
+    @keyframes pulse-red {
+      0%,100% { box-shadow: 0 0 0 0 rgba(255,77,77,0.4); }
+      50%      { box-shadow: 0 0 0 8px rgba(255,77,77,0); }
+    }
+    @keyframes pulse-text {
+      0%,100% { opacity: 1; } 50% { opacity: 0.4; }
+    }
+    .chat-speaker-btn {
+      width: 42px; height: 42px; border-radius: 50%;
+      border: 1px solid #e0e0de; background: white;
+      cursor: pointer; font-size: 18px;
+      display: flex; align-items: center; justify-content: center;
+      transition: all 0.15s; flex-shrink: 0;
+      opacity: 0.35;
+    }
+    .chat-speaker-btn:hover { background: #f0f0ee; opacity: 1; }
+    .chat-speaker-btn.on { opacity: 1; border-color: #0a0a0a; background: #0a0a0a; }
+    .chat-speaker-btn.speaking { opacity: 1; border-color: #e53e3e; background: #e53e3e;
+      animation: pulse-red 1s infinite; }
+    .chat-send-btn {
+      height: 42px; padding: 0 18px;
+      background: var(--black); color: var(--lime);
+      border: none; border-radius: 8px;
+      font-family: 'DM Mono', monospace; font-size: 11px;
+      font-weight: 600; letter-spacing: 0.08em;
+      cursor: pointer; transition: opacity 0.15s; flex-shrink: 0;
+    }
+    .chat-send-btn:hover { opacity: 0.8; }
+    .chat-send-btn:disabled { opacity: 0.35; cursor: not-allowed; }
+    .chat-hint {
+      padding: 8px 20px 0;
+      font-size: 11px; color: #bbb; font-family: 'DM Mono', monospace;
+    }
+
+    /* ─── PAKKET FILTER ────────────────────────────────────────────── */
+    .filter-divider {
+      width: 1px;
+      height: 20px;
+      background: #e0e0de;
+      align-self: center;
+      margin: 0 4px;
+      flex-shrink: 0;
+    }
+    .filter-group-label {
+      font-family: 'DM Mono', monospace;
+      font-size: 9px;
+      color: #aaa;
+      letter-spacing: 0.1em;
+      text-transform: uppercase;
+      align-self: center;
+      white-space: nowrap;
+    }
+  </style>
+  <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2/dist/umd/supabase.min.js"></script>
+  <script src="../klaar-client.js"></script>
+</head>
+<body>
+
+  <!-- ─── HEADER ──────────────────────────────────────────────────── -->
+  <header class="site-header">
+    <div class="header-left">
+      <a href="../index.html" class="btn-back">
+        <svg width="14" height="14" viewBox="0 0 14 14" fill="none">
+          <path d="M9 2L4 7L9 12" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"/>
+        </svg>
+        TERUG
+      </a>
+      <div class="header-divider"></div>
+      <a href="../index.html" class="logo">KLAAR</a>
+      <div class="header-divider"></div>
+      <span class="header-label">Allergenenkaart &amp; Kok Assistent</span>
+    </div>
+    <div class="header-right">
+      <button class="btn-icon" onclick="openHelp()" title="Uitleg & handleiding" style="margin-right:6px;">?</button>
+      <button class="btn-print" id="btn-print" onclick="window.print()">
+        <svg width="14" height="14" viewBox="0 0 14 14" fill="none">
+          <rect x="2" y="5" width="10" height="7" rx="1" stroke="currentColor" stroke-width="1.3"/>
+          <path d="M4 5V2H10V5" stroke="currentColor" stroke-width="1.3" stroke-linecap="round" stroke-linejoin="round"/>
+          <rect x="4" y="8" width="6" height="3" rx="0.5" fill="currentColor" opacity="0.4"/>
+          <circle cx="10.5" cy="6.5" r="0.8" fill="currentColor"/>
+        </svg>
+        PRINT A4
+      </button>
+    </div>
+  </header>
+
+  <!-- ─── TAB BAR ──────────────────────────────────────────────────── -->
+  <div class="tab-bar">
+    <button class="tab-btn active" id="tab-allergens" onclick="setMainTab('allergens')">🧾 Allergenenkaart</button>
+    <button class="tab-btn" id="tab-assistent" onclick="setMainTab('assistent')">👨‍🍳 Kok Assistent</button>
+  </div>
+
+  <!-- ─── VIEW: ALLERGENENKAART ─────────────────────────────────────── -->
+  <div id="view-allergens">
+  <main class="main">
+
+    <!-- Page title -->
+    <div class="page-title-row">
+      <div>
+        <h1 class="page-title">Allergenenkaart</h1>
+        <p class="page-subtitle" id="subtitle">EU-14 Allergenen — Conform NVWA Vereisten</p>
+      </div>
+      <span class="recipe-count-badge" id="recipe-count">0 gerechten</span>
+    </div>
+
+    <!-- Filter tabs -->
+    <div class="filter-bar" id="filter-bar">
+      <button class="filter-btn active" data-filter="all" onclick="setFilter('all')">Alle</button>
+    </div>
+
+    <!-- Matrix or empty state -->
+    <div id="content-area"></div>
+
+    <!-- Print watermark -->
+    <p class="print-watermark" id="print-watermark"></p>
+
+  </main>
+  </div>
+
+  <!-- ─── VIEW: KOK ASSISTENT ──────────────────────────────────────── -->
+  <div id="view-assistent">
+    <div class="asst-layout">
+
+      <!-- Sidebar: dish selector + info -->
+      <div class="asst-sidebar">
+        <div class="asst-sidebar-top">
+          <span class="asst-label">Selecteer een gerecht</span>
+          <div class="dish-search-wrap">
+            <input type="text" id="dish-search" class="dish-search-input"
+              placeholder="Zoek gerecht…"
+              oninput="searchDishes(this.value)"
+              onfocus="searchDishes(this.value)"
+              autocomplete="off">
+            <div class="dish-dropdown" id="dish-dropdown" style="display:none;"></div>
+          </div>
+        </div>
+        <div class="asst-dish-info" id="asst-dish-info">
+          <div class="asst-no-dish">
+            <div class="asst-no-dish-icon">🍽️</div>
+            <p>Selecteer een gerecht om te beginnen</p>
+            <small>De assistent krijgt volledige context over het geselecteerde gerecht</small>
+          </div>
+        </div>
+      </div>
+
+      <!-- Chat panel -->
+      <div class="asst-chat">
+
+        <!-- Mode selector -->
+        <div class="chat-mode-bar" id="chat-mode-bar">
+          <button class="mode-btn active" id="mode-btn-chat" onclick="setChatMode('chat')">
+            👨‍🍳 <span>Kok Assistent</span>
+          </button>
+          <button class="mode-btn emergency" id="mode-btn-emergency" onclick="setChatMode('emergency')">
+            🚨 <span>Noodoplossing</span>
+          </button>
+        </div>
+
+        <div class="chat-messages" id="chat-messages">
+          <div class="chat-empty" id="chat-empty">
+            <div class="chat-empty-icon">👨‍🍳</div>
+            <p id="chat-empty-text">Stel een vraag over het geselecteerde gerecht.<br><em>"Kan ik dit zonder gluten maken?"</em><br><em>"Welk alternatief is er voor de room?"</em></p>
+            <small>Gebruik 🎙️ voor spraakinvoer</small>
+          </div>
+        </div>
+        <div class="chat-hint" id="chat-hint" style="display:none;">
+          <span id="chat-mode-label">👨‍🍳 Kok Assistent</span> · <strong id="chat-dish-name">—</strong>
+          <span id="speaking-indicator" style="display:none; margin-left:10px; color:#e53e3e; font-size:11px; font-family:'DM Mono',monospace; animation: pulse-text 1s infinite;">🔊 SPREEKT…</span>
+        </div>
+        <div class="chat-input-bar">
+          <textarea class="chat-textarea" id="chat-input" rows="1"
+            placeholder="Typ je vraag…"
+            onkeydown="chatKeydown(event)"
+            oninput="autoGrow(this)"></textarea>
+          <button class="chat-mic-btn" id="mic-btn" onclick="toggleMic()" title="Spreek je vraag in">🎙️</button>
+          <button class="chat-speaker-btn" id="speaker-btn" onclick="toggleSpeaker()" title="Spraakuitvoer aan/uit">🔊</button>
+          <button class="chat-send-btn" id="send-btn" onclick="sendMessage()" disabled>STUUR</button>
+        </div>
+      </div>
+
+    </div>
+  </div>
+
+  <!-- Floating tooltip -->
+  <div id="allergen-tip"></div>
+
+  <!-- ─── HELP MODAL ───────────────────────────────────────────────── -->
+  <div class="modal-overlay" id="helpModal" onclick="closeHelp(event)">
+    <div class="help-modal">
+      <div class="help-modal-header">
+        <h2>Allergenenkaart &amp; Kok Assistent</h2>
+        <p>Uitleg over alle functies van deze module</p>
+        <button class="help-modal-close" onclick="document.getElementById('helpModal').classList.remove('open')">×</button>
+      </div>
+      <div class="help-modal-body">
+
+        <div class="help-section">
+          <div class="help-section-title">🧾 Allergenenkaart</div>
+          <div class="help-step">
+            <div class="help-step-num">1</div>
+            <div class="help-step-text">De kaart toont automatisch alle gerechten uit de <strong>Recept Studio (Module 01)</strong> met hun EU-14 allergenen per kolom.</div>
+          </div>
+          <div class="help-step">
+            <div class="help-step-num">2</div>
+            <div class="help-step-text">Filter op <strong>categorie</strong> (Keuken, Bar, Koffie) of op een specifiek <strong>pakket</strong> — zo print je precies de juiste kaart voor elke menukaart of event.</div>
+          </div>
+          <div class="help-step">
+            <div class="help-step-num">3</div>
+            <div class="help-step-text">Klik op <strong>PRINT A4</strong> voor een nette zwart-witte afdruk — conform NVWA-vereisten EU Verordening 1169/2011.</div>
+          </div>
+          <div class="help-step">
+            <div class="help-step-num">4</div>
+            <div class="help-step-text">Hover over een allergeen-icoon in de header voor de volledige naam. Klik op een gerecht voor alle details.</div>
+          </div>
+        </div>
+
+        <div class="help-section">
+          <div class="help-section-title">👨‍🍳 Kok Assistent</div>
+          <p style="font-size:13px;color:#555;margin:0 0 12px;line-height:1.6;">Selecteer een gerecht en stel vragen via tekst of spraak — Claude kent het volledige recept.</p>
+          <div class="help-card">
+            <div class="help-card-title">👨‍🍳 Kok Assistent — Vrije chat</div>
+            <div class="help-card-desc">Stel alles wat je wilt: "Kan ik dit zonder lactose maken?", "Wat is de bereidingstijd?", "Welk alternatief ingrediënt kan ik gebruiken?" Claude antwoordt altijd praktisch en kort.</div>
+          </div>
+          <div class="help-card emergency">
+            <div class="help-card-title">🚨 Noodoplossing — À la minute</div>
+            <div class="help-card-desc">Een gast heeft een allergie en je kunt het gerecht niet serveren? Selecteer het gerecht, activeer Noodoplossing en vertel welke ingrediënten je bij de hand hebt. Claude stelt direct een alternatief voor — zonder de gevaarlijke allergenen.</div>
+          </div>
+          <div class="help-step" style="margin-top:12px;">
+            <div class="help-step-num">🎙️</div>
+            <div class="help-step-text">Gebruik de <strong>microfoonknop</strong> voor spraakinvoer — handig als je druk in de keuken staat.</div>
+          </div>
+        </div>
+
+        <div class="help-section">
+          <div class="help-section-title">⚙️ Vereisten</div>
+          <div class="help-step">
+            <div class="help-step-num">!</div>
+            <div class="help-step-text">De Kok Assistent heeft een <strong>Claude API-sleutel</strong> nodig. Stel deze in via Module 08 (Instellingen) — hij wordt gedeeld over alle modules.</div>
+          </div>
+        </div>
+
+      </div>
+    </div>
+  </div>
+
+  <!-- ─── DETAIL PANEL ────────────────────────────────────────────── -->
+  <div class="panel-overlay" id="panel-overlay" onclick="closePanel()"></div>
+  <aside class="detail-panel" id="detail-panel" role="dialog" aria-modal="true">
+    <div class="panel-header">
+      <h2 class="panel-title" id="panel-title">—</h2>
+      <button class="panel-close" onclick="closePanel()" aria-label="Sluiten">
+        <svg width="12" height="12" viewBox="0 0 12 12" fill="none">
+          <path d="M2 2L10 10M10 2L2 10" stroke="currentColor" stroke-width="1.8" stroke-linecap="round"/>
+        </svg>
+      </button>
+    </div>
+    <div class="panel-meta" id="panel-meta"></div>
+    <div class="panel-body" id="panel-body"></div>
+  </aside>
+
+  <script>
+  // ──────────────────────────────────────────────────────────────────
+  // EU-14 Allergens definition
+  // ──────────────────────────────────────────────────────────────────
+  // EU-14 officiële allergenen (Verordening EU 1169/2011)
+  const ALLERGENS = [
+    { code: 'G',  name: 'Gluten',        color: '#c0392b' },
+    { code: 'S',  name: 'Schaaldieren',  color: '#e67e22' },
+    { code: 'E',  name: 'Eieren',        color: '#f39c12' },
+    { code: 'Vi', name: 'Vis',           color: '#2980b9' },
+    { code: 'P',  name: 'Pinda',         color: '#8e44ad' },
+    { code: 'So', name: 'Soja',          color: '#27ae60' },
+    { code: 'M',  name: 'Melk',          color: '#16a085' },
+    { code: 'N',  name: 'Noten',         color: '#d35400' },
+    { code: 'Se', name: 'Selderij',      color: '#1abc9c' },
+    { code: 'Mo', name: 'Mosterd',       color: '#f1c40f' },
+    { code: 'Sa', name: 'Sesam',         color: '#795548' },
+    { code: 'Su', name: 'Sulfieten',     color: '#9c27b0' },
+    { code: 'L',  name: 'Lupine',        color: '#e91e63' },
+    { code: 'W',  name: 'Weekdieren',    color: '#00bcd4' }
+  ];
+
+  // Extra aandachtsstoffen buiten EU-14
+  // Nootmuskaat is GEEN EU-14 allergeen (het is een zaad/specerij, geen noot),
+  // maar Module 01 vlagt het als veiligheidsmarge voor mensen met notenallergie.
+  const EXTRA_ALLERGENS = [
+    { code: 'NM', name: 'Nootmuskaat*', color: '#6d4c41', note: '*Geen officieel EU-14 allergeen. Flagged als veiligheidsmarge voor notenallergici.' }
+  ];
+
+  const DEFAULT_FOLDERS = [
+    { id: 'keuken',  label: 'Keuken',         icon: '🍳' },
+    { id: 'bar',     label: 'Bar & Cocktails', icon: '🍸' },
+    { id: 'koffie',  label: 'Koffie',          icon: '☕' },
+    { id: 'archief', label: 'Archief',          icon: '🗂️' },
+  ];
+
+  // ──────────────────────────────────────────────────────────────────
+  // State
+  // ──────────────────────────────────────────────────────────────────
+  let recipes = [];
+  let customFolders = [];
+  let pakketten = [];
+  let activeFilter = 'all';
+
+  function getAllFolders() { return [...DEFAULT_FOLDERS, ...customFolders]; }
+  function getFolderLabel(id) {
+    const f = getAllFolders().find(f => f.id === id);
+    return f ? f.label : (id || 'Overig');
+  }
+
+  // ──────────────────────────────────────────────────────────────────
+  // Load from localStorage
+  // ──────────────────────────────────────────────────────────────────
+  function loadRecipes() {
+    try {
+      const raw = localStorage.getItem('klaar_recipes');
+      if (!raw) return [];
+      const data = JSON.parse(raw);
+      return Array.isArray(data) ? data : [];
+    } catch (e) { return []; }
+  }
+
+  function loadExtraData() {
+    try { customFolders = JSON.parse(localStorage.getItem('klaar_folders_custom') || '[]'); } catch(e) { customFolders = []; }
+    try { pakketten = JSON.parse(localStorage.getItem('klaar_pakketten') || '[]'); } catch(e) { pakketten = []; }
+  }
+
+  // ──────────────────────────────────────────────────────────────────
+  // Data accessors — Module 01 stores recipe data nested under r.recipe
+  // Top-level keys: id, title, folder, type, language, updatedAt
+  // Nested keys:    r.recipe.allergens, r.recipe.servings, etc.
+  // ──────────────────────────────────────────────────────────────────
+  function getAllergens(r) {
+    // Nested (current format)
+    if (r.recipe?.allergens?.length) return r.recipe.allergens;
+    // Top-level fallback (older format)
+    if (Array.isArray(r.allergens) && r.allergens.length) return r.allergens;
+    return [];
+  }
+
+  function getServings(r) {
+    return r.recipe?.servings || r.servings || null;
+  }
+
+  function getFolder(r) {
+    if (r.folder) return r.folder;
+    if (r.category) return r.category.toLowerCase();
+    const t = r.type || '';
+    if (t === 'cocktail') return 'bar';
+    if (t === 'coffee')   return 'koffie';
+    return 'keuken';
+  }
+
+  function hasAllergen(r, code) {
+    return getAllergens(r).some(a => {
+      // Object format: {code, name}
+      if (typeof a === 'object' && a.code) {
+        return a.code.toUpperCase() === code.toUpperCase();
+      }
+      // String format (very old): plain string like "Gluten" or "G"
+      if (typeof a === 'string') {
+        const allergenDef = ALLERGENS.find(def => def.name.toLowerCase() === a.toLowerCase());
+        if (allergenDef) return allergenDef.code.toUpperCase() === code.toUpperCase();
+        return a.toUpperCase() === code.toUpperCase();
+      }
+      return false;
+    });
+  }
+
+  function getAllergenByCode(code) {
+    return ALLERGENS.find(a => a.code === code);
+  }
+
+  function groupByCategory(list) {
+    const groups = {};
+    list.forEach(r => {
+      const cat = getFolder(r);
+      if (!groups[cat]) groups[cat] = [];
+      groups[cat].push(r);
+    });
+    return groups;
+  }
+
+  function getActivePakket() {
+    if (!activeFilter.startsWith('pak:')) return null;
+    const id = activeFilter.slice(4);
+    return pakketten.find(p => p.id === id) || null;
+  }
+
+  function getFilteredRecipes() {
+    if (activeFilter === 'all') return recipes;
+    if (activeFilter.startsWith('pak:')) {
+      const pak = getActivePakket();
+      if (!pak) return [];
+      const ids = new Set(pak.gerechten.map(g => g.receptId));
+      return recipes.filter(r => ids.has(r.id));
+    }
+    return recipes.filter(r => getFolder(r) === activeFilter);
+  }
+
+  // ──────────────────────────────────────────────────────────────────
+  // Filter bar
+  // ──────────────────────────────────────────────────────────────────
+  function buildFilterBar() {
+    const bar = document.getElementById('filter-bar');
+    const usedFolders = new Set(recipes.map(r => getFolder(r)));
+    const allFolders = getAllFolders().filter(f => usedFolders.has(f.id));
+
+    let html = `<button class="filter-btn ${activeFilter === 'all' ? 'active' : ''}" onclick="setFilter('all')">Alle (${recipes.length})</button>`;
+
+    // Standard + custom folders
+    if (allFolders.length > 0) {
+      html += `<div class="filter-divider"></div>`;
+      allFolders.forEach(f => {
+        const count = recipes.filter(r => getFolder(r) === f.id).length;
+        html += `<button class="filter-btn ${activeFilter === f.id ? 'active' : ''}" onclick="setFilter('${f.id}')">${f.icon} ${f.label} (${count})</button>`;
+      });
+    }
+
+    // Pakketten
+    if (pakketten.length > 0) {
+      html += `<div class="filter-divider"></div><span class="filter-group-label">Pakketten</span>`;
+      pakketten.forEach(p => {
+        const ids = new Set(p.gerechten.map(g => g.receptId));
+        const count = recipes.filter(r => ids.has(r.id)).length;
+        const filterId = 'pak:' + p.id;
+        html += `<button class="filter-btn ${activeFilter === filterId ? 'active' : ''}" onclick="setFilter('${filterId}')">📦 ${escapeHtml(p.naam || 'Naamloos pakket')} (${count})</button>`;
+      });
+    }
+
+    bar.innerHTML = html;
+  }
+
+  function setFilter(filter) {
+    activeFilter = filter;
+    buildFilterBar();
+    renderMatrix();
+    updateSubtitle();
+  }
+
+  function updateSubtitle() {
+    const sub = document.getElementById('subtitle');
+    const count = document.getElementById('recipe-count');
+    const filtered = getFilteredRecipes();
+    count.textContent = `${filtered.length} gerecht${filtered.length !== 1 ? 'en' : ''}`;
+    if (activeFilter === 'all') {
+      sub.textContent = 'EU-14 Allergenen — Conform NVWA Vereisten';
+    } else if (activeFilter.startsWith('pak:')) {
+      const pak = getActivePakket();
+      sub.textContent = pak ? `📦 ${pak.naam || 'Naamloos pakket'} — ${filtered.length} gerechten` : 'Pakket';
+    } else {
+      sub.textContent = `${getFolderLabel(activeFilter)} — EU-14 Allergenen`;
+    }
+  }
+
+  // ──────────────────────────────────────────────────────────────────
+  // Matrix render
+  // ──────────────────────────────────────────────────────────────────
+  function renderMatrix() {
+    const area = document.getElementById('content-area');
+    const filtered = getFilteredRecipes();
+
+    if (recipes.length === 0) {
+      area.innerHTML = renderEmptyState();
+      return;
+    }
+
+    if (filtered.length === 0) {
+      area.innerHTML = `<div style="padding:40px;text-align:center;color:#888;font-family:'DM Mono',monospace;font-size:12px;">Geen gerechten in deze categorie.</div>`;
+      return;
+    }
+
+    const groups = groupByCategory(filtered);
+    const allFolderIds = getAllFolders().map(f => f.id);
+    // Order: known folders first (in defined order), then any unknown
+    const orderedCats = [
+      ...allFolderIds.filter(id => groups[id]),
+      ...Object.keys(groups).filter(id => !allFolderIds.includes(id))
+    ];
+
+    // When a pakket is active, show only one group without category header clutter
+    const pak = getActivePakket();
+
+    let rows = '';
+
+    orderedCats.forEach(cat => {
+      const dishes = groups[cat];
+      const label = getFolderLabel(cat);
+
+      // colspan = 14 EU + 1 NM + 1 dish-name = 16 total
+      rows += `<tr class="row-category">
+        <td colspan="${ALLERGENS.length + EXTRA_ALLERGENS.length + 1}">${label}</td>
+      </tr>`;
+
+      dishes.forEach((recipe, i) => {
+        const globalIndex = recipes.indexOf(recipe);
+        const allergenList = getAllergens(recipe);
+        const noData = allergenList.length === 0;
+
+        const cells = ALLERGENS.map(a => {
+          const present = hasAllergen(recipe, a.code);
+          return `<td class="td-allergen">
+            ${present
+              ? `<span class="allergen-present" style="background:${a.color}" data-name="${a.name}">${a.code}</span>`
+              : `<span class="allergen-absent"></span>`
+            }
+          </td>`;
+        }).join('');
+
+        // NM kolom — apart van EU-14
+        const extraCells = EXTRA_ALLERGENS.map(a => {
+          const present = hasAllergen(recipe, a.code);
+          return `<td class="td-allergen td-extra">
+            ${present
+              ? `<span class="allergen-present" style="background:${a.color};opacity:.85" data-name="${a.name}">${a.code}</span>`
+              : `<span class="allergen-absent"></span>`
+            }
+          </td>`;
+        }).join('');
+
+        const servings = getServings(recipe);
+        // Waarschuwing als recipe geen allergeendata heeft (oud recept, nog niet gegenereerd)
+        const noDataWarning = noData
+          ? `<span class="no-data-badge" title="Geen allergeendata — hergeneer dit recept in Module 01">⚠ geen data</span>`
+          : '';
+
+        rows += `<tr class="row-dish${noData ? ' row-no-data' : ''}" onclick="openPanel(${globalIndex})" title="Klik voor details">
+          <td class="td-dish">
+            <div class="dish-name">${escapeHtml(recipe.title || 'Naamloos')} ${noDataWarning}</div>
+            ${servings ? `<div class="dish-servings">${escapeHtml(servings)}</div>` : ''}
+          </td>
+          ${cells}
+          <td class="td-allergen td-extra-divider" style="width:1px;background:#f0f0ee;padding:0"></td>
+          ${extraCells}
+        </tr>`;
+      });
+    });
+
+    const thAllergens = ALLERGENS.map(a =>
+      `<th class="th-allergen">
+        <div class="th-allergen-inner" data-tooltip="${a.name}">
+          <span class="allergen-code">${a.code}</span>
+          ${allergenIcon(a)}
+        </div>
+      </th>`
+    ).join('');
+
+    // Extra (niet-EU-14) kolomkoppen
+    const thExtra = EXTRA_ALLERGENS.map(a =>
+      `<th class="th-allergen th-extra" data-tooltip="${a.name}${a.note ? ' — ' + a.note : ''}">
+        <div class="th-allergen-inner">
+          <span class="allergen-code" style="color:#aaa">${a.code}</span>
+          ${allergenIcon(a)}
+        </div>
+      </th>`
+    ).join('');
+
+    area.innerHTML = `
+      <div class="matrix-wrapper">
+        <div class="matrix-scroll">
+          <table class="matrix-table" role="table" aria-label="Allergenenmatrix">
+            <thead>
+              <tr>
+                <th class="th-dish">Gerecht</th>
+                ${thAllergens}
+                <th style="width:1px;background:#111;padding:0;border-right:1px solid #333"></th>
+                ${thExtra}
+              </tr>
+            </thead>
+            <tbody>
+              ${rows}
+            </tbody>
+          </table>
+        </div>
+        <div class="scroll-hint">
+          <svg width="12" height="12" viewBox="0 0 12 12" fill="none">
+            <path d="M3 6H9M7 4L9 6L7 8" stroke="currentColor" stroke-width="1.3" stroke-linecap="round" stroke-linejoin="round"/>
+          </svg>
+          Scroll horizontaal voor alle allergenen
+        </div>
+        <div class="matrix-footer">
+          <div class="footer-legend">
+            <div class="legend-item">
+              <span class="allergen-present" style="background:#ff6b1a;font-size:9px;width:20px;height:20px">G</span>
+              Aanwezig
+            </div>
+            <div class="legend-item">
+              <span class="allergen-absent"></span>
+              Niet aanwezig
+            </div>
+            <div class="legend-item" style="border-left:1px solid #e8e8e6;padding-left:16px;margin-left:4px">
+              <span class="allergen-present" style="background:#6d4c41;opacity:.85;font-size:8px;width:20px;height:20px">NM</span>
+              <span style="color:#999">NM = Nootmuskaat (niet EU-14)</span>
+            </div>
+            <div class="legend-item" style="border-left:1px solid #e8e8e6;padding-left:16px;margin-left:4px">
+              <span class="no-data-badge" style="margin-left:0">⚠ geen data</span>
+              Hergeneer recept in Module 01
+            </div>
+          </div>
+          <span style="margin-left:auto;font-family:'DM Mono',monospace;font-size:10px;color:#aaa;letter-spacing:.06em">
+            ${filtered.length} gerecht${filtered.length !== 1 ? 'en' : ''} · Klik op rij voor details
+          </span>
+        </div>
+      </div>`;
+  }
+
+  // ──────────────────────────────────────────────────────────────────
+  // Empty state
+  // ──────────────────────────────────────────────────────────────────
+  function renderEmptyState() {
+    return `
+      <div class="empty-state">
+        <svg class="empty-icon" viewBox="0 0 64 64" fill="none" xmlns="http://www.w3.org/2000/svg">
+          <rect x="12" y="8" width="40" height="48" rx="4" stroke="currentColor" stroke-width="2"/>
+          <line x1="20" y1="22" x2="44" y2="22" stroke="currentColor" stroke-width="1.5" stroke-linecap="round"/>
+          <line x1="20" y1="30" x2="44" y2="30" stroke="currentColor" stroke-width="1.5" stroke-linecap="round"/>
+          <line x1="20" y1="38" x2="34" y2="38" stroke="currentColor" stroke-width="1.5" stroke-linecap="round"/>
+        </svg>
+        <h2 class="empty-title">Nog geen recepten</h2>
+        <p class="empty-text">
+          Voeg recepten met allergeneninformatie toe in de Recepten Studio.<br>
+          Ze verschijnen hier automatisch.
+        </p>
+        <a href="../01-recepten-studio/klaar-recepten.html" class="btn-to-module1">
+          <svg width="14" height="14" viewBox="0 0 14 14" fill="none">
+            <circle cx="7" cy="7" r="5.5" stroke="currentColor" stroke-width="1.3"/>
+            <path d="M7 4.5V7L8.5 8.5" stroke="currentColor" stroke-width="1.3" stroke-linecap="round" stroke-linejoin="round"/>
+          </svg>
+          OPEN RECEPTEN STUDIO
+        </a>
+      </div>`;
+  }
+
+  // ──────────────────────────────────────────────────────────────────
+  // Detail panel
+  // ──────────────────────────────────────────────────────────────────
+  function openPanel(index) {
+    const recipe = recipes[index];
+    if (!recipe) return;
+
+    document.getElementById('panel-title').textContent = recipe.title || 'Naamloos';
+
+    const metaEl = document.getElementById('panel-meta');
+    metaEl.innerHTML = '';
+    const folder = getFolder(recipe);
+    const servings = getServings(recipe);
+    if (folder) metaEl.innerHTML += `<span class="meta-badge">${escapeHtml(CATEGORY_LABELS[folder] || folder)}</span>`;
+    if (servings) metaEl.innerHTML += `<span class="meta-badge">${escapeHtml(servings)}</span>`;
+
+    const allergenList = getAllergens(recipe);
+    const noData = allergenList.length === 0;
+
+    const presentAllergens = ALLERGENS.filter(a => hasAllergen(recipe, a.code));
+    const absentAllergens  = ALLERGENS.filter(a => !hasAllergen(recipe, a.code));
+    const presentExtra     = EXTRA_ALLERGENS.filter(a => hasAllergen(recipe, a.code));
+
+    const body = document.getElementById('panel-body');
+
+    const extraSection = presentExtra.length > 0 ? `
+        <p class="panel-section-title">Buiten EU-14</p>
+        <div class="allergen-list">
+          ${presentExtra.map(a => `
+            <div class="allergen-row present" style="background:#fdf5f0;border-color:#e0c9b8">
+              <div class="allergen-dot present" style="background:${a.color}">${a.code}</div>
+              <span class="allergen-row-name">${a.name}</span>
+              <span class="allergen-row-status" style="color:${a.color}">AANWEZIG</span>
+            </div>`).join('')}
+        </div>
+        <p style="font-family:'DM Mono',monospace;font-size:9px;color:#aaa;padding:8px 0;line-height:1.5">${presentExtra.map(a => a.note || '').filter(Boolean).join(' ')}</p>` : '';
+
+    if (noData) {
+      body.innerHTML = `
+        <div style="margin-top:20px;padding:14px;background:#fff8ec;border:1px solid #ffd580;border-radius:6px;font-family:'DM Mono',monospace;font-size:11px;color:#cc7700;line-height:1.6">
+          ⚠ Geen allergeendata opgeslagen.<br>
+          <strong>Hergeneer dit recept in Module 01</strong> om de allergeenanalyse bij te werken.
+        </div>`;
+    } else if (presentAllergens.length === 0 && presentExtra.length === 0) {
+      body.innerHTML = `
+        <p class="panel-section-title" style="margin-top:20px">EU-14 Allergenen</p>
+        <div class="no-allergens-msg">✓ Geen EU-14 allergenen geregistreerd</div>
+        ${extraSection}
+        <div class="allergen-list" style="margin-top:16px">
+          ${absentAllergens.map(a => `
+            <div class="allergen-row absent">
+              <div class="allergen-dot absent">${a.code}</div>
+              <span class="allergen-row-name">${a.name}</span>
+              <span class="allergen-row-status">—</span>
+            </div>`).join('')}
+        </div>`;
+    } else {
+      body.innerHTML = `
+        <p class="panel-section-title" style="margin-top:20px">Aanwezig — EU-14 (${presentAllergens.length})</p>
+        <div class="allergen-list">
+          ${presentAllergens.map(a => `
+            <div class="allergen-row present">
+              <div class="allergen-dot present" style="background:${a.color}">${a.code}</div>
+              <span class="allergen-row-name">${a.name}</span>
+              <span class="allergen-row-status">AANWEZIG</span>
+            </div>`).join('')}
+        </div>
+        ${extraSection}
+        <p class="panel-section-title">Niet aanwezig (${absentAllergens.length})</p>
+        <div class="allergen-list">
+          ${absentAllergens.map(a => `
+            <div class="allergen-row absent">
+              <div class="allergen-dot absent">${a.code}</div>
+              <span class="allergen-row-name">${a.name}</span>
+              <span class="allergen-row-status">—</span>
+            </div>`).join('')}
+        </div>`;
+    }
+
+    document.getElementById('panel-overlay').classList.add('open');
+    document.getElementById('detail-panel').classList.add('open');
+  }
+
+  function closePanel() {
+    document.getElementById('panel-overlay').classList.remove('open');
+    document.getElementById('detail-panel').classList.remove('open');
+  }
+
+  document.addEventListener('keydown', e => {
+    if (e.key === 'Escape') closePanel();
+  });
+
+  // ──────────────────────────────────────────────────────────────────
+  // Allergen icons (simple SVG shapes per allergen)
+  // ──────────────────────────────────────────────────────────────────
+  function allergenIcon(a) {
+    const icons = {
+      G:  `<svg class="allergen-icon" viewBox="0 0 22 22" fill="none"><ellipse cx="11" cy="8" rx="4" ry="6" stroke="${a.color}" stroke-width="1.3"/><path d="M11 14V19" stroke="${a.color}" stroke-width="1.3" stroke-linecap="round"/><path d="M8 12C6 13 5 15 6 17" stroke="${a.color}" stroke-width="1.3" stroke-linecap="round"/><path d="M14 12C16 13 17 15 16 17" stroke="${a.color}" stroke-width="1.3" stroke-linecap="round"/></svg>`,
+      S:  `<svg class="allergen-icon" viewBox="0 0 22 22" fill="none"><path d="M11 5C7 5 4 8 4 11C4 14 7 17 11 17" stroke="${a.color}" stroke-width="1.3" stroke-linecap="round"/><path d="M11 17C15 17 18 14 18 11" stroke="${a.color}" stroke-width="1.3" stroke-linecap="round"/><circle cx="11" cy="11" r="2.5" stroke="${a.color}" stroke-width="1.3"/><path d="M15 7L17 5M7 7L5 5" stroke="${a.color}" stroke-width="1.3" stroke-linecap="round"/></svg>`,
+      E:  `<svg class="allergen-icon" viewBox="0 0 22 22" fill="none"><ellipse cx="11" cy="12" rx="5" ry="6.5" stroke="${a.color}" stroke-width="1.3"/><ellipse cx="11" cy="8" rx="3.5" ry="4" stroke="${a.color}" stroke-width="1.3"/></svg>`,
+      Vi: `<svg class="allergen-icon" viewBox="0 0 22 22" fill="none"><path d="M4 11C6 7 9 5 13 5C17 5 19 8 19 11C19 14 17 17 13 17C9 17 6 15 4 11Z" stroke="${a.color}" stroke-width="1.3"/><path d="M19 11L21 9M19 11L21 13" stroke="${a.color}" stroke-width="1.3" stroke-linecap="round"/><circle cx="7" cy="11" r="1" fill="${a.color}"/></svg>`,
+      P:  `<svg class="allergen-icon" viewBox="0 0 22 22" fill="none"><ellipse cx="8" cy="13" rx="3.5" ry="4.5" stroke="${a.color}" stroke-width="1.3"/><ellipse cx="14" cy="13" rx="3.5" ry="4.5" stroke="${a.color}" stroke-width="1.3"/><path d="M11 13V8" stroke="${a.color}" stroke-width="1.3" stroke-linecap="round"/><path d="M8 8C9 6 13 6 14 8" stroke="${a.color}" stroke-width="1.3" stroke-linecap="round"/></svg>`,
+      So: `<svg class="allergen-icon" viewBox="0 0 22 22" fill="none"><ellipse cx="11" cy="12" rx="5" ry="5" stroke="${a.color}" stroke-width="1.3"/><path d="M9 10C9 9 10 8 11 8C12 8 13 9 13 10C13 11.5 11 12 11 13" stroke="${a.color}" stroke-width="1.3" stroke-linecap="round"/><circle cx="11" cy="15" r="0.8" fill="${a.color}"/></svg>`,
+      M:  `<svg class="allergen-icon" viewBox="0 0 22 22" fill="none"><path d="M7 7L5 17H17L15 7" stroke="${a.color}" stroke-width="1.3" stroke-linejoin="round"/><path d="M7 7C8 5 14 5 15 7" stroke="${a.color}" stroke-width="1.3" stroke-linecap="round"/><path d="M9 12C9.5 13.5 12.5 13.5 13 12" stroke="${a.color}" stroke-width="1.3" stroke-linecap="round"/></svg>`,
+      N:  `<svg class="allergen-icon" viewBox="0 0 22 22" fill="none"><path d="M11 5C8 5 5 8 5 11C5 14 8 17 11 17C14 17 17 14 17 11" stroke="${a.color}" stroke-width="1.3" stroke-linecap="round"/><path d="M14 5L17 5L17 8" stroke="${a.color}" stroke-width="1.3" stroke-linecap="round" stroke-linejoin="round"/><path d="M11 11L17 5" stroke="${a.color}" stroke-width="1.3" stroke-linecap="round"/></svg>`,
+      Se: `<svg class="allergen-icon" viewBox="0 0 22 22" fill="none"><path d="M11 17V11" stroke="${a.color}" stroke-width="1.3" stroke-linecap="round"/><path d="M11 11C9 9 7 9 6 10" stroke="${a.color}" stroke-width="1.3" stroke-linecap="round"/><path d="M11 13C13 11 15 11 16 12" stroke="${a.color}" stroke-width="1.3" stroke-linecap="round"/><path d="M11 11C10 9 10 7 11 6" stroke="${a.color}" stroke-width="1.3" stroke-linecap="round"/><ellipse cx="11" cy="18" rx="3" ry="1.5" stroke="${a.color}" stroke-width="1.3"/></svg>`,
+      Mo: `<svg class="allergen-icon" viewBox="0 0 22 22" fill="none"><circle cx="8" cy="9" r="2.5" stroke="${a.color}" stroke-width="1.3"/><circle cx="14" cy="9" r="2.5" stroke="${a.color}" stroke-width="1.3"/><path d="M6 14H16" stroke="${a.color}" stroke-width="1.3" stroke-linecap="round"/><path d="M8 14V17M14 14V17" stroke="${a.color}" stroke-width="1.3" stroke-linecap="round"/></svg>`,
+      Sa: `<svg class="allergen-icon" viewBox="0 0 22 22" fill="none"><ellipse cx="11" cy="11" rx="3" ry="5" stroke="${a.color}" stroke-width="1.3"/><circle cx="5" cy="11" r="1.5" stroke="${a.color}" stroke-width="1.3"/><circle cx="17" cy="11" r="1.5" stroke="${a.color}" stroke-width="1.3"/><circle cx="8" cy="6" r="1.5" stroke="${a.color}" stroke-width="1.3"/><circle cx="14" cy="6" r="1.5" stroke="${a.color}" stroke-width="1.3"/><circle cx="8" cy="16" r="1.5" stroke="${a.color}" stroke-width="1.3"/><circle cx="14" cy="16" r="1.5" stroke="${a.color}" stroke-width="1.3"/></svg>`,
+      Su: `<svg class="allergen-icon" viewBox="0 0 22 22" fill="none"><path d="M7 8C7 6 9 5 11 5C13 5 15 6 15 8C15 11 11 11 11 14" stroke="${a.color}" stroke-width="1.3" stroke-linecap="round"/><circle cx="11" cy="17" r="1" fill="${a.color}"/></svg>`,
+      L:  `<svg class="allergen-icon" viewBox="0 0 22 22" fill="none"><path d="M11 17C11 17 5 13 5 9C5 7 7 5 9 5C10 5 11 6 11 6C11 6 12 5 13 5C15 5 17 7 17 9C17 13 11 17 11 17Z" stroke="${a.color}" stroke-width="1.3" stroke-linejoin="round"/></svg>`,
+      W:  `<svg class="allergen-icon" viewBox="0 0 22 22" fill="none"><path d="M5 11C5 8 7 6 9 6C11 6 11 9 11 9C11 9 11 6 13 6C15 6 17 8 17 11C17 14 14 17 11 17C8 17 5 14 5 11Z" stroke="${a.color}" stroke-width="1.3" stroke-linejoin="round"/></svg>`
+    };
+    return icons[a.code] || `<svg class="allergen-icon" viewBox="0 0 22 22"><circle cx="11" cy="11" r="5" stroke="${a.color}" stroke-width="1.3"/></svg>`;
+  }
+
+  // ──────────────────────────────────────────────────────────────────
+  // Utility
+  // ──────────────────────────────────────────────────────────────────
+  function escapeHtml(str) {
+    if (typeof str !== 'string') return '';
+    return str.replace(/&/g,'&amp;').replace(/</g,'&lt;').replace(/>/g,'&gt;').replace(/"/g,'&quot;');
+  }
+
+  // ──────────────────────────────────────────────────────────────────
+  // Init
+  // ──────────────────────────────────────────────────────────────────
+  async function init() {
+    const session = await klaarRequireAuth();
+    if (!session) return;
+    recipes = loadRecipes();
+    loadExtraData();
+
+    updateSubtitle();
+
+    // Print watermark
+    const now = new Date();
+    document.getElementById('print-watermark').textContent =
+      `Afgedrukt op ${now.toLocaleDateString('nl-NL', {day:'numeric',month:'long',year:'numeric'})} · Klaar Allergenenkaart · Conform EU-verordening 1169/2011`;
+
+    buildFilterBar();
+    renderMatrix();
+  }
+
+  // Re-render when localStorage changes (e.g., Module 01 open in other tab)
+  window.addEventListener('storage', e => {
+    if (['klaar_recipes','klaar_folders_custom','klaar_pakketten'].includes(e.key)) {
+      recipes = loadRecipes();
+      loadExtraData();
+      buildFilterBar();
+      renderMatrix();
+      updateSubtitle();
+    }
+  });
+
+  // ──────────────────────────────────────────────────────────────────
+  // Floating tooltip — works outside overflow:hidden containers
+  // ──────────────────────────────────────────────────────────────────
+  const _tip = document.getElementById('allergen-tip');
+
+  function showTip(e, text) {
+    _tip.textContent = text;
+    _tip.style.display = 'block';
+    moveTip(e);
+  }
+  function moveTip(e) {
+    const w = _tip.offsetWidth;
+    const x = Math.min(e.clientX - w / 2, window.innerWidth - w - 8);
+    const y = e.clientY - _tip.offsetHeight - 12;
+    _tip.style.left = Math.max(8, x) + 'px';
+    _tip.style.top  = y + 'px';
+  }
+  function hideTip() { _tip.style.display = 'none'; }
+
+  // Delegate: header cells (data-tooltip) + allergen badges (data-name)
+  document.addEventListener('mouseover', e => {
+    const header = e.target.closest('[data-tooltip]');
+    if (header) { showTip(e, header.dataset.tooltip); return; }
+    const badge = e.target.closest('[data-name]');
+    if (badge) { showTip(e, badge.dataset.name); return; }
+    hideTip();
+  });
+  document.addEventListener('mousemove', e => {
+    if (_tip.style.display === 'block') moveTip(e);
+  });
+  document.addEventListener('mouseout', e => {
+    if (!e.relatedTarget?.closest('[data-tooltip],[data-name]')) hideTip();
+  });
+
+  document.addEventListener('DOMContentLoaded', init);
+
+  // ──────────────────────────────────────────────────────────────────
+  // HELP MODAL
+  // ──────────────────────────────────────────────────────────────────
+  function openHelp() { document.getElementById('helpModal').classList.add('open'); }
+  function closeHelp(e) {
+    if (e.target === document.getElementById('helpModal')) {
+      document.getElementById('helpModal').classList.remove('open');
+    }
+  }
+
+  // ──────────────────────────────────────────────────────────────────
+  // TAB SWITCHING
+  // ──────────────────────────────────────────────────────────────────
+  let _activeTab = 'allergens';
+
+  function setMainTab(tab) {
+    _activeTab = tab;
+    document.getElementById('view-allergens').style.display = tab === 'allergens' ? 'block' : 'none';
+    document.getElementById('view-assistent').style.display = tab === 'assistent' ? 'block' : 'none';
+    document.getElementById('tab-allergens').classList.toggle('active', tab === 'allergens');
+    document.getElementById('tab-assistent').classList.toggle('active', tab === 'assistent');
+    document.getElementById('btn-print').style.display = tab === 'allergens' ? '' : 'none';
+    if (tab === 'assistent') {
+      // Reload recipes in case they were updated
+      const dishSearch = document.getElementById('dish-search');
+      if (dishSearch && dishSearch.value) searchDishes(dishSearch.value);
+    }
+  }
+
+  // ──────────────────────────────────────────────────────────────────
+  // KOK ASSISTENT
+  // ──────────────────────────────────────────────────────────────────
+  const EU14 = {
+    gluten: 'Gluten', crustaceans: 'Schaaldieren', eggs: 'Eieren',
+    fish: 'Vis', peanuts: 'Pinda\'s', soy: 'Soja', milk: 'Melk (lactose)',
+    nuts: 'Noten', celery: 'Selderij', mustard: 'Mosterd',
+    sesame: 'Sesam', sulphites: 'Sulfiet/SO₂', lupin: 'Lupine',
+    molluscs: 'Weekdieren'
+  };
+
+  let _selectedDish = null;
+  let _chatMessages = [];
+  let _isSending = false;
+  let _recognition = null;
+  let _micActive = false;
+  let _chatMode = 'chat'; // 'chat' | 'emergency'
+
+  // ── Mode switching ──
+  function setChatMode(mode) {
+    _chatMode = mode;
+    document.getElementById('mode-btn-chat').classList.toggle('active', mode === 'chat');
+    document.getElementById('mode-btn-emergency').classList.toggle('active', mode === 'emergency');
+    // Update hint label
+    document.getElementById('chat-mode-label').textContent =
+      mode === 'emergency' ? '🚨 Noodoplossing' : '👨‍🍳 Kok Assistent';
+    // Update empty state text
+    document.getElementById('chat-empty-text').innerHTML = mode === 'emergency'
+      ? 'Selecteer een gerecht dat je <strong>niet kunt serveren</strong>.<br>Ik vraag wat je bij de hand hebt en kom met een alternatief.<br><em>Allergenen worden automatisch vermeden.</em>'
+      : 'Stel een vraag over het geselecteerde gerecht.<br><em>"Kan ik dit zonder gluten maken?"</em><br><em>"Welk alternatief is er voor de room?"</em>';
+    // Reset chat when switching modes (new context)
+    _chatMessages = [];
+    renderChatMessages();
+    updateSendState();
+    // In noodoplossing: als er al een gerecht is, stuur automatisch openingsbericht
+    if (mode === 'emergency' && _selectedDish) {
+      triggerEmergencyOpening();
+    }
+  }
+
+  function triggerEmergencyOpening() {
+    // Claude stuurt eerste bericht — vraagt wat beschikbaar is
+    _chatMessages = [];
+    const allergens = getDishAllergens(_selectedDish).map(a => a.name || a.code);
+    const allergenStr = allergens.length ? allergens.join(', ') : 'geen bekende allergenen';
+    addMessage('claude',
+      `🚨 Noodoplossing voor: ${getDishName(_selectedDish)}\n\nDit gerecht bevat: ${allergenStr}.\n\nWelke ingrediënten heb je nu beschikbaar in de keuken? Noem ze gewoon op, dan kom ik met een snel alternatief.`
+    );
+  }
+
+  // ── Dish search ──
+  // Recipe name — Module 01 uses r.title; older format uses r.naam
+  function getDishName(r) { return r.title || r.naam || r.recipe?.naam || '(naamloos)'; }
+
+  // Allergens — stored as array [{code,name}] in r.recipe.allergens or r.allergens
+  function getDishAllergens(r) { return getAllergens(r); }
+
+  // Ingredients — r.recipe.ingredients [{amount, item}] (Module 01 format)
+  function getDishIngredients(r) { return r.recipe?.ingredients || r.ingredienten || r.ingredients || []; }
+
+  // Steps — r.recipe.steps (Module 01 format)
+  function getDishSteps(r) { return r.recipe?.steps || r.stappen || r.steps || []; }
+
+  // Notes — r.recipe.notes (Module 01 format)
+  function getDishNotes(r) { return r.recipe?.notes || r.notities || r.notes || ''; }
+
+  function searchDishes(q) {
+    const dd = document.getElementById('dish-dropdown');
+    if (!q.trim()) { dd.style.display = 'none'; return; }
+    const allRecipes = loadRecipes();
+    const matches = allRecipes.filter(r =>
+      getDishName(r).toLowerCase().includes(q.toLowerCase())
+    ).slice(0, 12);
+    if (!matches.length) {
+      dd.innerHTML = '<div class="dish-option" style="color:#bbb;cursor:default;">Geen gerechten gevonden</div>';
+      dd.style.display = 'block';
+      return;
+    }
+    dd.innerHTML = matches.map(r => {
+      const folder = getAllFolders().find(f => f.id === getFolder(r));
+      const cat = folder ? `${folder.icon} ${folder.label}` : 'Overig';
+      return `<div class="dish-option" onclick="selectDish('${r.id}')">
+        <div class="dish-option-title">${getDishName(r)}</div>
+        <div class="dish-option-cat">${cat}</div>
+      </div>`;
+    }).join('');
+    dd.style.display = 'block';
+  }
+
+  function selectDish(id) {
+    const allRecipes = loadRecipes();
+    _selectedDish = allRecipes.find(r => r.id === id) || null;
+    document.getElementById('dish-dropdown').style.display = 'none';
+    document.getElementById('dish-search').value = _selectedDish ? getDishName(_selectedDish) : '';
+    renderDishInfo();
+    // Reset chat for new dish
+    _chatMessages = [];
+    renderChatMessages();
+    updateSendState();
+    if (_selectedDish) {
+      document.getElementById('chat-hint').style.display = 'block';
+      document.getElementById('chat-dish-name').textContent = getDishName(_selectedDish);
+      // In emergency mode: stuur automatisch openingsbericht
+      if (_chatMode === 'emergency') triggerEmergencyOpening();
+    } else {
+      document.getElementById('chat-hint').style.display = 'none';
+    }
+  }
+
+  // Close dropdown on outside click
+  document.addEventListener('click', e => {
+    if (!e.target.closest('.dish-search-wrap')) {
+      document.getElementById('dish-dropdown').style.display = 'none';
+    }
+  });
+
+  function renderDishInfo() {
+    const el = document.getElementById('asst-dish-info');
+    if (!_selectedDish) {
+      el.innerHTML = `<div class="asst-no-dish">
+        <div class="asst-no-dish-icon">🍽️</div>
+        <p>Selecteer een gerecht om te beginnen</p>
+        <small>De assistent krijgt volledige context over het geselecteerde gerecht</small>
+      </div>`;
+      return;
+    }
+    const r = _selectedDish;
+    // Allergens — array of {code, name, color} objects
+    const allergens = getDishAllergens(r);
+    const allergenHtml = allergens.length
+      ? allergens.map(a => {
+          const bg = a.color || '#e53e3e';
+          const label = a.name || a.code || '';
+          return `<span class="dish-allergen-pill" style="background:${bg}">${label}</span>`;
+        }).join('')
+      : '<span class="dish-no-allergens">✓ Geen EU-14 allergenen</span>';
+
+    // Ingredients
+    const ings = getDishIngredients(r).filter(i => i && (i.item || i.naam || i.name));
+    const ingsHtml = ings.length
+      ? `<ul class="dish-info-ingredients">${ings.map(i => {
+          const nm = i.item || i.naam || i.name;
+          const qty = i.amount || i.hoeveelheid || '';
+          return `<li>${nm}${qty ? ` — ${qty}` : ''}</li>`;
+        }).join('')}</ul>`
+      : '<p style="font-size:13px;color:#aaa;">Geen ingrediënten</p>';
+
+    // Steps
+    const steps = getDishSteps(r).filter(s => s && String(s).trim());
+    const stepsHtml = steps.length
+      ? `<ol class="dish-info-steps">${steps.map(s => `<li>${s}</li>`).join('')}</ol>`
+      : '';
+
+    el.innerHTML = `
+      <div class="dish-info-name">${getDishName(r)}</div>
+      <div>
+        <span class="asst-label" style="margin-bottom:8px;">Allergenen</span>
+        <div class="dish-info-allergens">${allergenHtml}</div>
+      </div>
+      <div>
+        <span class="asst-label" style="margin-bottom:8px;">Ingrediënten</span>
+        ${ingsHtml}
+      </div>
+      ${steps.length ? `<div>
+        <span class="asst-label" style="margin-bottom:8px;">Bereiding</span>
+        ${stepsHtml}
+      </div>` : ''}
+    `;
+  }
+
+  // ── Chat ──
+  function buildRecipeBlock(r) {
+    const allergens = getDishAllergens(r);
+    const presentAllergens = allergens.map(a => a.name || a.code).join(', ') || 'Geen';
+    const ings = getDishIngredients(r).filter(i => i && (i.item || i.naam || i.name))
+      .map(i => {
+        const nm = i.item || i.naam || i.name;
+        const qty = i.amount || i.hoeveelheid || '';
+        return `- ${nm}${qty ? ` (${qty})` : ''}`;
+      }).join('\n');
+    const steps = getDishSteps(r).filter(s => s && String(s).trim())
+      .map((s, i) => `${i+1}. ${s}`).join('\n');
+    const notes = getDishNotes(r);
+    return { name: getDishName(r), presentAllergens, ings, steps, notes };
+  }
+
+  function buildSystemPrompt() {
+    if (!_selectedDish) return '';
+    const r = _selectedDish;
+    const { name, presentAllergens, ings, steps, notes } = buildRecipeBlock(r);
+
+    if (_chatMode === 'emergency') {
+      return `Je bent een creatieve keukenassistent die koks helpt bij keukenemergencies. Een kok kan een specifiek gerecht NIET serveren aan een gast en heeft nú een alternatief nodig.
+
+GERECHT DAT NIET GESERVEERD KAN WORDEN: ${name}
+ALLERGENEN IN DIT GERECHT: ${presentAllergens}
+
+JOUW TAAK:
+1. Als de kok nog niet heeft verteld welke ingrediënten hij bij de hand heeft, vraag dit dan ALTIJD EERST. Houd het kort: "Welke ingrediënten heb je nu beschikbaar?" of vergelijkbaar.
+2. Zodra je weet wat beschikbaar is, stel je EEN concreet alternatief gerecht voor dat:
+   - Snel klaar te maken is (à la minute / max 15 minuten)
+   - ABSOLUUT GEEN van de bovenstaande allergenen bevat
+   - Past bij een professionele horecakeuken
+   - Gemaakt kan worden met de genoemde ingrediënten
+3. Geef een korte bereiding (max 5 stappen).
+4. Geef eventueel 1 alternatief als backup.
+
+TOON: direct, praktisch, geen uitleg over wat je NIET kunt doen. Gewoon oplossen.
+Antwoord altijd in het Nederlands. Korte zinnen — de kok staat in de keuken.`;
+    }
+
+    // Default: vrije chat modus
+    return `Je bent een professionele Kok Assistent voor een horeca keuken. Je helpt koks live in de keuken met alle vragen die ze hebben — over recepten, technieken, vervangingen, allergenen of improvisaties.
+
+HUIDIG GESELECTEERD GERECHT: ${name}
+
+ALLERGENEN IN DIT GERECHT (EU-14):
+${presentAllergens}
+
+INGREDIËNTEN:
+${ings || 'Niet opgegeven'}
+
+BEREIDINGSWIJZE:
+${steps || 'Niet opgegeven'}
+
+${notes ? `NOTITIES:\n${notes}` : ''}
+
+INSTRUCTIES:
+- Je antwoordt op ALLES wat een kok je vraagt — ook als het buiten dit recept valt.
+- Geef korte, praktische antwoorden. De kok staat in de keuken.
+- Als iemand vraagt of een allergeen weggelaten kan worden, leg dan concreet uit hoe het recept aangepast wordt.
+- Stel creatieve alternatieven voor bij vervangingsvragen — gebruik ingrediënten die waarschijnlijk in een professionele keuken aanwezig zijn.
+- Wees specifiek over hoeveelheden en technieken als dat relevant is.
+- Antwoord altijd in het Nederlands. Korte zinnen.`;
+  }
+
+  function renderChatMessages() {
+    const el = document.getElementById('chat-messages');
+    const empty = document.getElementById('chat-empty');
+    if (!_chatMessages.length) {
+      empty.style.display = 'flex';
+      // Remove all bubbles
+      [...el.querySelectorAll('.msg-row')].forEach(n => n.remove());
+      return;
+    }
+    empty.style.display = 'none';
+    // Rebuild
+    [...el.querySelectorAll('.msg-row')].forEach(n => n.remove());
+    _chatMessages.forEach(m => {
+      const row = document.createElement('div');
+      row.className = `msg-row ${m.role}`;
+      const bubble = document.createElement('div');
+      bubble.className = `msg-bubble ${m.role === 'user' ? 'user' : (m.thinking ? 'thinking' : 'claude')}`;
+      bubble.textContent = m.content;
+      row.appendChild(bubble);
+      el.appendChild(row);
+    });
+    el.scrollTop = el.scrollHeight;
+  }
+
+  function addMessage(role, content, thinking = false) {
+    _chatMessages.push({ role, content, thinking });
+    renderChatMessages();
+  }
+
+  function updateLastMessage(content) {
+    if (_chatMessages.length) {
+      _chatMessages[_chatMessages.length - 1].content = content;
+      _chatMessages[_chatMessages.length - 1].thinking = false;
+    }
+    renderChatMessages();
+  }
+
+  function updateSendState() {
+    const btn = document.getElementById('send-btn');
+    const inp = document.getElementById('chat-input');
+    btn.disabled = !_selectedDish || !inp.value.trim() || _isSending;
+  }
+
+  function chatKeydown(e) {
+    updateSendState();
+    if (e.key === 'Enter' && !e.shiftKey) {
+      e.preventDefault();
+      if (!document.getElementById('send-btn').disabled) sendMessage();
+    }
+  }
+
+  function autoGrow(el) {
+    el.style.height = 'auto';
+    el.style.height = Math.min(el.scrollHeight, 110) + 'px';
+    updateSendState();
+  }
+
+  async function sendMessage() {
+    const inp = document.getElementById('chat-input');
+    const text = inp.value.trim();
+    if (!text || !_selectedDish || _isSending) return;
+
+    inp.value = '';
+    inp.style.height = 'auto';
+    updateSendState();
+    _isSending = true;
+
+    addMessage('user', text);
+    addMessage('claude', '…', true);
+
+    // Build messages history for API
+    const apiMessages = _chatMessages
+      .filter(m => !m.thinking)
+      .slice(0, -1) // exclude the thinking placeholder
+      .map(m => ({ role: m.role === 'user' ? 'user' : 'assistant', content: m.content }));
+    apiMessages.push({ role: 'user', content: text });
+
+    try {
+      const data = await klaarAI({
+          model: 'claude-sonnet-4-6',
+          max_tokens: 1024,
+          system: buildSystemPrompt(),
+          messages: apiMessages
+      }, '02-allergenenkaart');
+      if (data.error) throw new Error(data.error.message);
+      const reply = data.content?.[0]?.text || '(geen antwoord)';
+      updateLastMessage(reply);
+      speakResponse(reply);
+    } catch (err) {
+      updateLastMessage('⚠️ Fout: ' + (err.message || 'Kon Claude niet bereiken'));
+    }
+
+    _isSending = false;
+    updateSendState();
+  }
+
+  // ── Voice input ──
+  function toggleMic() {
+    if (_micActive) {
+      stopMic();
+    } else {
+      startMic();
+    }
+  }
+
+  function startMic() {
+    const SpeechRecognition = window.SpeechRecognition || window.webkitSpeechRecognition;
+    if (!SpeechRecognition) {
+      alert('Spraakinvoer wordt niet ondersteund in deze browser. Gebruik Chrome.');
+      return;
+    }
+
+    // Stop eventuele TTS zodat je niet over de assistent heen praat
+    stopSpeaking();
+
+    _recognition = new SpeechRecognition();
+    _recognition.lang = 'nl-NL';
+    _recognition.continuous = false;
+    _recognition.interimResults = true;
+
+    const inp = document.getElementById('chat-input');
+    const micBtn = document.getElementById('mic-btn');
+    let finalTranscript = '';
+
+    _recognition.onstart = () => {
+      _micActive = true;
+      micBtn.classList.add('recording');
+      micBtn.textContent = '⏹️';
+    };
+
+    _recognition.onresult = e => {
+      let interim = '';
+      for (let i = e.resultIndex; i < e.results.length; i++) {
+        if (e.results[i].isFinal) finalTranscript += e.results[i][0].transcript;
+        else interim = e.results[i][0].transcript;
+      }
+      inp.value = (finalTranscript + interim).trim();
+      autoGrow(inp);
+      updateSendState();
+    };
+
+    _recognition.onend = () => {
+      _micActive = false;
+      micBtn.classList.remove('recording');
+      micBtn.textContent = '🎙️';
+      _recognition = null;
+      // Auto-send als er iets ingesproken is
+      const val = document.getElementById('chat-input').value.trim();
+      if (val && _selectedDish && !_isSending) {
+        setTimeout(() => sendMessage(), 200);
+      }
+    };
+
+    _recognition.onerror = e => {
+      _micActive = false;
+      micBtn.classList.remove('recording');
+      micBtn.textContent = '🎙️';
+      _recognition = null;
+    };
+
+    _recognition.start();
+  }
+
+  function stopMic() {
+    if (_recognition) { _recognition.stop(); }
+  }
+
+  // ── Speaker toggle ──
+  let _speakerOn = true; // standaard aan
+  let _isSpeaking = false;
+
+  function toggleSpeaker() {
+    _speakerOn = !_speakerOn;
+    const btn = document.getElementById('speaker-btn');
+    if (_speakerOn) {
+      btn.classList.add('on');
+      btn.title = 'Spraakuitvoer aan — klik om uit te zetten';
+    } else {
+      btn.classList.remove('on');
+      stopSpeaking();
+      btn.title = 'Spraakuitvoer uit — klik om aan te zetten';
+    }
+  }
+
+  function stopSpeaking() {
+    if (window.speechSynthesis) window.speechSynthesis.cancel();
+    _isSpeaking = false;
+    const btn = document.getElementById('speaker-btn');
+    btn.classList.remove('speaking');
+    const ind = document.getElementById('speaking-indicator');
+    if (ind) ind.style.display = 'none';
+  }
+
+  function speakResponse(text) {
+    if (!_speakerOn || !window.speechSynthesis) return;
+    stopSpeaking();
+
+    // Strip markdown formatting voor duidelijkere uitspraak
+    const clean = text
+      .replace(/\*\*(.*?)\*\*/g, '$1')
+      .replace(/\*(.*?)\*/g, '$1')
+      .replace(/#{1,3}\s/g, '')
+      .replace(/---+/g, '. ')
+      .replace(/\n\n+/g, '. ')
+      .replace(/\n/g, ' ')
+      .trim();
+
+    const utt = new SpeechSynthesisUtterance(clean);
+    utt.lang = 'nl-NL';
+    utt.rate = 0.92;
+    utt.pitch = 1.0;
+
+    // Kies Nederlandse stem als beschikbaar
+    const voices = window.speechSynthesis.getVoices();
+    const nlVoice = voices.find(v => v.lang === 'nl-NL') ||
+                    voices.find(v => v.lang.startsWith('nl')) ||
+                    voices.find(v => v.lang.startsWith('en'));
+    if (nlVoice) utt.voice = nlVoice;
+
+    utt.onstart = () => {
+      _isSpeaking = true;
+      document.getElementById('speaker-btn').classList.add('speaking');
+      const ind = document.getElementById('speaking-indicator');
+      if (ind) ind.style.display = 'inline';
+    };
+    utt.onend = utt.onerror = () => {
+      _isSpeaking = false;
+      document.getElementById('speaker-btn').classList.remove('speaking');
+      const ind = document.getElementById('speaking-indicator');
+      if (ind) ind.style.display = 'none';
+    };
+
+    window.speechSynthesis.speak(utt);
+  }
+
+  // Initialiseer speaker knop staat
+  document.addEventListener('DOMContentLoaded', () => {
+    const btn = document.getElementById('speaker-btn');
+    if (btn) { btn.classList.add('on'); }
+  });
+
+  // Zorg dat stemmen geladen zijn (vereist in Chrome/Safari)
+  if (window.speechSynthesis) {
+    window.speechSynthesis.getVoices();
+    window.speechSynthesis.addEventListener('voiceschanged', () => window.speechSynthesis.getVoices());
+  }
+
+  </script>
+
+<!-- ═══════════════════════════════════════════
+     KLAAR ASSISTENT — CHAT WIDGET Module 02
+     ═══════════════════════════════════════════ -->
+<style>
+
+    /* ═══════════════════════════════════════════
+       KLAAR ASSISTENT — CHAT WIDGET
+       ═══════════════════════════════════════════ */
+    .chat-trigger {
+      position: fixed; bottom: 24px; right: 24px; z-index: 1000;
+      display: flex; align-items: center; gap: 8px;
+      background: #e8ff47; color: #0a0a0a;
+      border: none; cursor: pointer;
+      padding: 0 18px; height: 44px;
+      font-family: 'DM Sans', sans-serif; font-size: 13px; font-weight: 600;
+      letter-spacing: 0.3px;
+      transition: transform 0.15s, box-shadow 0.15s;
+      box-shadow: 0 4px 20px rgba(232,255,71,0.3);
+    }
+    .chat-trigger:hover { transform: translateY(-2px); box-shadow: 0 6px 28px rgba(232,255,71,0.4); }
+    .chat-trigger.open { background: #1a1a1a; color: #e8ff47; border: 1px solid #e8ff47; box-shadow: none; }
+    .chat-trigger-pulse {
+      width: 7px; height: 7px; background: #22c55e; border-radius: 50%;
+      animation: chatPulse 2s infinite;
+    }
+    @keyframes chatPulse { 0%,100%{opacity:1;transform:scale(1)} 50%{opacity:0.6;transform:scale(1.3)} }
+    .chat-panel {
+      position: fixed; top: 0; right: -420px; width: 400px; height: 100vh;
+      background: #111111; border-left: 1px solid #222222;
+      display: flex; flex-direction: column;
+      z-index: 999; transition: right 0.28s cubic-bezier(0.4,0,0.2,1);
+      font-family: 'DM Sans', sans-serif;
+    }
+    .chat-panel.open { right: 0; }
+    .chat-header {
+      padding: 16px 16px 14px; border-bottom: 1px solid #222222;
+      display: flex; align-items: center; justify-content: space-between;
+      background: #0a0a0a; flex-shrink: 0;
+    }
+    .chat-header-info { display: flex; flex-direction: column; gap: 2px; }
+    .chat-header-title { font-family: 'Bebas Neue', sans-serif; font-size: 20px; letter-spacing: 1px; color: #e8ff47; line-height: 1; }
+    .chat-header-sub { font-family: 'DM Mono', monospace; font-size: 10px; color: #888888; letter-spacing: 1px; }
+    .chat-header-close { background: none; border: none; color: #888888; cursor: pointer; font-size: 18px; padding: 4px; transition: color 0.1s; }
+    .chat-header-close:hover { color: #f5f2eb; }
+    .chat-messages { flex: 1; overflow-y: auto; padding: 16px; display: flex; flex-direction: column; gap: 10px; scroll-behavior: smooth; }
+    .chat-messages::-webkit-scrollbar { width: 4px; }
+    .chat-messages::-webkit-scrollbar-track { background: transparent; }
+    .chat-messages::-webkit-scrollbar-thumb { background: #222222; }
+    .chat-msg { display: flex; flex-direction: column; max-width: 88%; }
+    .chat-msg.user { align-self: flex-end; }
+    .chat-msg.assistant { align-self: flex-start; }
+    .chat-bubble { padding: 10px 14px; font-size: 13px; line-height: 1.65; }
+    .chat-msg.user .chat-bubble { background: #e8ff47; color: #0a0a0a; font-weight: 500; }
+    .chat-msg.assistant .chat-bubble { background: #1a1a1a; color: #f5f2eb; border: 1px solid #222222; }
+    .chat-msg.assistant .chat-bubble strong { color: #e8ff47; }
+    .chat-typing { align-self: flex-start; padding: 12px 16px; background: #1a1a1a; border: 1px solid #222222; color: #888888; font-size: 18px; letter-spacing: 2px; line-height: 1; }
+    .chat-typing span { display: inline-block; animation: chatBlink 1.2s infinite; }
+    .chat-typing span:nth-child(2) { animation-delay: 0.2s; }
+    .chat-typing span:nth-child(3) { animation-delay: 0.4s; }
+    @keyframes chatBlink { 0%,100%{opacity:0.2} 50%{opacity:1} }
+    .chat-suggestions { padding: 8px 12px; display: flex; flex-wrap: wrap; gap: 6px; flex-shrink: 0; border-top: 1px solid #222222; }
+    .chat-suggestion { font-family: 'DM Mono', monospace; font-size: 10px; letter-spacing: 0.5px; padding: 5px 10px; border: 1px solid #333333; background: none; color: #888888; cursor: pointer; transition: all 0.15s; white-space: nowrap; }
+    .chat-suggestion:hover { border-color: #e8ff47; color: #e8ff47; }
+    .chat-input-area { padding: 12px; border-top: 1px solid #222222; display: flex; gap: 8px; align-items: flex-end; flex-shrink: 0; background: #0a0a0a; }
+    .chat-input { flex: 1; background: #1a1a1a; border: 1px solid #333333; color: #f5f2eb; font-family: 'DM Sans', sans-serif; font-size: 13px; line-height: 1.5; padding: 10px 12px; resize: none; max-height: 110px; min-height: 42px; transition: border-color 0.15s; }
+    .chat-input:focus { outline: none; border-color: #e8ff47; }
+    .chat-input::placeholder { color: #555555; }
+    .chat-send { width: 38px; height: 38px; background: #e8ff47; border: none; color: #0a0a0a; font-size: 16px; font-weight: 700; cursor: pointer; flex-shrink: 0; transition: opacity 0.15s; display: flex; align-items: center; justify-content: center; }
+    .chat-send:hover { opacity: 0.85; }
+    .chat-send:disabled { opacity: 0.35; cursor: not-allowed; }
+    .chat-upload-btn { width: 38px; height: 38px; background: #1a1a1a; border: 1px solid #333333; color: #888888; font-size: 15px; cursor: pointer; flex-shrink: 0; transition: all 0.15s; display: flex; align-items: center; justify-content: center; }
+    .chat-upload-btn:hover { border-color: #e8ff47; color: #e8ff47; }
+    .chat-no-key { background: #1a1a1a; border: 1px solid rgba(232,255,71,0.25); color: #aaa; font-size: 12px; padding: 12px 14px; line-height: 1.6; }
+    .chat-no-key strong { color: #e8ff47; }
+    .chat-img-preview { background: #1a1a1a; border: 1px solid rgba(232,255,71,0.25); padding: 8px 12px; font-size: 11px; color: #888888; font-family: 'DM Mono', monospace; display: flex; align-items: center; gap: 8px; flex-shrink: 0; }
+    .chat-img-preview img { width: 36px; height: 36px; object-fit: cover; }
+    .chat-img-clear { background: none; border: none; color: #e8ff47; cursor: pointer; font-size: 16px; margin-left: auto; line-height: 1; }
+    @media (max-width: 480px) { .chat-panel { width: 100%; right: -100%; } .chat-trigger { font-size: 12px; padding: 0 14px; } }
+
+</style>
+
+<button class="chat-trigger" id="chatTrigger" onclick="toggleChat()">
+  <span>💬</span>
+  <span id="chatTriggerLabel">Vraag de Klaar Assistent</span>
+  <span class="chat-trigger-pulse" id="chatTriggerPulse"></span>
+</button>
+
+<div class="chat-panel" id="chatPanel">
+  <div class="chat-header">
+    <div class="chat-header-info">
+      <div class="chat-header-title">Klaar Assistent</div>
+      <div class="chat-header-sub">EU-14 compliance-assistent · Module 02</div>
+    </div>
+    <button class="chat-header-close" onclick="toggleChat()">✕</button>
+  </div>
+  <div class="chat-messages" id="chatMessages">
+    <div class="chat-msg assistant">
+      <div class="chat-bubble">Hoi! Ik ben je Klaar Assistent voor <strong>Allergenenkaart</strong>.<br>Ik kan je helpen met NVWA-compliance, ontbrekende allergenen en gastcommunicatie.</div>
+    </div>
+  </div>
+  <div class="chat-suggestions" id="chatSuggestions">
+    <button class="chat-suggestion" onclick="chatSuggest('Controleer mijn allergenenmatrix op volledigheid')">✅ Matrix check</button>
+    <button class="chat-suggestion" onclick="chatSuggest('Welke gerechten hebben de meeste allergenenrisico's?')">⚠️ Risicoscan</button>
+    <button class="chat-suggestion" onclick="chatSuggest('Wat moet er op mijn menukaart staan (NVWA)?')">📋 NVWA regels</button>
+    <button class="chat-suggestion" onclick="chatSuggest('Hoe communiceer ik allergenen naar gasten?')">💬 Gastcommunicatie</button>
+  </div>
+  <div class="chat-input-area">
+    <textarea class="chat-input" id="chatInput" rows="1" placeholder="Vraag iets over je data..." onkeydown="chatKeyDown(event)" oninput="chatAutoResize(this)"></textarea>
+    <button class="chat-send" id="chatSend" onclick="chatSend()">↑</button>
+  </div>
+</div>
+
+
+<script>
+// ═══════════════════════════════════════════
+//  KLAAR ASSISTENT — Module 02
+// ═══════════════════════════════════════════
+const _chatHistory = [];
+let _chatStreaming = false;
+
+function toggleChat() {
+  const panel = document.getElementById('chatPanel');
+  const trigger = document.getElementById('chatTrigger');
+  const opening = !panel.classList.contains('open');
+  panel.classList.toggle('open', opening);
+  trigger.classList.toggle('open', opening);
+  document.getElementById('chatTriggerLabel').textContent = opening ? 'Sluiten' : 'Vraag de Klaar Assistent';
+  document.getElementById('chatTriggerPulse').style.display = opening ? 'none' : 'block';
+  if (opening) setTimeout(() => document.getElementById('chatInput').focus(), 300);
+}
+
+function chatBuildPrompt() {
+  const safe = (k, d=[]) => { try { return JSON.parse(localStorage.getItem(k) || JSON.stringify(d)); } catch(e) { return d; } };
+  const recepten = safe('klaar_recipes', []);
+  const ingredienten = safe('klaar_ingredienten', []);
+  const EU14 = ['gluten','schaaldieren','eieren','vis','pinda','soja','melk','noten','selderij','mosterd','sesam','sulfieten','lupine','weekdieren'];
+  const allergenMap = {};
+  // Per recept: titel + welke allergenen aanwezig
+  const receptAllergenDetail = recepten.slice(0,30).map(r => {
+    const ings = r.recipe?.ingredients || r.ingredients || [];
+    const rAllergens = [];
+    ings.forEach(ing => {
+      if (ing.allergens) Object.keys(ing.allergens).forEach(a => {
+        if (ing.allergens[a]) { allergenMap[a] = (allergenMap[a]||0) + 1; if (!rAllergens.includes(a)) rAllergens.push(a); }
+      });
+    });
+    return r.title + (rAllergens.length ? ' [' + rAllergens.join(', ') + ']' : ' [geen allergenen geregistreerd]');
+  }).join('\n');
+  const allergenSummary = EU14.map(a => a + ': ' + (allergenMap[a] || 0) + 'x').join(', ');
+  // Ingrediënten uit M04 bibliotheek
+  const ingLijst = ingredienten.length > 0
+    ? ingredienten.map(i => `${i.naam} (cat: ${i.categorie||'?'})`).join(', ')
+    : 'Geen ingrediënten in bibliotheek.';
+  return `Je bent de Klaar Assistent voor Module 02 — Allergenenkaart.
+
+LIVE DATA:
+Recepten in bibliotheek: ${recepten.length}
+EU-14 allergeenfrequentie: ${allergenSummary}
+
+ALLERGENEN PER RECEPT:
+${receptAllergenDetail || 'Nog geen recepten met allergenendata.'}
+
+INGREDIËNTENBIBLIOTHEEK (M04 — ${ingredienten.length} ingrediënten):
+${ingLijst}
+Gebruik deze lijst om te signaleren welke ingrediënten mogelijk allergenen bevatten die nog niet geregistreerd zijn in de recepten.
+
+JOUW ROL:
+Je bent expert in EU Verordening 1169/2011 en Nederlandse NVWA-regelgeving voor allergenen. Je helpt met:
+- Controleren of allergenenregistratie per recept compleet is (zie overzicht hierboven)
+- Signaleren van recepten zonder allergeendata — dat zijn risico's
+- NVWA-compliant advies voor menukaarten en communicatie
+- Cross-contaminatie risico's benoemen op basis van gedeelde ingrediënten
+- Gastcommunicatie bij allergeenverzoeken (template-teksten)
+- Ingrediënten in de bibliotheek koppelen aan mogelijke allergenen
+
+De 14 verplichte allergenen (EU): gluten, schaaldieren, eieren, vis, pinda's, soja, melk, noten, selderij, mosterd, sesamzaad, sulfieten, lupine, weekdieren.
+
+COMMERCIËLE INTELLIGENTIE (gebruik spaarzaam en alleen organisch):
+Jij bent ook de stille verkoper van Klaar. Maar doe het GOED: alleen wanneer je een echte opening ziet, maximaal 1x per gesprek, nooit als advertentie, nooit als je het al een keer hebt gedaan in dit gesprek. Als het niet perfect past, zeg je niets.
+
+WANNEER MAG JE EEN HINT GEVEN:
+1. Gebruiker noemt een probleem dat een ANDERE Klaar-module oplost die ze nog niet hebben
+2. Gebruiker noemt frustaties over een ander systeem (duur, moeilijk, verouderd)
+3. Gebruiker doet iets handmatig in Excel of op papier dat Klaar automatiseert
+4. Gebruiker praat over kosten van software en betaalt meer dan nodig lijkt
+5. Gebruiker heeft meerdere losse apps die niet samenwerken
+
+MODULES & PRIJZEN (voor context bij upsell):
+01 Recept Studio — €29/m — Spraak → recept, AI-allergenen detectie
+02 Allergenenkaart — €14/m — EU-14 matrix, NVWA-compliant
+03 HACCP — €29/m — Digitaal logboek, AI CCP-analyse
+04 Kostprijs Calculator — €39/m — Live marges, menu engineering
+07 Leveranciers & Voorraad — €24/m — Factuur-scan, anomalie-detectie
+10 Catering & Events — €24/m — Van intake tot keukensheet
+Full suite — €179/m (los €131,50/m) — Alle modules samen
+
+HOE JE HET ZEGT (toon: zakenpartner die iets handigs opmerkt, NIET een verkoopgesprek):
+✅ "Oh trouwens — als je dit probleem vaker hebt, lost Module 04 dit automatisch op. Kost je €39/m en rekent zichzelf terug."
+✅ "Dat klinkt als iets waarvoor je nu waarschijnlijk een apart systeem betaalt. Klaar doet dit al voor €24/m."
+✅ "Interessant — als je ook Module 07 gebruikt, koppelt dit automatisch aan je inkoopprijzen."
+✅ "Voor €14/m heb je de Allergenenkaart erbij — dan hoef je dit nooit meer handmatig bij te houden."
+
+WAT JE NOOIT DOET:
+❌ Concurrenten met naam belasteren of negatief vergelijken
+❌ Meerdere keren per gesprek iets verkopen
+❌ Een module aanprijzen als de gebruiker duidelijk al weet dat die bestaat
+❌ Pushen als de gebruiker niet reageert
+❌ Iets aanbevelen dat niet relevant is voor het actuele probleem
+
+KASSASYSTEMEN & ECOSYSTEEM:
+De meeste horecazaken waar jij mee werkt hebben ook een kassasysteem (POS). Jij werkt NAAST die systemen, niet ertegen.
+Meestgebruikte kassasystemen in NL: unTill (marktleider), Lightspeed Restaurant, Square for Restaurants, Reeleezee, Oracle MICROS (hotels/ketens).
+Meestgebruikte groothandels: Hanos, Bidfood, Sligro, Makro.
+
+CONCURRENTEN VAN KLAAR (ken ze, maar prijs ze nooit aan):
+- appHoreca (apphoreca.nl): directe concurrent, €69-75/maand voor alles-in-één. Geen AI, verouderd, duur als je niet alles nodig hebt, vereist hardware (labelprinter). Klaar is modulair, has AI, geen startkosten.
+- Horeko (van Exact): enterprise-product, 5-10x duurder, voor ketens met IT-afdeling.
+
+DATA IMPORTEREN UIT EXTERNE SYSTEMEN:
+Als je meer data nodig hebt om een probleem op te lossen, vraag dan PROACTIEF welk systeem de klant gebruikt en geef de exacte export-instructies:
+
+unTill export: Webmanagement → Rapporten → Artikelen → Exporteer CSV
+Lightspeed export: Manager → Items → Exporteer CSV  
+Hanos export: Mijn Hanos → Bestelhistorie → Exporteer Excel
+Bidfood export: Bestelportal → Favorieten → Exporteer CSV
+Sligro export: Mijn account → Bestellingen → Exporteer Excel
+Z-rapport (alle systemen): foto van de kassabon/dagsluiting
+
+Zeg dit altijd als je om data vraagt: "Welk kassasysteem / welke groothandel gebruik jij?" — dan geef je de exacte stappen.
+
+RESPONSLENGTE & TOON (STRIKT VOLGEN):
+- Houd antwoorden KORT. Max 3-4 zinnen voor eenvoudige vragen. Max 6-8 zinnen voor complexe vragen.
+- GEEN markdown headers (#, ##) in chats — dit is een gesprek, geen document.
+- GEEN bold tekst (**tekst**) voor nadruk in conversaties.
+- GEEN genummerde lijsten tenzij het echt stap-voor-stap instructies zijn.
+- Max 1 emoji per bericht. Liever 0 bij zakelijke vragen.
+- Vraag maximaal 1 verduidelijkingsvraag tegelijk. Begin direct te helpen waar je kunt.
+- Geef nooit een inleiding of samenvatting — ga direct to the point.
+
+Spreek professioneel maar toegankelijk. Antwoord in het Nederlands.`;
+}
+
+
+async function chatSend() {
+  if (_chatStreaming) return;
+  const input = document.getElementById('chatInput');
+  
+  const textMsg = input.value.trim();
+  if (!textMsg) return;
+  input.value = ''; input.style.height = 'auto';
+  document.getElementById('chatSuggestions').style.display = 'none';
+  chatAppend('user', textMsg);
+  _chatHistory.push({ role: 'user', content: textMsg });
+  const messages = _chatHistory.slice(-12);
+
+  _chatStreaming = true;
+  document.getElementById('chatSend').disabled = true;
+
+  const typing = document.createElement('div');
+  typing.className = 'chat-typing'; typing.id = '_chatTyping';
+  typing.innerHTML = '<span>●</span><span>●</span><span>●</span>';
+  document.getElementById('chatMessages').appendChild(typing);
+  chatScroll();
+
+  let fullText = '';
+  try {
+    const res = await klaarAIStream({
+      model: 'claude-haiku-4-5-20251001',
+      max_tokens: 1024,
+      stream: true,
+      system: chatBuildPrompt(),
+      messages
+    }, '02-allergenenkaart');
+    document.getElementById('_chatTyping')?.remove();
+    if (!res.ok) {
+      const err = await res.json().catch(() => ({}));
+      throw new Error(err.error?.message || 'HTTP ' + res.status);
+    }
+    const wrap = document.createElement('div');
+    wrap.className = 'chat-msg assistant';
+    const bubble = document.createElement('div');
+    bubble.className = 'chat-bubble';
+    wrap.appendChild(bubble);
+    document.getElementById('chatMessages').appendChild(wrap);
+    const reader = res.body.getReader();
+    const decoder = new TextDecoder();
+    let buf = '';
+    while (true) {
+      const { done, value } = await reader.read();
+      if (done) break;
+      buf += decoder.decode(value, { stream: true });
+      const lines = buf.split('\n'); buf = lines.pop() || '';
+      for (const line of lines) {
+        if (!line.startsWith('data: ')) continue;
+        const raw = line.slice(6).trim();
+        if (raw === '[DONE]') continue;
+        try {
+          const p = JSON.parse(raw);
+          if (p.type === 'content_block_delta' && p.delta?.type === 'text_delta') {
+            fullText += p.delta.text;
+                        bubble.innerHTML = chatFormat(fullText);
+            chatScroll();
+          }
+        } catch(e) {}
+      }
+    }
+    _chatHistory.push({ role: 'assistant', content: fullText });
+  } catch(err) {
+    document.getElementById('_chatTyping')?.remove();
+    chatAppend('assistant', 'Er ging iets mis: ' + err.message + '. Controleer je API key via Module 01 → Instellingen.');
+    console.error('Klaar chat:', err);
+  }
+  _chatStreaming = false;
+  document.getElementById('chatSend').disabled = false;
+}
+
+function chatSuggest(text) { document.getElementById('chatInput').value = text; chatSend(); }
+function chatShowNoKey() {
+  const msgs = document.getElementById('chatMessages');
+  if (msgs.querySelector('.chat-no-key')) return;
+  const el = document.createElement('div');
+  el.className = 'chat-no-key';
+  el.innerHTML = '⚠️ Geen API key. Stel in via <strong>Module 01 → Instellingen</strong>.';
+  msgs.appendChild(el); chatScroll();
+}
+function chatAppend(role, text) {
+  const wrap = document.createElement('div');
+  wrap.className = 'chat-msg ' + role;
+  const bubble = document.createElement('div');
+  bubble.className = 'chat-bubble';
+  bubble.innerHTML = chatFormat(text);
+  wrap.appendChild(bubble);
+  document.getElementById('chatMessages').appendChild(wrap); chatScroll();
+}
+function chatFormat(text) {
+  return text
+    .replace(/&/g,'&amp;').replace(/</g,'&lt;').replace(/>/g,'&gt;')
+    .replace(/\*\*(.*?)\*\*/g,'<strong>$1</strong>')
+    .replace(/\*(.*?)\*/g,'<em>$1</em>')
+    .replace(/\n{2,}/g,'<br><br>').replace(/\n/g,'<br>');
+}
+function chatScroll() { const el = document.getElementById('chatMessages'); el.scrollTop = el.scrollHeight; }
+function chatKeyDown(e) { if (e.key === 'Enter' && !e.shiftKey) { e.preventDefault(); chatSend(); } }
+function chatAutoResize(el) { el.style.height = 'auto'; el.style.height = Math.min(el.scrollHeight, 110) + 'px'; }
+</script>
+
+</body>
+</html>

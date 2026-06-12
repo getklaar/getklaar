@@ -1,0 +1,4146 @@
+<!DOCTYPE html>
+<html lang="nl">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>KLAAR — Leveranciers & Voorraad</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Bebas+Neue&family=DM+Mono:wght@400;500&family=DM+Sans:wght@300;400;500;600&display=swap" rel="stylesheet">
+<style>
+  :root {
+    --black: #0a0a0a;
+    --border: #222222;
+    --lime: #e8ff47;
+    --bg: #f5f5f3;
+    --surface: #ffffff;
+    --text: #111111;
+    --muted: #888888;
+    --green: #22c55e;
+    --orange: #f97316;
+    --red: #ef4444;
+    --blue: #3b82f6;
+    --yellow: #eab308;
+  }
+
+  * { box-sizing: border-box; margin: 0; padding: 0; }
+
+  body {
+    font-family: 'DM Sans', sans-serif;
+    background: var(--bg);
+    color: var(--text);
+    height: 100vh;
+    overflow: hidden;
+  }
+
+  /* ── HEADER ── */
+  .header {
+    position: sticky; top: 0; z-index: 100;
+    height: 60px; background: var(--black);
+    border-bottom: 1px solid var(--border);
+    display: flex; align-items: center;
+    padding: 0 24px; gap: 20px;
+  }
+  .header-back {
+    font-family: 'DM Mono', monospace; font-size: 11px;
+    color: var(--muted); text-decoration: none;
+    letter-spacing: 0.05em; transition: color 0.15s;
+  }
+  .header-back:hover { color: #fff; }
+  .header-logo {
+    font-family: 'Bebas Neue', sans-serif; font-size: 28px;
+    color: var(--lime); letter-spacing: 0.02em; line-height: 1;
+  }
+  .header-module {
+    font-family: 'DM Mono', monospace; font-size: 11px;
+    color: var(--muted); letter-spacing: 0.05em;
+    border-left: 1px solid var(--border);
+    padding-left: 16px; margin-left: 4px;
+  }
+  .header-spacer { flex: 1; }
+  .header-settings {
+    background: none; border: 1px solid var(--border);
+    color: var(--muted); font-size: 16px; cursor: pointer;
+    padding: 6px 10px; border-radius: 6px; line-height: 1;
+    transition: border-color 0.15s, color 0.15s;
+  }
+  .header-settings:hover { border-color: var(--lime); color: var(--lime); }
+
+  /* ── TAB BAR ── */
+  .tab-bar {
+    background: var(--surface); border-bottom: 1px solid #e5e5e5;
+    display: flex; overflow-x: auto; scrollbar-width: none;
+    -webkit-overflow-scrolling: touch; height: 48px; flex-shrink: 0;
+  }
+  .tab-bar::-webkit-scrollbar { display: none; }
+  .tab-btn {
+    font-family: 'DM Mono', monospace; font-size: 11px;
+    letter-spacing: 0.06em; color: var(--muted);
+    background: none; border: none;
+    border-bottom: 2px solid transparent;
+    padding: 0 20px; height: 48px; white-space: nowrap;
+    cursor: pointer; transition: color 0.15s, border-color 0.15s;
+    text-transform: uppercase;
+  }
+  .tab-btn:hover { color: var(--text); }
+  .tab-btn.active { color: var(--text); border-bottom-color: var(--lime); }
+
+  /* ── CONTENT SCROLL ── */
+  .content-scroll {
+    overflow-y: auto;
+    height: calc(100vh - 60px - 48px);
+    padding: 32px 24px;
+  }
+
+  /* ── TAB PANELS ── */
+  .tab-panel { display: none; }
+  .tab-panel.active { display: block; }
+
+  /* ── SECTION HEADER ── */
+  .section-title {
+    font-family: 'Bebas Neue', sans-serif; font-size: 22px;
+    letter-spacing: 0.04em; color: var(--text); margin-bottom: 4px;
+  }
+  .section-sub { font-size: 13px; color: var(--muted); margin-bottom: 24px; }
+
+  /* ── CARDS ── */
+  .card {
+    background: var(--surface); border: 1px solid #e5e5e5;
+    border-radius: 8px; padding: 20px; margin-bottom: 16px;
+  }
+  .card-title {
+    font-family: 'DM Mono', monospace; font-size: 11px;
+    letter-spacing: 0.08em; text-transform: uppercase;
+    color: var(--muted); margin-bottom: 16px;
+  }
+  .card-header {
+    display: flex; align-items: center;
+    justify-content: space-between; margin-bottom: 16px;
+  }
+  .card-header .card-title { margin-bottom: 0; }
+
+  /* ── GRID ── */
+  .grid-2 { display: grid; grid-template-columns: 1fr 1fr; gap: 16px; }
+  .grid-3 { display: grid; grid-template-columns: 1fr 1fr 1fr; gap: 16px; }
+  @media (max-width: 768px) {
+    .grid-2, .grid-3 { grid-template-columns: 1fr; }
+    .content-scroll { padding: 16px; }
+  }
+
+  /* ── CHIPS ── */
+  .chip {
+    display: inline-flex; align-items: center; gap: 5px;
+    font-family: 'DM Mono', monospace; font-size: 10px;
+    letter-spacing: 0.06em; padding: 3px 8px;
+    border-radius: 20px; font-weight: 500;
+  }
+  .chip-green  { background: #dcfce7; color: #16a34a; }
+  .chip-orange { background: #ffedd5; color: #c2410c; }
+  .chip-red    { background: #fee2e2; color: #dc2626; }
+  .chip-gray   { background: #f3f4f6; color: var(--muted); }
+  .chip-blue   { background: #dbeafe; color: #1d4ed8; }
+  .chip-yellow { background: #fef9c3; color: #a16207; }
+
+  /* ── FORMS ── */
+  .form-group { margin-bottom: 14px; }
+  .form-label {
+    font-family: 'DM Mono', monospace; font-size: 11px;
+    letter-spacing: 0.06em; text-transform: uppercase;
+    color: var(--muted); display: block; margin-bottom: 6px;
+  }
+  .form-input, .form-select, .form-textarea {
+    width: 100%; font-family: 'DM Sans', sans-serif;
+    font-size: 14px; color: var(--text);
+    background: #fafafa; border: 1px solid #e5e5e5;
+    border-radius: 6px; padding: 10px 12px;
+    transition: border-color 0.15s; -webkit-appearance: none;
+  }
+  .form-input:focus, .form-select:focus, .form-textarea:focus {
+    outline: none; border-color: var(--text); background: #fff;
+  }
+  .form-textarea { resize: vertical; min-height: 80px; }
+  .form-input.error, .form-select.error { border-color: var(--red); }
+  .form-row   { display: grid; grid-template-columns: 1fr 1fr; gap: 12px; }
+  .form-row-3 { display: grid; grid-template-columns: 1fr 1fr 1fr; gap: 12px; }
+  @media (max-width: 600px) { .form-row, .form-row-3 { grid-template-columns: 1fr; } }
+
+  .form-section-label {
+    font-family: 'DM Mono', monospace; font-size: 10px;
+    letter-spacing: 0.08em; text-transform: uppercase;
+    color: var(--muted); margin: 20px 0 12px;
+    padding-bottom: 8px; border-bottom: 1px solid #f0f0f0;
+  }
+  .form-section-label:first-child { margin-top: 0; }
+
+  /* ── BUTTONS ── */
+  .btn {
+    font-family: 'DM Mono', monospace; font-size: 12px;
+    letter-spacing: 0.06em; font-weight: 500;
+    padding: 10px 18px; border-radius: 6px; border: none;
+    cursor: pointer; transition: opacity 0.15s, transform 0.1s;
+    white-space: nowrap;
+  }
+  .btn:active { transform: scale(0.98); }
+  .btn-primary { background: var(--text); color: #fff; }
+  .btn-primary:hover { opacity: 0.85; }
+  .btn-lime { background: var(--lime); color: var(--text); }
+  .btn-lime:hover { opacity: 0.88; }
+  .btn-ghost { background: none; border: 1px solid #e5e5e5; color: var(--text); }
+  .btn-ghost:hover { border-color: var(--text); }
+  .btn-danger { background: var(--red); color: #fff; }
+  .btn-danger:hover { opacity: 0.88; }
+  .btn-sm { padding: 6px 12px; font-size: 11px; }
+
+  /* ── COLLAPSIBLE ── */
+  .collapsible-body { display: none; margin-top: 16px; }
+  .collapsible-body.open { display: block; }
+
+  /* ── TABLES ── */
+  .data-table { width: 100%; border-collapse: collapse; font-size: 13px; }
+  .data-table th {
+    font-family: 'DM Mono', monospace; font-size: 10px;
+    letter-spacing: 0.06em; text-transform: uppercase;
+    color: var(--muted); font-weight: 500;
+    padding: 8px 12px; border-bottom: 1px solid #e5e5e5; text-align: left;
+  }
+  .data-table td {
+    padding: 10px 12px; border-bottom: 1px solid #f0f0f0;
+    color: var(--text); vertical-align: middle;
+  }
+  .data-table tr:last-child td { border-bottom: none; }
+  .data-table tr:hover td { background: #fafafa; }
+
+  /* ── MISC ── */
+  .lev-pill {
+    display: inline-block; font-family: 'DM Mono', monospace;
+    font-size: 10px; padding: 2px 8px; border-radius: 20px;
+    background: #f3f4f6; color: var(--muted); margin-right: 4px;
+  }
+  .empty-state {
+    text-align: center; padding: 48px 24px; color: var(--muted);
+  }
+  .empty-state-icon { font-size: 40px; margin-bottom: 12px; }
+  .empty-state-text { font-family: 'DM Mono', monospace; font-size: 12px; letter-spacing: 0.05em; }
+  .action-btn {
+    background: none; border: none; cursor: pointer;
+    font-size: 14px; padding: 4px 6px; border-radius: 4px;
+    color: var(--muted); transition: color 0.15s, background 0.15s;
+  }
+  .action-btn:hover { color: var(--text); background: #f3f4f6; }
+  .action-btn.del:hover { color: var(--red); background: #fee2e2; }
+  .bewaar-kamer { background: #f0fdf4; color: #15803d; }
+  .bewaar-koel  { background: #dbeafe; color: #1d4ed8; }
+  .bewaar-vries { background: #ede9fe; color: #6d28d9; }
+  input[type="number"] { -moz-appearance: textfield; }
+  input[type="number"]::-webkit-inner-spin-button,
+  input[type="number"]::-webkit-outer-spin-button { -webkit-appearance: none; }
+
+  /* ── TOAST ── */
+  .toast {
+    position: fixed; bottom: 24px; right: 24px; z-index: 9999;
+    background: var(--text); color: #fff;
+    font-family: 'DM Mono', monospace; font-size: 12px;
+    letter-spacing: 0.05em; padding: 12px 20px; border-radius: 6px;
+    opacity: 0; transform: translateY(8px);
+    transition: opacity 0.2s, transform 0.2s; pointer-events: none;
+    max-width: 340px;
+  }
+  .toast.show { opacity: 1; transform: translateY(0); }
+  .toast.success { background: #16a34a; }
+  .toast.error   { background: var(--red); }
+  .toast.warning { background: #c2410c; }
+
+  /* ══════════════════════════════════════
+     VOORRAAD — Fase 6
+  ══════════════════════════════════════ */
+
+  /* Variance kleuren */
+  .var-ok    { color: #16a34a; font-weight: 600; }
+  .var-warn  { color: #c2410c; font-weight: 600; }
+  .var-alarm { color: var(--red); font-weight: 700; }
+  .var-zero  { color: var(--muted); }
+
+  /* Stock status badges */
+  .stock-ok    { background: #dcfce7; color: #16a34a; }
+  .stock-low   { background: #ffedd5; color: #c2410c; }
+  .stock-empty { background: #fee2e2; color: #dc2626; }
+
+  /* Stockopname tabel */
+  .stock-table { width: 100%; border-collapse: collapse; font-size: 13px; }
+  .stock-table th {
+    font-family: 'DM Mono', monospace; font-size: 10px;
+    letter-spacing: 0.06em; text-transform: uppercase;
+    color: var(--muted); font-weight: 500;
+    padding: 8px 10px; border-bottom: 1px solid #e5e5e5; text-align: left;
+  }
+  .stock-table td {
+    padding: 8px 10px; border-bottom: 1px solid #f5f5f5; vertical-align: middle;
+  }
+  .stock-table tr:last-child td { border-bottom: none; }
+  .stock-table tr:hover td { background: #fafafa; }
+  .stock-table input[type="number"] {
+    width: 80px; font-family: 'DM Sans', sans-serif; font-size: 13px;
+    border: 1px solid #e5e5e5; border-radius: 5px; padding: 6px 8px;
+    background: #fafafa; transition: border-color 0.15s; text-align: right;
+    -moz-appearance: textfield;
+  }
+  .stock-table input[type="number"]:focus {
+    outline: none; border-color: var(--text); background: #fff;
+  }
+  .stock-table input[type="number"]::-webkit-inner-spin-button,
+  .stock-table input[type="number"]::-webkit-outer-spin-button { -webkit-appearance: none; }
+  .stock-table input[type="date"] {
+    font-family: 'DM Sans', sans-serif; font-size: 12px;
+    border: 1px solid #e5e5e5; border-radius: 5px; padding: 5px 7px;
+    background: #fafafa; color: var(--text);
+  }
+
+  /* Variance bar */
+  .var-bar-wrap { display: flex; align-items: center; gap: 8px; min-width: 120px; }
+  .var-bar-bg {
+    flex: 1; height: 6px; background: #f0f0f0;
+    border-radius: 3px; overflow: hidden;
+  }
+  .var-bar-fill {
+    height: 100%; border-radius: 3px;
+    transition: width 0.3s;
+  }
+  .var-fill-ok    { background: #22c55e; }
+  .var-fill-warn  { background: var(--orange); }
+  .var-fill-alarm { background: var(--red); }
+
+  /* Scan knop per rij */
+  .scan-row-btn {
+    background: none; border: 1px solid #e5e5e5; border-radius: 5px;
+    padding: 5px 8px; cursor: pointer; font-size: 13px;
+    color: var(--muted); transition: border-color 0.15s, color 0.15s;
+  }
+  .scan-row-btn:hover { border-color: var(--text); color: var(--text); }
+
+  /* Barcode scanner modal */
+  .scanner-modal {
+    display: none; position: fixed; inset: 0; z-index: 600;
+    background: rgba(0,0,0,0.92);
+    flex-direction: column; align-items: center; justify-content: center;
+  }
+  .scanner-modal.open { display: flex; }
+  .scanner-wrap {
+    position: relative; width: min(90vw, 480px);
+  }
+  #scanner-video {
+    width: 100%; border-radius: 8px; display: block;
+    background: #111;
+  }
+  .scanner-frame {
+    position: absolute;
+    top: 50%; left: 50%;
+    transform: translate(-50%, -50%);
+    width: 65%; aspect-ratio: 3/2;
+    border: 2px solid var(--lime);
+    border-radius: 6px;
+    box-shadow: 0 0 0 2000px rgba(0,0,0,0.4);
+    pointer-events: none;
+  }
+  .scanner-line {
+    position: absolute; left: 0; right: 0; height: 2px;
+    background: var(--lime); opacity: 0.8;
+    animation: scanline 2s ease-in-out infinite;
+  }
+  @keyframes scanline {
+    0%   { top: 10%; }
+    50%  { top: 85%; }
+    100% { top: 10%; }
+  }
+  .scanner-status {
+    font-family: 'DM Mono', monospace; font-size: 13px;
+    color: #fff; text-align: center; margin-top: 16px;
+    letter-spacing: 0.05em; min-height: 20px;
+  }
+  .scanner-close {
+    margin-top: 20px; background: none; border: 1px solid rgba(255,255,255,0.3);
+    color: #fff; font-family: 'DM Mono', monospace; font-size: 12px;
+    padding: 10px 24px; border-radius: 6px; cursor: pointer;
+    letter-spacing: 0.06em; transition: border-color 0.15s;
+  }
+  .scanner-close:hover { border-color: var(--lime); color: var(--lime); }
+  .scanner-product-found {
+    font-family: 'Bebas Neue', sans-serif; font-size: 22px;
+    color: var(--lime); letter-spacing: 0.05em;
+    text-align: center; margin-top: 12px;
+  }
+
+  /* Stockopname samenvatting */
+  .opname-summary {
+    display: flex; gap: 20px; flex-wrap: wrap;
+    padding: 14px 0; border-bottom: 1px solid #f0f0f0; margin-bottom: 16px;
+  }
+  .opname-stat {
+    display: flex; flex-direction: column; gap: 2px;
+  }
+  .opname-stat-label {
+    font-family: 'DM Mono', monospace; font-size: 10px;
+    letter-spacing: 0.07em; text-transform: uppercase; color: var(--muted);
+  }
+  .opname-stat-value { font-size: 18px; font-weight: 600; }
+
+  /* Geschiedenis items */
+  .history-item {
+    display: flex; align-items: center; gap: 12px;
+    padding: 12px; border: 1px solid #e5e5e5; border-radius: 7px;
+    margin-bottom: 8px; cursor: pointer; transition: background 0.15s;
+  }
+  .history-item:hover { background: #fafafa; }
+  .history-item-date {
+    font-family: 'DM Mono', monospace; font-size: 11px;
+    color: var(--muted); min-width: 90px;
+  }
+  .history-item-info { flex: 1; font-size: 13px; }
+  .history-item-arrow { color: var(--muted); font-size: 12px; }
+  .history-detail {
+    display: none; padding: 12px;
+    background: #fafafa; border-radius: 0 0 7px 7px;
+    border: 1px solid #e5e5e5; border-top: none;
+    margin-top: -8px; margin-bottom: 8px;
+    font-size: 12px;
+  }
+  .history-detail.open { display: block; }
+
+  /* Low-stock alert banner */
+  .low-stock-banner {
+    padding: 12px 16px; border-radius: 7px;
+    border: 1px solid #fed7aa; background: #fff7ed;
+    margin-bottom: 16px; font-size: 13px; color: #c2410c;
+  }
+  .low-stock-banner strong {
+    font-family: 'DM Mono', monospace; font-size: 11px;
+    letter-spacing: 0.06em; text-transform: uppercase; display: block;
+    margin-bottom: 6px;
+  }
+
+  /* ══════════════════════════════════════
+     DASHBOARD — Fase 7
+  ══════════════════════════════════════ */
+
+  /* KPI blok */
+  .kpi-grid {
+    display: grid; grid-template-columns: repeat(4, 1fr); gap: 12px;
+    margin-bottom: 20px;
+  }
+  @media (max-width: 900px) { .kpi-grid { grid-template-columns: repeat(2, 1fr); } }
+  @media (max-width: 500px) { .kpi-grid { grid-template-columns: 1fr 1fr; } }
+  .kpi-card {
+    background: var(--surface); border: 1px solid #e5e5e5;
+    border-radius: 8px; padding: 16px 18px;
+  }
+  .kpi-label {
+    font-family: 'DM Mono', monospace; font-size: 10px;
+    letter-spacing: 0.07em; text-transform: uppercase;
+    color: var(--muted); margin-bottom: 8px;
+  }
+  .kpi-value {
+    font-family: 'Bebas Neue', sans-serif; font-size: 28px;
+    letter-spacing: 0.02em; color: var(--text); line-height: 1;
+  }
+  .kpi-sub {
+    font-size: 11px; color: var(--muted); margin-top: 4px;
+  }
+  .kpi-up   { color: var(--red); }
+  .kpi-down { color: var(--green); }
+  .kpi-neu  { color: var(--muted); }
+
+  /* Laatste scan banner */
+  .scan-banner {
+    display: flex; align-items: center; gap: 12px;
+    padding: 12px 16px; border-radius: 7px;
+    background: #f7ffe0; border: 1px solid #d4f08a;
+    margin-bottom: 16px; font-size: 13px;
+  }
+  .scan-banner-icon { font-size: 20px; }
+  .scan-banner-text { flex: 1; }
+  .scan-banner strong {
+    font-family: 'DM Mono', monospace; font-size: 11px;
+    letter-spacing: 0.05em;
+  }
+
+  /* Hardlopers tabel */
+  .hardloper-table { width: 100%; border-collapse: collapse; font-size: 13px; }
+  .hardloper-table th {
+    font-family: 'DM Mono', monospace; font-size: 10px;
+    letter-spacing: 0.06em; text-transform: uppercase;
+    color: var(--muted); font-weight: 500;
+    padding: 8px 10px; border-bottom: 1px solid #e5e5e5; text-align: left;
+  }
+  .hardloper-table td {
+    padding: 9px 10px; border-bottom: 1px solid #f5f5f5; vertical-align: middle;
+  }
+  .hardloper-table tr:last-child td { border-bottom: none; }
+  .hardloper-table tr:hover td { background: #fafafa; }
+  .rank-badge {
+    display: inline-flex; align-items: center; justify-content: center;
+    width: 22px; height: 22px; border-radius: 50%;
+    font-family: 'DM Mono', monospace; font-size: 10px; font-weight: 600;
+    background: #f3f4f6; color: var(--muted);
+  }
+  .rank-badge.top3 { background: var(--lime); color: var(--text); }
+
+  /* Prijs wijziging indicator */
+  .prijs-delta {
+    display: inline-flex; align-items: center; gap: 4px;
+    font-family: 'DM Mono', monospace; font-size: 12px; font-weight: 600;
+    padding: 3px 8px; border-radius: 5px;
+  }
+  .delta-up   { background: #fee2e2; color: var(--red); }
+  .delta-down { background: #dcfce7; color: #16a34a; }
+  .delta-neu  { background: #f3f4f6; color: var(--muted); }
+  .delta-new  { background: #dbeafe; color: #1d4ed8; }
+
+  /* Impact badge */
+  .impact-badge {
+    font-family: 'DM Mono', monospace; font-size: 11px;
+    color: var(--muted);
+  }
+  .impact-badge.impact-neg { color: var(--red); font-weight: 600; }
+  .impact-badge.impact-pos { color: #16a34a; font-weight: 600; }
+
+  /* Filter toggle */
+  .toggle-group {
+    display: flex; gap: 0; border: 1px solid #e5e5e5;
+    border-radius: 6px; overflow: hidden;
+  }
+  .toggle-btn {
+    font-family: 'DM Mono', monospace; font-size: 11px;
+    letter-spacing: 0.05em; padding: 7px 14px;
+    background: none; border: none; cursor: pointer;
+    color: var(--muted); transition: background 0.15s, color 0.15s;
+    white-space: nowrap;
+  }
+  .toggle-btn.active { background: var(--text); color: #fff; }
+  .toggle-btn + .toggle-btn { border-left: 1px solid #e5e5e5; }
+
+  /* Waste benchmark */
+  .bench-row {
+    display: flex; align-items: center; gap: 10px;
+    padding: 8px 0; border-bottom: 1px solid #f5f5f5;
+  }
+  .bench-row:last-child { border-bottom: none; }
+  .bench-naam {
+    width: 110px; font-size: 13px; font-weight: 500; flex-shrink: 0;
+  }
+  .bench-bar-wrap { flex: 1; display: flex; align-items: center; gap: 8px; }
+  .bench-bar-bg {
+    flex: 1; height: 8px; background: #f0f0f0;
+    border-radius: 4px; overflow: hidden; position: relative;
+  }
+  .bench-bar-jij {
+    height: 100%; border-radius: 4px;
+    transition: width 0.4s; position: absolute; top: 0; left: 0;
+  }
+  .bench-bar-norm {
+    position: absolute; top: 0; height: 100%; width: 2px;
+    background: rgba(0,0,0,0.25); border-radius: 0;
+  }
+  .bench-pct {
+    font-family: 'DM Mono', monospace; font-size: 11px;
+    width: 50px; text-align: right;
+  }
+  .bench-norm-label {
+    font-size: 11px; color: var(--muted); width: 80px; flex-shrink: 0;
+  }
+
+  @media (max-width: 700px) {
+    #dash-lower-grid { grid-template-columns: 1fr !important; }
+  }
+
+  /* Geen data staat */
+  .dash-empty {
+    text-align: center; padding: 48px 24px; color: var(--muted);
+  }
+  .dash-empty-icon { font-size: 44px; margin-bottom: 12px; }
+  .dash-empty-title {
+    font-family: 'Bebas Neue', sans-serif; font-size: 18px;
+    letter-spacing: 0.06em; margin-bottom: 8px; color: var(--text);
+  }
+  .dash-empty-sub { font-size: 13px; max-width: 360px; margin: 0 auto; }
+
+  .btn-icon-del {
+    background: none; border: none; cursor: pointer;
+    font-size: 14px; padding: 2px 4px; border-radius: 4px;
+    opacity: 0.4; transition: opacity 0.15s, background 0.15s;
+    vertical-align: middle;
+  }
+  .btn-icon-del:hover { opacity: 1; background: #fee2e2; }
+
+  /* ── COMING SOON ── */
+  .coming-soon { text-align: center; padding: 80px 24px; }
+  .coming-soon-label {
+    font-family: 'Bebas Neue', sans-serif; font-size: 18px;
+    letter-spacing: 0.1em; color: var(--muted); margin-bottom: 8px;
+  }
+  .coming-soon-sub { font-size: 13px; color: var(--muted); }
+
+  /* ══════════════════════════════════════
+     MODAL OVERLAY (settings + review)
+  ══════════════════════════════════════ */
+  .modal-overlay {
+    display: none; position: fixed; inset: 0; z-index: 500;
+    background: rgba(0,0,0,0.55);
+    align-items: flex-start; justify-content: center;
+    padding: 40px 16px; overflow-y: auto;
+  }
+  .modal-overlay.open { display: flex; }
+  .modal-panel {
+    background: var(--surface); border-radius: 10px;
+    width: 100%; max-width: 520px;
+    box-shadow: 0 20px 60px rgba(0,0,0,0.25);
+    overflow: hidden;
+  }
+  .modal-panel.modal-wide { max-width: 900px; }
+  .modal-header {
+    display: flex; align-items: center; justify-content: space-between;
+    padding: 18px 24px; border-bottom: 1px solid #e5e5e5;
+    background: var(--black);
+  }
+  .modal-title {
+    font-family: 'Bebas Neue', sans-serif; font-size: 20px;
+    letter-spacing: 0.05em; color: var(--lime);
+  }
+  .modal-close {
+    background: none; border: none; color: var(--muted);
+    font-size: 18px; cursor: pointer; padding: 4px 8px;
+    border-radius: 4px; transition: color 0.15s;
+    font-family: 'DM Mono', monospace; letter-spacing: 0;
+  }
+  .modal-close:hover { color: #fff; }
+  .modal-body { padding: 24px; }
+  .modal-footer {
+    padding: 16px 24px; border-top: 1px solid #e5e5e5;
+    display: flex; justify-content: flex-end; gap: 10px;
+    background: #fafafa;
+  }
+
+  /* ══════════════════════════════════════
+     DROP ZONE (foto-import card)
+  ══════════════════════════════════════ */
+  .import-routes {
+    display: grid; grid-template-columns: 1fr 1fr 1fr; gap: 12px;
+    margin-bottom: 0;
+  }
+  @media (max-width: 700px) { .import-routes { grid-template-columns: 1fr; } }
+
+  .import-route-btn {
+    display: flex; flex-direction: column; align-items: center;
+    justify-content: center; gap: 8px;
+    padding: 20px 12px; border-radius: 8px;
+    border: 1.5px dashed #d0d0d0; background: #fafafa;
+    cursor: pointer; transition: border-color 0.15s, background 0.15s;
+    text-align: center;
+  }
+  .import-route-btn:hover { border-color: var(--text); background: #f0f0ee; }
+  .import-route-btn.active-drop {
+    border-color: var(--lime); background: #f7ffe0;
+  }
+  .import-route-icon { font-size: 28px; line-height: 1; }
+  .import-route-label {
+    font-family: 'DM Mono', monospace; font-size: 11px;
+    letter-spacing: 0.06em; color: var(--text); font-weight: 500;
+    text-transform: uppercase;
+  }
+  .import-route-sub { font-size: 11px; color: var(--muted); }
+
+  /* ── SCANNING SPINNER ── */
+  .scan-spinner {
+    display: none; text-align: center; padding: 32px 24px;
+  }
+  .scan-spinner.show { display: block; }
+  .spinner-ring {
+    width: 40px; height: 40px; border: 3px solid #e5e5e5;
+    border-top-color: var(--lime); border-radius: 50%;
+    animation: spin 0.8s linear infinite; margin: 0 auto 12px;
+  }
+  @keyframes spin { to { transform: rotate(360deg); } }
+  .spinner-label {
+    font-family: 'DM Mono', monospace; font-size: 12px;
+    letter-spacing: 0.06em; color: var(--muted);
+  }
+
+  /* ══════════════════════════════════════
+     REVIEW SCREEN (inside modal)
+  ══════════════════════════════════════ */
+  .review-meta {
+    display: flex; gap: 16px; flex-wrap: wrap; margin-bottom: 20px;
+  }
+  .review-meta-item {
+    display: flex; flex-direction: column; gap: 4px;
+  }
+  .review-meta-label {
+    font-family: 'DM Mono', monospace; font-size: 10px;
+    letter-spacing: 0.06em; text-transform: uppercase; color: var(--muted);
+  }
+  .review-meta-value { font-size: 14px; font-weight: 500; }
+  .review-meta input.form-input { margin: 0; padding: 7px 10px; font-size: 13px; }
+
+  .review-lines { width: 100%; border-collapse: collapse; font-size: 13px; }
+  .review-lines th {
+    font-family: 'DM Mono', monospace; font-size: 10px;
+    letter-spacing: 0.06em; text-transform: uppercase;
+    color: var(--muted); font-weight: 500;
+    padding: 6px 8px; border-bottom: 1px solid #e5e5e5; text-align: left;
+  }
+  .review-lines td {
+    padding: 6px 8px; border-bottom: 1px solid #f5f5f5; vertical-align: top;
+  }
+  .review-lines tr:last-child td { border-bottom: none; }
+  .review-lines input, .review-lines select {
+    font-family: 'DM Sans', sans-serif; font-size: 13px;
+    color: var(--text); background: #fafafa;
+    border: 1px solid #e5e5e5; border-radius: 5px;
+    padding: 6px 8px; width: 100%;
+    transition: border-color 0.15s;
+  }
+  .review-lines input:focus, .review-lines select:focus {
+    outline: none; border-color: var(--text); background: #fff;
+  }
+
+  /* Row anomaly highlighting */
+  .review-row-warn td { background: #fffbeb; }
+  .review-row-block td { background: #fef2f2; }
+
+  .anomaly-badge {
+    display: inline-flex; align-items: center; gap: 4px;
+    font-family: 'DM Mono', monospace; font-size: 10px;
+    padding: 2px 7px; border-radius: 20px; font-weight: 500;
+    margin-top: 4px; white-space: nowrap;
+  }
+  .anomaly-warn  { background: #fef9c3; color: #a16207; }
+  .anomaly-block { background: #fee2e2; color: #dc2626; }
+  .anomaly-info  { background: #dbeafe; color: #1d4ed8; }
+
+  .review-include-cell { width: 32px; text-align: center; }
+  .review-include-cell input[type="checkbox"] {
+    width: 16px; height: 16px; cursor: pointer;
+    accent-color: var(--text); border-radius: 3px;
+  }
+
+  .review-summary {
+    font-family: 'DM Mono', monospace; font-size: 11px;
+    color: var(--muted); margin-top: 12px; letter-spacing: 0.04em;
+  }
+
+  /* ── INKOOP HISTORY ── */
+  .inkoop-row { cursor: default; }
+  .inkoop-details { display: none; }
+  .inkoop-details.open { display: table-row; }
+  .inkoop-detail-cell {
+    padding: 0 12px 12px !important;
+    background: #fafafa;
+  }
+  .inkoop-detail-inner {
+    padding: 12px; border: 1px solid #e5e5e5; border-radius: 6px;
+    font-size: 12px;
+  }
+</style>
+  <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2/dist/umd/supabase.min.js"></script>
+  <script src="../klaar-client.js"></script>
+</head>
+<body>
+
+<!-- ── HEADER ── -->
+<header class="header">
+  <a href="../index.html" class="header-back">← TERUG</a>
+  <span class="header-logo">KLAAR</span>
+  <span class="header-module">MODULE 07 — LEVERANCIERS &amp; VOORRAAD</span>
+  <span class="header-spacer"></span>
+  <button class="header-settings" onclick="openSettings()" title="API-sleutel instellen">⚙</button>
+</header>
+
+<!-- ── TAB BAR ── -->
+<nav class="tab-bar">
+  <button class="tab-btn active" onclick="switchTab('producten', this)">Producten &amp; Prijzen</button>
+  <button class="tab-btn" onclick="switchTab('voorraad', this)">Voorraad</button>
+  <button class="tab-btn" onclick="switchTab('dashboard', this)">Dashboard</button>
+</nav>
+
+<!-- ── CONTENT ── -->
+<div class="content-scroll">
+
+  <!-- ══ TAB: PRODUCTEN & PRIJZEN ══ -->
+  <div id="tab-producten" class="tab-panel active">
+
+    <div class="section-title">Producten &amp; Prijzen</div>
+    <p class="section-sub">Importeer pakbonnen via foto, bestand of handmatige invoer. Beheer leveranciers en producten.</p>
+
+    <!-- ── INKOOP INVOEREN ── -->
+    <div class="card">
+      <div class="card-title">Inkoop invoeren</div>
+
+      <div class="import-routes">
+        <!-- Route A: Foto -->
+        <div class="import-route-btn" onclick="document.getElementById('foto-input').click()" id="route-foto">
+          <div class="import-route-icon">📷</div>
+          <div class="import-route-label">Scan pakbon</div>
+          <div class="import-route-sub">Foto of afbeelding</div>
+        </div>
+
+        <!-- Route B: Bestand -->
+        <div class="import-route-btn" id="route-bestand"
+             ondragover="event.preventDefault(); this.classList.add('active-drop')"
+             ondragleave="this.classList.remove('active-drop')"
+             ondrop="handleDrop(event)"
+             onclick="document.getElementById('bestand-input').click()">
+          <div class="import-route-icon">📄</div>
+          <div class="import-route-label">Bestand droppen</div>
+          <div class="import-route-sub">PDF · Excel · CSV</div>
+        </div>
+
+        <!-- Route C: Handmatig -->
+        <div class="import-route-btn" onclick="toggleCollapsible('handmatig-form')">
+          <div class="import-route-icon">✏️</div>
+          <div class="import-route-label">Handmatig invoeren</div>
+          <div class="import-route-sub">Regel voor regel</div>
+        </div>
+      </div>
+
+      <!-- Verborgen file inputs -->
+      <input type="file" id="foto-input" accept="image/*" capture="environment" style="display:none" onchange="handleFotoInput(event)">
+      <input type="file" id="bestand-input" accept=".pdf,.xlsx,.xls,.csv" style="display:none" onchange="handleBestandInput(event)">
+
+      <!-- Spinner -->
+      <div class="scan-spinner" id="scan-spinner">
+        <div class="spinner-ring"></div>
+        <div class="spinner-label" id="spinner-label">Pakbon scannen…</div>
+      </div>
+
+      <!-- Handmatig invoer formulier -->
+      <div id="handmatig-form" class="collapsible-body" style="margin-top:20px;">
+        <div class="form-section-label">Handmatige inkoop</div>
+        <div class="form-row">
+          <div class="form-group">
+            <label class="form-label">Leverancier</label>
+            <select id="hm-leverancier" class="form-select">
+              <option value="">— selecteer —</option>
+            </select>
+          </div>
+          <div class="form-group">
+            <label class="form-label">Datum</label>
+            <input type="date" id="hm-datum" class="form-input">
+          </div>
+        </div>
+        <div id="hm-lines"></div>
+        <button class="btn btn-ghost btn-sm" onclick="addHandmatigLine()" style="margin-bottom:14px;">+ Regel toevoegen</button>
+        <div style="display:flex;gap:10px;">
+          <button class="btn btn-lime" onclick="saveHandmatig()">Inkoop opslaan</button>
+          <button class="btn btn-ghost" onclick="toggleCollapsible('handmatig-form'); resetHandmatig()">Annuleren</button>
+        </div>
+      </div>
+    </div>
+
+    <!-- ── RECENTE INKOPEN ── -->
+    <div class="card" id="card-inkopen" style="display:none;">
+      <div class="card-header">
+        <span class="card-title">Recente inkopen</span>
+        <span id="inkoop-count" class="chip chip-gray">0</span>
+      </div>
+      <div id="inkopen-list"></div>
+    </div>
+
+    <!-- ── LEVERANCIERS ── -->
+    <div class="card">
+      <div class="card-header">
+        <span class="card-title">Leveranciers</span>
+        <button class="btn btn-ghost btn-sm" onclick="toggleCollapsible('lev-form')">+ Leverancier toevoegen</button>
+      </div>
+      <div id="lev-form" class="collapsible-body">
+        <div class="form-row">
+          <div class="form-group">
+            <label class="form-label">Naam *</label>
+            <input type="text" id="lev-naam" class="form-input" placeholder="bijv. Hanos, Sligro…">
+          </div>
+          <div class="form-group">
+            <label class="form-label">Contactpersoon</label>
+            <input type="text" id="lev-contact" class="form-input" placeholder="Naam contactpersoon">
+          </div>
+        </div>
+        <div class="form-row">
+          <div class="form-group">
+            <label class="form-label">E-mail</label>
+            <input type="email" id="lev-email" class="form-input" placeholder="inkoop@leverancier.nl">
+          </div>
+          <div class="form-group">
+            <label class="form-label">Telefoon</label>
+            <input type="text" id="lev-telefoon" class="form-input" placeholder="+31 6…">
+          </div>
+        </div>
+        <div style="display:flex;gap:10px;margin-top:4px;">
+          <button class="btn btn-lime" onclick="saveLeverancier()">Opslaan</button>
+          <button class="btn btn-ghost" onclick="toggleCollapsible('lev-form')">Annuleren</button>
+        </div>
+      </div>
+      <div id="lev-list"></div>
+    </div>
+
+    <!-- ── PRODUCT TOEVOEGEN ── -->
+    <div class="card">
+      <div class="card-header">
+        <span class="card-title">Product toevoegen</span>
+        <button class="btn btn-ghost btn-sm" onclick="toggleCollapsible('prod-form')">+ Nieuw product</button>
+      </div>
+      <div id="prod-form" class="collapsible-body">
+        <div class="form-section-label">Basisgegevens</div>
+        <div class="form-row">
+          <div class="form-group">
+            <label class="form-label">Productnaam *</label>
+            <input type="text" id="prod-naam" class="form-input" placeholder="bijv. Jack Daniels 70cl">
+          </div>
+          <div class="form-group">
+            <label class="form-label">Categorie *</label>
+            <select id="prod-categorie" class="form-select">
+              <option value="">— selecteer —</option>
+              <option value="vlees">Vlees &amp; gevogelte</option>
+              <option value="vis">Vis &amp; zeevruchten</option>
+              <option value="zuivel">Zuivel &amp; eieren</option>
+              <option value="groente">Groente &amp; fruit</option>
+              <option value="droog">Droog &amp; kruiden</option>
+              <option value="dranken">Dranken</option>
+              <option value="non-food">Non-food</option>
+              <option value="overig">Overig</option>
+            </select>
+          </div>
+        </div>
+        <div class="form-row">
+          <div class="form-group">
+            <label class="form-label">Eenheid *</label>
+            <select id="prod-eenheid" class="form-select">
+              <option value="">— selecteer —</option>
+              <option value="kg">kg</option>
+              <option value="gram">gram</option>
+              <option value="liter">liter</option>
+              <option value="cl">cl</option>
+              <option value="fles">fles</option>
+              <option value="stuk">stuk</option>
+              <option value="doos">doos</option>
+              <option value="pak">pak</option>
+              <option value="blik">blik</option>
+              <option value="pot">pot</option>
+            </select>
+          </div>
+          <div class="form-group">
+            <label class="form-label">Leverancier</label>
+            <select id="prod-leverancier" class="form-select">
+              <option value="">— selecteer leverancier —</option>
+            </select>
+          </div>
+        </div>
+        <div class="form-section-label">Bewaar &amp; houdbaarheid</div>
+        <div class="form-row">
+          <div class="form-group">
+            <label class="form-label">Bewaartype *</label>
+            <select id="prod-bewaartype" class="form-select">
+              <option value="kamertemperatuur">Kamertemperatuur</option>
+              <option value="gekoeld">Gekoeld (≤7°C)</option>
+              <option value="diepvries">Diepvries (≤−18°C)</option>
+            </select>
+          </div>
+          <div class="form-group">
+            <label class="form-label">Houdbaarheidslabel</label>
+            <select id="prod-tgt-tht" class="form-select">
+              <option value="nvt">Niet van toepassing</option>
+              <option value="tht">THT (Ten Minste Houdbaar Tot)</option>
+              <option value="tgt">TGT (Te Gebruiken Tot — harde grens)</option>
+            </select>
+          </div>
+        </div>
+        <div class="form-section-label">Voorraad &amp; verlies</div>
+        <div class="form-row-3">
+          <div class="form-group">
+            <label class="form-label">Spillage %</label>
+            <input type="number" id="prod-spillage" class="form-input" value="3" min="0" max="100" step="0.5">
+          </div>
+          <div class="form-group">
+            <label class="form-label">Waste %</label>
+            <input type="number" id="prod-waste" class="form-input" value="2" min="0" max="100" step="0.5">
+          </div>
+          <div class="form-group">
+            <label class="form-label">Eigen gebruik/week</label>
+            <input type="number" id="prod-eigen" class="form-input" value="0" min="0" step="1">
+          </div>
+        </div>
+        <div style="max-width:220px;">
+          <div class="form-group">
+            <label class="form-label">Min. voorraad</label>
+            <input type="number" id="prod-min" class="form-input" value="6" min="0" step="1">
+          </div>
+        </div>
+        <div style="display:flex;gap:10px;margin-top:8px;">
+          <button class="btn btn-lime" onclick="saveProduct()">Product opslaan</button>
+          <button class="btn btn-ghost" onclick="toggleCollapsible('prod-form'); resetProductForm()">Annuleren</button>
+        </div>
+      </div>
+    </div>
+
+    <!-- ── PRODUCTENLIJST ── -->
+    <div class="card">
+      <div class="card-header">
+        <span class="card-title">Producten</span>
+        <span id="prod-count" class="chip chip-gray">0 producten</span>
+      </div>
+      <div style="display:flex;gap:10px;margin-bottom:16px;flex-wrap:wrap;">
+        <input type="text" id="prod-search" class="form-input" style="max-width:220px;margin-bottom:0;" placeholder="🔍 Zoeken…" oninput="renderProductList()">
+        <select id="prod-filter-cat" class="form-select" style="max-width:180px;" onchange="renderProductList()">
+          <option value="">Alle categorieën</option>
+          <option value="vlees">Vlees &amp; gevogelte</option>
+          <option value="vis">Vis &amp; zeevruchten</option>
+          <option value="zuivel">Zuivel &amp; eieren</option>
+          <option value="groente">Groente &amp; fruit</option>
+          <option value="droog">Droog &amp; kruiden</option>
+          <option value="dranken">Dranken</option>
+          <option value="non-food">Non-food</option>
+          <option value="overig">Overig</option>
+        </select>
+        <select id="prod-filter-bewaar" class="form-select" style="max-width:180px;" onchange="renderProductList()">
+          <option value="">Alle bewaartypes</option>
+          <option value="kamertemperatuur">Kamertemperatuur</option>
+          <option value="gekoeld">Gekoeld</option>
+          <option value="diepvries">Diepvries</option>
+        </select>
+      </div>
+      <div id="prod-list"></div>
+    </div>
+
+  </div><!-- /tab-producten -->
+
+  <!-- ══ TAB: VOORRAAD ══ -->
+  <div id="tab-voorraad" class="tab-panel">
+    <div class="section-title">Voorraad</div>
+    <p class="section-sub">Stockopname — werkelijke vs. theoretische voorraad. Variance toont waar je verlies maakt.</p>
+
+    <!-- Lage voorraad waarschuwingen -->
+    <div id="low-stock-alerts"></div>
+
+    <!-- ── Theoretisch voorraad overzicht (altijd zichtbaar na eerste factuur) ── -->
+    <div class="card" id="card-theor-overzicht" style="display:none;margin-bottom:16px;">
+      <div class="card-header">
+        <span class="card-title">Theoretische voorraad</span>
+        <span class="chip chip-gray" id="theor-prod-count"></span>
+      </div>
+      <div class="section-sub" style="margin-bottom:12px;">
+        Berekend op basis van ingekochte facturen. Klik op een product om details te zien of te bewerken.
+      </div>
+      <div style="display:flex;gap:10px;margin-bottom:12px;flex-wrap:wrap;">
+        <input type="text" id="theor-zoek" class="form-input" style="max-width:220px;"
+          placeholder="🔍 Zoek product…" oninput="renderTheorOvzicht()">
+        <select id="theor-cat-filter" class="form-select" style="max-width:160px;" onchange="renderTheorOvzicht()">
+          <option value="">Alle categorieën</option>
+        </select>
+      </div>
+      <div style="overflow-x:auto;">
+        <table class="stock-table" id="theor-table">
+          <thead><tr>
+            <th>Product</th>
+            <th>Categorie</th>
+            <th style="text-align:right">Th. voorraad</th>
+            <th style="text-align:right">Minimum</th>
+            <th style="text-align:center">Status</th>
+          </tr></thead>
+          <tbody id="theor-tbody"></tbody>
+        </table>
+      </div>
+    </div>
+
+    <!-- Actieve / starten stockopname -->
+    <div class="card" id="card-stockopname">
+      <div class="card-header">
+        <span class="card-title" id="opname-card-title">Stockopname</span>
+        <div style="display:flex;gap:8px;" id="opname-actions">
+          <button class="btn btn-lime" onclick="startStockopname()" id="btn-start-opname">Nieuwe stockopname starten</button>
+        </div>
+      </div>
+      <div id="opname-leeg" style="color:var(--muted);font-size:13px;padding:8px 0;">
+        Start een stockopname om werkelijke voorraad te vergelijken met theoretisch.
+      </div>
+      <div id="opname-actief" style="display:none;">
+        <div class="opname-summary" id="opname-summary"></div>
+        <div style="display:flex;gap:10px;align-items:center;margin-bottom:12px;flex-wrap:wrap;">
+          <button class="btn btn-ghost btn-sm" onclick="openScannerModal()">📷 Scan barcode</button>
+          <input type="text" id="opname-zoek" class="form-input" style="max-width:200px;"
+            placeholder="🔍 Product zoeken…" oninput="renderOpnameTable()">
+          <select id="opname-filter" class="form-select" style="max-width:160px;" onchange="renderOpnameTable()">
+            <option value="all">Alle producten</option>
+            <option value="open">Nog niet ingevuld</option>
+            <option value="afwijking">Met afwijking</option>
+          </select>
+        </div>
+        <div style="overflow-x:auto;">
+          <table class="stock-table" id="opname-table">
+            <thead><tr>
+              <th>Product</th>
+              <th>Theoretisch</th>
+              <th>Werkelijk</th>
+              <th>Variance</th>
+              <th>Houdbaarheid</th>
+              <th style="width:36px;"></th>
+            </tr></thead>
+            <tbody id="opname-tbody"></tbody>
+          </table>
+        </div>
+        <div style="display:flex;gap:10px;margin-top:16px;">
+          <button class="btn btn-lime" onclick="finaliseerStockopname()">Stockopname afronden</button>
+          <button class="btn btn-ghost" onclick="annuleerStockopname()">Annuleren</button>
+        </div>
+      </div>
+    </div>
+
+    <!-- Voorraadstatus (na minimaal 1 stockopname) -->
+    <div class="card" id="card-voorraad-status" style="display:none;">
+      <div class="card-header">
+        <span class="card-title">Huidige voorraadstatus</span>
+        <span id="voorraad-status-datum" class="chip chip-gray"></span>
+      </div>
+      <div id="voorraad-status-list"></div>
+    </div>
+
+    <!-- Stockopname geschiedenis -->
+    <div class="card" id="card-opname-history" style="display:none;">
+      <div class="card-header">
+        <span class="card-title">Stockopname geschiedenis</span>
+        <span id="history-count" class="chip chip-gray"></span>
+      </div>
+      <div id="opname-history-list"></div>
+    </div>
+
+  </div>
+
+  <!-- ══ TAB: DASHBOARD ══ -->
+  <div id="tab-dashboard" class="tab-panel">
+
+    <!-- Geen data: lege staat -->
+    <div id="dash-empty" class="dash-empty" style="display:none">
+      <div class="dash-empty-icon">📊</div>
+      <div class="dash-empty-title">Nog geen inkoopdata</div>
+      <div class="dash-empty-sub">Scan of importeer je eerste factuur via het tabblad <strong>Producten &amp; Prijzen</strong> om het dashboard te activeren. Na de eerste import zie je direct je hardlopers en prijstrends.</div>
+      <br>
+      <button class="btn" onclick="goToTab('producten')">📷 Importeer eerste factuur</button>
+    </div>
+
+    <!-- Dashboard content -->
+    <div id="dash-content">
+
+      <!-- ① KPI rij -->
+      <div class="kpi-grid" id="dash-kpi"></div>
+
+      <!-- Laatste scan banner -->
+      <div id="dash-scan-banner" class="scan-banner" style="display:none">
+        <div class="scan-banner-icon">🔍</div>
+        <div class="scan-banner-text">
+          <strong>LAATSTE FACTUUR — </strong>
+          <span id="dash-banner-lev"></span> · <span id="dash-banner-datum"></span>
+          &nbsp;·&nbsp; <span id="dash-banner-regels"></span> producten
+        </div>
+        <div id="dash-banner-changes"></div>
+      </div>
+
+      <!-- ② Inkoop Intelligence — Hardlopers -->
+      <div class="card" style="margin-bottom:16px">
+        <div style="display:flex;align-items:center;justify-content:space-between;margin-bottom:12px;flex-wrap:wrap;gap:8px">
+          <div>
+            <div class="section-title" style="margin-bottom:2px">💰 Inkoop Intelligence</div>
+            <div class="section-sub" style="margin-bottom:0">Top hardlopers — meeste spend. Prijswijziging per factuur direct zichtbaar.</div>
+          </div>
+          <div class="toggle-group" id="dash-period-toggle">
+            <button class="toggle-btn active" onclick="setDashPeriod('alles',this)">Alles</button>
+            <button class="toggle-btn" onclick="setDashPeriod('30',this)">30 dgn</button>
+            <button class="toggle-btn" onclick="setDashPeriod('90',this)">90 dgn</button>
+          </div>
+        </div>
+        <div style="overflow-x:auto">
+          <table class="hardloper-table" id="dash-hardloper-table">
+            <thead>
+              <tr>
+                <th>#</th>
+                <th>Product</th>
+                <th>Leverancier</th>
+                <th style="text-align:right">Prijs</th>
+                <th style="text-align:center">Wijziging</th>
+                <th style="text-align:right">Maand impact</th>
+                <th style="text-align:right">Totaal spend</th>
+              </tr>
+            </thead>
+            <tbody id="dash-hardloper-body"></tbody>
+          </table>
+        </div>
+        <div id="dash-hardloper-empty" class="dash-empty" style="display:none;padding:32px 24px">
+          <div class="dash-empty-sub">Importeer facturen om hardlopers te zien.</div>
+        </div>
+      </div>
+
+      <!-- ③ Voorraad indicatie -->
+      <div style="display:grid;grid-template-columns:1fr 1fr;gap:16px;margin-bottom:16px" id="dash-lower-grid">
+
+        <!-- Voorraadwaarde per categorie -->
+        <div class="card" id="dash-stock-card">
+          <div class="section-title" style="margin-bottom:4px">📦 Voorraad indicatie</div>
+          <div class="section-sub" style="margin-bottom:14px">Theoretische waarde per categorie. Indicatie — geen exacte boekhouding.</div>
+          <div id="dash-stock-cats"></div>
+          <div style="border-top:1px solid #f0f0f0;margin-top:12px;padding-top:10px;display:flex;justify-content:space-between;align-items:center">
+            <span style="font-size:12px;color:var(--muted)">Totale voorraadwaarde</span>
+            <span id="dash-stock-total" style="font-family:'Bebas Neue',sans-serif;font-size:22px;letter-spacing:0.03em"></span>
+          </div>
+        </div>
+
+        <!-- Top 5 variances + waste benchmark -->
+        <div style="display:flex;flex-direction:column;gap:16px">
+
+          <!-- Top variances -->
+          <div class="card" id="dash-variance-card">
+            <div class="section-title" style="margin-bottom:4px">⚠️ Top variances</div>
+            <div class="section-sub" style="margin-bottom:12px">Producten met grootste afwijking theoretisch vs. werkelijk.</div>
+            <div id="dash-variance-list"></div>
+            <div id="dash-variance-empty" style="font-size:13px;color:var(--muted);display:none">Geen stockopnames beschikbaar.</div>
+          </div>
+
+          <!-- Waste benchmark -->
+          <div class="card" id="dash-waste-card">
+            <div class="section-title" style="margin-bottom:4px">🗑️ Waste benchmark</div>
+            <div class="section-sub" style="margin-bottom:12px">Jouw waste% vs. horeca-gemiddelden. Grote afwijking = actie nodig.</div>
+            <div id="dash-waste-bench"></div>
+            <div id="dash-waste-empty" style="font-size:13px;color:var(--muted);display:none">Stel waste% in per product voor een benchmark.</div>
+          </div>
+
+        </div>
+      </div>
+
+      <!-- ④ Lage voorraad -->
+      <div class="card" id="dash-low-card" style="margin-bottom:16px;display:none">
+        <div class="section-title" style="margin-bottom:4px">🔴 Lage voorraad</div>
+        <div class="section-sub" style="margin-bottom:12px">Producten onder het ingestelde minimum.</div>
+        <div id="dash-low-list"></div>
+      </div>
+
+    </div><!-- /dash-content -->
+  </div>
+
+</div><!-- /content-scroll -->
+
+
+<!-- ══ BARCODE SCANNER MODAL ══ -->
+<div class="scanner-modal" id="scanner-modal">
+  <div class="scanner-wrap">
+    <video id="scanner-video" autoplay playsinline muted></video>
+    <div class="scanner-frame">
+      <div class="scanner-line"></div>
+    </div>
+  </div>
+  <div class="scanner-status" id="scanner-status">Richt camera op barcode of QR-code…</div>
+  <div class="scanner-product-found" id="scanner-found" style="display:none;"></div>
+  <button class="scanner-close" onclick="closeScannerModal()">✕ Sluiten</button>
+</div>
+
+<!-- ══ SETTINGS MODAL ══ -->
+<div class="modal-overlay" id="settings-modal" onclick="if(event.target===this) closeSettings()">
+  <div class="modal-panel">
+    <div class="modal-header">
+      <span class="modal-title">Instellingen</span>
+      <button class="modal-close" onclick="closeSettings()">✕</button>
+    </div>
+    <div class="modal-body">
+      <div class="form-group">
+        <label class="form-label">Anthropic API-sleutel</label>
+        <input type="password" id="api-key-input" class="form-input" placeholder="sk-ant-…">
+        <div style="font-size:12px;color:var(--muted);margin-top:6px;">
+          Dezelfde sleutel als Module 01 (Recept Studio). Wordt lokaal opgeslagen.
+        </div>
+      </div>
+    </div>
+    <div class="modal-footer">
+      <button class="btn btn-ghost" onclick="closeSettings()">Annuleren</button>
+      <button class="btn btn-lime" onclick="saveApiKey()">Opslaan</button>
+    </div>
+  </div>
+</div>
+
+
+<!-- ══ REVIEW MODAL ══ -->
+<div class="modal-overlay" id="review-modal" onclick="if(event.target===this) closeReview()">
+  <div class="modal-panel modal-wide">
+    <div class="modal-header">
+      <span class="modal-title">Review pakbon</span>
+      <button class="modal-close" onclick="closeReview()">✕</button>
+    </div>
+    <div class="modal-body" id="review-body">
+      <!-- filled by JS -->
+    </div>
+    <div class="modal-footer">
+      <div style="flex:1;font-family:'DM Mono',monospace;font-size:11px;color:var(--muted);" id="review-anomaly-summary"></div>
+      <button class="btn btn-ghost" onclick="closeReview()">Annuleren</button>
+      <button class="btn btn-lime" onclick="saveReview()" id="review-save-btn">Inkoop opslaan</button>
+    </div>
+  </div>
+</div>
+
+
+<!-- ── TOAST ── -->
+<div class="toast" id="toast"></div>
+
+
+<script>
+/* ════════════════════════════════════════════════
+   STATE & STORAGE
+   ════════════════════════════════════════════════ */
+
+const STORAGE_KEY = 'klaar_voorraad';
+const defaultData = {
+  leveranciers: [],
+  producten: [],
+  prijzen: [],
+  stockopnames: [],
+  inkopen: [],
+  verkopen: []
+};
+
+function loadData() {
+  try {
+    const raw = localStorage.getItem(STORAGE_KEY);
+    if (!raw) return JSON.parse(JSON.stringify(defaultData));
+    return Object.assign({}, defaultData, JSON.parse(raw));
+  } catch (e) {
+    return JSON.parse(JSON.stringify(defaultData));
+  }
+}
+
+function saveData(data) {
+  try {
+    localStorage.setItem(STORAGE_KEY, JSON.stringify(data));
+    syncGedeeldeProducten(data); // Sync naar klaar_producten voor andere modules
+  } catch (e) {
+    showToast('Opslaan mislukt — localStorage vol?', 'error');
+  }
+}
+
+function uid() {
+  return Date.now().toString(36) + Math.random().toString(36).substr(2, 5);
+}
+
+
+/* ════════════════════════════════════════════════
+   UI HELPERS
+   ════════════════════════════════════════════════ */
+
+function switchTab(name, btn) {
+  document.querySelectorAll('.tab-panel').forEach(p => p.classList.remove('active'));
+  document.querySelectorAll('.tab-btn').forEach(b => b.classList.remove('active'));
+  document.getElementById('tab-' + name).classList.add('active');
+  if (btn) btn.classList.add('active');
+  if (name === 'dashboard') renderDashboard();
+}
+
+function toggleCollapsible(id) {
+  document.getElementById(id).classList.toggle('open');
+}
+
+let toastTimer = null;
+function showToast(msg, type = 'success') {
+  const t = document.getElementById('toast');
+  t.textContent = msg;
+  t.className = 'toast show ' + type;
+  if (toastTimer) clearTimeout(toastTimer);
+  toastTimer = setTimeout(() => { t.className = 'toast'; }, 3000);
+}
+
+function esc(str) {
+  if (!str) return '';
+  return String(str)
+    .replace(/&/g, '&amp;').replace(/</g, '&lt;')
+    .replace(/>/g, '&gt;').replace(/"/g, '&quot;');
+}
+
+function showSpinner(label = 'Bezig…') {
+  document.getElementById('spinner-label').textContent = label;
+  document.getElementById('scan-spinner').classList.add('show');
+}
+function hideSpinner() {
+  document.getElementById('scan-spinner').classList.remove('show');
+}
+
+
+/* ════════════════════════════════════════════════
+   SETTINGS / API KEY
+   ════════════════════════════════════════════════ */
+
+function openSettings() {
+  document.getElementById('api-key-input').value = localStorage.getItem(API_KEY_KEY) || '';
+  document.getElementById('settings-modal').classList.add('open');
+}
+function closeSettings() {
+  document.getElementById('settings-modal').classList.remove('open');
+}
+function saveApiKey() {
+  const key = document.getElementById('api-key-input').value.replace(/[^\x20-\x7E]/g, '').trim();
+  if (key) {
+    localStorage.setItem(API_KEY_KEY, key);
+    showToast('API-sleutel opgeslagen ✓');
+  }
+  closeSettings();
+}
+
+function getApiKey() {
+  return (localStorage.getItem(API_KEY_KEY) || '').replace(/[^\x20-\x7E]/g, '').trim();
+}
+
+
+/* ════════════════════════════════════════════════
+   FOTO IMPORT — Route A
+   ════════════════════════════════════════════════ */
+
+async function handleFotoInput(event) {
+  const file = event.target.files[0];
+  event.target.value = ''; // reset so same file can be selected again
+  if (!file) return;
+
+  const mediaType = file.type || 'image/jpeg';
+  const allowedTypes = ['image/jpeg','image/png','image/gif','image/webp'];
+  if (!allowedTypes.includes(mediaType)) {
+    showToast('Alleen JPEG, PNG, GIF of WebP afbeeldingen', 'error');
+    return;
+  }
+
+  showSpinner('Pakbon scannen met AI…');
+
+  try {
+    const base64 = await fileToBase64(file);
+    const result = await callClaudeVision(base64, mediaType);
+    hideSpinner();
+    openReview(result, 'foto');
+  } catch (e) {
+    hideSpinner();
+    showToast('Fout bij scannen: ' + e.message, 'error');
+    console.error(e);
+  }
+}
+
+function fileToBase64(file) {
+  return new Promise((resolve, reject) => {
+    const reader = new FileReader();
+    reader.onload = () => {
+      const base64 = reader.result.split(',')[1];
+      resolve(base64);
+    };
+    reader.onerror = reject;
+    reader.readAsDataURL(file);
+  });
+}
+
+async function callClaudeVision(base64, mediaType) {
+  const prompt = `Je bent een nauwkeurige assistent die pakbonnen en facturen verwerkt voor een horecabedrijf.
+Analyseer deze factuur/pakbon en extraheer ALLE productregels.
+
+Geef ALLEEN een geldig JSON-object terug, zonder markdown, geen tekst ervoor of erna:
+{"leverancier":"naam","datum":"YYYY-MM-DD","regels":[{"product":"naam","hoeveelheid":1,"eenheid":"stuk","prijs_per_eenheid":10.00,"totaal":10.00,"skip":false}]}
+
+═══ HANOS/SLIGRO FACTUURFORMAT — KRITIEK ═══
+De kolommen op een HANOS-factuur zijn:
+  [Artikelnr] [VP] [Inh] [EH] [Omschrijving] [Merk] || [Aantal] [Prijs] [Bedrag] [Btw] [Cd]
+
+VP, Inh, EH zijn VERPAKKINGSGEGEVENS — NOOIT de bestelde hoeveelheid:
+  "TR 6 FL" = tray van 6 flessen (verpakking) → de bestelde hoeveelheid staat RECHTS
+  "BL 450 GR" = blik van 450 gram → de bestelde hoeveelheid staat RECHTS
+  "ZAK 500 GR" = zak van 500 gram → de bestelde hoeveelheid staat RECHTS
+
+De bestelde hoeveelheid (Aantal) staat in de kolom direct LINKS van de Prijs-kolom.
+
+VERIFICATIE — verplicht voor elke regel:
+  hoeveelheid × prijs_per_eenheid moet gelijk zijn aan totaal (Bedrag)
+  Als dit niet klopt: herbereken hoeveelheid = totaal / prijs_per_eenheid
+  Voorbeeld: totaal=0,90, prijs=0,15 → hoeveelheid = 0,90/0,15 = 6
+
+Overige regels:
+- leverancier: naam op de factuur (bijv. "HANOS")
+- datum: factuurdatum YYYY-MM-DD
+- eenheid afleiden uit EH-kolom: FL=fles, KG=kg, ST=stuk, GR=gram, L=liter, ZAK=zak, BOS=bos, POT=pot, ROL=rol, PK=pak
+- skip=true voor: statiegeld (FLES LOS), emballage, btw-regels, subtotalen, administratiekosten
+- Geef ALLE regels terug (ook skip:true) zodat gebruiker kan beslissen`;
+
+  const data = await klaarAI({
+    model: 'claude-sonnet-4-6',
+    max_tokens: 8192,
+    messages: [{
+      role: 'user',
+      content: [
+        { type: 'image', source: { type: 'base64', media_type: mediaType, data: base64 } },
+        { type: 'text', text: prompt }
+      ]
+    }]
+  }, '07-leveranciers');
+  const text = data.content?.[0]?.text || '';
+
+  // Robuust JSON extraheren: pak het eerste volledige { ... } blok
+  const parsed = extractJSON(text);
+  if (!parsed) {
+    console.error('Claude response was:', text.substring(0, 500));
+    throw new Error('AI gaf geen geldig JSON terug. Probeer een duidelijkere foto of controleer je API-sleutel.');
+  }
+  return parsed;
+}
+
+function extractJSON(text) {
+  // 1. Probeer directe parse (na code-fence stripping)
+  const stripped = text.replace(/^```(?:json)?\s*/im, '').replace(/\s*```\s*$/m, '').trim();
+  try { return JSON.parse(stripped); } catch (_) {}
+
+  // 2. Zoek het eerste { ... } blok (ook bij extra tekst voor/na)
+  const start = text.indexOf('{');
+  const end   = text.lastIndexOf('}');
+  if (start !== -1 && end > start) {
+    try { return JSON.parse(text.slice(start, end + 1)); } catch (_) {}
+  }
+
+  // 3. Probeer afgekapte JSON te repareren (max_tokens net gehaald)
+  if (start !== -1) {
+    let partial = text.slice(start);
+    // Sluit open arrays en objects
+    const opens = (partial.match(/\[/g)||[]).length - (partial.match(/\]/g)||[]).length;
+    const openObjs = (partial.match(/\{/g)||[]).length - (partial.match(/\}/g)||[]).length;
+    for (let i = 0; i < opens; i++) partial += ']';
+    for (let i = 0; i < openObjs; i++) partial += '}';
+    // Verwijder eventueel incompleet laatste object
+    partial = partial.replace(/,\s*\{[^{}]*$/, '').replace(/,\s*$/, '');
+    // Sluit opnieuw
+    const o2 = (partial.match(/\[/g)||[]).length - (partial.match(/\]/g)||[]).length;
+    const ob2 = (partial.match(/\{/g)||[]).length - (partial.match(/\}/g)||[]).length;
+    for (let i = 0; i < o2; i++) partial += ']';
+    for (let i = 0; i < ob2; i++) partial += '}';
+    try { return JSON.parse(partial); } catch (_) {}
+  }
+
+  return null;
+}
+
+
+/* ════════════════════════════════════════════════
+   BESTAND IMPORT — Route B
+   ════════════════════════════════════════════════ */
+
+async function handleDrop(event) {
+  event.preventDefault();
+  document.getElementById('route-bestand').classList.remove('active-drop');
+  const file = event.dataTransfer.files[0];
+  if (file) await processBestand(file);
+}
+
+async function handleBestandInput(event) {
+  const file = event.target.files[0];
+  event.target.value = '';
+  if (file) await processBestand(file);
+}
+
+async function processBestand(file) {
+  const name = file.name.toLowerCase();
+
+  if (name.endsWith('.csv')) {
+    await processCSV(file);
+  } else if (name.endsWith('.pdf')) {
+    showToast('PDF-import: gebruik de foto-optie voor nu (pak een screenshot van de PDF)', 'warning');
+  } else if (name.endsWith('.xlsx') || name.endsWith('.xls')) {
+    showToast('Excel-import komt in een latere fase. Gebruik CSV-export vanuit Excel.', 'warning');
+  } else {
+    showToast('Onbekend bestandstype. Gebruik afbeelding, CSV of PDF.', 'error');
+  }
+}
+
+async function processCSV(file) {
+  showSpinner('CSV verwerken…');
+  try {
+    const text = await file.text();
+    const result = await callClaudeText(text, 'csv');
+    hideSpinner();
+    openReview(result, 'bestand');
+  } catch (e) {
+    hideSpinner();
+    showToast('Fout bij CSV: ' + e.message, 'error');
+  }
+}
+
+async function callClaudeText(content, type) {
+  const prompt = `Je verwerkt een pakbon in ${type.toUpperCase()}-formaat voor een horecabedrijf.
+Extraheer alle gegevens en geef ALLEEN geldig JSON terug, zonder markdown:
+{
+  "leverancier": "naam of lege string",
+  "datum": "YYYY-MM-DD of lege string",
+  "regels": [
+    { "product": "naam", "hoeveelheid": 1, "eenheid": "stuk", "prijs_per_eenheid": 0.00, "totaal": 0.00 }
+  ]
+}
+
+Pakbon inhoud:
+${content.substring(0, 8000)}`;
+
+  const data = await klaarAI({
+    model: 'claude-sonnet-4-6',
+    max_tokens: 2048,
+    messages: [{ role: 'user', content: prompt }]
+  }, '07-leveranciers');
+  const text = data.content?.[0]?.text || '';
+  const cleaned = text.replace(/^```(?:json)?\s*/i, '').replace(/\s*```\s*$/, '').trim();
+  return JSON.parse(cleaned);
+}
+
+
+/* ════════════════════════════════════════════════
+   ANOMALIE-DETECTIE
+   ════════════════════════════════════════════════ */
+
+function detectAnomalies(regel, data) {
+  const anomalies = [];
+
+  // Fuzzy match op bestaande productnaam
+  const naam = (regel.product || '').toLowerCase();
+  const match = data.producten.find(p =>
+    p.naam.toLowerCase().includes(naam) || naam.includes(p.naam.toLowerCase())
+  );
+
+  if (match) {
+    regel._matched_product_id = match.id;
+    regel._matched_product_naam = match.naam;
+
+    // Zoek laatste prijs voor dit product
+    const prijzen = data.prijzen.filter(p => p.product_id === match.id);
+    if (prijzen.length > 0) {
+      const lastPrijs = prijzen[prijzen.length - 1];
+      const vorigePrijs = lastPrijs.prijs;
+      const nieuwePrijs = parseFloat(regel.prijs_per_eenheid) || 0;
+
+      if (vorigePrijs > 0 && nieuwePrijs > 0) {
+        const pct = ((nieuwePrijs - vorigePrijs) / vorigePrijs) * 100;
+        regel._prijs_delta_pct = pct;
+        regel._vorige_prijs = vorigePrijs;
+
+        if (Math.abs(pct) > 40) {
+          anomalies.push({
+            type: 'block',
+            msg: `Prijs ${pct > 0 ? '+' : ''}${pct.toFixed(0)}% t.o.v. vorige (€${vorigePrijs.toFixed(2)}) — bevestiging vereist`
+          });
+          regel._blocked = true;
+          regel._confirmed = false;
+        } else if (Math.abs(pct) > 15) {
+          anomalies.push({
+            type: 'warn',
+            msg: `Prijs ${pct > 0 ? '+' : ''}${pct.toFixed(0)}% t.o.v. vorige (€${vorigePrijs.toFixed(2)}) — controleer`
+          });
+        }
+      }
+
+      // Eenheid veranderd?
+      if (lastPrijs.eenheid && regel.eenheid && lastPrijs.eenheid !== regel.eenheid) {
+        anomalies.push({
+          type: 'warn',
+          msg: `Eenheid veranderd: ${lastPrijs.eenheid} → ${regel.eenheid}`
+        });
+      }
+    }
+  } else {
+    // Nieuw product, niet herkend
+    anomalies.push({ type: 'info', msg: 'Nieuw product — wordt aangemaakt bij opslaan' });
+    regel._new_product = true;
+  }
+
+  // Totaalregel klopt niet? → auto-fix hoeveelheid als totaal/prijs een nettig getal geeft
+  const hoeveelheid = parseFloat(regel.hoeveelheid) || 0;
+  const prijs = parseFloat(regel.prijs_per_eenheid) || 0;
+  const totaal = parseFloat(regel.totaal) || 0;
+  if (totaal > 0 && hoeveelheid > 0 && prijs > 0) {
+    const berekend = hoeveelheid * prijs;
+    if (Math.abs(berekend - totaal) > 0.02) {
+      // Probeer auto-fix: bereken juiste hoeveelheid
+      const juisteHoeveelheid = totaal / prijs;
+      const isNetGetal = Math.abs(Math.round(juisteHoeveelheid * 100) / 100 - juisteHoeveelheid) < 0.001;
+      if (isNetGetal && juisteHoeveelheid > 0) {
+        // Stille auto-fix: pas hoeveelheid aan en noteer
+        regel.hoeveelheid = Math.round(juisteHoeveelheid * 100) / 100;
+        regel._hoeveelheid_gecorrigeerd = true;
+        regel._hoeveelheid_origineel = hoeveelheid;
+        anomalies.push({
+          type: 'info',
+          msg: `Hoeveelheid gecorrigeerd: ${hoeveelheid} → ${regel.hoeveelheid} (op basis van totaal €${totaal.toFixed(2)} ÷ prijs €${prijs.toFixed(2)})`
+        });
+      } else {
+        anomalies.push({
+          type: 'warn',
+          msg: `Totaal klopt niet: ${hoeveelheid}×€${prijs.toFixed(2)} = €${berekend.toFixed(2)}, staat als €${totaal.toFixed(2)}`
+        });
+      }
+    }
+  }
+
+  return anomalies;
+}
+
+
+/* ════════════════════════════════════════════════
+   REVIEW SCREEN
+   ════════════════════════════════════════════════ */
+
+// Global review state
+let reviewState = null;
+
+function openReview(parsed, bron) {
+  const data = loadData();
+
+  // Annotate elke regel met anomalies
+  const regels = (parsed.regels || []).map((r, i) => {
+    // skip:true = statiegeld/administratie → standaard uitgevinkt
+    const isSkip = r.skip === true;
+    const regel = { ...r, _id: 'r' + i, _include: !isSkip, _confirmed: true, _skip_suggested: isSkip };
+    const anomalies = detectAnomalies(regel, data);
+    regel._anomalies = anomalies;
+    if (isSkip) {
+      anomalies.unshift({ type: 'info', msg: 'Statiegeld/administratie — standaard overgeslagen' });
+    }
+    if (regel._blocked) regel._confirmed = false;
+    return regel;
+  });
+
+  reviewState = {
+    leverancier: parsed.leverancier || '',
+    datum: parsed.datum || new Date().toISOString().split('T')[0],
+    bron,
+    regels
+  };
+
+  renderReview();
+  document.getElementById('review-modal').classList.add('open');
+}
+
+function closeReview() {
+  document.getElementById('review-modal').classList.remove('open');
+  reviewState = null;
+}
+
+function renderReview() {
+  if (!reviewState) return;
+  const data = loadData();
+
+  const leverancierOptions = data.leveranciers
+    .map(l => `<option value="${esc(l.id)}" ${reviewState.leverancier === l.naam ? 'selected' : ''}>${esc(l.naam)}</option>`)
+    .join('');
+
+  const metaHtml = `
+    <div class="review-meta">
+      <div class="review-meta-item">
+        <span class="review-meta-label">Leverancier</span>
+        <input type="text" id="rv-leverancier" class="form-input" style="width:200px;"
+          value="${esc(reviewState.leverancier)}" placeholder="Naam leverancier"
+          oninput="reviewState.leverancier = this.value">
+      </div>
+      <div class="review-meta-item">
+        <span class="review-meta-label">Datum</span>
+        <input type="date" id="rv-datum" class="form-input" style="width:160px;"
+          value="${esc(reviewState.datum)}"
+          oninput="reviewState.datum = this.value">
+      </div>
+      <div class="review-meta-item" style="align-self:flex-end;">
+        <span class="chip chip-gray">${esc(reviewState.bron)}</span>
+      </div>
+    </div>`;
+
+  let blockCount = 0, warnCount = 0, newCount = 0;
+
+  const rows = reviewState.regels.map((r, i) => {
+    const hasBlock = r._anomalies.some(a => a.type === 'block');
+    const hasWarn  = r._anomalies.some(a => a.type === 'warn');
+    if (hasBlock) blockCount++;
+    if (hasWarn)  warnCount++;
+    if (r._new_product) newCount++;
+
+    const rowClass = hasBlock ? 'review-row-block' : (hasWarn ? 'review-row-warn' : '');
+    const anomalyBadges = r._anomalies.map(a =>
+      `<div class="anomaly-badge anomaly-${a.type}">${a.type === 'block' ? '🔴' : a.type === 'warn' ? '⚠️' : 'ℹ️'} ${esc(a.msg)}</div>`
+    ).join('');
+
+    const confirmCell = hasBlock ? `
+      <div style="margin-top:4px;">
+        <label style="font-size:11px;color:var(--red);display:flex;align-items:center;gap:5px;cursor:pointer;">
+          <input type="checkbox" ${r._confirmed ? 'checked' : ''}
+            onchange="reviewState.regels[${i}]._confirmed = this.checked; updateReviewSummary()">
+          Bevestig afwijking
+        </label>
+      </div>` : '';
+
+    return `<tr class="${rowClass}">
+      <td class="review-include-cell">
+        <input type="checkbox" ${r._include ? 'checked' : ''}
+          onchange="reviewState.regels[${i}]._include = this.checked; updateReviewSummary()">
+      </td>
+      <td style="min-width:160px;">
+        <input value="${esc(r.product)}" placeholder="Productnaam"
+          oninput="reviewState.regels[${i}].product = this.value">
+        ${r._matched_product_naam ? `<div style="font-size:10px;color:var(--muted);margin-top:3px;">→ ${esc(r._matched_product_naam)}</div>` : ''}
+      </td>
+      <td style="width:80px;">
+        <input type="number" value="${r.hoeveelheid}" min="0" step="0.001"
+          oninput="reviewState.regels[${i}].hoeveelheid = parseFloat(this.value)||0; recalcTotaal(${i})">
+      </td>
+      <td style="width:90px;">
+        <select oninput="reviewState.regels[${i}].eenheid = this.value">
+          ${['kg','gram','liter','cl','fles','stuk','doos','pak','blik','pot'].map(u =>
+            `<option ${r.eenheid === u ? 'selected' : ''}>${u}</option>`
+          ).join('')}
+        </select>
+      </td>
+      <td style="width:100px;">
+        <input type="number" value="${parseFloat(r.prijs_per_eenheid).toFixed(2)}" min="0" step="0.01"
+          oninput="reviewState.regels[${i}].prijs_per_eenheid = parseFloat(this.value)||0; recalcTotaal(${i})">
+      </td>
+      <td style="width:90px;">
+        <input type="number" id="rv-totaal-${i}" value="${parseFloat(r.totaal).toFixed(2)}" min="0" step="0.01"
+          oninput="reviewState.regels[${i}].totaal = parseFloat(this.value)||0">
+      </td>
+      <td style="min-width:180px;">
+        ${anomalyBadges}
+        ${confirmCell}
+      </td>
+    </tr>`;
+  }).join('');
+
+  const tableHtml = `
+    <div style="overflow-x:auto;">
+      <table class="review-lines">
+        <thead><tr>
+          <th style="width:32px;"></th>
+          <th>Product</th>
+          <th>Aantal</th>
+          <th>Eenheid</th>
+          <th>Prijs/eenheid</th>
+          <th>Totaal</th>
+          <th>Controle</th>
+        </tr></thead>
+        <tbody>${rows}</tbody>
+      </table>
+    </div>`;
+
+  document.getElementById('review-body').innerHTML = metaHtml + tableHtml;
+
+  // Summary
+  const parts = [];
+  if (blockCount) parts.push(`🔴 ${blockCount} geblokkeerde regel(s) — bevestig handmatig`);
+  if (warnCount)  parts.push(`⚠️ ${warnCount} waarschuwing(en)`);
+  if (newCount)   parts.push(`ℹ️ ${newCount} nieuw product(en)`);
+  document.getElementById('review-anomaly-summary').textContent = parts.join(' · ') || '';
+
+  updateReviewSummary();
+}
+
+function recalcTotaal(i) {
+  const r = reviewState.regels[i];
+  const totaal = (parseFloat(r.hoeveelheid) || 0) * (parseFloat(r.prijs_per_eenheid) || 0);
+  r.totaal = totaal;
+  const el = document.getElementById('rv-totaal-' + i);
+  if (el) el.value = totaal.toFixed(2);
+}
+
+function updateReviewSummary() {
+  // Check all blocked rules are confirmed before allowing save
+  const hasUnconfirmed = reviewState.regels.some(
+    r => r._include && r._blocked && !r._confirmed
+  );
+  const btn = document.getElementById('review-save-btn');
+  btn.disabled = hasUnconfirmed;
+  btn.style.opacity = hasUnconfirmed ? '0.4' : '1';
+  btn.title = hasUnconfirmed ? 'Bevestig eerst alle rode afwijkingen' : '';
+}
+
+
+/* ════════════════════════════════════════════════
+   SAVE REVIEW → klaar_voorraad
+   ════════════════════════════════════════════════ */
+
+function saveReview() {
+  if (!reviewState) return;
+
+  // Read back editable fields from DOM
+  reviewState.leverancier = document.getElementById('rv-leverancier').value.trim();
+  reviewState.datum = document.getElementById('rv-datum').value;
+
+  const data = loadData();
+
+  // Find or create leverancier
+  let levId = null;
+  if (reviewState.leverancier) {
+    let lev = data.leveranciers.find(l =>
+      l.naam.toLowerCase() === reviewState.leverancier.toLowerCase()
+    );
+    if (!lev) {
+      lev = { id: uid(), naam: reviewState.leverancier, contact: '', email: '', telefoon: '' };
+      data.leveranciers.push(lev);
+    }
+    levId = lev.id;
+  }
+
+  const inkoopRegels = [];
+
+  reviewState.regels
+    .filter(r => r._include)
+    .forEach(r => {
+      const naam = (r.product || '').trim();
+      if (!naam) return;
+
+      // Find or create product
+      let prodId = r._matched_product_id;
+      if (!prodId) {
+        // New product: create with defaults
+        const prod = {
+          id: uid(),
+          naam,
+          categorie: guessCategorieFromNaam(naam),
+          leverancier_ids: levId ? [levId] : [],
+          eenheid: r.eenheid || 'stuk',
+          ingredient_match: '',
+          bewaartype: guessBewaartype(naam),
+          tgt_of_tht: 'nvt',
+          allergenen: [],
+          spillage_pct: 3,
+          waste_pct: 2,
+          eigen_gebruik_per_week: 0,
+          min_voorraad: 6,
+          aangemaakt: reviewState.datum
+        };
+        data.producten.push(prod);
+        prodId = prod.id;
+      } else {
+        // Add leverancier to existing product if not already there
+        const prod = data.producten.find(p => p.id === prodId);
+        if (prod && levId && !prod.leverancier_ids.includes(levId)) {
+          prod.leverancier_ids.push(levId);
+        }
+      }
+
+      // Save price record
+      const prijs = parseFloat(r.prijs_per_eenheid) || 0;
+      if (prijs > 0) {
+        data.prijzen.push({
+          product_id: prodId,
+          leverancier_id: levId,
+          prijs,
+          eenheid: r.eenheid || 'stuk',
+          datum: reviewState.datum,
+          bron: reviewState.bron
+        });
+      }
+
+      inkoopRegels.push({
+        product_id: prodId,
+        hoeveelheid: parseFloat(r.hoeveelheid) || 0,
+        prijs_per_eenheid: prijs,
+        houdbaarheid: ''
+      });
+    });
+
+  // Save inkoop record
+  data.inkopen.push({
+    id: uid(),
+    datum: reviewState.datum,
+    leverancier_id: levId,
+    bron: reviewState.bron,
+    regels: inkoopRegels
+  });
+
+  saveData(data);
+
+  // HACCP-koppeling: genereer ontvangst-controletaken voor Module 03
+  const haccpCount = generateHaccpTaken(data.inkopen[data.inkopen.length - 1], data);
+
+  closeReview();
+  renderAll();
+
+  const n = inkoopRegels.length;
+  const haccpMsg = haccpCount > 0 ? ` · ${haccpCount} HACCP-controles aangemaakt` : '';
+  const nieuweProds = reviewState ? 0 : data.producten.length; // al gesloten, gebruik n als indicatie
+
+  // Toast met directe actieknop naar Voorraad tab
+  showToastActie(
+    `✓ Inkoop opgeslagen — ${n} product${n !== 1 ? 'en' : ''}${haccpMsg}`,
+    '📦 Bekijk voorraad',
+    () => {
+      const btn = document.querySelector('.tab-btn[onclick*="voorraad"]');
+      if (btn) switchTab('voorraad', btn);
+    }
+  );
+}
+
+function showToastActie(msg, btnLabel, btnAction) {
+  // Verwijder eventuele bestaande toast
+  const bestaand = document.querySelector('.toast');
+  if (bestaand) bestaand.remove();
+
+  const t = document.createElement('div');
+  t.className = 'toast toast-show';
+  t.innerHTML = `<span>${esc(msg)}</span>
+    <button style="margin-left:12px;background:var(--lime);color:var(--text);border:none;
+      border-radius:5px;padding:4px 10px;font-family:'DM Mono',monospace;font-size:11px;
+      letter-spacing:0.05em;cursor:pointer;font-weight:600;"
+      onclick="this.closest('.toast').remove(); (${btnAction.toString()})()">${esc(btnLabel)}</button>`;
+  document.body.appendChild(t);
+  setTimeout(() => { t.classList.remove('toast-show'); setTimeout(() => t.remove(), 400); }, 6000);
+}
+
+
+/* ════════════════════════════════════════════════
+   HACCP-KOPPELING — Module 03
+   Schrijft ontvangst-controletaken naar
+   klaar_haccp_ontvangst_taken voor elke inkoopregel
+   die een koelvers, diepvries of allergeen product bevat.
+   ════════════════════════════════════════════════ */
+
+function generateHaccpTaken(inkoop, data) {
+  if (!inkoop || !inkoop.regels) return 0;
+
+  const prodMap = {};
+  data.producten.forEach(p => { prodMap[p.id] = p; });
+  const levMap  = {};
+  data.leveranciers.forEach(l => { levMap[l.id] = l.naam; });
+
+  const taken = [];
+
+  inkoop.regels.forEach(r => {
+    const prod = prodMap[r.product_id];
+    if (!prod) return;
+
+    const checks = haccpChecksVoorProduct(prod);
+    if (!checks.length) return;
+
+    taken.push({
+      id: uid(),
+      type:        'ontvangst_controle',
+      product:     prod.naam,
+      categorie:   prod.categorie,
+      leverancier: levMap[inkoop.leverancier_id] || '',
+      datum:       inkoop.datum,
+      bewaartype:  prod.bewaartype,
+      tgt_of_tht:  prod.tgt_of_tht,
+      allergenen:  prod.allergenen || [],
+      checks,
+      status:      'open',
+      bron:        'module_07',
+      inkoop_id:   inkoop.id
+    });
+  });
+
+  if (taken.length > 0) {
+    try {
+      const bestaand = JSON.parse(localStorage.getItem('klaar_haccp_ontvangst_taken') || '[]');
+      localStorage.setItem('klaar_haccp_ontvangst_taken', JSON.stringify([...bestaand, ...taken]));
+    } catch (e) {
+      console.error('HACCP-taken opslaan mislukt:', e);
+    }
+  }
+
+  return taken.length;
+}
+
+function haccpChecksVoorProduct(prod) {
+  const checks = [];
+  const isVlees = ['vlees', 'vis'].includes(prod.categorie);
+
+  if (prod.bewaartype === 'gekoeld') {
+    checks.push({
+      id:    'temperatuur_ontvangst',
+      label: isVlees ? 'Temperatuur bij ontvangst (eis: max 4°C voor vlees/gevogelte)' : 'Temperatuur bij ontvangst (eis: max 7°C)',
+      type:  'temperatuur',
+      norm:  isVlees ? 4 : 7
+    });
+    checks.push({ id: 'verpakking_intact', label: 'Verpakking intact, geen beschadiging of lekkage', type: 'checkbox' });
+    if (prod.tgt_of_tht !== 'nvt') {
+      checks.push({
+        id:    'houdbaarheidsdatum',
+        label: prod.tgt_of_tht === 'tgt'
+          ? 'Houdbaarheidsdatum (TGT) controleren — harde grens, niet gebruiken na datum'
+          : 'Houdbaarheidsdatum (THT) controleren — kwaliteitsindicatie',
+        type:  'datum'
+      });
+    }
+  } else if (prod.bewaartype === 'diepvries') {
+    checks.push({ id: 'bevroren_bij_ontvangst', label: 'Product was bevroren bij ontvangst', type: 'checkbox' });
+    checks.push({ id: 'geen_dooi_sporen',        label: 'Geen zichtbare dooi-sporen of ijskristallen buiten verpakking', type: 'checkbox' });
+    checks.push({ id: 'verpakking_intact',       label: 'Verpakking intact', type: 'checkbox' });
+    if (prod.tgt_of_tht !== 'nvt') {
+      checks.push({ id: 'houdbaarheidsdatum', label: 'Houdbaarheidsdatum controleren', type: 'datum' });
+    }
+  } else {
+    // Kamertemperatuur — alleen relevant als er TGT/THT is of allergenen
+    if (prod.tgt_of_tht !== 'nvt') {
+      checks.push({
+        id:    'houdbaarheidsdatum',
+        label: prod.tgt_of_tht === 'tgt' ? 'Houdbaarheidsdatum (TGT) — harde grens' : 'Houdbaarheidsdatum (THT)',
+        type:  'datum'
+      });
+    }
+    if (prod.allergenen && prod.allergenen.length > 0) {
+      checks.push({ id: 'verpakking_intact', label: 'Verpakking intact', type: 'checkbox' });
+    }
+    if (!prod.tgt_of_tht || prod.tgt_of_tht === 'nvt') {
+      // Geen relevante checks voor dit product
+      return [];
+    }
+  }
+
+  if (prod.allergenen && prod.allergenen.length > 0) {
+    checks.push({
+      id:    'allergeen_bewaar_gescheiden',
+      label: `Bewaar gescheiden van allergeen-vrije producten (bevat: ${prod.allergenen.join(', ')}) — suggestie, afhankelijk van keukenindeling`,
+      type:  'checkbox'
+    });
+  }
+
+  return checks;
+}
+
+// Simpele heuristieken voor nieuwe producten
+function guessCategorieFromNaam(naam) {
+  const n = naam.toLowerCase();
+  if (/bier|wijn|wijn|ros[eé]|champagne|prosecco|gin|vodka|whisky|rum|bourbon|cognac|likeur|cola|spa|sap|koffie|thee/.test(n)) return 'dranken';
+  if (/rund|kalf|lam|vark|kip|kalkoen|gehakt|biefstuk|entrecote|kipfil/.test(n)) return 'vlees';
+  if (/zalm|tonijn|tilapia|garnaal|inktvis|zeebaars|makreel|haring|kabeljauw/.test(n)) return 'vis';
+  if (/melk|room|boter|kaas|yoghurt|eieren|ei /.test(n)) return 'zuivel';
+  if (/sla|tomaat|paprika|ui|knoflook|aardappel|wortel|broccoli|spinazie|citroen|appel|peer/.test(n)) return 'groente';
+  if (/meel|suiker|zout|peper|olie|azijn|pasta|rijst|bloem|kruiden/.test(n)) return 'droog';
+  return 'overig';
+}
+
+function guessBewaartype(naam) {
+  const n = naam.toLowerCase();
+
+  // ── Diepvries — altijd eerst checken ──────────────────────────────
+  if (/diepvries|frozen|ijscrème|ijs |sorbet|diepgevroren/.test(n)) return 'diepvries';
+
+  // ── Duidelijk gekoeld: vlees, vis, zuivel ──────────────────────────
+  if (/zalm|tonijn|forel|kabeljauw|pangasius|tilapia|mosselen?|garnalen?|kreeft|inktvis|zeebaars|dorade/.test(n)) return 'gekoeld';
+  if (/kip|rund|vark|kalf|lam|geit|eend|konijn|wild|biefstuk|entrecote|ossenhaas|ribeye|spek|bacon|worst|chorizo|salami|ham |prosciutto|carpaccio|tartaar|gehakt|lever|nier|long/.test(n)) return 'gekoeld';
+  if (/kaas|yoghurt|kwark|melk|room|boter|margarine|creme fraiche|mascarpone|ricotta|mozzarella|brie|camembert|gouda|edam|grana|parmezan|feta/.test(n)) return 'gekoeld';
+  if (/ei |eieren|mayonaise|mayo|aioli|hollandaise|béarnaise/.test(n)) return 'gekoeld';
+  if (/tofu|tempeh|seitan|hummus|tzatziki/.test(n)) return 'gekoeld';
+  if (/slagroom|slag room|ijs room|ijsroom/.test(n)) return 'gekoeld';
+  if (/vers |verse |fresh /.test(n)) return 'gekoeld'; // "verse kruiden", "vers brood" etc.
+
+  // ── SNIJINDICATOREN — verwerkte/gesneden producten ──────────────────
+  // Als een product gesneden/verwerkt is, moet het altijd gekoeld.
+  // Dit vangt bijv: "uien ringen", "paprika blokjes", "wortelen schijfjes"
+  const snijIndicatoren = /ringen?|gesneden|schijf(jes)?|blokjes?|reepjes?|halv(e|en|eerde)|kwartjes?|julienne|brunoise|chiffonade|geraspt|gepeld|geportioneerd|versneden|geminced|gemalen|geperst|gepureerd|puree|gemengd|geweekt|gemarineerd|voorgekookt|voorgebakken|blancheerd|gestoomd|geroosterd|gebakken|gekookt/;
+  if (snijIndicatoren.test(n)) return 'gekoeld';
+
+  // ── Productnamen die in basis NIET koeling nodig hebben maar verwerkt WEL ─
+  // (deze worden al gevangen door snijIndicatoren hierboven, maar
+  //  hier staan ze expliciet voor duidelijkheid in de code)
+  // bijv. "wortelen gesneden" → gekoeld, "wortelen" → kamertemperatuur
+
+  // ── Groenten/fruit die in VERSE vorm altijd gekoeld moeten ─────────
+  if (/sla |sla$|andijvie|spinazie|rucola|veldsla|witlof|asperge|broccoli|bloemkool|spruitjes|paksoi|bok choy|radicchio/.test(n)) return 'gekoeld';
+  if (/paddenstoelen?|champignon|shiitake|oesterzwam|truffel/.test(n)) return 'gekoeld';
+  if (/aardbeien?|frambozen?|bramen?|blauwe bessen?|kersen?|druiven?/.test(n)) return 'gekoeld';
+  if (/avocado|mango(?!chutney)|papaja|jackfruit/.test(n)) return 'gekoeld';
+
+  // ── Bereide gerechten / sauzen (altijd gekoeld) ───────────────────
+  if (/saus$|soep$|bouillon|stock|fond |jus |dressing|vinaigrette|pesto/.test(n)) return 'gekoeld';
+
+  // ── Kamertemperatuur: droog, houdbaar ─────────────────────────────
+  return 'kamertemperatuur';
+}
+
+
+/* ════════════════════════════════════════════════
+   HANDMATIGE INVOER — Route C
+   ════════════════════════════════════════════════ */
+
+let hmLineCount = 0;
+
+function addHandmatigLine(product = '', hoeveelheid = '', eenheid = 'stuk', prijs = '') {
+  hmLineCount++;
+  const id = 'hm-line-' + hmLineCount;
+  const data = loadData();
+  const prodOptions = data.producten
+    .map(p => `<option value="${esc(p.naam)}">${esc(p.naam)}</option>`)
+    .join('');
+
+  const div = document.createElement('div');
+  div.id = id;
+  div.style.cssText = 'display:grid;grid-template-columns:2fr 1fr 1fr 1fr auto;gap:8px;margin-bottom:8px;align-items:end;';
+  div.innerHTML = `
+    <div>
+      ${hmLineCount === 1 ? '<div class="form-label">Product</div>' : ''}
+      <input type="text" class="form-input hm-product" placeholder="Productnaam" list="hm-products-${id}" value="${esc(product)}">
+      <datalist id="hm-products-${id}">${prodOptions}</datalist>
+    </div>
+    <div>
+      ${hmLineCount === 1 ? '<div class="form-label">Aantal</div>' : ''}
+      <input type="number" class="form-input hm-hoeveelheid" placeholder="1" value="${esc(String(hoeveelheid))}" min="0" step="0.001">
+    </div>
+    <div>
+      ${hmLineCount === 1 ? '<div class="form-label">Eenheid</div>' : ''}
+      <select class="form-select hm-eenheid">
+        ${['kg','gram','liter','cl','fles','stuk','doos','pak','blik','pot'].map(u =>
+          `<option ${u === eenheid ? 'selected' : ''}>${u}</option>`).join('')}
+      </select>
+    </div>
+    <div>
+      ${hmLineCount === 1 ? '<div class="form-label">Prijs/eenheid</div>' : ''}
+      <input type="number" class="form-input hm-prijs" placeholder="0.00" value="${esc(String(prijs))}" min="0" step="0.01">
+    </div>
+    <div style="${hmLineCount === 1 ? 'margin-top:22px;' : ''}">
+      <button class="btn btn-ghost btn-sm" onclick="document.getElementById('${id}').remove()">✕</button>
+    </div>`;
+  document.getElementById('hm-lines').appendChild(div);
+}
+
+function saveHandmatig() {
+  const datum = document.getElementById('hm-datum').value || new Date().toISOString().split('T')[0];
+  const levId = document.getElementById('hm-leverancier').value || null;
+
+  const regels = [];
+  document.querySelectorAll('#hm-lines > div').forEach(row => {
+    const product = row.querySelector('.hm-product').value.trim();
+    const hoeveelheid = parseFloat(row.querySelector('.hm-hoeveelheid').value) || 0;
+    const eenheid = row.querySelector('.hm-eenheid').value;
+    const prijs = parseFloat(row.querySelector('.hm-prijs').value) || 0;
+    if (product) regels.push({ product, hoeveelheid, eenheid, prijs_per_eenheid: prijs, totaal: hoeveelheid * prijs });
+  });
+
+  if (!regels.length) {
+    showToast('Voeg minimaal één productregel toe', 'error');
+    return;
+  }
+
+  // Route via review screen zodat anomalie-detectie ook werkt
+  openReview({
+    leverancier: levId ? (loadData().leveranciers.find(l => l.id === levId)?.naam || '') : '',
+    datum,
+    regels
+  }, 'handmatig');
+}
+
+function resetHandmatig() {
+  document.getElementById('hm-lines').innerHTML = '';
+  document.getElementById('hm-datum').value = '';
+  hmLineCount = 0;
+}
+
+
+/* ════════════════════════════════════════════════
+   LEVERANCIERS
+   ════════════════════════════════════════════════ */
+
+function saveLeverancier() {
+  const naam = document.getElementById('lev-naam').value.trim();
+  if (!naam) {
+    document.getElementById('lev-naam').classList.add('error');
+    showToast('Naam is verplicht', 'error');
+    return;
+  }
+  document.getElementById('lev-naam').classList.remove('error');
+
+  const data = loadData();
+  data.leveranciers.push({
+    id: uid(), naam,
+    contact:  document.getElementById('lev-contact').value.trim(),
+    email:    document.getElementById('lev-email').value.trim(),
+    telefoon: document.getElementById('lev-telefoon').value.trim()
+  });
+  saveData(data);
+
+  ['lev-naam','lev-contact','lev-email','lev-telefoon'].forEach(id => {
+    document.getElementById(id).value = '';
+  });
+  toggleCollapsible('lev-form');
+  renderAll();
+  showToast('Leverancier opgeslagen ✓');
+}
+
+function deleteLeverancier(id) {
+  if (!confirm('Leverancier verwijderen?')) return;
+  const data = loadData();
+  data.leveranciers = data.leveranciers.filter(l => l.id !== id);
+  saveData(data);
+  renderAll();
+  showToast('Leverancier verwijderd');
+}
+
+function renderLeverancierList() {
+  const data = loadData();
+  const el = document.getElementById('lev-list');
+
+  if (!data.leveranciers.length) {
+    el.innerHTML = `<div class="empty-state" style="padding:20px 0;">
+      <div class="empty-state-text">Nog geen leveranciers.</div>
+    </div>`;
+    return;
+  }
+
+  const rows = data.leveranciers.map(l => `
+    <tr>
+      <td><strong>${esc(l.naam)}</strong></td>
+      <td>${esc(l.contact) || '<span style="color:var(--muted)">—</span>'}</td>
+      <td>${l.email ? `<a href="mailto:${esc(l.email)}" style="color:var(--blue);text-decoration:none;">${esc(l.email)}</a>` : '<span style="color:var(--muted)">—</span>'}</td>
+      <td>${esc(l.telefoon) || '<span style="color:var(--muted)">—</span>'}</td>
+      <td><button class="action-btn del" onclick="deleteLeverancier('${l.id}')">🗑</button></td>
+    </tr>`).join('');
+
+  el.innerHTML = `<table class="data-table"><thead><tr>
+    <th>Naam</th><th>Contact</th><th>E-mail</th><th>Telefoon</th><th></th>
+  </tr></thead><tbody>${rows}</tbody></table>`;
+}
+
+function populateLeverancierDropdowns() {
+  const data = loadData();
+  ['prod-leverancier', 'hm-leverancier'].forEach(selId => {
+    const sel = document.getElementById(selId);
+    if (!sel) return;
+    const cur = sel.value;
+    const label = selId === 'hm-leverancier' ? '— selecteer —' : '— selecteer leverancier —';
+    sel.innerHTML = `<option value="">${label}</option>`;
+    data.leveranciers.forEach(l => {
+      const opt = document.createElement('option');
+      opt.value = l.id;
+      opt.textContent = l.naam;
+      if (opt.value === cur) opt.selected = true;
+      sel.appendChild(opt);
+    });
+  });
+}
+
+
+/* ════════════════════════════════════════════════
+   PRODUCTEN
+   ════════════════════════════════════════════════ */
+
+function saveProduct() {
+  const naam      = document.getElementById('prod-naam').value.trim();
+  const categorie = document.getElementById('prod-categorie').value;
+  const eenheid   = document.getElementById('prod-eenheid').value;
+
+  let valid = true;
+  [['prod-naam', naam], ['prod-categorie', categorie], ['prod-eenheid', eenheid]].forEach(([id, val]) => {
+    if (!val) { document.getElementById(id).classList.add('error'); valid = false; }
+    else document.getElementById(id).classList.remove('error');
+  });
+
+  if (!valid) { showToast('Vul alle verplichte velden in', 'error'); return; }
+
+  const levId = document.getElementById('prod-leverancier').value;
+  const data  = loadData();
+
+  data.producten.push({
+    id: uid(), naam, categorie,
+    leverancier_ids:        levId ? [levId] : [],
+    eenheid,
+    ingredient_match:       '',
+    bewaartype:             document.getElementById('prod-bewaartype').value,
+    tgt_of_tht:             document.getElementById('prod-tgt-tht').value,
+    allergenen:             [],
+    spillage_pct:           parseFloat(document.getElementById('prod-spillage').value) || 3,
+    waste_pct:              parseFloat(document.getElementById('prod-waste').value) || 2,
+    eigen_gebruik_per_week: parseFloat(document.getElementById('prod-eigen').value) || 0,
+    min_voorraad:           parseFloat(document.getElementById('prod-min').value) || 6,
+    aangemaakt:             new Date().toISOString().split('T')[0]
+  });
+
+  saveData(data);
+  resetProductForm();
+  toggleCollapsible('prod-form');
+  renderAll();
+  showToast(`"${naam}" opgeslagen ✓`);
+}
+
+function deleteProduct(id) {
+  if (!confirm('Product verwijderen?')) return;
+  const data = loadData();
+  data.producten = data.producten.filter(p => p.id !== id);
+  data.prijzen   = data.prijzen.filter(p => p.product_id !== id);
+  saveData(data);
+  renderAll();
+  showToast('Product verwijderd');
+}
+
+function resetProductForm() {
+  document.getElementById('prod-naam').value = '';
+  document.getElementById('prod-categorie').value = '';
+  document.getElementById('prod-eenheid').value = '';
+  document.getElementById('prod-bewaartype').value = 'kamertemperatuur';
+  document.getElementById('prod-tgt-tht').value = 'nvt';
+  document.getElementById('prod-leverancier').value = '';
+  document.getElementById('prod-spillage').value = '3';
+  document.getElementById('prod-waste').value = '2';
+  document.getElementById('prod-eigen').value = '0';
+  document.getElementById('prod-min').value = '6';
+  ['prod-naam','prod-categorie','prod-eenheid'].forEach(id => {
+    document.getElementById(id).classList.remove('error');
+  });
+}
+
+const CATEGORIE_LABELS = {
+  vlees: 'Vlees & gevogelte', vis: 'Vis & zeevruchten',
+  zuivel: 'Zuivel & eieren', groente: 'Groente & fruit',
+  droog: 'Droog & kruiden', dranken: 'Dranken',
+  'non-food': 'Non-food', overig: 'Overig'
+};
+
+const BEWAAR_CLASSES = { kamertemperatuur: 'bewaar-kamer', gekoeld: 'bewaar-koel', diepvries: 'bewaar-vries' };
+const BEWAAR_LABELS  = { kamertemperatuur: '🏠 Kamer', gekoeld: '❄️ Gekoeld', diepvries: '🧊 Diepvries' };
+const TGT_THT_LABELS = { nvt: '—', tht: 'THT', tgt: 'TGT ⚠️' };
+
+function renderProductList() {
+  const data    = loadData();
+  const search  = document.getElementById('prod-search').value.toLowerCase();
+  const catF    = document.getElementById('prod-filter-cat').value;
+  const bewaarF = document.getElementById('prod-filter-bewaar').value;
+
+  let producten = data.producten.filter(p => {
+    if (search  && !p.naam.toLowerCase().includes(search)) return false;
+    if (catF    && p.categorie !== catF) return false;
+    if (bewaarF && p.bewaartype !== bewaarF) return false;
+    return true;
+  });
+
+  document.getElementById('prod-count').textContent =
+    data.producten.length + ' product' + (data.producten.length !== 1 ? 'en' : '');
+
+  const el = document.getElementById('prod-list');
+
+  if (!data.producten.length) {
+    el.innerHTML = `<div class="empty-state">
+      <div class="empty-state-icon">📦</div>
+      <div class="empty-state-text">Nog geen producten. Voeg er een toe of importeer een pakbon.</div>
+    </div>`;
+    return;
+  }
+
+  if (!producten.length) {
+    el.innerHTML = `<div class="empty-state">
+      <div class="empty-state-text">Geen producten gevonden voor deze filter.</div>
+    </div>`;
+    return;
+  }
+
+  const levMap = {};
+  data.leveranciers.forEach(l => { levMap[l.id] = l.naam; });
+
+  const rows = producten.map(p => {
+    const levPills = p.leverancier_ids
+      .map(lid => `<span class="lev-pill">${esc(levMap[lid] || 'onbekend')}</span>`)
+      .join('') || '<span style="color:var(--muted);font-size:12px;">—</span>';
+
+    const prijzen = data.prijzen.filter(pr => pr.product_id === p.id);
+    const lastPrijs = prijzen.length
+      ? `€ ${prijzen[prijzen.length - 1].prijs.toFixed(2)}<span style="color:var(--muted);font-size:11px;"> /${esc(p.eenheid)}</span>`
+      : '<span style="color:var(--muted);font-size:12px;">—</span>';
+
+    return `<tr>
+      <td>
+        <div style="font-weight:500;">${esc(p.naam)}</div>
+        <div style="font-size:11px;color:var(--muted);margin-top:2px;">${esc(CATEGORIE_LABELS[p.categorie] || p.categorie)}</div>
+      </td>
+      <td>${levPills}</td>
+      <td><span class="chip chip-gray">${esc(p.eenheid)}</span></td>
+      <td><span class="chip ${BEWAAR_CLASSES[p.bewaartype] || ''}">${BEWAAR_LABELS[p.bewaartype] || p.bewaartype}</span></td>
+      <td><span style="font-family:'DM Mono',monospace;font-size:11px;color:var(--muted);">${TGT_THT_LABELS[p.tgt_of_tht] || '—'}</span></td>
+      <td style="text-align:right;">${lastPrijs}</td>
+      <td><button class="action-btn del" onclick="deleteProduct('${p.id}')">🗑</button></td>
+    </tr>`;
+  }).join('');
+
+  el.innerHTML = `<table class="data-table"><thead><tr>
+    <th>Product</th><th>Leverancier</th><th>Eenheid</th>
+    <th>Bewaar</th><th>Label</th><th style="text-align:right;">Prijs</th><th></th>
+  </tr></thead><tbody>${rows}</tbody></table>`;
+}
+
+
+/* ════════════════════════════════════════════════
+   INKOPEN LIJST
+   ════════════════════════════════════════════════ */
+
+function renderInkopen() {
+  const data = loadData();
+  const card = document.getElementById('card-inkopen');
+
+  if (!data.inkopen.length) {
+    card.style.display = 'none';
+    return;
+  }
+
+  card.style.display = 'block';
+  document.getElementById('inkoop-count').textContent = data.inkopen.length;
+
+  const levMap = {};
+  data.leveranciers.forEach(l => { levMap[l.id] = l.naam; });
+  const prodMap = {};
+  data.producten.forEach(p => { prodMap[p.id] = p; });
+
+  const sorted = [...data.inkopen].sort((a, b) => b.datum.localeCompare(a.datum));
+
+  const rows = sorted.slice(0, 20).map(ink => {
+    const levNaam = levMap[ink.leverancier_id] || '—';
+    const totaal  = ink.regels.reduce((s, r) => s + (r.hoeveelheid * r.prijs_per_eenheid), 0);
+    const nRegels = ink.regels.length;
+    const bronIcon = { foto: '📷', bestand: '📄', handmatig: '✏️' }[ink.bron] || '📋';
+
+    const detailRows = ink.regels.map(r => {
+      const prod = prodMap[r.product_id];
+      return `<div style="display:flex;justify-content:space-between;padding:4px 0;border-bottom:1px solid #f0f0f0;">
+        <span>${prod ? esc(prod.naam) : '<em>onbekend</em>'}</span>
+        <span style="color:var(--muted);">${r.hoeveelheid} ${prod ? esc(prod.eenheid) : ''} × €${r.prijs_per_eenheid.toFixed(2)} = <strong>€${(r.hoeveelheid * r.prijs_per_eenheid).toFixed(2)}</strong></span>
+      </div>`;
+    }).join('');
+
+    return `
+      <tr class="inkoop-row" onclick="toggleInkoopDetails('detail-${ink.id}')">
+        <td>${bronIcon} ${esc(ink.datum)}</td>
+        <td>${esc(levNaam)}</td>
+        <td>${nRegels} regel${nRegels !== 1 ? 's' : ''}</td>
+        <td style="text-align:right;font-family:'DM Mono',monospace;font-size:13px;">€ ${totaal.toFixed(2)}</td>
+        <td style="color:var(--muted);font-size:12px;text-align:right;">
+          <span style="margin-right:8px">▼</span>
+          <button class="btn-icon-del" title="Inkoop verwijderen"
+            onclick="event.stopPropagation(); verwijderInkoop('${ink.id}')">🗑</button>
+        </td>
+      </tr>
+      <tr id="detail-${ink.id}" class="inkoop-details">
+        <td colspan="5" class="inkoop-detail-cell">
+          <div class="inkoop-detail-inner">${detailRows}
+            <div style="margin-top:10px;padding-top:8px;border-top:1px solid #e5e5e5;">
+              <button class="btn btn-ghost btn-sm" style="color:var(--red);border-color:var(--red);"
+                onclick="verwijderInkoop('${ink.id}')">🗑 Inkoop verwijderen</button>
+              <span style="font-size:11px;color:var(--muted);margin-left:8px;">
+                Verwijdert ook de bijbehorende prijsrecords van ${esc(ink.datum)}.
+              </span>
+            </div>
+          </div>
+        </td>
+      </tr>`;
+  }).join('');
+
+  document.getElementById('inkopen-list').innerHTML = `
+    <table class="data-table"><thead><tr>
+      <th>Datum</th><th>Leverancier</th><th>Regels</th>
+      <th style="text-align:right;">Totaal</th><th></th>
+    </tr></thead><tbody>${rows}</tbody></table>`;
+}
+
+function toggleInkoopDetails(id) {
+  document.getElementById(id)?.classList.toggle('open');
+}
+
+function verwijderInkoop(inkoopId) {
+  const data   = loadData();
+  const inkoop = data.inkopen.find(i => i.id === inkoopId);
+  if (!inkoop) return;
+
+  const lev    = data.leveranciers.find(l => l.id === inkoop.leverancier_id);
+  const levNaam = lev ? lev.naam : 'onbekende leverancier';
+  const totaal  = inkoop.regels.reduce((s, r) => s + r.hoeveelheid * r.prijs_per_eenheid, 0);
+
+  if (!confirm(`Inkoop verwijderen?\n\n${levNaam} · ${inkoop.datum} · €${totaal.toFixed(2)}\n\nDe bijbehorende prijsrecords van deze datum worden ook verwijderd. Theoretische voorraad wordt herberekend.`)) return;
+
+  // 1. Verwijder de inkoop
+  data.inkopen = data.inkopen.filter(i => i.id !== inkoopId);
+
+  // 2. Verwijder prijsrecords van deze inkoop (zelfde datum + leverancier_id)
+  //    Bewaar records van andere datums of leveranciers
+  const productIdsInkoop = new Set(inkoop.regels.map(r => r.product_id));
+  data.prijzen = data.prijzen.filter(p => {
+    // Verwijder alleen als: zelfde datum, zelfde leverancier, en product zat in deze inkoop
+    const isVanDezeInkoop = p.datum === inkoop.datum &&
+      p.leverancier_id === inkoop.leverancier_id &&
+      productIdsInkoop.has(p.product_id);
+    return !isVanDezeInkoop;
+  });
+
+  // 3. Verwijder producten die nergens anders meer inkopen voor hebben
+  //    (optioneel — we bewaren producten voor de database, ook als ze geen inkopen meer hebben)
+  //    → niet verwijderen, want historische productinfo is waardevol
+
+  saveData(data);
+  renderAll();
+  showToast(`Inkoop verwijderd — ${inkoop.regels.length} regels, €${totaal.toFixed(2)}`);
+}
+
+
+/* ════════════════════════════════════════════════
+   FASE 6 — VOORRAAD & STOCKOPNAME
+   ════════════════════════════════════════════════ */
+
+const ACTIEVE_OPNAME_KEY = 'klaar_voorraad_actieve_opname';
+
+// ── Theoretische voorraad berekening ──────────────
+function calcTheorStock(productId, data, peildatum) {
+  const peil = peildatum || new Date().toISOString().split('T')[0];
+  const prod  = data.producten.find(p => p.id === productId);
+  if (!prod) return 0;
+
+  // Vind laatste stockopname voor dit product
+  const opnamesSorted = [...data.stockopnames].sort((a,b) => b.datum.localeCompare(a.datum));
+  const lastOpname    = opnamesSorted.find(o => o.regels.some(r => r.product_id === productId));
+  const lastOpnameRegel = lastOpname?.regels.find(r => r.product_id === productId);
+  const baseStock     = lastOpnameRegel ? (lastOpnameRegel.werkelijk ?? 0) : 0;
+  const baseDate      = lastOpname?.datum || '2000-01-01';
+
+  // Inkopen na laatste stockopname
+  const inkopen = data.inkopen
+    .filter(i => i.datum > baseDate && i.datum <= peil)
+    .flatMap(i => i.regels.filter(r => r.product_id === productId));
+  const ingekocht = inkopen.reduce((s, r) => s + (parseFloat(r.hoeveelheid) || 0), 0);
+
+  // Verkopen na laatste stockopname (als die er zijn)
+  const verkopen = (data.verkopen || [])
+    .filter(v => v.datum > baseDate && v.datum <= peil)
+    .flatMap(v => (v.regels || []).filter(r => r.product_id === productId));
+  const verkocht = verkopen.reduce((s, r) => s + (parseFloat(r.hoeveelheid) || 0), 0);
+
+  // Eigen gebruik op basis van weken
+  const msPerWeek  = 7 * 24 * 60 * 60 * 1000;
+  const weken      = Math.max(0, (new Date(peil) - new Date(baseDate)) / msPerWeek);
+  const eigenGebruik = (prod.eigen_gebruik_per_week || 0) * weken;
+
+  // Verliezen op ingekochte + bestaande stock
+  const totalDoorvoer = baseStock + ingekocht;
+  const spillage      = totalDoorvoer * ((prod.spillage_pct || 0) / 100);
+  const waste         = totalDoorvoer * ((prod.waste_pct   || 0) / 100);
+
+  const theoretisch = baseStock + ingekocht - verkocht - spillage - waste - eigenGebruik;
+  return Math.max(0, Math.round(theoretisch * 100) / 100);
+}
+
+// ── Actieve opname laden/opslaan ──────────────────
+function laadActieveOpname() {
+  try { return JSON.parse(localStorage.getItem(ACTIEVE_OPNAME_KEY) || 'null'); }
+  catch { return null; }
+}
+function slaActieveOpname(opname) {
+  if (opname) localStorage.setItem(ACTIEVE_OPNAME_KEY, JSON.stringify(opname));
+  else         localStorage.removeItem(ACTIEVE_OPNAME_KEY);
+}
+
+// ── Nieuwe stockopname starten ────────────────────
+function startStockopname() {
+  const data = loadData();
+  if (!data.producten.length) {
+    showToast('Voeg eerst producten toe voor je een stockopname doet', 'error');
+    return;
+  }
+
+  const peildatum = new Date().toISOString().split('T')[0];
+  const regels    = data.producten.map(p => ({
+    product_id:    p.id,
+    theoretisch:   calcTheorStock(p.id, data, peildatum),
+    werkelijk:     null,
+    houdbaarheid:  '',
+    gescand:       false
+  }));
+
+  const opname = { datum: peildatum, regels };
+  slaActieveOpname(opname);
+  renderVoorraad();
+}
+
+function annuleerStockopname() {
+  if (!confirm('Stockopname annuleren? Niet-opgeslagen gegevens gaan verloren.')) return;
+  slaActieveOpname(null);
+  renderVoorraad();
+}
+
+function finaliseerStockopname() {
+  const opname = laadActieveOpname();
+  if (!opname) return;
+
+  const ingevuld = opname.regels.filter(r => r.werkelijk !== null).length;
+  if (!ingevuld) {
+    showToast('Vul minimaal één product in voor je afrondt', 'error');
+    return;
+  }
+
+  if (ingevuld < opname.regels.length) {
+    const door = confirm(`${opname.regels.length - ingevuld} producten nog niet ingevuld. Toch afronden? (lege regels worden overgeslagen)`);
+    if (!door) return;
+  }
+
+  const data = loadData();
+
+  const savedRegels = opname.regels
+    .filter(r => r.werkelijk !== null)
+    .map(r => ({
+      product_id:   r.product_id,
+      werkelijk:    parseFloat(r.werkelijk) || 0,
+      theoretisch:  r.theoretisch,
+      variance:     Math.round(((parseFloat(r.werkelijk) || 0) - r.theoretisch) * 100) / 100,
+      houdbaarheid: r.houdbaarheid || ''
+    }));
+
+  data.stockopnames.push({ id: uid(), datum: opname.datum, regels: savedRegels });
+  saveData(data);
+  slaActieveOpname(null);
+  renderAll();
+  showToast(`Stockopname opgeslagen — ${savedRegels.length} producten geteld ✓`);
+}
+
+// ── Update werkelijke waarde vanuit inputveld ─────
+function updateWerkelijk(productId, value) {
+  const opname = laadActieveOpname();
+  if (!opname) return;
+  const regel = opname.regels.find(r => r.product_id === productId);
+  if (!regel) return;
+  regel.werkelijk = value === '' ? null : parseFloat(value);
+  slaActieveOpname(opname);
+  updateOpnameSummary();
+  renderVarianceCell(productId);
+}
+
+function updateHoudbaarheid(productId, value) {
+  const opname = laadActieveOpname();
+  if (!opname) return;
+  const regel = opname.regels.find(r => r.product_id === productId);
+  if (regel) { regel.houdbaarheid = value; slaActieveOpname(opname); }
+}
+
+function renderVarianceCell(productId) {
+  const opname = laadActieveOpname();
+  if (!opname) return;
+  const regel = opname.regels.find(r => r.product_id === productId);
+  if (!regel) return;
+
+  const cell = document.getElementById('var-cell-' + productId);
+  if (!cell) return;
+
+  if (regel.werkelijk === null) {
+    cell.innerHTML = '<span style="color:var(--muted);">—</span>';
+    return;
+  }
+
+  const v    = regel.werkelijk - regel.theoretisch;
+  const pct  = regel.theoretisch > 0 ? Math.abs(v / regel.theoretisch) * 100 : 0;
+  const cls  = pct > 25 ? 'var-alarm' : pct > 10 ? 'var-warn' : v === 0 ? 'var-zero' : 'var-ok';
+  const fillCls = pct > 25 ? 'var-fill-alarm' : pct > 10 ? 'var-fill-warn' : 'var-fill-ok';
+  const sign = v > 0 ? '+' : '';
+  const data = loadData();
+  const prod = data.producten.find(p => p.id === productId);
+  const eenheid = prod?.eenheid || '';
+
+  cell.innerHTML = `
+    <div class="var-bar-wrap">
+      <div class="var-bar-bg"><div class="var-bar-fill ${fillCls}" style="width:${Math.min(pct,100)}%"></div></div>
+      <span class="${cls}">${sign}${v.toFixed(2)} ${eenheid}</span>
+    </div>`;
+}
+
+function updateOpnameSummary() {
+  const opname = laadActieveOpname();
+  if (!opname) return;
+
+  const ingevuld  = opname.regels.filter(r => r.werkelijk !== null).length;
+  const totaal    = opname.regels.length;
+  const metAfwijk = opname.regels.filter(r => {
+    if (r.werkelijk === null) return false;
+    const v = r.werkelijk - r.theoretisch;
+    return r.theoretisch > 0 && Math.abs(v / r.theoretisch) > 0.1;
+  }).length;
+
+  const el = document.getElementById('opname-summary');
+  if (!el) return;
+  el.innerHTML = `
+    <div class="opname-stat">
+      <span class="opname-stat-label">Ingevuld</span>
+      <span class="opname-stat-value">${ingevuld}/${totaal}</span>
+    </div>
+    <div class="opname-stat">
+      <span class="opname-stat-label">Met afwijking</span>
+      <span class="opname-stat-value ${metAfwijk > 0 ? 'var-warn' : 'var-zero'}">${metAfwijk}</span>
+    </div>
+    <div class="opname-stat">
+      <span class="opname-stat-label">Datum</span>
+      <span class="opname-stat-value">${opname.datum}</span>
+    </div>`;
+}
+
+// ── Render stockopname-tabel ──────────────────────
+function renderOpnameTable() {
+  const opname = laadActieveOpname();
+  if (!opname) return;
+
+  const data   = loadData();
+  const zoek   = (document.getElementById('opname-zoek')?.value || '').toLowerCase();
+  const filter = document.getElementById('opname-filter')?.value || 'all';
+
+  let regels = opname.regels.map(r => {
+    const prod = data.producten.find(p => p.id === r.product_id);
+    return { ...r, prod };
+  }).filter(r => r.prod);
+
+  if (zoek) regels = regels.filter(r => r.prod.naam.toLowerCase().includes(zoek));
+  if (filter === 'open')     regels = regels.filter(r => r.werkelijk === null);
+  if (filter === 'afwijking') regels = regels.filter(r => {
+    if (r.werkelijk === null) return false;
+    const v = r.werkelijk - r.theoretisch;
+    return r.theoretisch > 0 && Math.abs(v / r.theoretisch) > 0.1;
+  });
+
+  const tbody = document.getElementById('opname-tbody');
+  if (!tbody) return;
+
+  if (!regels.length) {
+    tbody.innerHTML = `<tr><td colspan="6" style="text-align:center;color:var(--muted);padding:24px;">Geen producten gevonden.</td></tr>`;
+    return;
+  }
+
+  tbody.innerHTML = regels.map(r => {
+    const werkelijkVal = r.werkelijk !== null ? r.werkelijk : '';
+    const varHtml = r.werkelijk !== null
+      ? (() => {
+          const v    = r.werkelijk - r.theoretisch;
+          const pct  = r.theoretisch > 0 ? Math.abs(v / r.theoretisch) * 100 : 0;
+          const cls  = pct > 25 ? 'var-alarm' : pct > 10 ? 'var-warn' : v === 0 ? 'var-zero' : 'var-ok';
+          const fillCls = pct > 25 ? 'var-fill-alarm' : pct > 10 ? 'var-fill-warn' : 'var-fill-ok';
+          return `<div class="var-bar-wrap">
+            <div class="var-bar-bg"><div class="var-bar-fill ${fillCls}" style="width:${Math.min(pct,100)}%"></div></div>
+            <span class="${cls}">${v > 0 ? '+' : ''}${v.toFixed(2)} ${r.prod.eenheid}</span>
+          </div>`;
+        })()
+      : '<span style="color:var(--muted);">—</span>';
+
+    return `<tr id="row-${r.product_id}">
+      <td>
+        <div style="font-weight:500;">${esc(r.prod.naam)}</div>
+        <div style="font-size:11px;color:var(--muted);">${esc(r.prod.eenheid)} · ${esc(r.prod.bewaartype)}</div>
+      </td>
+      <td style="text-align:right;color:var(--muted);">${r.theoretisch} <span style="font-size:11px;">${esc(r.prod.eenheid)}</span></td>
+      <td>
+        <input type="number" value="${werkelijkVal}" min="0" step="0.01"
+          placeholder="—"
+          style="width:80px;"
+          oninput="updateWerkelijk('${r.product_id}', this.value)"
+          id="inp-${r.product_id}">
+      </td>
+      <td id="var-cell-${r.product_id}">${varHtml}</td>
+      <td>
+        <input type="date" value="${esc(r.houdbaarheid)}"
+          oninput="updateHoudbaarheid('${r.product_id}', this.value)"
+          style="font-size:12px;padding:4px 7px;border:1px solid #e5e5e5;border-radius:5px;background:#fafafa;">
+      </td>
+      <td>
+        <button class="scan-row-btn" onclick="openScannerModal('${r.product_id}')" title="Scan barcode">📷</button>
+      </td>
+    </tr>`;
+  }).join('');
+}
+
+// ── Render volledige voorraad-tab ─────────────────
+function renderVoorraad() {
+  const opname = laadActieveOpname();
+  const data   = loadData();
+
+  // Lege staat / actief
+  if (!data.producten.length) {
+    document.getElementById('opname-leeg').style.display   = 'block';
+    document.getElementById('opname-actief').style.display = 'none';
+    document.getElementById('btn-start-opname').style.display = 'none';
+    return;
+  }
+
+  if (opname) {
+    document.getElementById('opname-leeg').style.display   = 'none';
+    document.getElementById('opname-actief').style.display = 'block';
+    document.getElementById('btn-start-opname').style.display = 'none';
+    document.getElementById('opname-card-title').textContent = `Stockopname — ${opname.datum}`;
+    updateOpnameSummary();
+    renderOpnameTable();
+  } else {
+    document.getElementById('opname-leeg').style.display   = 'none';
+    document.getElementById('opname-actief').style.display = 'none';
+    document.getElementById('btn-start-opname').style.display = '';
+    document.getElementById('opname-card-title').textContent = 'Stockopname';
+  }
+
+  renderVoorraadStatus();
+  renderStockHistory();
+  renderLowStockAlerts();
+  renderTheorOvzicht();
+}
+
+// ── Low-stock waarschuwingen ──────────────────────
+function renderLowStockAlerts() {
+  const data = loadData();
+  if (!data.stockopnames.length) {
+    document.getElementById('low-stock-alerts').innerHTML = '';
+    return;
+  }
+
+  const lastOpname = [...data.stockopnames].sort((a,b) => b.datum.localeCompare(a.datum))[0];
+  const warnings   = [];
+
+  lastOpname.regels.forEach(r => {
+    const prod = data.producten.find(p => p.id === r.product_id);
+    if (!prod) return;
+    const huidig = calcTheorStock(r.product_id, data);
+    if (huidig <= 0) {
+      warnings.push(`<span style="font-weight:500;">${esc(prod.naam)}</span> — op (0 ${esc(prod.eenheid)})`);
+    } else if (huidig <= (prod.min_voorraad || 0)) {
+      warnings.push(`<span style="font-weight:500;">${esc(prod.naam)}</span> — laag (${huidig} ${esc(prod.eenheid)}, min. ${prod.min_voorraad})`);
+    }
+  });
+
+  const el = document.getElementById('low-stock-alerts');
+  if (!warnings.length) { el.innerHTML = ''; return; }
+
+  el.innerHTML = `<div class="low-stock-banner">
+    <strong>⚠️ Lage voorraad — ${warnings.length} product${warnings.length !== 1 ? 'en' : ''}</strong>
+    ${warnings.join(' · ')}
+  </div>`;
+}
+
+// ── Huidige voorraadstatus (na stockopname) ───────
+function renderVoorraadStatus() {
+  const data = loadData();
+  const card = document.getElementById('card-voorraad-status');
+  if (!data.stockopnames.length) { card.style.display = 'none'; return; }
+
+  card.style.display = 'block';
+  const lastOpname = [...data.stockopnames].sort((a,b) => b.datum.localeCompare(a.datum))[0];
+  document.getElementById('voorraad-status-datum').textContent = `Laatste opname: ${lastOpname.datum}`;
+
+  const rows = data.producten.map(prod => {
+    const opnameRegel = lastOpname.regels.find(r => r.product_id === prod.id);
+    const huidig      = calcTheorStock(prod.id, data);
+    const min         = prod.min_voorraad || 0;
+
+    let statusCls = 'stock-ok', statusLabel = 'OK';
+    if (huidig <= 0)   { statusCls = 'stock-empty'; statusLabel = 'Op'; }
+    else if (huidig <= min) { statusCls = 'stock-low';   statusLabel = 'Laag'; }
+
+    return `<tr>
+      <td><div style="font-weight:500;">${esc(prod.naam)}</div>
+          <div style="font-size:11px;color:var(--muted);">${esc(prod.categorie)}</div></td>
+      <td style="text-align:right;font-family:'DM Mono',monospace;font-size:13px;">
+        <strong>${huidig}</strong> <span style="color:var(--muted);font-size:11px;">${esc(prod.eenheid)}</span>
+      </td>
+      <td style="text-align:right;color:var(--muted);font-size:12px;">${min} ${esc(prod.eenheid)}</td>
+      <td><span class="chip ${statusCls}">${statusLabel}</span></td>
+      ${opnameRegel ? `<td style="font-size:11px;color:var(--muted);">${opnameRegel.houdbaarheid || '—'}</td>` : '<td>—</td>'}
+    </tr>`;
+  }).join('');
+
+  document.getElementById('voorraad-status-list').innerHTML = `
+    <table class="data-table"><thead><tr>
+      <th>Product</th><th style="text-align:right;">Huidig (theor.)</th>
+      <th style="text-align:right;">Minimum</th><th>Status</th><th>Houdbaarheid</th>
+    </tr></thead><tbody>${rows}</tbody></table>`;
+}
+
+// ── Stockopname geschiedenis ──────────────────────
+function renderStockHistory() {
+  const data = loadData();
+  const card = document.getElementById('card-opname-history');
+  if (!data.stockopnames.length) { card.style.display = 'none'; return; }
+
+  card.style.display = 'block';
+  const sorted = [...data.stockopnames].sort((a,b) => b.datum.localeCompare(a.datum));
+  document.getElementById('history-count').textContent = sorted.length;
+
+  const prodMap = {};
+  data.producten.forEach(p => { prodMap[p.id] = p; });
+
+  document.getElementById('opname-history-list').innerHTML = sorted.map(opname => {
+    const nRegels      = opname.regels.length;
+    const totAfwijking = opname.regels.filter(r => Math.abs(r.variance || 0) > 0.01).length;
+    const totaalVar    = opname.regels.reduce((s, r) => s + Math.abs(r.variance || 0), 0);
+
+    const detailRows = opname.regels
+      .sort((a,b) => Math.abs(b.variance||0) - Math.abs(a.variance||0))
+      .slice(0, 10)
+      .map(r => {
+        const prod = prodMap[r.product_id];
+        const cls  = Math.abs(r.variance||0) > 0 ? (Math.abs((r.variance||0)/Math.max(r.theoretisch,0.01)) > 0.25 ? 'var-alarm' : 'var-warn') : 'var-zero';
+        return `<div style="display:flex;justify-content:space-between;padding:3px 0;font-size:12px;">
+          <span>${prod ? esc(prod.naam) : '—'}</span>
+          <span>T: ${r.theoretisch} · W: ${r.werkelijk} · <span class="${cls}">${(r.variance||0) >= 0 ? '+' : ''}${(r.variance||0).toFixed(2)}</span></span>
+        </div>`;
+      }).join('');
+
+    return `
+      <div class="history-item" onclick="toggleHistoryDetail('hd-${opname.id}')">
+        <span class="history-item-date">📅 ${opname.datum}</span>
+        <div class="history-item-info">
+          ${nRegels} producten geteld · ${totAfwijking} met afwijking
+        </div>
+        <span class="${totaalVar > 0 ? 'var-warn' : 'var-zero'}" style="font-size:12px;font-family:'DM Mono',monospace;">
+          Σvar: ${totaalVar.toFixed(2)}
+        </span>
+        <span class="history-item-arrow">▼</span>
+      </div>
+      <div class="history-detail" id="hd-${opname.id}">
+        ${detailRows}
+        ${nRegels > 10 ? `<div style="color:var(--muted);margin-top:6px;">… en ${nRegels - 10} meer</div>` : ''}
+      </div>`;
+  }).join('');
+}
+
+function toggleHistoryDetail(id) {
+  document.getElementById(id)?.classList.toggle('open');
+}
+
+
+/* ════════════════════════════════════════════════
+   BARCODE SCANNER
+   ════════════════════════════════════════════════ */
+
+let scannerStream   = null;
+let scannerInterval = null;
+let scannerTargetId = null; // product_id om in te vullen na scan
+
+async function openScannerModal(targetProductId = null) {
+  scannerTargetId = targetProductId;
+  document.getElementById('scanner-modal').classList.add('open');
+  document.getElementById('scanner-found').style.display = 'none';
+  document.getElementById('scanner-status').textContent  = 'Richt camera op barcode of QR-code…';
+
+  try {
+    scannerStream = await navigator.mediaDevices.getUserMedia({
+      video: { facingMode: 'environment', width: { ideal: 1280 }, height: { ideal: 720 } }
+    });
+    const video = document.getElementById('scanner-video');
+    video.srcObject = scannerStream;
+    await video.play();
+    startBarcodeDetection(video);
+  } catch (e) {
+    document.getElementById('scanner-status').textContent =
+      'Camera niet beschikbaar: ' + (e.message || e.name) +
+      '. Gebruik handmatige invoer.';
+  }
+}
+
+function closeScannerModal() {
+  if (scannerInterval) { clearInterval(scannerInterval); scannerInterval = null; }
+  if (scannerStream)   { scannerStream.getTracks().forEach(t => t.stop()); scannerStream = null; }
+  const video = document.getElementById('scanner-video');
+  video.srcObject = null;
+  document.getElementById('scanner-modal').classList.remove('open');
+  scannerTargetId = null;
+}
+
+function startBarcodeDetection(video) {
+  if (typeof BarcodeDetector === 'undefined') {
+    document.getElementById('scanner-status').textContent =
+      'BarcodeDetector niet ondersteund in deze browser. Gebruik Chrome op Android of desktop.';
+    return;
+  }
+
+  const detector = new BarcodeDetector({
+    formats: ['ean_13', 'ean_8', 'upc_a', 'upc_e', 'qr_code', 'code_128', 'code_39']
+  });
+
+  scannerInterval = setInterval(async () => {
+    if (!video.readyState || video.readyState < 2) return;
+    try {
+      const barcodes = await detector.detect(video);
+      if (barcodes.length > 0) {
+        const code = barcodes[0].rawValue;
+        handleBarcode(code);
+      }
+    } catch {}
+  }, 300);
+}
+
+function handleBarcode(code) {
+  if (scannerInterval) { clearInterval(scannerInterval); scannerInterval = null; }
+
+  const data = loadData();
+
+  // Zoek product op barcode (in barcode-veld of naam bevat code)
+  let prod = data.producten.find(p => p.barcode === code);
+  if (!prod) prod = data.producten.find(p => p.naam.toLowerCase().includes(code.toLowerCase()));
+
+  const foundEl  = document.getElementById('scanner-found');
+  const statusEl = document.getElementById('scanner-status');
+
+  if (prod) {
+    foundEl.textContent    = `✓ ${prod.naam}`;
+    foundEl.style.display  = 'block';
+    statusEl.textContent   = `Barcode: ${code}`;
+
+    // Als we een target hebben (uit een rij-scan), vul dat in
+    if (scannerTargetId) {
+      focusOpnameInput(scannerTargetId);
+      closeScannerModal();
+      return;
+    }
+
+    // Anders: scroll naar de juiste rij in de stockopname
+    setTimeout(() => {
+      closeScannerModal();
+      focusOpnameInput(prod.id);
+    }, 800);
+  } else {
+    // Nieuw / onbekend product
+    foundEl.textContent   = `Barcode: ${code}`;
+    foundEl.style.display = 'block';
+    statusEl.textContent  = 'Product niet gevonden — zoek handmatig of koppel barcode via productbeheer.';
+
+    // Sla barcode op voor koppeling (simpel: sla op in eerste product dat geen barcode heeft)
+    // In latere fase: een koppel-UI toevoegen
+    setTimeout(() => {
+      closeScannerModal();
+      showToast(`Barcode ${code} niet gekoppeld aan product`, 'warning');
+    }, 1500);
+  }
+}
+
+function focusOpnameInput(productId) {
+  // Scroll naar rij en focus input
+  const row   = document.getElementById('row-' + productId);
+  const input = document.getElementById('inp-' + productId);
+  if (row)   row.scrollIntoView({ behavior: 'smooth', block: 'center' });
+  if (input) { input.focus(); input.select(); }
+
+  // Zorg dat de filter "all" staat zodat de rij zichtbaar is
+  const filterEl = document.getElementById('opname-filter');
+  if (filterEl && filterEl.value !== 'all') {
+    filterEl.value = 'all';
+    renderOpnameTable();
+    setTimeout(() => {
+      const inp2 = document.getElementById('inp-' + productId);
+      if (inp2) { inp2.focus(); inp2.select(); }
+    }, 100);
+  }
+}
+
+/* ════════════════════════════════════════════════
+   RENDER ALL
+   ════════════════════════════════════════════════ */
+
+/* ════════════════════════════════════════════════
+   DASHBOARD — Fase 7
+   ════════════════════════════════════════════════ */
+
+let dashPeriodDays = null; // null = alles
+
+function setDashPeriod(val, btn) {
+  dashPeriodDays = val === 'alles' ? null : parseInt(val);
+  document.querySelectorAll('#dash-period-toggle .toggle-btn').forEach(b => b.classList.remove('active'));
+  btn.classList.add('active');
+  renderDashboard();
+}
+
+function goToTab(name) {
+  const btns = document.querySelectorAll('.tab-btn');
+  let found = null;
+  btns.forEach(b => { if (b.getAttribute('onclick') && b.getAttribute('onclick').includes("'" + name + "'")) found = b; });
+  if (found) switchTab(name, found);
+}
+
+function renderDashboard() {
+  const data = loadData();
+  const inkopen = data.inkopen || [];
+  const producten = data.producten || [];
+  const prijzen = data.prijzen || [];
+  const stockopnames = data.stockopnames || [];
+
+  const emptyEl   = document.getElementById('dash-empty');
+  const contentEl = document.getElementById('dash-content');
+
+  // Geen data? Lege staat
+  if (inkopen.length === 0) {
+    emptyEl.style.display  = 'block';
+    contentEl.style.display = 'none';
+    return;
+  }
+  emptyEl.style.display  = 'none';
+  contentEl.style.display = 'block';
+
+  // Filter inkopen op periode
+  const now    = new Date();
+  const cutoff = dashPeriodDays ? new Date(now - dashPeriodDays * 86400000) : null;
+  const filtInkopen = cutoff
+    ? inkopen.filter(i => new Date(i.datum) >= cutoff)
+    : inkopen;
+
+  // ── Laatste factuur banner ──
+  const lastInkoop = [...inkopen].sort((a, b) => b.datum.localeCompare(a.datum))[0];
+  if (lastInkoop) {
+    const lev = (data.leveranciers || []).find(l => l.id === lastInkoop.leverancier_id);
+    document.getElementById('dash-banner-lev').textContent  = lev ? lev.naam : lastInkoop.leverancier_id || '—';
+    document.getElementById('dash-banner-datum').textContent = lastInkoop.datum;
+    document.getElementById('dash-banner-regels').textContent = (lastInkoop.regels || []).length;
+
+    // Prijswijzigingen in laatste factuur
+    const changes = (lastInkoop.regels || []).filter(r => {
+      const prev = getPrevPrijs(r.product_id, lastInkoop.datum, prijzen);
+      return prev !== null && Math.abs(r.prijs_per_eenheid - prev) / prev > 0.01;
+    });
+    const chEl = document.getElementById('dash-banner-changes');
+    if (changes.length > 0) {
+      chEl.innerHTML = `<span class="prijs-delta delta-up">${changes.length} prijswijziging${changes.length !== 1 ? 'en' : ''}</span>`;
+    } else {
+      chEl.innerHTML = '<span class="prijs-delta delta-neu">geen wijzigingen</span>';
+    }
+    document.getElementById('dash-scan-banner').style.display = 'flex';
+  }
+
+  // ── KPI berekeningen ──
+  let totalSpend = 0, totalRegels = 0, gewijzigdPrijs = 0, lageVoorraad = 0;
+
+  filtInkopen.forEach(i => {
+    (i.regels || []).forEach(r => {
+      totalSpend += (r.hoeveelheid || 0) * (r.prijs_per_eenheid || 0);
+      totalRegels++;
+    });
+  });
+
+  // Prijswijzigingen tellen (laatste prijs vs. vorige)
+  producten.forEach(p => {
+    const prodPrijzen = prijzen.filter(pr => pr.product_id === p.id).sort((a,b) => a.datum.localeCompare(b.datum));
+    if (prodPrijzen.length >= 2) {
+      const last = prodPrijzen[prodPrijzen.length - 1];
+      const prev = prodPrijzen[prodPrijzen.length - 2];
+      if (Math.abs(last.prijs - prev.prijs) / prev.prijs > 0.01) gewijzigdPrijs++;
+    }
+  });
+
+  // Lage voorraad
+  const peildatum = new Date().toISOString().split('T')[0];
+  producten.forEach(p => {
+    if (!p.min_voorraad) return;
+    const thStock = calcTheorStock(p.id, data, peildatum);
+    if (thStock !== null && thStock < p.min_voorraad) lageVoorraad++;
+  });
+
+  // KPI grid
+  const kpiEl = document.getElementById('dash-kpi');
+  kpiEl.innerHTML = `
+    <div class="kpi-card">
+      <div class="kpi-label">Totaal inkoop ${dashPeriodDays ? dashPeriodDays + ' dgn' : 'alltime'}</div>
+      <div class="kpi-value">€${Math.round(totalSpend).toLocaleString('nl-NL')}</div>
+      <div class="kpi-sub">${totalRegels} inkoopregels · ${filtInkopen.length} facturen</div>
+    </div>
+    <div class="kpi-card">
+      <div class="kpi-label">Actieve producten</div>
+      <div class="kpi-value">${producten.length}</div>
+      <div class="kpi-sub">${(data.leveranciers||[]).length} leveranciers</div>
+    </div>
+    <div class="kpi-card">
+      <div class="kpi-label">Prijswijzigingen</div>
+      <div class="kpi-value ${gewijzigdPrijs > 0 ? 'kpi-up' : ''}">${gewijzigdPrijs}</div>
+      <div class="kpi-sub">producten met andere prijs</div>
+    </div>
+    <div class="kpi-card">
+      <div class="kpi-label">Lage voorraad</div>
+      <div class="kpi-value ${lageVoorraad > 0 ? 'kpi-up' : ''}">${lageVoorraad}</div>
+      <div class="kpi-sub">onder minimum niveau</div>
+    </div>
+  `;
+
+  // ── Hardlopers tabel ──
+  renderHardlopers(data, filtInkopen, prijzen, producten);
+
+  // ── Voorraad per categorie ──
+  renderStockKaarten(data, producten, peildatum);
+
+  // ── Top 5 variances ──
+  renderVariances(data, stockopnames);
+
+  // ── Waste benchmark ──
+  renderWasteBenchmark(producten);
+
+  // ── Lage voorraad kaart ──
+  renderLageVoorraadKaart(data, producten, peildatum);
+}
+
+/* Haal vorige prijs op voor een product (vóór gegeven datum) */
+function getPrevPrijs(productId, vóórDatum, prijzen) {
+  const lijst = prijzen
+    .filter(p => p.product_id === productId && p.datum < vóórDatum)
+    .sort((a,b) => a.datum.localeCompare(b.datum));
+  return lijst.length ? lijst[lijst.length - 1].prijs : null;
+}
+
+/* Bereken gemiddeld maandverbruik van een product (in stuks) */
+function calcMaandVerbruik(productId, inkopen) {
+  const relevante = inkopen.filter(i => (i.regels||[]).some(r => r.product_id === productId));
+  if (!relevante.length) return 0;
+  const data_min = relevante.reduce((m,i) => i.datum < m ? i.datum : m, relevante[0].datum);
+  const data_max = relevante.reduce((m,i) => i.datum > m ? i.datum : m, relevante[0].datum);
+  const maanden = Math.max(1, (new Date(data_max) - new Date(data_min)) / (30 * 86400000));
+  const totaalStuks = inkopen.reduce((sum, i) => {
+    return sum + (i.regels||[]).filter(r=>r.product_id===productId).reduce((s,r)=>s+(r.hoeveelheid||0),0);
+  }, 0);
+  return totaalStuks / maanden;
+}
+
+function renderHardlopers(data, filtInkopen, prijzen, producten) {
+  // Bereken totale spend per product in gefilterde periode
+  const spendMap = {};
+  filtInkopen.forEach(inkoop => {
+    (inkoop.regels || []).forEach(r => {
+      if (!r.product_id) return;
+      const spend = (r.hoeveelheid || 0) * (r.prijs_per_eenheid || 0);
+      spendMap[r.product_id] = (spendMap[r.product_id] || 0) + spend;
+    });
+  });
+
+  // Sorteer op spend
+  const sorted = Object.entries(spendMap)
+    .sort((a, b) => b[1] - a[1])
+    .slice(0, 20);
+
+  const tbody   = document.getElementById('dash-hardloper-body');
+  const emptyEl = document.getElementById('dash-hardloper-empty');
+  const table   = document.getElementById('dash-hardloper-table');
+
+  if (!sorted.length) {
+    table.style.display  = 'none';
+    emptyEl.style.display = 'block';
+    return;
+  }
+  table.style.display  = '';
+  emptyEl.style.display = 'none';
+
+  tbody.innerHTML = sorted.map(([productId, spend], idx) => {
+    const prod = producten.find(p => p.id === productId);
+    const naam = prod ? prod.naam : productId;
+    const levNaam = prod && prod.leverancier_ids && prod.leverancier_ids[0]
+      ? (data.leveranciers||[]).find(l=>l.id===prod.leverancier_ids[0])?.naam || '—'
+      : '—';
+
+    // Huidige prijs en vorige prijs
+    const prodPrijzen = prijzen
+      .filter(pr => pr.product_id === productId)
+      .sort((a,b) => a.datum.localeCompare(b.datum));
+
+    let currentPrijs = null, prevPrijs = null, deltaPct = null;
+    if (prodPrijzen.length >= 1) {
+      currentPrijs = prodPrijzen[prodPrijzen.length - 1].prijs;
+      if (prodPrijzen.length >= 2) {
+        prevPrijs = prodPrijzen[prodPrijzen.length - 2].prijs;
+        deltaPct = ((currentPrijs - prevPrijs) / prevPrijs) * 100;
+      }
+    }
+
+    // Maandimpact = delta in prijs × gemiddeld maandverbruik
+    const maandVerbruik = calcMaandVerbruik(productId, filtInkopen);
+    let impactHtml = '<span class="impact-badge">—</span>';
+    if (deltaPct !== null && maandVerbruik > 0 && prevPrijs !== null) {
+      const impact = (currentPrijs - prevPrijs) * maandVerbruik;
+      const cls = impact > 0 ? 'impact-neg' : impact < 0 ? 'impact-pos' : '';
+      const sign = impact > 0 ? '+' : '';
+      impactHtml = `<span class="impact-badge ${cls}">${sign}€${Math.abs(impact).toFixed(0)}/mnd</span>`;
+    }
+
+    // Delta badge
+    let deltaHtml;
+    if (deltaPct === null) {
+      deltaHtml = '<span class="prijs-delta delta-new">nieuw</span>';
+    } else if (Math.abs(deltaPct) < 1) {
+      deltaHtml = '<span class="prijs-delta delta-neu">0%</span>';
+    } else if (deltaPct > 0) {
+      deltaHtml = `<span class="prijs-delta delta-up">▲ ${deltaPct.toFixed(1)}%</span>`;
+    } else {
+      deltaHtml = `<span class="prijs-delta delta-down">▼ ${Math.abs(deltaPct).toFixed(1)}%</span>`;
+    }
+
+    const prijsStr = currentPrijs !== null ? `€${currentPrijs.toFixed(2)}` : '—';
+    const rankCls  = idx < 3 ? 'top3' : '';
+
+    return `<tr>
+      <td><span class="rank-badge ${rankCls}">${idx + 1}</span></td>
+      <td style="font-weight:500">${escH(naam)}</td>
+      <td style="color:var(--muted);font-size:12px">${escH(levNaam)}</td>
+      <td style="text-align:right;font-family:'DM Mono',monospace;font-size:12px">${prijsStr}</td>
+      <td style="text-align:center">${deltaHtml}</td>
+      <td style="text-align:right">${impactHtml}</td>
+      <td style="text-align:right;font-family:'DM Mono',monospace;font-size:12px;font-weight:600">€${Math.round(spend).toLocaleString('nl-NL')}</td>
+    </tr>`;
+  }).join('');
+}
+
+function renderStockKaarten(data, producten, peildatum) {
+  const cats = {};
+  producten.forEach(p => {
+    const cat   = p.categorie || 'overig';
+    const stock = calcTheorStock(p.id, data, peildatum);
+    if (stock === null || stock <= 0) return;
+    const prijs = getHuidigePrijs(p.id, data.prijzen || [], peildatum);
+    if (!prijs) return;
+    const waarde = stock * prijs;
+    cats[cat] = (cats[cat] || 0) + waarde;
+  });
+
+  const sorted = Object.entries(cats).sort((a,b) => b[1] - a[1]);
+  const total  = sorted.reduce((s, [,v]) => s + v, 0);
+
+  const catsEl = document.getElementById('dash-stock-cats');
+  const totalEl = document.getElementById('dash-stock-total');
+
+  if (!sorted.length) {
+    catsEl.innerHTML = '<div style="font-size:13px;color:var(--muted)">Geen voorraaddata beschikbaar. Importeer facturen om de waarde te berekenen.</div>';
+    totalEl.textContent = '€0';
+    return;
+  }
+
+  totalEl.textContent = `€${Math.round(total).toLocaleString('nl-NL')}`;
+  const maxWaarde = sorted[0][1];
+
+  catsEl.innerHTML = sorted.map(([cat, waarde]) => {
+    const pct = maxWaarde > 0 ? (waarde / maxWaarde) * 100 : 0;
+    const barColor = waarde > total * 0.3 ? '#0a0a0a' : waarde > total * 0.15 ? '#555' : '#aaa';
+    return `
+      <div class="bench-row">
+        <div class="bench-naam" style="text-transform:capitalize">${escH(cat)}</div>
+        <div class="bench-bar-wrap">
+          <div class="bench-bar-bg">
+            <div class="bench-bar-jij" style="width:${pct}%;background:${barColor}"></div>
+          </div>
+        </div>
+        <div class="bench-pct" style="color:var(--text);font-weight:600">€${Math.round(waarde).toLocaleString('nl-NL')}</div>
+      </div>`;
+  }).join('');
+}
+
+function getHuidigePrijs(productId, prijzen, datum) {
+  const lijst = prijzen
+    .filter(p => p.product_id === productId && p.datum <= datum)
+    .sort((a,b) => a.datum.localeCompare(b.datum));
+  return lijst.length ? lijst[lijst.length - 1].prijs : null;
+}
+
+function renderVariances(data, stockopnames) {
+  const el      = document.getElementById('dash-variance-list');
+  const emptyEl = document.getElementById('dash-variance-empty');
+
+  if (!stockopnames.length) {
+    el.innerHTML = '';
+    emptyEl.style.display = 'block';
+    return;
+  }
+  emptyEl.style.display = 'none';
+
+  // Meest recente stockopname
+  const last = [...stockopnames].sort((a,b) => b.datum.localeCompare(a.datum))[0];
+  const regels = (last.regels || [])
+    .filter(r => r.theoretisch > 0)
+    .map(r => ({
+      ...r,
+      pct: Math.abs((r.variance || 0) / r.theoretisch) * 100
+    }))
+    .sort((a,b) => b.pct - a.pct)
+    .slice(0, 5);
+
+  if (!regels.length) {
+    el.innerHTML = '<div style="font-size:13px;color:var(--muted)">Geen variances gevonden.</div>';
+    return;
+  }
+
+  el.innerHTML = regels.map(r => {
+    const prod = (data.producten||[]).find(p => p.id === r.product_id);
+    const naam = prod ? prod.naam : r.product_id;
+    const cls  = r.pct > 25 ? 'var(--red)' : r.pct > 10 ? '#f59e0b' : '#16a34a';
+    const sign = (r.variance || 0) < 0 ? '' : '+';
+    return `
+      <div class="bench-row">
+        <div class="bench-naam">${escH(naam)}</div>
+        <div class="bench-bar-wrap">
+          <div class="bench-bar-bg">
+            <div class="bench-bar-jij" style="width:${Math.min(r.pct,100)}%;background:${cls}"></div>
+          </div>
+        </div>
+        <div class="bench-pct" style="color:${cls};font-weight:600">${sign}${(r.variance||0).toFixed(1)}</div>
+      </div>`;
+  }).join('');
+}
+
+function renderWasteBenchmark(producten) {
+  // Horeca-gemiddelden per categorie
+  const BENCHMARKS = {
+    vlees:    { norm: 8,  label: 'Vlees' },
+    vis:      { norm: 12, label: 'Vis' },
+    groente:  { norm: 15, label: 'Groente' },
+    zuivel:   { norm: 6,  label: 'Zuivel' },
+    dranken:  { norm: 3,  label: 'Dranken' },
+  };
+
+  const el      = document.getElementById('dash-waste-bench');
+  const emptyEl = document.getElementById('dash-waste-empty');
+
+  // Gemiddeld waste% per categorie berekenen uit producten
+  const catData = {};
+  producten.forEach(p => {
+    const cat = (p.categorie || '').toLowerCase();
+    if (!BENCHMARKS[cat]) return;
+    if (!catData[cat]) catData[cat] = { sum: 0, n: 0 };
+    catData[cat].sum += (p.waste_pct || 0) + (p.spillage_pct || 0);
+    catData[cat].n++;
+  });
+
+  const rows = Object.entries(BENCHMARKS).filter(([cat]) => catData[cat]);
+
+  if (!rows.length) {
+    el.innerHTML  = '';
+    emptyEl.style.display = 'block';
+    return;
+  }
+  emptyEl.style.display = 'none';
+
+  el.innerHTML = rows.map(([cat, bench]) => {
+    const d    = catData[cat];
+    const mijn = d ? d.sum / d.n : 0;
+    const norm = bench.norm;
+    const max  = Math.max(mijn, norm, 1);
+    const mijnPct = (mijn / max) * 100;
+    const normPct = (norm / max) * 100;
+    const color = mijn > norm * 1.3 ? 'var(--red)' : mijn > norm ? '#f59e0b' : '#16a34a';
+    return `
+      <div class="bench-row">
+        <div class="bench-naam">${bench.label}</div>
+        <div class="bench-bar-wrap">
+          <div class="bench-bar-bg">
+            <div class="bench-bar-jij" style="width:${mijnPct}%;background:${color}"></div>
+            <div class="bench-bar-norm" style="left:${normPct}%"></div>
+          </div>
+        </div>
+        <div class="bench-pct" style="color:${color}">${mijn.toFixed(1)}%</div>
+        <div class="bench-norm-label" style="font-size:11px;color:var(--muted);width:80px;flex-shrink:0;text-align:right">norm ${norm}%</div>
+      </div>`;
+  }).join('');
+}
+
+function renderLageVoorraadKaart(data, producten, peildatum) {
+  const laag = producten.filter(p => {
+    if (!p.min_voorraad) return false;
+    const stock = calcTheorStock(p.id, data, peildatum);
+    return stock !== null && stock < p.min_voorraad;
+  });
+
+  const card = document.getElementById('dash-low-card');
+  if (!laag.length) {
+    card.style.display = 'none';
+    return;
+  }
+  card.style.display = 'block';
+  document.getElementById('dash-low-list').innerHTML = laag.map(p => {
+    const stock = calcTheorStock(p.id, data, peildatum);
+    return `
+      <div style="display:flex;justify-content:space-between;align-items:center;padding:7px 0;border-bottom:1px solid #f5f5f5">
+        <span style="font-weight:500">${escH(p.naam)}</span>
+        <span style="font-family:'DM Mono',monospace;font-size:12px;color:var(--red)">
+          ${stock !== null ? stock.toFixed(1) : '?'} ${escH(p.eenheid||'')}
+          <span style="color:var(--muted)">(min: ${p.min_voorraad})</span>
+        </span>
+      </div>`;
+  }).join('');
+}
+
+/* ════════════════════════════════════════════════
+   GEDEELDE PRODUCTEN DATABASE — klaar_producten
+   Schrijft een vereenvoudigde snapshot naar een
+   gedeelde localStorage key zodat Module 01, 03,
+   04 en andere modules producten kunnen lezen.
+   ════════════════════════════════════════════════ */
+
+function syncGedeeldeProducten(data) {
+  try {
+    const vandaag = new Date().toISOString().split('T')[0];
+    const gedeeld = (data.producten || []).map(p => {
+      const prijs = getHuidigePrijs(p.id, data.prijzen || [], vandaag);
+      const lev   = (data.leveranciers || []).find(l => (p.leverancier_ids || [])[0] === l.id);
+      return {
+        id:          p.id,
+        naam:        p.naam,
+        categorie:   p.categorie || 'overig',
+        eenheid:     p.eenheid   || 'stuk',
+        prijs:       prijs,
+        leverancier: lev ? lev.naam : '',
+        bewaartype:  p.bewaartype || 'kamertemperatuur',
+        allergenen:  p.allergenen || [],
+        bron:        'module_07',
+        bijgewerkt:  vandaag
+      };
+    });
+    localStorage.setItem('klaar_producten', JSON.stringify(gedeeld));
+  } catch (e) {
+    console.warn('Sync klaar_producten mislukt:', e);
+  }
+}
+
+/* ════════════════════════════════════════════════
+   THEORETISCH VOORRAAD OVERZICHT
+   Altijd zichtbaar na eerste factuurimport —
+   geen actieve stockopname nodig.
+   ════════════════════════════════════════════════ */
+
+function renderTheorOvzicht() {
+  const data    = loadData();
+  const card    = document.getElementById('card-theor-overzicht');
+  const vandaag = new Date().toISOString().split('T')[0];
+
+  if (!data.producten.length) {
+    card.style.display = 'none';
+    return;
+  }
+  card.style.display = '';
+
+  // Vul categorie filter
+  const catSel = document.getElementById('theor-cat-filter');
+  const cats   = [...new Set(data.producten.map(p => p.categorie || 'overig'))].sort();
+  const huidigeCat = catSel.value;
+  catSel.innerHTML = '<option value="">Alle categorieën</option>' +
+    cats.map(c => `<option value="${esc(c)}" ${huidigeCat === c ? 'selected' : ''}>${esc(c)}</option>`).join('');
+
+  const zoek   = (document.getElementById('theor-zoek')?.value || '').toLowerCase();
+  const catFil = catSel.value;
+
+  let producten = data.producten.filter(p => {
+    if (zoek && !p.naam.toLowerCase().includes(zoek)) return false;
+    if (catFil && (p.categorie || 'overig') !== catFil) return false;
+    return true;
+  });
+
+  document.getElementById('theor-prod-count').textContent = `${producten.length} producten`;
+
+  const tbody = document.getElementById('theor-tbody');
+
+  if (!producten.length) {
+    tbody.innerHTML = `<tr><td colspan="5" style="text-align:center;color:var(--muted);padding:20px;">Geen producten gevonden.</td></tr>`;
+    return;
+  }
+
+  tbody.innerHTML = producten.map(p => {
+    const thStock = calcTheorStock(p.id, data, vandaag);
+    const min     = p.min_voorraad || 0;
+    const stock   = thStock !== null ? thStock : null;
+
+    let statusHtml;
+    if (stock === null) {
+      statusHtml = '<span class="chip chip-gray">Geen data</span>';
+    } else if (stock <= 0) {
+      statusHtml = '<span class="chip" style="background:#fee2e2;color:var(--red)">Op</span>';
+    } else if (min > 0 && stock < min) {
+      statusHtml = `<span class="chip" style="background:#fef9c3;color:#92400e">Laag</span>`;
+    } else {
+      statusHtml = '<span class="chip" style="background:#dcfce7;color:#166534">OK</span>';
+    }
+
+    const stockStr = stock !== null
+      ? `<strong>${stock % 1 === 0 ? stock : stock.toFixed(2)}</strong> ${esc(p.eenheid || '')}`
+      : '—';
+
+    return `<tr style="cursor:pointer" onclick="openProductEdit('${esc(p.id)}')">
+      <td style="font-weight:500">${esc(p.naam)}</td>
+      <td style="color:var(--muted);font-size:12px;text-transform:capitalize">${esc(p.categorie || 'overig')}</td>
+      <td style="text-align:right;font-family:'DM Mono',monospace;font-size:13px">${stockStr}</td>
+      <td style="text-align:right;font-family:'DM Mono',monospace;font-size:12px;color:var(--muted)">${min > 0 ? min + ' ' + esc(p.eenheid || '') : '—'}</td>
+      <td style="text-align:center">${statusHtml}</td>
+    </tr>`;
+  }).join('');
+}
+
+function openProductEdit(productId) {
+  // Ga naar producten tab en highlight dit product
+  const productenTab = document.querySelector('.tab-btn[onclick*="producten"]');
+  if (productenTab) switchTab('producten', productenTab);
+  setTimeout(() => {
+    const zoekEl = document.getElementById('prod-search');
+    if (zoekEl) {
+      const data = loadData();
+      const prod = data.producten.find(p => p.id === productId);
+      if (prod) {
+        zoekEl.value = prod.naam;
+        renderProductList();
+        zoekEl.focus();
+      }
+    }
+  }, 100);
+}
+
+function renderAll() {
+  renderLeverancierList();
+  populateLeverancierDropdowns();
+  renderProductList();
+  renderInkopen();
+  renderVoorraad();
+  renderTheorOvzicht();
+  renderDashboard();
+}
+
+
+/* ════════════════════════════════════════════════
+   INIT
+   ════════════════════════════════════════════════ */
+
+document.addEventListener('DOMContentLoaded', async () => {
+  const session = await klaarRequireAuth();
+  if (!session) return;
+  // Set today's date as default for handmatig form
+  document.getElementById('hm-datum').value = new Date().toISOString().split('T')[0];
+  // Add one empty handmatig line by default
+  addHandmatigLine();
+  renderAll();
+});
+</script>
+
+
+<!-- ═══════════════════════════════════════════
+     KLAAR ASSISTENT — CHAT WIDGET Module 07
+     ═══════════════════════════════════════════ -->
+<style>
+
+    /* ═══════════════════════════════════════════
+       KLAAR ASSISTENT — CHAT WIDGET
+       ═══════════════════════════════════════════ */
+    .chat-trigger {
+      position: fixed; bottom: 24px; right: 24px; z-index: 1000;
+      display: flex; align-items: center; gap: 8px;
+      background: #e8ff47; color: #0a0a0a;
+      border: none; cursor: pointer;
+      padding: 0 18px; height: 44px;
+      font-family: 'DM Sans', sans-serif; font-size: 13px; font-weight: 600;
+      letter-spacing: 0.3px;
+      transition: transform 0.15s, box-shadow 0.15s;
+      box-shadow: 0 4px 20px rgba(232,255,71,0.3);
+    }
+    .chat-trigger:hover { transform: translateY(-2px); box-shadow: 0 6px 28px rgba(232,255,71,0.4); }
+    .chat-trigger.open { background: #1a1a1a; color: #e8ff47; border: 1px solid #e8ff47; box-shadow: none; }
+    .chat-trigger-pulse {
+      width: 7px; height: 7px; background: #22c55e; border-radius: 50%;
+      animation: chatPulse 2s infinite;
+    }
+    @keyframes chatPulse { 0%,100%{opacity:1;transform:scale(1)} 50%{opacity:0.6;transform:scale(1.3)} }
+    .chat-panel {
+      position: fixed; top: 0; right: -420px; width: 400px; height: 100vh;
+      background: #111111; border-left: 1px solid #222222;
+      display: flex; flex-direction: column;
+      z-index: 999; transition: right 0.28s cubic-bezier(0.4,0,0.2,1);
+      font-family: 'DM Sans', sans-serif;
+    }
+    .chat-panel.open { right: 0; }
+    .chat-header {
+      padding: 16px 16px 14px; border-bottom: 1px solid #222222;
+      display: flex; align-items: center; justify-content: space-between;
+      background: #0a0a0a; flex-shrink: 0;
+    }
+    .chat-header-info { display: flex; flex-direction: column; gap: 2px; }
+    .chat-header-title { font-family: 'Bebas Neue', sans-serif; font-size: 20px; letter-spacing: 1px; color: #e8ff47; line-height: 1; }
+    .chat-header-sub { font-family: 'DM Mono', monospace; font-size: 10px; color: #888888; letter-spacing: 1px; }
+    .chat-header-close { background: none; border: none; color: #888888; cursor: pointer; font-size: 18px; padding: 4px; transition: color 0.1s; }
+    .chat-header-close:hover { color: #f5f2eb; }
+    .chat-messages { flex: 1; overflow-y: auto; padding: 16px; display: flex; flex-direction: column; gap: 10px; scroll-behavior: smooth; }
+    .chat-messages::-webkit-scrollbar { width: 4px; }
+    .chat-messages::-webkit-scrollbar-track { background: transparent; }
+    .chat-messages::-webkit-scrollbar-thumb { background: #222222; }
+    .chat-msg { display: flex; flex-direction: column; max-width: 88%; }
+    .chat-msg.user { align-self: flex-end; }
+    .chat-msg.assistant { align-self: flex-start; }
+    .chat-bubble { padding: 10px 14px; font-size: 13px; line-height: 1.65; }
+    .chat-msg.user .chat-bubble { background: #e8ff47; color: #0a0a0a; font-weight: 500; }
+    .chat-msg.assistant .chat-bubble { background: #1a1a1a; color: #f5f2eb; border: 1px solid #222222; }
+    .chat-msg.assistant .chat-bubble strong { color: #e8ff47; }
+    .chat-typing { align-self: flex-start; padding: 12px 16px; background: #1a1a1a; border: 1px solid #222222; color: #888888; font-size: 18px; letter-spacing: 2px; line-height: 1; }
+    .chat-typing span { display: inline-block; animation: chatBlink 1.2s infinite; }
+    .chat-typing span:nth-child(2) { animation-delay: 0.2s; }
+    .chat-typing span:nth-child(3) { animation-delay: 0.4s; }
+    @keyframes chatBlink { 0%,100%{opacity:0.2} 50%{opacity:1} }
+    .chat-suggestions { padding: 8px 12px; display: flex; flex-wrap: wrap; gap: 6px; flex-shrink: 0; border-top: 1px solid #222222; }
+    .chat-suggestion { font-family: 'DM Mono', monospace; font-size: 10px; letter-spacing: 0.5px; padding: 5px 10px; border: 1px solid #333333; background: none; color: #888888; cursor: pointer; transition: all 0.15s; white-space: nowrap; }
+    .chat-suggestion:hover { border-color: #e8ff47; color: #e8ff47; }
+    .chat-input-area { padding: 12px; border-top: 1px solid #222222; display: flex; gap: 8px; align-items: flex-end; flex-shrink: 0; background: #0a0a0a; }
+    .chat-input { flex: 1; background: #1a1a1a; border: 1px solid #333333; color: #f5f2eb; font-family: 'DM Sans', sans-serif; font-size: 13px; line-height: 1.5; padding: 10px 12px; resize: none; max-height: 110px; min-height: 42px; transition: border-color 0.15s; }
+    .chat-input:focus { outline: none; border-color: #e8ff47; }
+    .chat-input::placeholder { color: #555555; }
+    .chat-send { width: 38px; height: 38px; background: #e8ff47; border: none; color: #0a0a0a; font-size: 16px; font-weight: 700; cursor: pointer; flex-shrink: 0; transition: opacity 0.15s; display: flex; align-items: center; justify-content: center; }
+    .chat-send:hover { opacity: 0.85; }
+    .chat-send:disabled { opacity: 0.35; cursor: not-allowed; }
+    .chat-upload-btn { width: 38px; height: 38px; background: #1a1a1a; border: 1px solid #333333; color: #888888; font-size: 15px; cursor: pointer; flex-shrink: 0; transition: all 0.15s; display: flex; align-items: center; justify-content: center; }
+    .chat-upload-btn:hover { border-color: #e8ff47; color: #e8ff47; }
+    .chat-no-key { background: #1a1a1a; border: 1px solid rgba(232,255,71,0.25); color: #aaa; font-size: 12px; padding: 12px 14px; line-height: 1.6; }
+    .chat-no-key strong { color: #e8ff47; }
+    .chat-img-preview { background: #1a1a1a; border: 1px solid rgba(232,255,71,0.25); padding: 8px 12px; font-size: 11px; color: #888888; font-family: 'DM Mono', monospace; display: flex; align-items: center; gap: 8px; flex-shrink: 0; }
+    .chat-img-preview img { width: 36px; height: 36px; object-fit: cover; }
+    .chat-img-clear { background: none; border: none; color: #e8ff47; cursor: pointer; font-size: 16px; margin-left: auto; line-height: 1; }
+    @media (max-width: 480px) { .chat-panel { width: 100%; right: -100%; } .chat-trigger { font-size: 12px; padding: 0 14px; } }
+
+</style>
+
+<input type="file" id="chatFileInput" accept="image/*,.csv,.xlsx,.xls" style="display:none" onchange="chatHandleFile(this)">
+<button class="chat-trigger" id="chatTrigger" onclick="toggleChat()">
+  <span>💬</span>
+  <span id="chatTriggerLabel">Vraag de Klaar Assistent</span>
+  <span class="chat-trigger-pulse" id="chatTriggerPulse"></span>
+</button>
+
+<div class="chat-panel" id="chatPanel">
+  <div class="chat-header">
+    <div class="chat-header-info">
+      <div class="chat-header-title">Klaar Assistent</div>
+      <div class="chat-header-sub">Inkoopanalyse-assistent · Module 07</div>
+    </div>
+    <button class="chat-header-close" onclick="toggleChat()">✕</button>
+  </div>
+  <div class="chat-messages" id="chatMessages">
+    <div class="chat-msg assistant">
+      <div class="chat-bubble">Hoi! Ik ben je Klaar Assistent voor <strong>Leveranciers & Voorraad</strong>.<br>Ik zie al je producten en prijzen. Upload een factuur of pakbon en ik vul het automatisch in.</div>
+    </div>
+  </div>
+  <div class="chat-suggestions" id="chatSuggestions">
+    <button class="chat-suggestion" onclick="chatSuggest('Analyseer mijn leveranciersprijzen op afwijkingen')">📊 Prijsanalyse</button>
+    <button class="chat-suggestion" onclick="chatSuggest('Ik upload een factuur — extraheer de producten')">📸 Factuur scan</button>
+    <button class="chat-suggestion" onclick="chatSuggest('Welke producten zijn het duurst en waar kan ik besparen?')">💡 Besparen</button>
+    <button class="chat-suggestion" onclick="chatSuggest('Geef een overzicht van mijn productcategorieën')">📦 Overzicht</button>
+  </div>
+  <div class="chat-img-preview" id="chatImgPreview" style="display:none"><img id="chatImgThumb" src=""><span id="chatImgName"></span><button class="chat-img-clear" onclick="chatClearImage()">×</button></div>
+  <div class="chat-input-area">
+    <button class="chat-upload-btn" id="chatUploadBtn" onclick="chatTriggerUpload()" title="Foto uploaden">📎</button>
+    <textarea class="chat-input" id="chatInput" rows="1" placeholder="Vraag iets over je data..." onkeydown="chatKeyDown(event)" oninput="chatAutoResize(this)"></textarea>
+    <button class="chat-send" id="chatSend" onclick="chatSend()">↑</button>
+  </div>
+</div>
+
+
+<script>
+// ═══════════════════════════════════════════
+//  KLAAR ASSISTENT — Module 07
+// ═══════════════════════════════════════════
+const _chatHistory = [];
+let _chatStreaming = false;
+  let _chatImage = null;
+
+function toggleChat() {
+  const panel = document.getElementById('chatPanel');
+  const trigger = document.getElementById('chatTrigger');
+  const opening = !panel.classList.contains('open');
+  panel.classList.toggle('open', opening);
+  trigger.classList.toggle('open', opening);
+  document.getElementById('chatTriggerLabel').textContent = opening ? 'Sluiten' : 'Vraag de Klaar Assistent';
+  document.getElementById('chatTriggerPulse').style.display = opening ? 'none' : 'block';
+  if (opening) setTimeout(() => document.getElementById('chatInput').focus(), 300);
+}
+
+function chatBuildPrompt() {
+  const safe = (k, d=[]) => { try { return JSON.parse(localStorage.getItem(k) || JSON.stringify(d)); } catch(e) { return d; } };
+  const producten = safe('klaar_producten', []);
+  const ingredienten = safe('klaar_ingredienten', []);
+  const recepten = safe('klaar_recipes', []);
+  const prodLijst = producten.slice(0,60).map(p => `${p.naam}: €${p.prijs}/${p.eenheid||'?'}${p.leverancier?' ('+p.leverancier+')':''}`).join(' | ');
+  const cats = {};
+  producten.forEach(p => { const c = p.categorie||'overig'; cats[c] = (cats[c]||0)+1; });
+  // Ingrediënten uit M04 die al gekoppeld zijn aan M07 producten
+  const gekoppeld = ingredienten.filter(i => i.m07_product_id || producten.some(p => p.naam.toLowerCase() === i.naam.toLowerCase()));
+  const ongekoppeld = ingredienten.filter(i => !i.m07_product_id && !producten.some(p => p.naam.toLowerCase() === i.naam.toLowerCase()));
+  // Recepten die producten uit M07 gebruiken
+  const recLijst = recepten.slice(0,20).map(r => r.title).join(', ');
+  return `Je bent de Klaar Assistent voor Module 07 — Leveranciers & Voorraad.
+
+LIVE PRODUCTENLIJST (${producten.length} producten):
+${prodLijst || 'Geen producten geregistreerd.'}
+Categorieën: ${JSON.stringify(cats)}
+
+INGREDIËNTEN (M04 — ${ingredienten.length} stuks):
+Gekoppeld aan M07: ${gekoppeld.map(i=>i.naam).join(', ') || 'geen'}
+Nog niet gekoppeld: ${ongekoppeld.map(i=>i.naam).join(', ') || 'geen'}
+Gebruik de ongekoppelde ingrediënten als aanleiding om de gebruiker te helpen die producten ook in M07 toe te voegen of te synchroniseren.
+
+RECEPTEN (M01 — ${recepten.length} recepten):
+${recLijst || 'Geen recepten.'}
+
+JOUW ROL:
+Je bent een inkoop- en leveranciersexpert voor de horeca. Je helpt met:
+- Prijsanalyse en anomalie-detectie (ongewone prijsstijgingen signaleren)
+- Leveranciersvergelijking en besparingsadvies
+- Voorraadbeheer en bestelfrequentie
+- Factuur/pakbon-interpretatie
+- Cross-module: producten koppelen aan ingrediënten in de kostprijsmodule (M04)
+
+FOTO-SCAN (facturen/pakbonnen):
+Als de gebruiker een foto uploadt, analyseer je de afbeelding en extraheer je alle producten:
+Voeg elk product toe met:
+[KLAAR:ADD_PRODUCT:{"naam":"Kipfilet","prijs":8.50,"eenheid":"kg","categorie":"vlees","leverancier":"Hanos"}]
+Categorieën: vlees, vis, groente, zuivel, droog, drank, schoonmaak, overig
+
+PRIJSUPDATE:
+Als een prijs is veranderd voor een bestaand product, gebruik:
+[KLAAR:UPDATE_PRODUCT:{"naam":"Kipfilet","prijs":9.20}]
+
+CROSS-MODULE SYNC (product ook als ingrediënt opslaan in M04):
+Als de gebruiker wil dat een product ook in de kostprijsmodule komt als ingrediënt, gebruik:
+[KLAAR:SYNC_TO_INGREDIENT:{"naam":"Kipfilet","inkoopprijs":8.50,"eenheid":"kg","categorie":"vlees","leverancier":"Hanos"}]
+Stel dit pro-actief voor als een product duidelijk als ingrediënt gebruikt wordt (vlees, vis, groente, zuivel etc.).
+
+COMMERCIËLE INTELLIGENTIE (gebruik spaarzaam en alleen organisch):
+Jij bent ook de stille verkoper van Klaar. Maar doe het GOED: alleen wanneer je een echte opening ziet, maximaal 1x per gesprek, nooit als advertentie, nooit als je het al een keer hebt gedaan in dit gesprek. Als het niet perfect past, zeg je niets.
+
+WANNEER MAG JE EEN HINT GEVEN:
+1. Gebruiker noemt een probleem dat een ANDERE Klaar-module oplost die ze nog niet hebben
+2. Gebruiker noemt frustaties over een ander systeem (duur, moeilijk, verouderd)
+3. Gebruiker doet iets handmatig in Excel of op papier dat Klaar automatiseert
+4. Gebruiker praat over kosten van software en betaalt meer dan nodig lijkt
+5. Gebruiker heeft meerdere losse apps die niet samenwerken
+
+MODULES & PRIJZEN (voor context bij upsell):
+01 Recept Studio — €29/m — Spraak → recept, AI-allergenen detectie
+02 Allergenenkaart — €14/m — EU-14 matrix, NVWA-compliant
+03 HACCP — €29/m — Digitaal logboek, AI CCP-analyse
+04 Kostprijs Calculator — €39/m — Live marges, menu engineering
+07 Leveranciers & Voorraad — €24/m — Factuur-scan, anomalie-detectie
+10 Catering & Events — €24/m — Van intake tot keukensheet
+Full suite — €179/m (los €131,50/m) — Alle modules samen
+
+HOE JE HET ZEGT (toon: zakenpartner die iets handigs opmerkt, NIET een verkoopgesprek):
+✅ "Oh trouwens — als je dit probleem vaker hebt, lost Module 04 dit automatisch op. Kost je €39/m en rekent zichzelf terug."
+✅ "Dat klinkt als iets waarvoor je nu waarschijnlijk een apart systeem betaalt. Klaar doet dit al voor €24/m."
+✅ "Interessant — als je ook Module 07 gebruikt, koppelt dit automatisch aan je inkoopprijzen."
+✅ "Voor €14/m heb je de Allergenenkaart erbij — dan hoef je dit nooit meer handmatig bij te houden."
+
+WAT JE NOOIT DOET:
+❌ Concurrenten met naam belasteren of negatief vergelijken
+❌ Meerdere keren per gesprek iets verkopen
+❌ Een module aanprijzen als de gebruiker duidelijk al weet dat die bestaat
+❌ Pushen als de gebruiker niet reageert
+❌ Iets aanbevelen dat niet relevant is voor het actuele probleem
+
+KASSASYSTEMEN & ECOSYSTEEM:
+De meeste horecazaken waar jij mee werkt hebben ook een kassasysteem (POS). Jij werkt NAAST die systemen, niet ertegen.
+Meestgebruikte kassasystemen in NL: unTill (marktleider), Lightspeed Restaurant, Square for Restaurants, Reeleezee, Oracle MICROS (hotels/ketens).
+Meestgebruikte groothandels: Hanos, Bidfood, Sligro, Makro.
+
+CONCURRENTEN VAN KLAAR (ken ze, maar prijs ze nooit aan):
+- appHoreca (apphoreca.nl): directe concurrent, €69-75/maand voor alles-in-één. Geen AI, verouderd, duur als je niet alles nodig hebt, vereist hardware (labelprinter). Klaar is modulair, has AI, geen startkosten.
+- Horeko (van Exact): enterprise-product, 5-10x duurder, voor ketens met IT-afdeling.
+
+DATA IMPORTEREN UIT EXTERNE SYSTEMEN:
+Als je meer data nodig hebt om een probleem op te lossen, vraag dan PROACTIEF welk systeem de klant gebruikt en geef de exacte export-instructies:
+
+unTill export: Webmanagement → Rapporten → Artikelen → Exporteer CSV
+Lightspeed export: Manager → Items → Exporteer CSV  
+Hanos export: Mijn Hanos → Bestelhistorie → Exporteer Excel
+Bidfood export: Bestelportal → Favorieten → Exporteer CSV
+Sligro export: Mijn account → Bestellingen → Exporteer Excel
+Z-rapport (alle systemen): foto van de kassabon/dagsluiting
+
+Zeg dit altijd als je om data vraagt: "Welk kassasysteem / welke groothandel gebruik jij?" — dan geef je de exacte stappen.
+
+RESPONSLENGTE & TOON (STRIKT VOLGEN):
+- Houd antwoorden KORT. Max 3-4 zinnen voor eenvoudige vragen. Max 6-8 zinnen voor complexe vragen.
+- GEEN markdown headers (#, ##) in chats — dit is een gesprek, geen document.
+- GEEN bold tekst (**tekst**) voor nadruk in conversaties.
+- GEEN genummerde lijsten tenzij het echt stap-voor-stap instructies zijn.
+- Max 1 emoji per bericht. Liever 0 bij zakelijke vragen.
+- Vraag maximaal 1 verduidelijkingsvraag tegelijk. Begin direct te helpen waar je kunt.
+- Geef nooit een inleiding of samenvatting — ga direct to the point.
+
+Spreek professioneel maar toegankelijk. Antwoord in het Nederlands.`;
+}
+
+  function chatExecuteActions(text) {
+    const re = /\[KLAAR:([A-Z_]+):([^\]]+)\]/g;
+    let m, executed = [];
+    while ((m = re.exec(text)) !== null) {
+      const type = m[1];
+      try {
+        const payload = JSON.parse(m[2]);
+        
+        if (type === 'ADD_PRODUCT') {
+          const prods = JSON.parse(localStorage.getItem('klaar_producten') || '[]');
+          const existing = prods.findIndex(p => p.naam.toLowerCase() === payload.naam.toLowerCase());
+          if (existing >= 0) {
+            prods[existing] = { ...prods[existing], ...payload, lastUpdated: new Date().toISOString().slice(0,10) };
+            executed.push('Update: ' + payload.naam);
+          } else {
+            prods.push({ id: 'prod_' + Date.now() + '_' + Math.random().toString(36).slice(2,6), ...payload, lastUpdated: new Date().toISOString().slice(0,10) });
+            executed.push('Nieuw: ' + payload.naam);
+          }
+          localStorage.setItem('klaar_producten', JSON.stringify(prods));
+        } else if (type === 'UPDATE_PRODUCT') {
+          const prods = JSON.parse(localStorage.getItem('klaar_producten') || '[]');
+          const idx = prods.findIndex(p => p.naam.toLowerCase() === payload.naam.toLowerCase());
+          if (idx >= 0) {
+            prods[idx] = { ...prods[idx], ...payload, lastUpdated: new Date().toISOString().slice(0,10) };
+            localStorage.setItem('klaar_producten', JSON.stringify(prods));
+            executed.push('Prijs update: ' + payload.naam);
+          }
+        } else if (type === 'SYNC_TO_INGREDIENT') {
+          const ings = JSON.parse(localStorage.getItem('klaar_ingredienten') || '[]');
+          const existing = ings.findIndex(i => i.naam.toLowerCase() === payload.naam.toLowerCase());
+          if (existing >= 0) {
+            ings[existing] = { ...ings[existing], inkoopprijs: payload.inkoopprijs, eenheid: payload.eenheid||ings[existing].eenheid, leverancier: payload.leverancier||ings[existing].leverancier, lastUpdated: new Date().toISOString().slice(0,10), source: 'm07-sync' };
+            executed.push('M04 sync update: ' + payload.naam);
+          } else {
+            ings.push({ id: 'ing_' + Date.now() + '_' + Math.random().toString(36).slice(2,6), naam: payload.naam, inkoopprijs: payload.inkoopprijs, eenheid: payload.eenheid||'kg', categorie: payload.categorie||'overig', leverancier: payload.leverancier||'', lastUpdated: new Date().toISOString().slice(0,10), source: 'm07-sync' });
+            executed.push('M04 nieuw ingrediënt: ' + payload.naam);
+          }
+          localStorage.setItem('klaar_ingredienten', JSON.stringify(ings));
+        }
+        executed.push(type);
+      } catch(e) { console.warn('Klaar action error:', e, m[2]); }
+    }
+    if (executed.length) {
+      const el = document.createElement('div');
+      el.style.cssText = 'font-family:DM Mono,monospace;font-size:11px;color:#22c55e;padding:4px 8px 4px 10px;border-left:2px solid #22c55e;margin:2px 0;align-self:flex-start;';
+      el.textContent = '✅ Opgeslagen: ' + executed.join(', ');
+      document.getElementById('chatMessages').appendChild(el);
+      chatScroll();
+    }
+    return text.replace(/\[KLAAR:[A-Z_]+:[^\]]+\]/g, '').trim();
+  }
+
+
+
+  function chatTriggerUpload() { document.getElementById('chatFileInput').click(); }
+  function chatHandleFile(input) {
+    const file = input.files[0]; if (!file) return;
+    const isImage = file.type.startsWith('image/');
+    const isCsv = file.name.endsWith('.csv') || file.type === 'text/csv';
+    const isExcel = file.name.endsWith('.xlsx') || file.name.endsWith('.xls') || file.type.includes('spreadsheetml');
+
+    if (isImage) {
+      // Foto: stuur als vision
+      const reader = new FileReader();
+      reader.onload = (e) => {
+        const data = e.target.result;
+        _chatImage = { base64: data.split(',')[1], mimeType: file.type || 'image/jpeg', filename: file.name, type: 'image' };
+        document.getElementById('chatImgThumb').src = data;
+        document.getElementById('chatImgName').textContent = file.name;
+        document.getElementById('chatImgPreview').style.display = 'flex';
+      };
+      reader.readAsDataURL(file);
+    } else if (isCsv || isExcel) {
+      // CSV/Excel: lees als tekst en stuur als tekstbericht
+      const reader = new FileReader();
+      reader.onload = (e) => {
+        const text = e.target.result;
+        const preview = text.slice(0, 3000); // max 3000 chars preview
+        _chatImage = { text: preview, filename: file.name, type: 'csv', mimeType: 'text/plain' };
+        document.getElementById('chatImgThumb').src = 'data:image/svg+xml,<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 40 40"><rect fill="%23222" width="40" height="40"/><text x="50%" y="55%" font-size="12" fill="%23e8ff47" text-anchor="middle" font-family="monospace">CSV</text></svg>';
+        document.getElementById('chatImgName').textContent = file.name + ' (' + text.split('\n').length + ' regels)';
+        document.getElementById('chatImgPreview').style.display = 'flex';
+      };
+      reader.readAsText(file, 'UTF-8');
+    }
+    input.value = '';
+  }
+  function chatClearImage() {
+    _chatImage = null;
+    document.getElementById('chatImgPreview').style.display = 'none';
+    document.getElementById('chatImgThumb').src = '';
+  }
+
+async function chatSend() {
+  if (_chatStreaming) return;
+  const input = document.getElementById('chatInput');
+  
+  const textMsg = input.value.trim();
+  if (!textMsg && !_chatImage) return;
+  input.value = ''; input.style.height = 'auto';
+  document.getElementById('chatSuggestions').style.display = 'none';
+
+  let userContent;
+  if (_chatImage && _chatImage.type === 'image') {
+    userContent = [
+      { type: 'image', source: { type: 'base64', media_type: _chatImage.mimeType, data: _chatImage.base64 } },
+      { type: 'text', text: textMsg || 'Analyseer deze afbeelding en extraheer de relevante data voor deze module.' }
+    ];
+    chatAppend('user', '📎 ' + _chatImage.filename + (textMsg ? ' — ' + textMsg : ''));
+    _chatHistory.push({ role: 'user', content: textMsg || 'Analyseer de afbeelding.' });
+    chatClearImage();
+  } else if (_chatImage && _chatImage.type === 'csv') {
+    const csvMsg = (textMsg ? textMsg + '\n\n' : '') + 'CSV/Excel bestand: ' + _chatImage.filename + '\n\nInhoud (eerste 3000 tekens):\n' + _chatImage.text;
+    userContent = csvMsg;
+    chatAppend('user', '📊 ' + _chatImage.filename + (textMsg ? ' — ' + textMsg : ''));
+    _chatHistory.push({ role: 'user', content: csvMsg });
+    chatClearImage();
+  } else {
+    userContent = textMsg;
+    chatAppend('user', textMsg);
+    _chatHistory.push({ role: 'user', content: textMsg });
+  }
+  const messages = [ ..._chatHistory.slice(-10), { role: 'user', content: userContent } ];
+
+  _chatStreaming = true;
+  document.getElementById('chatSend').disabled = true;
+
+  const typing = document.createElement('div');
+  typing.className = 'chat-typing'; typing.id = '_chatTyping';
+  typing.innerHTML = '<span>●</span><span>●</span><span>●</span>';
+  document.getElementById('chatMessages').appendChild(typing);
+  chatScroll();
+
+  let fullText = '';
+  try {
+    const res = await klaarAIStream({
+      model: 'claude-haiku-4-5-20251001',
+      max_tokens: 1024,
+      stream: true,
+      system: chatBuildPrompt(),
+      messages
+    }, '07-leveranciers');
+    document.getElementById('_chatTyping')?.remove();
+    if (!res.ok) {
+      const err = await res.json().catch(() => ({}));
+      throw new Error(err.error?.message || 'HTTP ' + res.status);
+    }
+    const wrap = document.createElement('div');
+    wrap.className = 'chat-msg assistant';
+    const bubble = document.createElement('div');
+    bubble.className = 'chat-bubble';
+    wrap.appendChild(bubble);
+    document.getElementById('chatMessages').appendChild(wrap);
+    const reader = res.body.getReader();
+    const decoder = new TextDecoder();
+    let buf = '';
+    while (true) {
+      const { done, value } = await reader.read();
+      if (done) break;
+      buf += decoder.decode(value, { stream: true });
+      const lines = buf.split('\n'); buf = lines.pop() || '';
+      for (const line of lines) {
+        if (!line.startsWith('data: ')) continue;
+        const raw = line.slice(6).trim();
+        if (raw === '[DONE]') continue;
+        try {
+          const p = JSON.parse(raw);
+          if (p.type === 'content_block_delta' && p.delta?.type === 'text_delta') {
+            fullText += p.delta.text;
+                        bubble.innerHTML = chatFormat(chatExecuteActions(fullText));
+            chatScroll();
+          }
+        } catch(e) {}
+      }
+    }
+    _chatHistory.push({ role: 'assistant', content: fullText });
+  } catch(err) {
+    document.getElementById('_chatTyping')?.remove();
+    chatAppend('assistant', 'Er ging iets mis: ' + err.message + '. Controleer je API key via Module 01 → Instellingen.');
+    console.error('Klaar chat:', err);
+  }
+  _chatStreaming = false;
+  document.getElementById('chatSend').disabled = false;
+}
+
+function chatSuggest(text) { document.getElementById('chatInput').value = text; chatSend(); }
+function chatShowNoKey() {
+  const msgs = document.getElementById('chatMessages');
+  if (msgs.querySelector('.chat-no-key')) return;
+  const el = document.createElement('div');
+  el.className = 'chat-no-key';
+  el.innerHTML = '⚠️ Geen API key. Stel in via <strong>Module 01 → Instellingen</strong>.';
+  msgs.appendChild(el); chatScroll();
+}
+function chatAppend(role, text) {
+  const wrap = document.createElement('div');
+  wrap.className = 'chat-msg ' + role;
+  const bubble = document.createElement('div');
+  bubble.className = 'chat-bubble';
+  bubble.innerHTML = chatFormat(text);
+  wrap.appendChild(bubble);
+  document.getElementById('chatMessages').appendChild(wrap); chatScroll();
+}
+function chatFormat(text) {
+  return text
+    .replace(/&/g,'&amp;').replace(/</g,'&lt;').replace(/>/g,'&gt;')
+    .replace(/\*\*(.*?)\*\*/g,'<strong>$1</strong>')
+    .replace(/\*(.*?)\*/g,'<em>$1</em>')
+    .replace(/\n{2,}/g,'<br><br>').replace(/\n/g,'<br>');
+}
+function chatScroll() { const el = document.getElementById('chatMessages'); el.scrollTop = el.scrollHeight; }
+function chatKeyDown(e) { if (e.key === 'Enter' && !e.shiftKey) { e.preventDefault(); chatSend(); } }
+function chatAutoResize(el) { el.style.height = 'auto'; el.style.height = Math.min(el.scrollHeight, 110) + 'px'; }
+</script>
+
+</body>
+</html>

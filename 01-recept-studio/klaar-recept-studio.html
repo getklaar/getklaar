@@ -1,0 +1,2441 @@
+<!DOCTYPE html>
+<html lang="nl">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Klaar — Recepten & Allergenen</title>
+  <link href="https://fonts.googleapis.com/css2?family=Bebas+Neue&family=DM+Mono:wght@400;500&family=DM+Sans:wght@300;400;500;600&display=swap" rel="stylesheet">
+  <style>
+    :root {
+      /* Dark zone (header, sidebar, chat panel) */
+      --black:   #0a0a0a;
+      --surface: #111111;
+      --surface2:#161616;
+      --border:  #222222;
+      --border2: #333333;
+      --lime:    #e8ff47;
+      --white:   #eeeeee;
+      --gray:    #666666;
+      --muted:   #3a3a3a;
+      /* Light zone (main editor / matrix area) */
+      --lbg:     #f6f4f0;
+      --lsurface:#ffffff;
+      --lborder: #e2ddd6;
+      --lborder2:#ccc8c0;
+      --ltext:   #1a1a1a;
+      --lmuted:  #999591;
+      /* Status / semantic */
+      --danger:  #c0392b;
+      --present: #e53e3e;
+      --complete:#27ae60;
+      --draft:   #e8a838;
+      --hdr:     54px;
+    }
+    *{box-sizing:border-box;margin:0;padding:0;}
+    body{font-family:'DM Sans',sans-serif;background:var(--black);color:var(--white);height:100vh;display:flex;flex-direction:column;overflow:hidden;}
+    a{text-decoration:none;color:inherit;}
+    button{font-family:'DM Sans',sans-serif;}
+    input,textarea,select{font-family:'DM Sans',sans-serif;}
+
+    /* ── HEADER ── */
+    header{
+      height:var(--hdr);flex-shrink:0;
+      background:var(--surface);border-bottom:1px solid var(--border);
+      display:flex;align-items:center;padding:0 16px;gap:12px;z-index:100;
+    }
+    .back-link{
+      font-size:11px;font-family:'DM Mono',monospace;color:var(--white);
+      display:flex;align-items:center;gap:5px;white-space:nowrap;transition:all .15s;
+      padding:4px 10px;border:1px solid var(--border);border-radius:3px;
+    }
+    .back-link:hover{border-color:var(--lime);color:var(--lime);}
+    .h-div{width:1px;height:20px;background:var(--border);flex-shrink:0;}
+    .logo{font-family:'Bebas Neue',sans-serif;font-size:24px;color:var(--lime);letter-spacing:.04em;line-height:1;}
+    .mod-badge{font-family:'DM Mono',monospace;font-size:9px;color:var(--gray);letter-spacing:.12em;text-transform:uppercase;white-space:nowrap;}
+    /* Tab strip with a visible container */
+    .h-tabs{
+      display:flex;gap:4px;flex:1;padding-left:10px;
+      background:var(--surface2);border-radius:6px;padding:4px;
+      max-width:320px;
+    }
+    .h-tab{
+      flex:1;padding:6px 14px;font-size:11px;font-family:'DM Mono',monospace;
+      color:var(--gray);background:none;border:none;cursor:pointer;
+      letter-spacing:.07em;text-transform:uppercase;transition:all .2s;
+      border-radius:4px;white-space:nowrap;text-align:center;
+    }
+    .h-tab:hover{color:var(--white);background:rgba(255,255,255,.05);}
+    .h-tab.active{
+      background:var(--lime);color:#000;font-weight:600;
+    }
+    .h-actions{display:flex;gap:6px;align-items:center;margin-left:auto;}
+    .btn-hdr{
+      padding:5px 12px;font-size:11px;font-family:'DM Mono',monospace;
+      background:none;border:1px solid var(--border);color:var(--gray);
+      cursor:pointer;letter-spacing:.05em;transition:all .15s;
+    }
+    .btn-hdr:hover{border-color:var(--white);color:var(--white);}
+    .btn-hdr.primary{background:var(--lime);color:#000;border-color:var(--lime);font-weight:600;}
+    .btn-hdr.primary:hover{background:#d4e83d;}
+
+    /* ── BODY ── */
+    .body{display:flex;flex:1;overflow:hidden;}
+
+    /* ── SIDEBAR ── */
+    .sidebar{
+      width:220px;flex-shrink:0;
+      background:var(--surface);border-right:1px solid var(--border);
+      display:flex;flex-direction:column;overflow:hidden;
+    }
+    .sidebar-top{padding:8px;border-bottom:1px solid var(--border);}
+    .sidebar-search{
+      width:100%;padding:6px 10px;
+      background:var(--surface2);border:1px solid var(--border);
+      color:var(--white);font-size:12px;outline:none;
+    }
+    .sidebar-search::placeholder{color:var(--gray);}
+    .sidebar-search:focus{border-color:var(--border2);}
+    .sidebar-list{flex:1;overflow-y:auto;padding:4px 0 40px;}
+    .sidebar-list::-webkit-scrollbar{width:3px;}
+    .sidebar-list::-webkit-scrollbar-thumb{background:var(--border);}
+
+    .folder-hdr{
+      display:flex;align-items:center;justify-content:space-between;
+      padding:8px 10px 5px;cursor:pointer;user-select:none;
+    }
+    .folder-hdr-name{font-size:10px;font-family:'DM Mono',monospace;color:var(--gray);letter-spacing:.1em;text-transform:uppercase;}
+    .folder-hdr-right{display:flex;gap:6px;align-items:center;}
+    .folder-hdr-count{font-size:10px;color:var(--muted);font-family:'DM Mono',monospace;}
+    .folder-hdr-arrow{font-size:8px;color:var(--muted);}
+
+    .recipe-row{
+      display:flex;align-items:center;gap:7px;
+      padding:7px 10px 7px 18px;
+      cursor:pointer;transition:background .1s;
+      border-left:2px solid transparent;
+    }
+    .recipe-row:hover{background:var(--surface2);}
+    .recipe-row.active{background:rgba(232,255,71,.06);border-left-color:var(--lime);}
+    .recipe-row-dot{width:6px;height:6px;border-radius:50%;flex-shrink:0;}
+    .recipe-row-dot.complete{background:var(--complete);}
+    .recipe-row-dot.draft{background:var(--draft);}
+    .recipe-row-name{flex:1;font-size:12px;white-space:nowrap;overflow:hidden;text-overflow:ellipsis;}
+    .recipe-row.active .recipe-row-name{color:var(--lime);}
+    .aleg-dots{display:flex;gap:2px;}
+    .aleg-dot{width:5px;height:5px;border-radius:50%;background:var(--present);}
+
+    .sidebar-empty{padding:16px 12px;font-size:11px;color:var(--gray);text-align:center;line-height:1.7;}
+
+    /* Sidebar delete button (visible on hover) */
+    .recipe-row-del{
+      opacity:0;width:18px;height:18px;flex-shrink:0;
+      display:flex;align-items:center;justify-content:center;
+      background:none;border:none;color:var(--muted);cursor:pointer;font-size:13px;
+      transition:opacity .15s,color .15s;line-height:1;
+    }
+    .recipe-row:hover .recipe-row-del{opacity:1;}
+    .recipe-row-del:hover{color:var(--danger)!important;}
+
+    /* Drag-over folder highlight */
+    .folder-hdr.drag-over{background:rgba(232,255,71,.08);outline:1px dashed var(--lime);}
+
+    /* ── MAIN (light zone) ── */
+    .main{flex:1;display:flex;flex-direction:column;overflow:hidden;background:var(--lbg);}
+
+    /* ── EMPTY STATE ── */
+    .empty-state{
+      flex:1;display:flex;flex-direction:column;align-items:center;justify-content:center;
+      gap:14px;padding:40px;text-align:center;
+    }
+    .empty-icon{font-size:44px;}
+    .empty-title{font-family:'Bebas Neue',sans-serif;font-size:30px;color:var(--ltext);letter-spacing:.05em;}
+    .empty-sub{font-size:13px;color:var(--lmuted);max-width:320px;line-height:1.7;}
+
+    /* ── EDITOR ── */
+    .editor{flex:1;display:flex;flex-direction:column;overflow:hidden;}
+
+    .record-bar{
+      padding:9px 14px;background:var(--lsurface);border-bottom:1px solid var(--lborder);
+      display:flex;align-items:center;gap:10px;flex-shrink:0;
+    }
+    .btn-rec{
+      display:flex;align-items:center;gap:6px;
+      padding:6px 12px;background:none;border:1px solid var(--lborder2);
+      color:var(--lmuted);font-size:11px;font-family:'DM Mono',monospace;letter-spacing:.05em;
+      cursor:pointer;transition:all .15s;
+    }
+    .btn-rec:hover{border-color:var(--black);color:var(--black);}
+    .btn-rec.rec{border-color:var(--present);color:var(--present);animation:blink 1s infinite;}
+    @keyframes blink{0%,100%{opacity:1}50%{opacity:.5}}
+    .rec-timer{font-family:'DM Mono',monospace;font-size:11px;color:var(--present);display:none;}
+    .rec-note{font-size:11px;color:var(--lmuted);font-family:'DM Mono',monospace;flex:1;white-space:nowrap;overflow:hidden;text-overflow:ellipsis;}
+    .btn-gen{
+      padding:6px 14px;background:var(--lime);color:#000;
+      border:none;font-size:11px;font-family:'DM Mono',monospace;letter-spacing:.05em;
+      cursor:pointer;font-weight:600;transition:background .15s;display:none;flex-shrink:0;
+    }
+    .btn-gen:hover{background:#d4e83d;}
+    .btn-gen:disabled{opacity:.5;cursor:not-allowed;}
+
+    .editor-scroll{flex:1;overflow-y:auto;padding:22px 26px 16px;}
+    .editor-scroll::-webkit-scrollbar{width:3px;}
+    .editor-scroll::-webkit-scrollbar-thumb{background:var(--lborder2);}
+
+    .recipe-title-inp{
+      width:100%;background:none;border:none;outline:none;
+      font-family:'Bebas Neue',sans-serif;font-size:38px;color:var(--ltext);
+      letter-spacing:.03em;margin-bottom:16px;
+    }
+    .recipe-title-inp::placeholder{color:var(--lborder2);}
+
+    .meta-row{display:flex;gap:8px;flex-wrap:wrap;margin-bottom:22px;}
+    .meta-field{display:flex;flex-direction:column;gap:3px;}
+    .meta-label{font-size:9px;font-family:'DM Mono',monospace;color:var(--lmuted);letter-spacing:.12em;text-transform:uppercase;}
+    .meta-inp{
+      padding:5px 8px;background:var(--lsurface);border:1px solid var(--lborder);
+      color:var(--ltext);font-size:12px;font-family:'DM Mono',monospace;outline:none;width:100px;
+      transition:border-color .15s;
+    }
+    .meta-inp:focus{border-color:var(--lborder2);}
+    .meta-inp::placeholder{color:var(--lmuted);}
+    .meta-sel{
+      padding:5px 8px;background:var(--lsurface);border:1px solid var(--lborder);
+      color:var(--ltext);font-size:12px;font-family:'DM Mono',monospace;outline:none;cursor:pointer;
+    }
+    .meta-sel option{background:var(--lsurface);color:var(--ltext);}
+
+    /* Kostprijsbalk */
+    .cost-bar{display:flex;align-items:center;gap:10px;padding:9px 14px;
+      background:var(--lsurface);border:1px solid var(--lborder);border-radius:6px;
+      margin-bottom:18px;font-family:'DM Mono',monospace;font-size:11px;color:var(--lmuted);flex-wrap:wrap;}
+    .cost-bar .cv{color:var(--ltext);font-weight:600;}
+    .cost-bar .csep{color:var(--lborder2);}
+    .cost-bar .cmatch{color:var(--lmuted);font-size:10px;margin-left:auto;}
+    .cost-bar .clabel{font-size:10px;letter-spacing:.06em;text-transform:uppercase;}
+    .cost-warn{color:#c47d00;}
+
+    /* Module-link label */
+    .mod-link{display:inline-flex;align-items:center;gap:5px;
+      font-size:10px;font-family:'DM Mono',monospace;color:var(--lmuted);
+      margin-top:4px;letter-spacing:.04em;}
+    .mod-link span{opacity:.5;}
+
+    .sec-hdr{
+      font-size:9px;font-family:'DM Mono',monospace;color:var(--lmuted);
+      letter-spacing:.12em;text-transform:uppercase;
+      padding-bottom:7px;margin-bottom:9px;
+      border-bottom:1px solid var(--lborder);
+      display:flex;align-items:center;justify-content:space-between;
+    }
+    .sec-hdr button{
+      font-size:10px;font-family:'DM Mono',monospace;
+      background:none;border:1px solid var(--lborder2);color:var(--lmuted);
+      padding:2px 8px;cursor:pointer;transition:all .15s;letter-spacing:.04em;
+    }
+    .sec-hdr button:hover{border-color:var(--black);color:var(--black);}
+    .editor-sec{margin-bottom:24px;}
+
+    .ing-row{display:flex;gap:7px;margin-bottom:5px;align-items:center;}
+    .ing-amt{
+      width:80px;padding:5px 8px;
+      background:var(--lsurface);border:1px solid var(--lborder);
+      color:var(--ltext);font-size:12px;font-family:'DM Mono',monospace;outline:none;flex-shrink:0;
+    }
+    .ing-amt:focus{border-color:var(--lborder2);}
+    .ing-name{
+      flex:1;padding:5px 9px;
+      background:var(--lsurface);border:1px solid var(--lborder);
+      color:var(--ltext);font-size:13px;outline:none;
+    }
+    .ing-name:focus{border-color:var(--lborder2);}
+    .btn-del-row{
+      width:22px;height:22px;display:flex;align-items:center;justify-content:center;
+      background:none;border:none;color:var(--lborder2);cursor:pointer;font-size:15px;
+      transition:color .15s;flex-shrink:0;
+    }
+    .btn-del-row:hover{color:var(--danger);}
+
+    .step-row{display:flex;gap:9px;margin-bottom:7px;align-items:flex-start;}
+    .step-num{
+      width:22px;height:22px;flex-shrink:0;margin-top:5px;
+      background:var(--lbg);border:1px solid var(--lborder2);
+      display:flex;align-items:center;justify-content:center;
+      font-size:9px;font-family:'DM Mono',monospace;color:var(--lmuted);
+    }
+    .step-ta{
+      flex:1;padding:6px 9px;
+      background:var(--lsurface);border:1px solid var(--lborder);
+      color:var(--ltext);font-size:13px;resize:none;outline:none;line-height:1.5;min-height:32px;
+    }
+    .step-ta:focus{border-color:var(--lborder2);}
+
+    .notes-ta{
+      width:100%;padding:8px 10px;
+      background:var(--lsurface);border:1px solid var(--lborder);
+      color:var(--ltext);font-size:13px;resize:none;outline:none;min-height:54px;line-height:1.6;
+    }
+    .notes-ta:focus{border-color:var(--lborder2);}
+
+    /* Allergen tags in editor — light bg variant */
+    .atag-list{display:flex;flex-wrap:wrap;gap:5px;margin-top:7px;}
+    .atag{
+      display:flex;align-items:center;gap:5px;padding:5px 10px;
+      background:rgba(192,57,43,.08);border:1px solid rgba(192,57,43,.3);
+      font-size:11px;font-family:'DM Mono',monospace;color:#b03025;
+      border-radius:2px;
+    }
+    .atag.maybe{
+      background:rgba(232,168,56,.08);border-color:rgba(232,168,56,.35);color:#a07820;
+    }
+    .atag-icon{font-size:14px;line-height:1;}
+    .atag-code{font-weight:700;font-size:10px;}
+    .atag-name{font-size:11px;}
+    .atag-uncertain{font-size:9px;font-style:italic;opacity:.8;}
+    .no-atag{font-size:11px;color:var(--lmuted);font-family:'DM Mono',monospace;}
+
+    /* ── RECIPE GRID DASHBOARD ── */
+    .grid-view{
+      flex:1;display:flex;flex-direction:column;overflow:hidden;background:var(--lbg);
+    }
+    .grid-toolbar{
+      padding:14px 22px 10px;display:flex;gap:10px;align-items:center;flex-shrink:0;
+      border-bottom:1px solid var(--lborder);background:var(--lsurface);
+    }
+    .grid-search{
+      flex:1;max-width:280px;padding:6px 10px;
+      background:var(--lbg);border:1px solid var(--lborder);
+      color:var(--ltext);font-size:12px;outline:none;
+      transition:border-color .15s;
+    }
+    .grid-search:focus{border-color:var(--lborder2);}
+    .grid-search::placeholder{color:var(--lmuted);}
+    .grid-scroll{flex:1;overflow-y:auto;padding:22px;}
+    .grid-scroll::-webkit-scrollbar{width:3px;}
+    .grid-scroll::-webkit-scrollbar-thumb{background:var(--lborder2);}
+    .grid-section{margin-bottom:28px;}
+    .grid-section-hdr{
+      font-size:10px;font-family:'DM Mono',monospace;color:var(--lmuted);
+      letter-spacing:.12em;text-transform:uppercase;
+      margin-bottom:10px;display:flex;align-items:center;gap:8px;
+    }
+    .grid-section-hdr span{
+      background:var(--lborder);color:var(--lmuted);
+      font-size:9px;padding:1px 6px;border-radius:10px;
+    }
+    .grid-cards{display:grid;grid-template-columns:repeat(auto-fill,minmax(190px,1fr));gap:10px;}
+    .recipe-card{
+      background:var(--lsurface);border:1px solid var(--lborder);
+      padding:14px 14px 12px;cursor:pointer;
+      transition:border-color .15s,box-shadow .15s;position:relative;
+      display:flex;flex-direction:column;gap:8px;
+    }
+    .recipe-card:hover{border-color:var(--lborder2);box-shadow:0 2px 10px rgba(0,0,0,.06);}
+    .recipe-card.complete{border-left:3px solid var(--complete);}
+    .recipe-card.draft{border-left:3px solid var(--lborder2);}
+    .recipe-card-title{
+      font-family:'Bebas Neue',sans-serif;font-size:19px;color:var(--ltext);
+      letter-spacing:.03em;line-height:1.1;word-break:break-word;
+    }
+    .recipe-card-meta{
+      font-size:10px;font-family:'DM Mono',monospace;color:var(--lmuted);
+      display:flex;gap:7px;flex-wrap:wrap;
+    }
+    .recipe-card-allergens{display:flex;flex-wrap:wrap;gap:3px;margin-top:auto;}
+    .rc-al-icon{font-size:15px;line-height:1;cursor:default;}
+    .rc-al-maybe{font-size:13px;line-height:1;opacity:.5;cursor:default;}
+    .rc-no-al{font-size:10px;font-family:'DM Mono',monospace;color:var(--lborder2);}
+    .rc-status{
+      position:absolute;top:10px;right:10px;
+      font-size:9px;font-family:'DM Mono',monospace;letter-spacing:.08em;
+      color:var(--lmuted);
+    }
+    .rc-status.complete{color:var(--complete);}
+    .grid-empty{
+      padding:60px 20px;text-align:center;color:var(--lmuted);font-size:13px;line-height:1.7;
+    }
+
+    /* Breadcrumb in editor */
+    .editor-breadcrumb{
+      padding:8px 22px 0;flex-shrink:0;
+    }
+    .btn-back-grid{
+      font-size:11px;font-family:'DM Mono',monospace;color:var(--lmuted);
+      background:none;border:none;cursor:pointer;padding:0;
+      display:inline-flex;align-items:center;gap:4px;
+      transition:color .15s;letter-spacing:.04em;
+    }
+    .btn-back-grid:hover{color:var(--ltext);}
+
+    /* Text prompt input in record bar */
+    .prompt-inp{
+      flex:1;padding:5px 9px;
+      background:var(--lsurface);border:1px solid var(--lborder);
+      color:var(--ltext);font-size:12px;outline:none;
+      transition:border-color .15s;
+    }
+    .prompt-inp:focus{border-color:var(--lborder2);}
+    .prompt-inp::placeholder{color:var(--lmuted);}
+
+    /* Action bar */
+    .action-bar{
+      padding:9px 14px;background:var(--lsurface);border-top:1px solid var(--lborder);
+      display:flex;gap:7px;align-items:center;flex-shrink:0;
+    }
+    .btn-act{
+      padding:6px 14px;background:none;border:1px solid var(--lborder2);color:var(--lmuted);
+      font-size:11px;font-family:'DM Mono',monospace;letter-spacing:.05em;cursor:pointer;transition:all .15s;
+    }
+    .btn-act:hover{border-color:var(--ltext);color:var(--ltext);}
+    .btn-act.save{background:var(--lime);color:#000;border-color:var(--lime);font-weight:600;}
+    .btn-act.save:hover{background:#d4e83d;}
+    .btn-act.danger:hover{border-color:var(--danger);color:var(--danger);}
+    .unsaved-dot{width:6px;height:6px;border-radius:50%;background:var(--draft);display:none;flex-shrink:0;}
+    .btn-status{
+      margin-left:auto;padding:5px 12px;
+      font-size:10px;font-family:'DM Mono',monospace;letter-spacing:.1em;
+      background:none;border:1px solid var(--lborder2);color:var(--lmuted);cursor:pointer;transition:all .15s;
+    }
+    .btn-status.complete{border-color:var(--complete);color:var(--complete);}
+
+    /* ── ALLERGEN MATRIX VIEW (light zone) ── */
+    .matrix-view{flex:1;display:flex;flex-direction:column;overflow:hidden;}
+    .matrix-filter{
+      padding:10px 14px;background:var(--lsurface);border-bottom:1px solid var(--lborder);
+      display:flex;gap:6px;flex-wrap:wrap;align-items:center;flex-shrink:0;
+    }
+    .filter-chip{
+      padding:4px 11px;font-size:10px;font-family:'DM Mono',monospace;
+      background:none;border:1px solid var(--lborder2);color:var(--lmuted);
+      cursor:pointer;letter-spacing:.05em;transition:all .15s;
+    }
+    .filter-chip.active{background:var(--black);border-color:var(--black);color:var(--lime);}
+    .filter-chip:hover{border-color:var(--ltext);color:var(--ltext);}
+    .matrix-scroll{flex:1;overflow:auto;background:var(--lbg);}
+    .matrix-scroll::-webkit-scrollbar{width:4px;height:4px;}
+    .matrix-scroll::-webkit-scrollbar-thumb{background:var(--lborder2);}
+    .matrix-table{border-collapse:collapse;min-width:100%;}
+    .matrix-table th,
+    .matrix-table td{border:1px solid var(--lborder);}
+    /* Matrix header stays dark for contrast with vertical text */
+    .th-dish{
+      position:sticky;left:0;top:0;z-index:3;
+      background:var(--surface);min-width:170px;max-width:230px;
+      padding:8px 12px;font-size:11px;font-family:'DM Sans',sans-serif;
+      font-weight:500;color:var(--white);text-align:left;
+      border-color:var(--border2);
+    }
+    thead .th-alg{position:sticky;top:0;z-index:2;}
+    thead{position:sticky;top:0;}
+    .th-alg{
+      background:var(--surface);padding:6px 3px;min-width:34px;text-align:center;
+      border-color:var(--border2);
+    }
+    .th-alg-inner{
+      writing-mode:vertical-rl;transform:rotate(180deg);
+      font-size:10px;font-family:'DM Mono',monospace;color:var(--gray);
+      padding:3px 0;letter-spacing:.06em;
+    }
+    /* Dish name column sticky — light */
+    .td-dish{
+      position:sticky;left:0;background:var(--lsurface);
+      padding:8px 12px;font-size:12px;color:var(--ltext);
+      white-space:nowrap;overflow:hidden;text-overflow:ellipsis;max-width:230px;
+      cursor:pointer;border-right:2px solid var(--lborder2);transition:background .1s;
+    }
+    .td-dish:hover{background:var(--lborder);color:var(--black);}
+    .td-cell{text-align:center;padding:5px;background:var(--lsurface);}
+    .cell-yes{width:14px;height:14px;border-radius:50%;background:var(--present);margin:0 auto;}
+    .cell-no{width:14px;height:14px;border-radius:50%;background:var(--lborder2);margin:0 auto;}
+    /* alternating row tint */
+    .matrix-table tbody tr:nth-child(even) .td-cell{background:#f0ece7;}
+    .matrix-table tbody tr:nth-child(even) .td-dish{background:#f0ece7;}
+    .matrix-table tbody tr:nth-child(even) .td-dish:hover{background:var(--lborder);color:var(--black);}
+    .matrix-empty{padding:40px;text-align:center;color:var(--lmuted);font-size:13px;line-height:1.7;}
+    .matrix-legend{
+      padding:12px 16px;background:var(--lsurface);border-top:1px solid var(--lborder);flex-shrink:0;
+      display:flex;gap:16px;align-items:center;
+    }
+    .legend-item{display:flex;align-items:center;gap:6px;font-size:11px;color:var(--lmuted);font-family:'DM Mono',monospace;}
+    .legend-dot-yes{width:10px;height:10px;border-radius:50%;background:var(--present);}
+    .legend-dot-no{width:10px;height:10px;border-radius:50%;background:var(--lborder2);}
+
+    /* ── CHAT PANEL ── */
+    .chat-panel{
+      width:270px;flex-shrink:0;
+      background:var(--surface);border-left:1px solid var(--border);
+      display:flex;flex-direction:column;overflow:hidden;
+    }
+    .chat-hdr{
+      padding:9px 12px;border-bottom:1px solid var(--border);
+      display:flex;align-items:center;justify-content:space-between;flex-shrink:0;
+    }
+    .chat-hdr-title{font-size:9px;font-family:'DM Mono',monospace;color:var(--gray);letter-spacing:.12em;text-transform:uppercase;}
+    .chat-ctx{
+      font-size:10px;font-family:'DM Mono',monospace;color:var(--lime);
+      white-space:nowrap;overflow:hidden;text-overflow:ellipsis;max-width:150px;
+    }
+    .chat-msgs{
+      flex:1;overflow-y:auto;padding:10px;
+      display:flex;flex-direction:column;gap:7px;
+    }
+    .chat-msgs::-webkit-scrollbar{width:3px;}
+    .chat-msgs::-webkit-scrollbar-thumb{background:var(--border);}
+    .chat-msg{padding:8px 10px;font-size:12px;line-height:1.55;max-width:97%;}
+    .chat-msg.user{
+      background:rgba(232,255,71,.07);border:1px solid rgba(232,255,71,.15);
+      color:var(--white);align-self:flex-end;
+    }
+    .chat-msg.assistant{
+      background:var(--surface2);border:1px solid var(--border);
+      color:var(--white);align-self:flex-start;
+    }
+    .chat-msg.sys{
+      font-size:10px;color:var(--gray);font-family:'DM Mono',monospace;
+      text-align:center;background:none;border:none;padding:4px 0;align-self:center;
+    }
+    .chat-typing{display:flex;gap:3px;padding:10px;}
+    .chat-typing span{
+      width:5px;height:5px;border-radius:50%;background:var(--gray);
+      animation:bounce .9s infinite;
+    }
+    .chat-typing span:nth-child(2){animation-delay:.2s;}
+    .chat-typing span:nth-child(3){animation-delay:.4s;}
+    @keyframes bounce{0%,80%,100%{transform:translateY(0)}40%{transform:translateY(-5px)}}
+
+    .chat-sugs{
+      padding:7px 8px;border-top:1px solid var(--border);
+      display:flex;flex-direction:column;gap:4px;flex-shrink:0;
+    }
+    .chat-sug{
+      padding:5px 9px;background:none;border:1px solid var(--border);color:var(--gray);
+      font-size:10px;font-family:'DM Mono',monospace;cursor:pointer;text-align:left;
+      transition:all .15s;white-space:nowrap;overflow:hidden;text-overflow:ellipsis;
+      letter-spacing:.03em;
+    }
+    .chat-sug:hover{border-color:var(--lime);color:var(--lime);}
+    .chat-input-row{
+      padding:7px 8px;border-top:1px solid var(--border);
+      display:flex;gap:6px;align-items:flex-end;flex-shrink:0;
+    }
+    .chat-ta{
+      flex:1;padding:6px 8px;
+      background:var(--surface2);border:1px solid var(--border);
+      color:var(--white);font-size:12px;
+      resize:none;outline:none;min-height:30px;max-height:80px;line-height:1.4;
+    }
+    .chat-ta:focus{border-color:var(--border2);}
+    .chat-ta::placeholder{color:var(--gray);}
+    .chat-send{
+      width:28px;height:28px;flex-shrink:0;
+      background:var(--lime);border:none;color:#000;
+      font-size:13px;cursor:pointer;display:flex;align-items:center;justify-content:center;
+      transition:background .15s;
+    }
+    .chat-send:hover{background:#d4e83d;}
+    .chat-send:disabled{background:var(--muted);color:var(--gray);cursor:not-allowed;}
+
+    /* ── MODALS ── */
+    .modal-ov{
+      position:fixed;inset:0;background:rgba(0,0,0,.75);
+      display:flex;align-items:center;justify-content:center;
+      z-index:200;opacity:0;pointer-events:none;transition:opacity .2s;
+    }
+    .modal-ov.open{opacity:1;pointer-events:all;}
+    .modal{
+      background:var(--surface);border:1px solid var(--border2);
+      padding:22px;width:370px;max-width:92vw;
+    }
+    .modal-title{font-family:'Bebas Neue',sans-serif;font-size:22px;color:var(--white);margin-bottom:16px;letter-spacing:.04em;}
+    .modal-row{margin-bottom:12px;}
+    .modal-label{font-size:9px;font-family:'DM Mono',monospace;color:var(--gray);letter-spacing:.12em;margin-bottom:5px;}
+    .modal-inp{
+      width:100%;padding:7px 10px;
+      background:var(--black);border:1px solid var(--border);
+      color:var(--white);font-size:13px;outline:none;
+    }
+    .modal-inp:focus{border-color:var(--border2);}
+    .modal-btns{display:flex;gap:8px;margin-top:16px;justify-content:flex-end;}
+    .modal-note{font-size:11px;color:var(--gray);line-height:1.6;}
+
+    /* ── TOAST ── */
+    .toast{
+      position:fixed;bottom:18px;left:50%;transform:translateX(-50%);
+      background:var(--surface);border:1px solid var(--lime);color:var(--white);
+      padding:7px 18px;font-size:11px;font-family:'DM Mono',monospace;
+      z-index:999;opacity:0;transition:opacity .25s;pointer-events:none;white-space:nowrap;
+    }
+    .toast.show{opacity:1;}
+
+    /* ── NO KEY BANNER ── */
+    .nokey{
+      padding:6px 14px;background:rgba(229,62,62,.08);border-bottom:1px solid rgba(229,62,62,.2);
+      font-size:10px;color:#f08080;font-family:'DM Mono',monospace;text-align:center;display:none;
+    }
+    .nokey a{color:#f08080;text-decoration:underline;cursor:pointer;}
+
+    /* ── PRINT ── */
+    @media print{
+      .sidebar,.chat-panel,header,.record-bar,.action-bar,.nokey{display:none!important;}
+      .main{width:100%!important;}
+      .editor-scroll{overflow:visible!important;padding:20px!important;}
+      body{height:auto!important;overflow:visible!important;}
+      .recipe-title-inp{font-size:28px!important;}
+    }
+  </style>
+  <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2/dist/umd/supabase.min.js"></script>
+  <script src="../klaar-client.js"></script>
+</head>
+<body>
+
+<!-- NO KEY BANNER -->
+<div class="nokey" id="noKeyBanner">
+  ⚠ Geen Claude API-sleutel — AI-functies uitgeschakeld.
+  <a onclick="openSettings()">Instellen →</a>
+</div>
+
+<!-- SETTINGS MODAL -->
+<div class="modal-ov" id="modalSettings" onclick="if(event.target===this)closeSettings()">
+  <div class="modal" onclick="event.stopPropagation()">
+    <div class="modal-title">Instellingen</div>
+    <div class="modal-note" style="color:var(--lime);opacity:.8;">AI is ingeschakeld via Klaar — geen API key nodig.</div>
+    <div class="modal-btns">
+      <button class="btn-hdr" onclick="closeSettings()">Sluiten</button>
+    </div>
+    <div style="margin-top:18px;border-top:1px solid var(--border);padding-top:14px;">
+      <div class="modal-label" style="margin-bottom:8px;">DEMODATA</div>
+      <div style="font-size:10px;font-family:'DM Mono',monospace;color:var(--gray);margin-bottom:8px;">
+        Laadt 28 ingrediënten + 9 complete recepten om alle modules te testen.
+      </div>
+      <div style="display:flex;gap:8px;">
+        <button class="btn-hdr" onclick="loadDemoData()" style="font-size:10px;">↓ Laad demodata</button>
+        <button class="btn-hdr" onclick="clearAllData()" style="font-size:10px;color:var(--danger);">✕ Wis alle data</button>
+      </div>
+    </div>
+    <div style="margin-top:18px;border-top:1px solid var(--border);padding-top:14px;">
+      <div class="modal-label" style="margin-bottom:8px;">DIAGNOSTIEK</div>
+      <div style="display:flex;gap:8px;">
+        <button class="btn-hdr" onclick="exportErrorLog()" style="font-size:10px;">↓ Exporteer foutlog</button>
+        <button class="btn-hdr" onclick="clearErrorLog()" style="font-size:10px;color:var(--gray);">✕ Wis log</button>
+        <span id="errLogCount" style="font-size:10px;font-family:'DM Mono',monospace;color:var(--gray);align-self:center;"></span>
+      </div>
+    </div>
+  </div>
+</div>
+
+<!-- DELETE MODAL -->
+<div class="modal-ov" id="modalDelete" onclick="if(event.target===this)closeDelete()">
+  <div class="modal" onclick="event.stopPropagation()">
+    <div class="modal-title">Recept verwijderen?</div>
+    <p class="modal-note">Dit recept wordt permanent verwijderd. Kan niet ongedaan worden gemaakt.</p>
+    <div class="modal-btns">
+      <button class="btn-hdr" onclick="closeDelete()">Annuleer</button>
+      <button class="btn-hdr" style="border-color:var(--danger);color:var(--danger);" onclick="confirmDelete()">Verwijder</button>
+    </div>
+  </div>
+</div>
+
+<!-- HEADER -->
+<header>
+  <a href="../index.html" class="back-link">← Dashboard</a>
+  <div class="h-div"></div>
+  <a href="../index.html" class="logo">Klaar</a>
+  <span class="mod-badge">Recepten & Allergenen</span>
+  <div class="h-div"></div>
+  <div class="h-tabs">
+    <button class="h-tab active" id="tab-gerechten"  onclick="setView('gerechten')">🍽️ Gerechten</button>
+    <button class="h-tab"        id="tab-allergenen" onclick="setView('allergenen')">🧾 Allergenenkaart</button>
+  </div>
+  <div class="h-actions">
+    <button class="btn-hdr primary" onclick="newRecipe()">+ Nieuw recept</button>
+    <button class="btn-hdr" onclick="openSettings()">⚙</button>
+  </div>
+</header>
+
+<!-- BODY -->
+<div class="body">
+
+  <!-- SIDEBAR -->
+  <div class="sidebar">
+    <div class="sidebar-top">
+      <input class="sidebar-search" type="text" id="searchInp" placeholder="Zoek recept..." oninput="renderSidebar()">
+    </div>
+    <div class="sidebar-list" id="sidebarList"></div>
+  </div>
+
+  <!-- MAIN -->
+  <div class="main" id="mainArea">
+
+    <!-- VIEW: GERECHTEN -->
+    <div id="view-gerechten" style="flex:1;display:flex;flex-direction:column;overflow:hidden;">
+
+      <!-- GRID DASHBOARD -->
+      <div class="grid-view" id="gridView">
+        <div class="grid-toolbar">
+          <input type="text" class="grid-search" id="gridSearch"
+            placeholder="Zoek in recepten..." oninput="renderGrid()">
+          <button class="btn-hdr primary" onclick="newRecipe()">+ Nieuw recept</button>
+        </div>
+        <div class="grid-scroll">
+          <div id="recipeGrid"></div>
+        </div>
+      </div>
+
+      <!-- Recipe editor -->
+      <div class="editor" id="recipeEditor" style="display:none;">
+
+        <!-- Breadcrumb terug naar overzicht -->
+        <div class="editor-breadcrumb">
+          <button class="btn-back-grid" onclick="showGrid()">← Alle recepten</button>
+        </div>
+
+        <!-- Recording bar -->
+        <div class="record-bar">
+          <button class="btn-rec" id="btnRecord" onclick="toggleRecord()">🎙️ Inspreken</button>
+          <span class="rec-timer" id="recTimer">0:00</span>
+          <input type="text" class="prompt-inp" id="promptInp"
+            placeholder="Of typ een recept of opdracht hier..."
+            onkeydown="if(event.key==='Enter'){event.preventDefault();generateRecipe();}"
+            oninput="onPromptInput()">
+          <button class="btn-gen" id="btnGen" onclick="generateRecipe()">✦ Genereer</button>
+        </div>
+
+        <!-- Editor content -->
+        <div class="editor-scroll">
+
+          <input type="text" class="recipe-title-inp" id="recTitle" placeholder="Naam van het recept..." oninput="markDirty()">
+
+          <!-- Meta -->
+          <div class="meta-row">
+            <div class="meta-field">
+              <div class="meta-label">Voorbereiding</div>
+              <input type="text" class="meta-inp" id="mPrep" placeholder="15 min" oninput="markDirty()">
+            </div>
+            <div class="meta-field">
+              <div class="meta-label">Bereidingstijd</div>
+              <input type="text" class="meta-inp" id="mCook" placeholder="30 min" oninput="markDirty()">
+            </div>
+            <div class="meta-field">
+              <div class="meta-label">Porties</div>
+              <input type="number" class="meta-inp" id="mServings" placeholder="4" min="1" style="width:70px;" oninput="markDirty()">
+            </div>
+            <div class="meta-field">
+              <div class="meta-label">Type</div>
+              <select class="meta-sel" id="mType" onchange="markDirty()">
+                <option value="savoury">Hartig</option>
+                <option value="sweet">Zoet</option>
+                <option value="drink">Drank</option>
+                <option value="snack">Snack</option>
+                <option value="sauce">Saus/Dip</option>
+              </select>
+            </div>
+            <div class="meta-field">
+              <div class="meta-label">Categorie</div>
+              <select class="meta-sel" id="mFolder" onchange="markDirty()">
+                <option value="keuken">🍳 Keuken</option>
+                <option value="bar">🍹 Bar</option>
+                <option value="koffie">☕ Koffie</option>
+                <option value="archief">📦 Archief</option>
+              </select>
+            </div>
+          </div>
+
+          <!-- Kostprijs (gevoed door ingrediëntenbibliotheek) -->
+          <div class="cost-bar" id="costBar" style="display:none;">
+            <span class="clabel">Kostprijs recept</span>
+            <span class="cv" id="costTotal">€ —</span>
+            <span class="csep">·</span>
+            <span class="clabel">per portie</span>
+            <span class="cv" id="costPer">€ —</span>
+            <span class="cmatch" id="costMatch"></span>
+          </div>
+
+          <!-- Ingredients -->
+          <div class="editor-sec">
+            <div class="sec-hdr">Ingrediënten <button onclick="addIngredient()">+ Toevoegen</button></div>
+            <div id="ingList"></div>
+          </div>
+
+          <!-- Steps -->
+          <div class="editor-sec">
+            <div class="sec-hdr">Bereidingsstappen <button onclick="addStep()">+ Stap</button></div>
+            <div id="stepList"></div>
+          </div>
+
+          <!-- Notes -->
+          <div class="editor-sec">
+            <div class="sec-hdr">Tips & Notities</div>
+            <textarea class="notes-ta" id="recNotes" placeholder="Variaties, tips, bewaaradviezen..." rows="2" oninput="markDirty()"></textarea>
+          </div>
+
+          <!-- Allergens -->
+          <div class="editor-sec">
+            <div class="sec-hdr">
+              Allergenen (EU-14)
+              <button onclick="detectAllergens()">↺ Herdetecteer</button>
+            </div>
+            <div class="atag-list" id="atagList">
+              <span class="no-atag">Nog niet gedetecteerd — sla op of klik Herdetecteer</span>
+            </div>
+            <div class="mod-link"><span>→</span> zichtbaar in de Allergenenkaart van alle modules</div>
+          </div>
+
+        </div><!-- /editor-scroll -->
+
+        <!-- Action bar -->
+        <div class="action-bar">
+          <div class="unsaved-dot" id="unsavedDot"></div>
+          <button class="btn-act save" onclick="saveRecipe()">💾 Opslaan</button>
+          <button class="btn-act" onclick="printRecipe()">🖨️ Print</button>
+          <button class="btn-act danger" onclick="askDelete()">Verwijder</button>
+          <button class="btn-status" id="btnStatus" onclick="toggleStatus()">● Concept</button>
+        </div>
+
+      </div><!-- /editor -->
+    </div><!-- /view-gerechten -->
+
+    <!-- VIEW: ALLERGENENKAART -->
+    <div id="view-allergenen" style="flex:1;display:none;flex-direction:column;overflow:hidden;">
+      <div class="matrix-view">
+        <div class="matrix-filter" id="matrixFilter"></div>
+        <div class="matrix-scroll"><div id="matrixContent"></div></div>
+        <div class="matrix-legend">
+          <div class="legend-item"><div class="legend-dot-yes"></div>Aanwezig</div>
+          <div class="legend-item"><div class="legend-dot-no"></div>Afwezig</div>
+          <span style="margin-left:auto;font-size:10px;color:var(--gray);font-family:'DM Mono',monospace;">Klik op gerecht om te openen</span>
+        </div>
+      </div>
+    </div>
+
+  </div><!-- /main -->
+
+  <!-- CHAT PANEL -->
+  <div class="chat-panel">
+    <div class="chat-hdr">
+      <span class="chat-hdr-title">AI Assistent</span>
+      <span class="chat-ctx" id="chatCtx">— geen recept open</span>
+    </div>
+    <div class="chat-msgs" id="chatMsgs">
+      <div class="chat-msg sys">Open een recept om mee te sparren, of stel een algemene vraag.</div>
+    </div>
+    <div class="chat-sugs" id="chatSugs"></div>
+    <div class="chat-input-row">
+      <textarea class="chat-ta" id="chatInp" placeholder="Vraag of spar..."
+        onkeydown="chatKeyDown(event)" oninput="chatAutoResize(this)" rows="1"></textarea>
+      <button class="chat-send" id="chatSendBtn" onclick="chatSend()">↑</button>
+    </div>
+  </div>
+
+</div><!-- /body -->
+
+<div class="toast" id="toast"></div>
+
+<script>
+// ═══════════════════════════════════════════════════
+// DATA & CONSTANTS
+// ═══════════════════════════════════════════════════
+
+const EU14 = [
+  { code:'G',   name:'Gluten',       icon:'🌾' },
+  { code:'S',   name:'Schaaldieren', icon:'🦐' },
+  { code:'E',   name:'Eieren',       icon:'🥚' },
+  { code:'V',   name:'Vis',          icon:'🐟' },
+  { code:'P',   name:"Pinda's",      icon:'🥜' },
+  { code:'So',  name:'Soja',         icon:'🫘' },
+  { code:'M',   name:'Melk',         icon:'🥛' },
+  { code:'N',   name:'Noten',        icon:'🌰' },
+  { code:'Sel', name:'Selderij',     icon:'🌿' },
+  { code:'Mo',  name:'Mosterd',      icon:'🟡' },
+  { code:'Se',  name:'Sesam',        icon:'🫚' },
+  { code:'Su',  name:'Sulfieten',    icon:'⚗️' },
+  { code:'Lu',  name:'Lupine',       icon:'🌸' },
+  { code:'W',   name:'Weekdieren',   icon:'🦪' },
+];
+
+const FOLDERS = [
+  { id:'keuken', name:'Keuken', icon:'🍳' },
+  { id:'bar',    name:'Bar',    icon:'🍹' },
+  { id:'koffie', name:'Koffie', icon:'☕' },
+  { id:'archief',name:'Archief',icon:'📦' },
+];
+
+// ═══════════════════════════════════════════════════
+// FOUTLOGGER — automatisch bijhouden voor debugging
+// ═══════════════════════════════════════════════════
+
+const ERRLOG_KEY = 'klaar_error_log';
+const ERRLOG_MAX = 150;
+
+function logError(context, err, extra = {}) {
+  try {
+    const log  = JSON.parse(localStorage.getItem(ERRLOG_KEY) || '[]');
+    const msg  = String(err?.message || err || 'onbekend').slice(0, 200);
+    const fp   = `${context}::${msg.slice(0, 80)}`;
+    const existing = log.find(e => e.fp === fp);
+    if (existing) {
+      existing.count = (existing.count || 1) + 1;
+      existing.last  = new Date().toISOString();
+    } else {
+      log.unshift({
+        fp, context,
+        msg,
+        stack: String(err?.stack || '').slice(0, 600),
+        module: 'recept-studio',
+        ua: navigator.userAgent.slice(0, 120),
+        count: 1,
+        first: new Date().toISOString(),
+        last:  new Date().toISOString(),
+        ...extra
+      });
+    }
+    localStorage.setItem(ERRLOG_KEY, JSON.stringify(log.slice(0, ERRLOG_MAX)));
+  } catch(_) { /* logger mag nooit zelf crashen */ }
+}
+
+// Vang globale JS-fouten en onverwerkte promises
+window.addEventListener('error', e => {
+  logError('js-global', e.error || e.message, { file: e.filename, line: e.lineno });
+});
+window.addEventListener('unhandledrejection', e => {
+  logError('promise', e.reason);
+});
+
+function exportErrorLog() {
+  const log = JSON.parse(localStorage.getItem(ERRLOG_KEY) || '[]');
+  if (!log.length) { showToast('Geen fouten geregistreerd 👍'); return; }
+  const lines = [
+    `# Klaar Foutlog — ${new Date().toLocaleDateString('nl-NL')}`,
+    `Totaal unieke fouten: ${log.length}`,
+    '',
+    ...log.map((e, i) =>
+      `## ${i+1}. [${e.context}] ${e.msg}\n` +
+      `- Aantal keren: ${e.count}\n` +
+      `- Eerste: ${e.first?.slice(0,19)}\n` +
+      `- Laatste: ${e.last?.slice(0,19)}\n` +
+      `- Module: ${e.module}\n` +
+      (e.stack ? `- Stack:\n\`\`\`\n${e.stack}\n\`\`\`\n` : '')
+    )
+  ].join('\n');
+  const blob = new Blob([lines], { type: 'text/plain' });
+  const url  = URL.createObjectURL(blob);
+  const a    = document.createElement('a');
+  a.href     = url;
+  a.download = `klaar-foutlog-${new Date().toISOString().slice(0,10)}.txt`;
+  a.click();
+  URL.revokeObjectURL(url);
+  showToast(`${log.length} fout${log.length > 1 ? 'meldingen' : 'melding'} geëxporteerd`);
+}
+
+function clearErrorLog() {
+  localStorage.removeItem(ERRLOG_KEY);
+  showToast('Foutlog gewist');
+}
+
+// ═══════════════════════════════════════════════════
+// DEMODATA
+// ═══════════════════════════════════════════════════
+
+function clearAllData() {
+  if (!confirm('Weet je zeker dat je ALLE recepten en ingrediënten wilt wissen?')) return;
+  localStorage.removeItem('klaar_recipes');
+  localStorage.removeItem('klaar_ingredienten');
+  recipes = [];
+  renderSidebar(); renderGrid(); showGrid();
+  showToast('Alle data gewist');
+}
+
+function loadDemoData() {
+  // ── Ingrediëntenbibliotheek ──────────────────────────────────────────────
+  const ing = [
+    // Vlees & Vis
+    { id:'ing_01', naam:'kipfilet',              inkoopprijs:6.50,  eenheid:'kg',   leverancier:'Hanos',           categorie:'vlees' },
+    { id:'ing_02', naam:'rundergehakt',           inkoopprijs:9.20,  eenheid:'kg',   leverancier:'Hanos',           categorie:'vlees' },
+    { id:'ing_03', naam:'kippendijen (uitgebeend)',inkoopprijs:4.80, eenheid:'kg',   leverancier:'Hanos',           categorie:'vlees' },
+    { id:'ing_04', naam:'zalm filet',             inkoopprijs:14.50, eenheid:'kg',   leverancier:'Hanos',           categorie:'vis'   },
+    { id:'ing_05', naam:'kabeljauw filet',        inkoopprijs:13.20, eenheid:'kg',   leverancier:'Bidfood',         categorie:'vis'   },
+    { id:'ing_06', naam:'spek (gerookt, blokjes)',inkoopprijs:5.60,  eenheid:'kg',   leverancier:'Hanos',           categorie:'vlees' },
+    // Zuivel & Eieren
+    { id:'ing_07', naam:'slagroom 35%',           inkoopprijs:2.20,  eenheid:'l',    leverancier:'FrieslandCampina',categorie:'zuivel'},
+    { id:'ing_08', naam:'boter (ongezouten)',      inkoopprijs:8.40,  eenheid:'kg',   leverancier:'FrieslandCampina',categorie:'zuivel'},
+    { id:'ing_09', naam:'crème fraîche',          inkoopprijs:3.60,  eenheid:'kg',   leverancier:'Hanos',           categorie:'zuivel'},
+    { id:'ing_10', naam:'parmigiano reggiano',    inkoopprijs:19.50, eenheid:'kg',   leverancier:'Bidfood',         categorie:'zuivel'},
+    { id:'ing_11', naam:'volle melk',             inkoopprijs:1.10,  eenheid:'l',    leverancier:'FrieslandCampina',categorie:'zuivel'},
+    { id:'ing_12', naam:'eieren',                 inkoopprijs:0.26,  eenheid:'stuk', leverancier:'Hanos',           categorie:'zuivel'},
+    // Groenten
+    { id:'ing_13', naam:'ui (geel)',              inkoopprijs:0.75,  eenheid:'kg',   leverancier:'Hagé',            categorie:'groenten'},
+    { id:'ing_14', naam:'knoflook',               inkoopprijs:4.50,  eenheid:'kg',   leverancier:'Hanos',           categorie:'groenten'},
+    { id:'ing_15', naam:'wortel',                 inkoopprijs:0.90,  eenheid:'kg',   leverancier:'Hagé',            categorie:'groenten'},
+    { id:'ing_16', naam:'bleekselderij',          inkoopprijs:1.50,  eenheid:'kg',   leverancier:'Hagé',            categorie:'groenten'},
+    { id:'ing_17', naam:'tomaten (pruim)',         inkoopprijs:2.20,  eenheid:'kg',   leverancier:'Hagé',            categorie:'groenten'},
+    { id:'ing_18', naam:'paprika (rood)',          inkoopprijs:2.70,  eenheid:'kg',   leverancier:'Hagé',            categorie:'groenten'},
+    { id:'ing_19', naam:'aardappelen (vastkokend)',inkoopprijs:0.85,  eenheid:'kg',   leverancier:'Hagé',            categorie:'groenten'},
+    { id:'ing_20', naam:'witte asperges (klasse 1)',inkoopprijs:9.20, eenheid:'kg',  leverancier:'Hagé',            categorie:'groenten'},
+    { id:'ing_21', naam:'spinazie (baby, gewassen)',inkoopprijs:5.20, eenheid:'kg',  leverancier:'Hanos',           categorie:'groenten'},
+    // Droog & Pantry
+    { id:'ing_22', naam:'bloem (patent)',          inkoopprijs:0.68,  eenheid:'kg',   leverancier:'Hanos',           categorie:'droog' },
+    { id:'ing_23', naam:'pasta penne (droog)',     inkoopprijs:1.50,  eenheid:'kg',   leverancier:'Hanos',           categorie:'droog' },
+    { id:'ing_24', naam:'tomatenpuree',            inkoopprijs:2.90,  eenheid:'kg',   leverancier:'Hanos',           categorie:'droog' },
+    { id:'ing_25', naam:'olijfolie extra vergine', inkoopprijs:8.60,  eenheid:'l',    leverancier:'Bidfood',         categorie:'olie'  },
+    { id:'ing_26', naam:'kippenfond (donker)',      inkoopprijs:4.80,  eenheid:'l',    leverancier:'Hanos',           categorie:'fond'  },
+    { id:'ing_27', naam:'witte wijn (keuken)',      inkoopprijs:3.40,  eenheid:'l',    leverancier:'Bidfood',         categorie:'drank' },
+    { id:'ing_28', naam:'sojasaus',                inkoopprijs:3.80,  eenheid:'l',    leverancier:'Hanos',           categorie:'saus'  },
+    // Bar & Koffie
+    { id:'ing_29', naam:'espressobonen (blend)',    inkoopprijs:13.50, eenheid:'kg',   leverancier:'Van Egmond',      categorie:'koffie'},
+    { id:'ing_30', naam:'halfvolle melk',           inkoopprijs:0.98,  eenheid:'l',    leverancier:'FrieslandCampina',categorie:'zuivel'},
+    { id:'ing_31', naam:'citroensap (vers)',         inkoopprijs:1.80,  eenheid:'l',    leverancier:'Hagé',            categorie:'fruit' },
+    { id:'ing_32', naam:'suikersiroop (1:1)',        inkoopprijs:2.50,  eenheid:'l',    leverancier:'Hanos',           categorie:'drank' },
+  ];
+
+  // ── Recepten ─────────────────────────────────────────────────────────────
+  const ts = (offset = 0) => new Date(Date.now() - offset * 86400000).toISOString();
+
+  const rec = [
+    // 1. Gegrilde kipfilet
+    {
+      id:'demo_rec_01', title:'Gegrilde kipfilet met knoflookjus',
+      folder:'keuken', status:'complete', type:'savoury', createdAt: ts(8),
+      allergens:[{ code:'M', name:'Melk', maybe:false }],
+      recipe:{
+        prep:'20 min', cook:'18 min', servings:4,
+        ingredients:[
+          { amount:'720g',  name:'kipfilet' },
+          { amount:'30g',   name:'boter (ongezouten)' },
+          { amount:'20g',   name:'knoflook' },
+          { amount:'200ml', name:'kippenfond (donker)' },
+          { amount:'60ml',  name:'witte wijn (keuken)' },
+          { amount:'15ml',  name:'olijfolie extra vergine' },
+        ],
+        steps:[
+          'MISE EN PLACE: Kipfilet 30 min voor bereiding uit de koeling. Dep droog met keukenpapier. Knoflook fijnhakken (brunoise). Weeg fond en wijn af.',
+          'BEREIDING: Grillpan op 220°C. Besmeert kipfilet licht met olijfolie, zout en peper. Gril 4 min per kant zonder bewegen voor grillmerken. Kerntemperatuur 75°C.',
+          'JUS: Knoflook 60 sec zweten in boter (niet bruneren). Deglaceren met witte wijn, 1 min reduceren. Kippenfond erbij, 5 min reduceren tot licht gebonden consistentie. Op smaak met zout.',
+          'AFWERKING & SERVICE: Kip 4 min laten rusten onder folie. Schuinsnijden (45°). Jus door passeer­zeef over kip, direct serveren.',
+        ],
+        notes:'Prep: portioneer en marineer tot 24u van tevoren. Houdbaar gekookt: 3 dgn bij 2°C. Variatie: voeg 30g tarragon toe aan jus voor kipfilet à l\'estragon.',
+      },
+    },
+
+    // 2. Zalm op vel
+    {
+      id:'demo_rec_02', title:'Zalm op vel — citroencrème',
+      folder:'keuken', status:'complete', type:'savoury', createdAt: ts(6),
+      allergens:[
+        { code:'V', name:'Vis',  maybe:false },
+        { code:'M', name:'Melk', maybe:false },
+        { code:'Su', name:'Sulfieten', maybe:true },
+      ],
+      recipe:{
+        prep:'10 min', cook:'12 min', servings:4,
+        ingredients:[
+          { amount:'800g',  name:'zalm filet' },
+          { amount:'150g',  name:'crème fraîche' },
+          { amount:'80ml',  name:'slagroom 35%' },
+          { amount:'60ml',  name:'witte wijn (keuken)' },
+          { amount:'40ml',  name:'citroensap (vers)' },
+          { amount:'25g',   name:'boter (ongezouten)' },
+          { amount:'15ml',  name:'olijfolie extra vergine' },
+        ],
+        steps:[
+          'MISE EN PLACE: Zalm in 4 moten van 200g portioneren. Vel inkerven (om opkrullen te voorkomen). Dep droog. Slagroom + crème fraîche afwegen.',
+          'BEREIDING: Koekenpan op 180°C. Olijfolie erin. Zalm op vel, 5-6 min zonder bewegen tot vel crispy is. Omdraaien, 2 min. Kerntemperatuur 52°C voor medium. Uit de pan, warm houden.',
+          'SAUS: Zelfde pan, boter uitsmelten. Witte wijn erbij, 30 sec. Slagroom + crème fraîche, 3 min zachtjes inkoken. Citroensap erbij, op smaak brengen. Niet meer laten koken.',
+          'SERVICE: Saus direct op bord, zalm (vel omhoog) erop plaatsen. Garneren met dille of citroenzeste.',
+        ],
+        notes:'Prep: zalm max 4u voor service portioneren en koud bewaren. Saus apart opslaan, max 2 dgn bij 2°C. Variatie: voeg 30g kappertjes toe aan saus.',
+      },
+    },
+
+    // 3. Pasta bolognese (draft)
+    {
+      id:'demo_rec_03', title:'Pasta bolognese — klassiek',
+      folder:'keuken', status:'draft', type:'savoury', createdAt: ts(4),
+      allergens:[
+        { code:'G',  name:'Gluten', maybe:false },
+        { code:'M',  name:'Melk',   maybe:false },
+      ],
+      recipe:{
+        prep:'25 min', cook:'90 min', servings:6,
+        ingredients:[
+          { amount:'500g',  name:'pasta penne (droog)' },
+          { amount:'600g',  name:'rundergehakt' },
+          { amount:'160g',  name:'ui (geel)' },
+          { amount:'20g',   name:'knoflook' },
+          { amount:'120g',  name:'wortel' },
+          { amount:'80g',   name:'bleekselderij' },
+          { amount:'80g',   name:'tomatenpuree' },
+          { amount:'200ml', name:'witte wijn (keuken)' },
+          { amount:'400g',  name:'tomaten (pruim)' },
+          { amount:'80g',   name:'parmigiano reggiano' },
+          { amount:'30ml',  name:'olijfolie extra vergine' },
+        ],
+        steps:[
+          'MISE EN PLACE: Ui, wortel en bleekselderij in brunoise (3mm). Knoflook fijnhakken. Tomaten ontpitten en in blokjes. Parmigiano raspen.',
+          'SOFFRITTO: Olijfolie in ruime pan op 160°C. Ui 5 min zweten tot glazig. Wortel en selderij erbij, 4 min. Knoflook, 1 min.',
+          'VLEES & WIJN: Gehakt in pan, op hoog vuur in stukken breken. Bruneren 6-8 min. Tomatenpuree 2 min meebakken. Witte wijn erbij, volledig laten verdampen.',
+          'SUDDEREN: Tomaten erbij, zout. Deksel schuin op, 75 min op laag vuur sudderen. Regelmatig roeren. Saus moet dik en geglazuurd zijn.',
+          'PASTA: Royaal gezouten water (10g/l) aan de kook. Pasta koken tot al dente (1-2 min korter dan pakket). Uitlek­water bewaren. Pasta door saus mengen met schep kookwater.',
+          'SERVICE: In voorverwarmde kom. Parmigiano per tafel aan tafel raspen.',
+        ],
+        notes:'Prep: saus 2-3 dgn van tevoren maken (wordt beter). Houdbaar 4 dgn bij 2°C, 3 mnd diepvries. Pas pasta koken bij service.',
+      },
+    },
+
+    // 4. Aspergesoep
+    {
+      id:'demo_rec_04', title:'Crème van witte asperges',
+      folder:'keuken', status:'complete', type:'savoury', createdAt: ts(5),
+      allergens:[
+        { code:'M', name:'Melk', maybe:false },
+      ],
+      recipe:{
+        prep:'20 min', cook:'30 min', servings:6,
+        ingredients:[
+          { amount:'1000g', name:'witte asperges (klasse 1)' },
+          { amount:'300ml', name:'slagroom 35%' },
+          { amount:'600ml', name:'kippenfond (donker)' },
+          { amount:'60g',   name:'boter (ongezouten)' },
+          { amount:'120g',  name:'ui (geel)' },
+          { amount:'20ml',  name:'citroensap (vers)' },
+        ],
+        steps:[
+          'MISE EN PLACE: Asperges schillen (royaal, ook onderkant). Houterige onderstukken (3cm) afsnijden — bewaren voor de fond. Ui snipperen.',
+          'FOND OPTREKKEN: Asperge-afval 15 min trekken in 400ml water met zout. Zeven, bewaren.',
+          'SAUTEREN: Boter in soeppan. Ui glazig zweten. Asperges in stukken erbij, 5 min zachtjes meewarmen.',
+          'KOKEN: Kippenfond + asperge-fond erbij. 20-25 min zacht koken tot asperges volledig gaar. Niet te lang — kleur bewaart.',
+          'BLENDEN & PASSEREN: Staafmixer, vervolgens door fijne zeef passen voor fluwelen textuur. Slagroom erbij op laag vuur. Op smaak: zout, witte peper, citroensap.',
+          'SERVICE: Verwarmde kommen. Garneren met gereserveerde aspergestukjes (apart blancheerd, 4 min) en een scheutje slagroom.',
+        ],
+        notes:'Prep: soep volledig maken tot voor het toevoegen van slagroom. 2 dgn houdbaar bij 2°C. Seizoen: april–juni. Variatie: voeg 50g gerookte zalm toe bij service.',
+      },
+    },
+
+    // 5. Aardappelpuree
+    {
+      id:'demo_rec_05', title:'Aardappelpuree (grande crème)',
+      folder:'keuken', status:'complete', type:'savoury', createdAt: ts(3),
+      allergens:[
+        { code:'M', name:'Melk', maybe:false },
+      ],
+      recipe:{
+        prep:'10 min', cook:'25 min', servings:6,
+        ingredients:[
+          { amount:'1200g', name:'aardappelen (vastkokend)' },
+          { amount:'180g',  name:'boter (ongezouten)' },
+          { amount:'200ml', name:'volle melk' },
+          { amount:'80ml',  name:'slagroom 35%' },
+        ],
+        steps:[
+          'MISE EN PLACE: Aardappelen schillen, in gelijkmatige kwarten snijden (±4cm). Melk en slagroom samen opwarmen (niet laten koken), warm houden.',
+          'KOKEN: Aardappelen in koud, royaal gezouten water opzetten. Na kookpunt 20 min koken tot gaar (mes glijdt er zonder weerstand doorheen).',
+          'PUREREN: Afgieten, 2 min terugzetten op laag vuur om te drogen (stoom moet wegtrekken). Door pureepers of molinex — nooit blender (wordt lijmig).',
+          'MONTEREN: Koude boter in blokjes erdoor werken op laag vuur. Warme melk-slagroom beetje bij beetje erdoor kloppen tot gewenste dikte. Op smaak met zout, witte peper, nootmuskaat.',
+          'SERVICE: Direct serveren of au bain-marie warm houden max 45 min. Klop vlak voor service nog even door.',
+        ],
+        notes:'Houdbaar: 2 dgn bij 2°C. Bij opwarmen altijd scheutje warme melk toevoegen. Variatie: truffelboter, geroosterde knoflook, bieslook.',
+      },
+    },
+
+    // 6. Knoflookboter
+    {
+      id:'demo_rec_06', title:'Knoflookboter voor service',
+      folder:'keuken', status:'complete', type:'sauce', createdAt: ts(2),
+      allergens:[
+        { code:'M', name:'Melk', maybe:false },
+      ],
+      recipe:{
+        prep:'15 min', cook:'0 min', servings:20,
+        ingredients:[
+          { amount:'500g',  name:'boter (ongezouten)' },
+          { amount:'40g',   name:'knoflook' },
+          { amount:'20ml',  name:'citroensap (vers)' },
+        ],
+        steps:[
+          'MISE EN PLACE: Boter op kamertemperatuur (zacht maar niet gesmolten). Knoflook zo fijn mogelijk hakken of met zout wrijven tot pasta.',
+          'MENGEN: Boter loskloppen. Knoflookpasta, citroensap, zout en peper erdoor mengen. Gelijkmatig verdelen.',
+          'ROLLEN: Op plasticfolie rollen tot een cylinder (Ø4cm). Strak opwikkelen, uiteinden dichtdraaien.',
+          'BEWAREN & SERVICE: 2u koelen tot stevig. In plakken van 1cm snijden per order. Direct op warm gerecht of warm brood.',
+        ],
+        notes:'Houdbaar: 7 dgn gekoeld, 3 mnd diepvries. Variaties: peterselie, bieslook, dragon, ansjovis. Yield: ±20 plakken van 25g.',
+      },
+    },
+
+    // 7. Kippensoep base (bouillon)
+    {
+      id:'demo_rec_07', title:'Spek & ei salade — bistro',
+      folder:'keuken', status:'complete', type:'savoury', createdAt: ts(1),
+      allergens:[
+        { code:'E',  name:'Eieren', maybe:false },
+        { code:'G',  name:'Gluten', maybe:true  },
+        { code:'M',  name:'Melk',   maybe:false },
+      ],
+      recipe:{
+        prep:'15 min', cook:'12 min', servings:4,
+        ingredients:[
+          { amount:'200g',  name:'spek (gerookt, blokjes)' },
+          { amount:'8 stuk',name:'eieren' },
+          { amount:'60g',   name:'parmigiano reggiano' },
+          { amount:'40ml',  name:'olijfolie extra vergine' },
+          { amount:'120g',  name:'spinazie (baby, gewassen)' },
+          { amount:'20ml',  name:'citroensap (vers)' },
+        ],
+        steps:[
+          'MISE EN PLACE: Water voor pocheren opzetten (3-4 cm diep, pH-neutraal water + scheutje azijn). Spinazie wassen en drogen. Parmigiano schaven. Spek afwegen.',
+          'SPEK: Spekblokjes droog uitbakken in koekenpan op 160°C tot krokant en uitgebakken. Uit de pan, op keuken­papier.',
+          'EIEREN POCHEREN: Water 85°C (niet kokend). Eieren één voor één in een kommetje kraken. In malstroom laten glijden. 3 min voor vloeibaar eigeel. Schep op keukenpapier.',
+          'DRESSING: Aanbaksel spek deglaceren met citroensap. Olijfolie erbij, emulgeren. Op smaak met zout en peper.',
+          'SERVICE: Spinazie met dressing marineren (30 sec). Op bord leggen, gepocheerd ei erop, spekjes, geschaafde parmigiano. Direct serveren.',
+        ],
+        notes:'Eieren van tevoren pocheren: in ijswater bewaren, max 24u. Opwarmen in heet water (80°C) 60 sec voor service.',
+      },
+    },
+
+    // 8. Espresso (koffie module)
+    {
+      id:'demo_rec_08', title:'Espresso — standaard extractie',
+      folder:'koffie', status:'complete', type:'drink', createdAt: ts(7),
+      allergens:[],
+      recipe:{
+        prep:'2 min', cook:'0 min', servings:1,
+        ingredients:[
+          { amount:'18g',   name:'espressobonen (blend)' },
+        ],
+        steps:[
+          'MALEN: Bonen vers malen, maalgraad fijn. Kalibreer dagelijks: extractietijd 25-30 sec bij 18g dosis.',
+          'TAMPEN: Porte-filter egaal indrukken met 15-20kg druk. Horizontaal houden.',
+          'EXTRACTIE: Machine op 93°C, 9 bar. Extractietijd 25-30 sec. Yield: 36ml ± 5ml. Kleur: hazelnootbruin met goudkleurige crema.',
+          'SERVICE: Voorverwarmde espressokop. Direct serveren — espresso degradeert binnen 30 sec.',
+        ],
+        notes:'Kalibreer elke ochtend met eerste shots. Variabelen: maalgraad, dosis, tamper­druk. Houdbaar gemaald: max 2u (geur­verlies).',
+      },
+    },
+
+    // 9. Flat White
+    {
+      id:'demo_rec_09', title:'Flat White',
+      folder:'koffie', status:'complete', type:'drink', createdAt: ts(7),
+      allergens:[
+        { code:'M', name:'Melk', maybe:false },
+      ],
+      recipe:{
+        prep:'3 min', cook:'0 min', servings:1,
+        ingredients:[
+          { amount:'18g',   name:'espressobonen (blend)' },
+          { amount:'160ml', name:'halfvolle melk' },
+        ],
+        steps:[
+          'ESPRESSO: Dubbele ristretto trekken (18g in, 28ml out, 20-22 sec). In voorverwarmde 160ml kop.',
+          'MELK STOMEN: Melk koud aangieten (4°C). Stoomstaf net onder oppervlak, 30-45 graden hoek. Stoom tot 60-65°C (niet hoger — melk verbrandt). Microbel-textuur: zijdeglad, niet droog schuim.',
+          'INSCHENKEN: Kop op werkblad kantelen. Melk vanuit hoogte (20cm) inschenken voor laminaire stroom. Rosettepatroon of hart maken in laatste 30ml.',
+          'SERVICE: Direct serveren, lepeltje naast kop. Geen suiker op tafel — flat white is balanced zonder toevoeging.',
+        ],
+        notes:'Temperatuur melk controleren met thermometer. Boven 70°C verliest melk zoetheid. Variatie: oatmilk (60°C max, anders schifting).',
+      },
+    },
+  ];
+
+  // Bestaande data ophalen en samenvoegen (geen duplicaten overschrijven)
+  const bestaandeIng = JSON.parse(localStorage.getItem('klaar_ingredienten') || '[]');
+  const bestaandeRec = JSON.parse(localStorage.getItem('klaar_recipes') || '[]');
+
+  const ingIds = new Set(bestaandeIng.map(i => i.id));
+  const recIds = new Set(bestaandeRec.map(r => r.id));
+
+  const nieuweIng = ing.filter(i => !ingIds.has(i.id));
+  const nieuweRec = rec.filter(r => !recIds.has(r.id));
+
+  localStorage.setItem('klaar_ingredienten', JSON.stringify([...bestaandeIng, ...nieuweIng]));
+
+  // Recepten vooraan invoegen
+  const allRec = [...nieuweRec, ...bestaandeRec];
+  recipes = allRec;
+  localStorage.setItem('klaar_recipes', JSON.stringify(allRec));
+
+  renderSidebar();
+  renderGrid();
+  closeSettings();
+  showToast(`✓ ${nieuweIng.length} ingrediënten + ${nieuweRec.length} recepten geladen`);
+}
+
+// ═══════════════════════════════════════════════════
+// DATA LADEN + MIGRATIE (oud → nieuw formaat)
+// ═══════════════════════════════════════════════════
+
+let recipes       = JSON.parse(localStorage.getItem('klaar_recipes')        || '[]');
+let customFolders = JSON.parse(localStorage.getItem('klaar_folders_custom') || '[]');
+let folderState   = JSON.parse(localStorage.getItem('klaar_folder_state')   || '{}');
+
+/**
+ * Normaliseert één ingrediënt-object naar {amount, name}.
+ * Behandelt: string-formaat, afwijkende keys (naam/ingredient/item), of volledige tekst in 'amount'.
+ */
+function normalizeIngredient(i) {
+  if (typeof i === 'string') {
+    // "600g Rundvlees" of "600 g rundvlees" → {amount, name}
+    const m = i.match(/^([\d,.]+\s*(?:g|kg|ml|l|cl|el|tl|dl|stuk(?:s|jes?)?|teentje(?:s)?|blik(?:je)?|pak(?:je)?|zakje|snuf(?:je)?|mL|liter|stuks?)\.?)\s+([\s\S]+)/i);
+    return m ? { amount: m[1].trim(), name: m[2].trim() } : { amount: '', name: i.trim() };
+  }
+  // Haal naam op via alle bekende keys
+  const name   = i.name || i.naam || i.ingredient || i.ingrediënt || i.item || '';
+  const amount = i.amount || i.hoeveelheid || i.qty || i.quantity || '';
+  // Als naam leeg is maar amount een lange string is, probeer te splitsen
+  if (!name.trim() && amount && amount.length > 4) {
+    const m = String(amount).match(/^([\d,.]+\s*(?:g|kg|ml|l|cl|el|tl|dl|stuk(?:s|jes?)?|teentje(?:s)?|blik(?:je)?|pak(?:je)?|zakje|snuf(?:je)?|mL|liter|stuks?)\.?)\s+([\s\S]+)/i);
+    if (m) return { amount: m[1].trim(), name: m[2].trim() };
+  }
+  return { amount: String(amount).trim(), name: String(name).trim() };
+}
+
+/**
+ * Migreert recepten van het OUDE formaat (ingrediënten etc. op topniveau)
+ * naar het NIEUWE formaat (alles in r.recipe).
+ * Normaliseert ook ingredient-objecten met afwijkende keys.
+ * Veilig om meerdere keren te draaien.
+ */
+function migrateRecipes() {
+  let changed = 0;
+  recipes = recipes.map(r => {
+    let dirty = false;
+
+    // ── Stap 1: wrapper-migratie (oud formaat had ingrediënten op topniveau) ──
+    const hasOldTop = Array.isArray(r.ingredients) ||
+                      Array.isArray(r.steps) ||
+                      (r.prep !== undefined && !r.recipe) ||
+                      (r.cook !== undefined && !r.recipe);
+
+    if (hasOldTop) {
+      r = {
+        id:        r.id,
+        title:     r.title     || '',
+        folder:    r.folder    || 'keuken',
+        status:    r.status    || 'draft',
+        type:      r.type      || 'savoury',
+        allergens: r.allergens || [],
+        recipe: {
+          prep:        r.prep        || r.recipe?.prep        || '',
+          cook:        r.cook        || r.recipe?.cook        || '',
+          servings:    r.servings    || r.recipe?.servings    || 4,
+          ingredients: r.ingredients || r.recipe?.ingredients || [],
+          steps:       r.steps       || r.recipe?.steps       || [],
+          notes:       r.notes       || r.recipe?.notes       || '',
+        },
+        createdAt: r.createdAt  || new Date().toISOString(),
+        updatedAt: r.updatedAt  || new Date().toISOString(),
+      };
+      dirty = true;
+    }
+
+    // ── Stap 2: ingrediënten normaliseren (foute keys of string-formaat) ──
+    const ings = r.recipe?.ingredients || [];
+    if (ings.length > 0) {
+      const normalized = ings.map(normalizeIngredient);
+      // Controleer of er iets veranderd is
+      const changed = normalized.some((n, i) =>
+        n.name !== (ings[i]?.name || '') || n.amount !== (ings[i]?.amount || '')
+      );
+      if (changed) {
+        r.recipe.ingredients = normalized;
+        dirty = true;
+      }
+    }
+
+    // ── Stap 3: folder sanity ──
+    if (!r.folder || typeof r.folder !== 'string') {
+      r.folder = 'keuken';
+      dirty = true;
+    }
+
+    if (dirty) changed++;
+    return r;
+  });
+
+  if (changed > 0) {
+    saveRecipes();
+    logError('migration-info', `Gemigreerd: ${changed} recept(en)`, { severity: 'info' });
+    console.info(`[Klaar] ${changed} recept(en) gemigreerd/genormaliseerd.`);
+  }
+  return changed;
+}
+
+let activeId      = null;
+let isDirty       = false;
+let currentView   = 'gerechten';
+let matrixFilter  = 'all';
+
+// Recording state
+let mediaRec      = null;
+let audioChunks   = [];
+let isRecording   = false;
+let recTimerInt   = null;
+let transcribed   = '';
+
+// Chat state
+let _chatHistory  = [];
+let _chatStreaming = false;
+
+// ═══════════════════════════════════════════════════
+// INIT
+// ═══════════════════════════════════════════════════
+
+(async function init() {
+  // Auth guard — redirect naar index.html als niet ingelogd
+  const session = await klaarRequireAuth();
+  if (!session) return;
+
+  const migrated = migrateRecipes();
+  if (migrated > 0) console.info(`[Klaar] Init: ${migrated} recept(en) gemigreerd.`);
+  renderSidebar();
+  renderGrid();
+  updateSugs();
+  // Verberg noKeyBanner — API key is niet meer nodig
+  const banner = document.getElementById('noKeyBanner');
+  if (banner) banner.style.display = 'none';
+})();
+
+// ═══════════════════════════════════════════════════
+// API KEY
+// ═══════════════════════════════════════════════════
+
+function checkKey() {
+  // API key niet meer nodig — AI loopt via Supabase proxy
+  const banner = document.getElementById('noKeyBanner');
+  if (banner) banner.style.display = 'none';
+}
+function openSettings() {
+  const log = JSON.parse(localStorage.getItem(ERRLOG_KEY) || '[]');
+  const countEl = document.getElementById('errLogCount');
+  if (countEl) countEl.textContent = log.length ? `${log.length} melding${log.length > 1 ? 'en' : ''} geregistreerd` : 'Geen fouten';
+  document.getElementById('modalSettings').classList.add('open');
+}
+function closeSettings() { document.getElementById('modalSettings').classList.remove('open'); }
+function saveSettings() { closeSettings(); }
+
+// ═══════════════════════════════════════════════════
+// VIEW
+// ═══════════════════════════════════════════════════
+
+function setView(v) {
+  currentView = v;
+  ['gerechten','allergenen'].forEach(x => {
+    document.getElementById('view-'+ x).style.display   = x === v ? 'flex' : 'none';
+    document.getElementById('tab-' + x).classList.toggle('active', x === v);
+  });
+  if (v === 'allergenen') renderMatrix();
+  if (v === 'gerechten' && !activeId) renderGrid();
+  updateSugs();
+}
+
+// ─ Grid dashboard ─
+function showGrid() {
+  activeId = null;
+  document.getElementById('gridView').style.display    = 'flex';
+  document.getElementById('recipeEditor').style.display = 'none';
+  updateChatCtx(null);
+  renderGrid();
+  renderSidebar();
+  updateSugs();
+}
+
+function renderGrid() {
+  const q = ((document.getElementById('gridSearch')?.value) || '').toLowerCase().trim();
+  const eu14map = Object.fromEntries(EU14.map(a => [a.code, a]));
+  const allFolders = [...FOLDERS, ...customFolders];
+  let html = '';
+  let total = 0;
+
+  allFolders.forEach(f => {
+    const rs = recipes.filter(r =>
+      (r.folder || 'keuken') === f.id &&
+      (!q || (r.title || '').toLowerCase().includes(q))
+    );
+    if (!rs.length) return;
+    total += rs.length;
+    html += `<div class="grid-section">
+      <div class="grid-section-hdr">${f.icon} ${f.name} <span>${rs.length}</span></div>
+      <div class="grid-cards">
+        ${rs.map(r => recipeCard(r, eu14map)).join('')}
+      </div>
+    </div>`;
+  });
+
+  if (!total) {
+    html = recipes.length === 0
+      ? `<div class="grid-empty">🍳 Nog geen recepten.<br>Klik <b>+ Nieuw recept</b> of vraag het aan de AI-assistent →</div>`
+      : `<div class="grid-empty">Geen recepten gevonden voor "<b>${esc(q)}</b>"</div>`;
+  }
+
+  document.getElementById('recipeGrid').innerHTML = html;
+}
+
+function recipeCard(r, eu14map) {
+  const confirmed = (r.allergens || []).filter(a => !a.maybe);
+  const maybe     = (r.allergens || []).filter(a => a.maybe);
+  const icons = confirmed.slice(0,6).map(a =>
+    `<span class="rc-al-icon" title="${esc((eu14map[a.code]?.name) || a.name)}">${eu14map[a.code]?.icon || a.code}</span>`
+  ).join('') + maybe.slice(0,2).map(a =>
+    `<span class="rc-al-maybe" title="${esc(a.name)} (mogelijk)">⚠️</span>`
+  ).join('');
+
+  const prep     = r.recipe?.prep ? `⏱ ${esc(r.recipe.prep)}` : '';
+  const servings = r.recipe?.servings ? `· ${r.recipe.servings} p.` : '';
+  const ingCount = (r.recipe?.ingredients || []).length;
+  const isComplete = r.status === 'complete';
+
+  return `<div class="recipe-card ${isComplete ? 'complete' : 'draft'}" onclick="openRecipe('${r.id}')">
+    <span class="rc-status ${isComplete ? 'complete' : ''}">${isComplete ? '✓ KLAAR' : '● CONCEPT'}</span>
+    <div class="recipe-card-title">${esc(r.title || 'Naamloos')}</div>
+    <div class="recipe-card-meta">
+      ${prep}${servings}${ingCount ? ` · ${ingCount} ingrediënten` : ''}
+    </div>
+    <div class="recipe-card-allergens">
+      ${icons || '<span class="rc-no-al">nog geen allergenen</span>'}
+    </div>
+  </div>`;
+}
+
+// ═══════════════════════════════════════════════════
+// SIDEBAR
+// ═══════════════════════════════════════════════════
+
+function saveRecipes()    { localStorage.setItem('klaar_recipes', JSON.stringify(recipes)); }
+function getRecipe(id)    { return recipes.find(r => r.id === id); }
+
+function renderSidebar() {
+  const q = (document.getElementById('searchInp').value || '').toLowerCase().trim();
+  // Fix: recepten zonder geldige folder → keuken
+  const validFolderIds = new Set([...FOLDERS, ...customFolders].map(f => f.id));
+  recipes.forEach(r => { if (!validFolderIds.has(r.folder)) r.folder = 'keuken'; });
+  const allF = [...FOLDERS, ...customFolders];
+  let html = '';
+  allF.forEach(f => {
+    const rs = recipes.filter(r => (r.folder || 'keuken') === f.id && (!q || (r.title||'').toLowerCase().includes(q)));
+    if (!rs.length && q) return;
+    const open = folderState[f.id] !== false;
+    html += `<div class="folder-hdr" id="folder-${f.id}"
+      onclick="toggleFolder('${f.id}')"
+      ondragover="dragOverFolder(event,'${f.id}')"
+      ondragleave="dragLeaveFolder('${f.id}')"
+      ondrop="dropToFolder(event,'${f.id}')">
+      <span class="folder-hdr-name">${f.icon} ${f.name}</span>
+      <span class="folder-hdr-right">
+        <span class="folder-hdr-count">${rs.length}</span>
+        <span class="folder-hdr-arrow">${open ? '▾' : '▸'}</span>
+      </span>
+    </div>`;
+    if (open) {
+      if (!rs.length) {
+        html += `<div style="padding:3px 10px 8px 20px;font-size:11px;color:var(--muted);">Leeg</div>`;
+      } else {
+        rs.forEach(r => {
+          const ac = (r.allergens || []).filter(a => !a.maybe);
+          const maybeCount = (r.allergens || []).filter(a => a.maybe).length;
+          html += `<div class="recipe-row${r.id === activeId ? ' active' : ''}"
+            draggable="true"
+            ondragstart="dragStart(event,'${r.id}')"
+            ondragend="dragEnd(event)"
+            onclick="openRecipe('${r.id}')">
+            <div class="recipe-row-dot ${r.status === 'complete' ? 'complete' : 'draft'}"></div>
+            <div class="recipe-row-name">${esc(r.title) || 'Naamloos'}</div>
+            ${ac.length ? `<div class="aleg-dots">${'<div class="aleg-dot"></div>'.repeat(Math.min(ac.length,3))}${maybeCount?'<div class="aleg-dot" style="background:var(--draft);opacity:.6;"></div>':''}</div>` : ''}
+            <button class="recipe-row-del" onclick="event.stopPropagation();quickDelete('${r.id}')" title="Verwijder">×</button>
+          </div>`;
+        });
+      }
+    }
+  });
+  if (!recipes.length) html = `<div class="sidebar-empty">Nog geen recepten.<br>Klik <b>+ Nieuw recept</b>.</div>`;
+  document.getElementById('sidebarList').innerHTML = html;
+}
+
+function toggleFolder(id) {
+  folderState[id] = folderState[id] === false ? true : false;
+  localStorage.setItem('klaar_folder_state', JSON.stringify(folderState));
+  renderSidebar();
+}
+
+// ─ Quick delete from sidebar ─
+function quickDelete(id) {
+  if (!confirm('Recept verwijderen?')) return;
+  recipes = recipes.filter(r => r.id !== id);
+  saveRecipes();
+  if (activeId === id) showGrid();
+  else { renderSidebar(); renderGrid(); }
+  showToast('Verwijderd');
+}
+
+// ─ Drag & drop ─
+let _dragId = null;
+function dragStart(e, id) {
+  _dragId = id;
+  e.dataTransfer.effectAllowed = 'move';
+  // slight visual feedback on the dragged item
+  e.currentTarget.style.opacity = '.5';
+}
+function dragEnd(e) {
+  e.currentTarget.style.opacity = '';
+  _dragId = null;
+}
+function dragOverFolder(e, folderId) {
+  e.preventDefault();
+  e.dataTransfer.dropEffect = 'move';
+  document.getElementById('folder-' + folderId)?.classList.add('drag-over');
+}
+function dragLeaveFolder(folderId) {
+  document.getElementById('folder-' + folderId)?.classList.remove('drag-over');
+}
+function dropToFolder(e, folderId) {
+  e.preventDefault();
+  document.getElementById('folder-' + folderId)?.classList.remove('drag-over');
+  if (!_dragId) return;
+  const r = getRecipe(_dragId);
+  if (!r || r.folder === folderId) return;
+  r.folder = folderId;
+  saveRecipes();
+  renderSidebar();
+  const f = [...FOLDERS, ...customFolders].find(x => x.id === folderId);
+  showToast(`Verplaatst naar ${f ? f.icon + ' ' + f.name : folderId}`);
+}
+
+// ═══════════════════════════════════════════════════
+// RECIPE CRUD
+// ═══════════════════════════════════════════════════
+
+function newRecipe() {
+  setView('gerechten');
+  document.getElementById('gridView').style.display     = 'none';
+  document.getElementById('recipeEditor').style.display = 'flex';
+  const id = 'rec_' + Date.now() + '_' + Math.random().toString(36).slice(2,6);
+  recipes.unshift({ id, title:'', folder:'keuken', status:'draft', type:'savoury', allergens:[], recipe:{ prep:'', cook:'', servings:4, ingredients:[], steps:[], notes:'' }, createdAt: new Date().toISOString() });
+  saveRecipes();
+  openRecipe(id);
+  setTimeout(() => document.getElementById('recTitle').focus(), 50);
+}
+
+function openRecipe(id) {
+  setView('gerechten');
+  activeId = id;
+  const r = getRecipe(id);
+  if (!r) return;
+
+  document.getElementById('gridView').style.display     = 'none';
+  document.getElementById('recipeEditor').style.display = 'flex';
+
+  document.getElementById('recTitle').value    = r.title     || '';
+  document.getElementById('mPrep').value       = r.recipe?.prep      || '';
+  document.getElementById('mCook').value       = r.recipe?.cook      || '';
+  document.getElementById('mServings').value   = r.recipe?.servings  || 4;
+  document.getElementById('mType').value       = r.type      || 'savoury';
+  document.getElementById('mFolder').value     = r.folder    || 'keuken';
+  document.getElementById('recNotes').value    = r.recipe?.notes     || '';
+
+  renderIngredients(r.recipe?.ingredients || []);
+  renderSteps(r.recipe?.steps || []);
+  renderAllergens(r.allergens || []);
+  updateStatusBtn(r.status);
+
+  isDirty = false;
+  document.getElementById('unsavedDot').style.display = 'none';
+  renderSidebar();
+  updateChatCtx(r.title);
+  updateSugs(r);
+  calculateFoodCost();
+}
+
+function saveRecipe() {
+  if (!activeId) return;
+  const r = getRecipe(activeId);
+  if (!r) return;
+  r.title          = document.getElementById('recTitle').value.trim() || 'Naamloos recept';
+  r.type           = document.getElementById('mType').value;
+  r.folder         = document.getElementById('mFolder').value;
+  r.recipe         = r.recipe || {};
+  r.recipe.prep    = document.getElementById('mPrep').value.trim();
+  r.recipe.cook    = document.getElementById('mCook').value.trim();
+  r.recipe.servings= parseInt(document.getElementById('mServings').value) || 4;
+  r.recipe.notes   = document.getElementById('recNotes').value.trim();
+  r.recipe.ingredients = getIngsFromDOM();
+  r.recipe.steps       = getStepsFromDOM();
+  r.updatedAt = new Date().toISOString();
+  saveRecipes();
+  isDirty = false;
+  document.getElementById('unsavedDot').style.display = 'none';
+  renderSidebar();
+  updateChatCtx(r.title);
+  calculateFoodCost();
+  showToast('Opgeslagen ✓');
+  // Auto-detect allergens if ingredients present but no allergens detected yet
+  // (renderGrid wordt aangeroepen na detectie via renderSidebar)
+  if (r.recipe.ingredients.length > 0 && (!r.allergens || !r.allergens.length)) {
+    detectAllergens(true); // silent mode — toast only on result
+  }
+}
+
+function markDirty() {
+  isDirty = true;
+  document.getElementById('unsavedDot').style.display = 'block';
+}
+
+function toggleStatus() {
+  if (!activeId) return;
+  const r = getRecipe(activeId);
+  if (!r) return;
+  r.status = r.status === 'complete' ? 'draft' : 'complete';
+  saveRecipes(); renderSidebar(); updateStatusBtn(r.status);
+}
+
+function updateStatusBtn(s) {
+  const b = document.getElementById('btnStatus');
+  b.textContent = s === 'complete' ? '✓ Klaar' : '● Concept';
+  b.className   = 'btn-status' + (s === 'complete' ? ' complete' : '');
+}
+
+function askDelete()    { document.getElementById('modalDelete').classList.add('open'); }
+function closeDelete()  { document.getElementById('modalDelete').classList.remove('open'); }
+function confirmDelete() {
+  if (!activeId) return;
+  recipes = recipes.filter(r => r.id !== activeId);
+  saveRecipes(); closeDelete();
+  showGrid();
+  showToast('Recept verwijderd');
+}
+
+// ═══════════════════════════════════════════════════
+// INGREDIENTS DOM
+// ═══════════════════════════════════════════════════
+
+function renderIngredients(ings) {
+  const el = document.getElementById('ingList');
+  el.innerHTML = '';
+  ings.forEach(i => addIngRow(i.amount || '', i.name || ''));
+  if (!ings.length) addIngRow('', '');
+}
+
+function addIngRow(amount, name) {
+  const el = document.getElementById('ingList');
+  const d = document.createElement('div');
+  d.className = 'ing-row';
+  d.innerHTML = `<input type="text" class="ing-amt" value="${esc(amount)}" placeholder="hoeveelh." oninput="markDirty()">
+    <input type="text" class="ing-name" value="${esc(name)}" placeholder="ingrediënt" oninput="markDirty()"
+      onkeydown="if(event.key==='Enter'){event.preventDefault();addIngredient();}">
+    <button class="btn-del-row" onclick="this.parentElement.remove();markDirty();">×</button>`;
+  el.appendChild(d);
+}
+
+function addIngredient() {
+  addIngRow('', '');
+  const inputs = document.getElementById('ingList').querySelectorAll('.ing-name');
+  inputs[inputs.length - 1].focus();
+}
+
+function getIngsFromDOM() {
+  return Array.from(document.getElementById('ingList').querySelectorAll('.ing-row')).map(row => ({
+    amount: row.querySelector('.ing-amt').value.trim(),
+    name:   row.querySelector('.ing-name').value.trim()
+  })).filter(i => i.name);
+}
+
+function calculateFoodCost() {
+  const bar = document.getElementById('costBar');
+  if (!bar || !activeId) { if(bar) bar.style.display='none'; return; }
+  const r = getRecipe(activeId);
+  if (!r) { bar.style.display='none'; return; }
+
+  const lib  = JSON.parse(localStorage.getItem('klaar_ingredienten') || '[]');
+  if (!lib.length) { bar.style.display='none'; return; }
+
+  const ings     = r.recipe?.ingredients || [];
+  const servings = Math.max(1, parseInt(r.recipe?.servings) || 4);
+
+  // Unit → grams / liters multiplier
+  const toBase = (qty, unit) => {
+    const u = unit.toLowerCase().replace(/\./g,'');
+    const q = parseFloat(String(qty).replace(',','.')) || 0;
+    if (['g','gram','gr'].includes(u))  return { val: q/1000, base:'kg' };
+    if (['kg'].includes(u))             return { val: q,      base:'kg' };
+    if (['ml','mL'].includes(u))        return { val: q/1000, base:'l'  };
+    if (['cl'].includes(u))             return { val: q/100,  base:'l'  };
+    if (['l','liter','litre'].includes(u)) return { val: q,  base:'l'  };
+    return { val: q, base:'stuk' }; // stuk, teentje, etc.
+  };
+
+  let total = 0, matched = 0;
+  ings.forEach(ing => {
+    const ingName = (ing.name || '').toLowerCase().trim();
+    if (!ingName) return;
+    const m = (ing.amount||'').match(/^([\d,.]+)\s*([a-zA-Z]*)/);
+    if (!m) return;
+    const { val, base } = toBase(m[1], m[2] || 'stuk');
+
+    const entry = lib.find(e => {
+      const en = (e.naam||'').toLowerCase();
+      return en === ingName || ingName.includes(en) || en.includes(ingName);
+    });
+    if (!entry || !entry.inkoopprijs) return;
+
+    const price    = parseFloat(String(entry.inkoopprijs).replace(',','.')) || 0;
+    const libUnit  = (entry.eenheid||'kg').toLowerCase();
+    // Only add cost when units are compatible
+    const compatible = (base==='kg' && ['kg','g','gram'].includes(libUnit))
+                    || (base==='l'  && ['l','liter','litre','ml'].includes(libUnit))
+                    || (base==='stuk');
+    if (!compatible) return;
+
+    total += price * val;
+    matched++;
+  });
+
+  if (matched === 0) { bar.style.display='none'; return; }
+
+  bar.style.display = 'flex';
+  document.getElementById('costTotal').textContent = `€ ${total.toFixed(2)}`;
+  document.getElementById('costPer').textContent   = `€ ${(total/servings).toFixed(2)}`;
+  const miss = ings.length - matched;
+  document.getElementById('costMatch').innerHTML   = miss > 0
+    ? `<span class="cost-warn">${matched}/${ings.length} gekoppeld — ${miss} niet gevonden in bibliotheek</span>`
+    : `${matched}/${ings.length} gekoppeld`;
+}
+
+// ═══════════════════════════════════════════════════
+// STEPS DOM
+// ═══════════════════════════════════════════════════
+
+function renderSteps(steps) {
+  const el = document.getElementById('stepList');
+  el.innerHTML = '';
+  steps.forEach(s => addStepRow(s));
+  if (!steps.length) addStepRow('');
+}
+
+function addStepRow(text) {
+  const el = document.getElementById('stepList');
+  const num = el.querySelectorAll('.step-row').length + 1;
+  const d = document.createElement('div');
+  d.className = 'step-row';
+  d.innerHTML = `<div class="step-num">${num}</div>
+    <textarea class="step-ta" rows="1" placeholder="Stap ${num}..." oninput="this.style.height='auto';this.style.height=this.scrollHeight+'px';markDirty();">${esc(text)}</textarea>
+    <button class="btn-del-row" onclick="this.parentElement.remove();renumberSteps();markDirty();">×</button>`;
+  el.appendChild(d);
+  const ta = d.querySelector('textarea');
+  setTimeout(() => { ta.style.height = 'auto'; ta.style.height = ta.scrollHeight + 'px'; }, 0);
+}
+
+function addStep() {
+  addStepRow('');
+  const tas = document.getElementById('stepList').querySelectorAll('.step-ta');
+  tas[tas.length - 1].focus();
+}
+
+function renumberSteps() {
+  document.getElementById('stepList').querySelectorAll('.step-num').forEach((el, i) => el.textContent = i + 1);
+}
+
+function getStepsFromDOM() {
+  return Array.from(document.getElementById('stepList').querySelectorAll('.step-ta'))
+    .map(ta => ta.value.trim()).filter(Boolean);
+}
+
+// ═══════════════════════════════════════════════════
+// ALLERGENS
+// ═══════════════════════════════════════════════════
+
+function renderAllergens(allergens) {
+  const el = document.getElementById('atagList');
+  if (!allergens || !allergens.length) {
+    el.innerHTML = `<span class="no-atag">Nog niet gedetecteerd — sla op of klik ↺ Herdetecteer</span>`;
+    return;
+  }
+  const eu14map = Object.fromEntries(EU14.map(a => [a.code, a]));
+  el.innerHTML = allergens.map(a => {
+    const meta = eu14map[a.code] || {};
+    const isMaybe = !!a.maybe;
+    return `<span class="atag${isMaybe ? ' maybe' : ''}"
+      title="${esc(a.name)}${isMaybe ? ' — mogelijk aanwezig, verificeer' : ''}">
+      <span class="atag-icon">${meta.icon || ''}</span>
+      <span class="atag-code">${esc(a.code)}</span>
+      <span class="atag-name">${esc(a.name)}</span>
+      ${isMaybe ? '<span class="atag-uncertain">⚠ mogelijk</span>' : ''}
+    </span>`;
+  }).join('');
+}
+
+async function detectAllergens(silent = false) {
+  if (!activeId) return;
+  const r = getRecipe(activeId);
+  // Normaliseer ingrediënten voor detectie (vangt nog niet-gemigreerde data op)
+  const rawIngs = (r.recipe?.ingredients || []).map(normalizeIngredient);
+  const ings = rawIngs.map(i => `${i.amount} ${i.name}`.trim()).filter(Boolean).join(', ');
+  if (!ings) { if (!silent) showToast('Voeg eerst ingrediënten toe'); return; }
+
+  if (!silent) showToast('Allergenen detecteren...');
+  const table = EU14.map(a => `${a.code}=${a.name}`).join(', ');
+
+  try {
+    const d = await klaarAI({
+        model: 'claude-haiku-4-5-20251001', max_tokens: 400,
+        messages: [{ role: 'user', content:
+`Je bent een EU-14 allergeenexpert voor de horeca in Nederland.
+
+Analyseer de ingrediënten hieronder en detecteer welke EU-14 allergenen ZEKER aanwezig zijn en welke MISSCHIEN aanwezig zijn (bijv. als een ingrediënt cross-contaminatie risico heeft of als het allergen onduidelijk is door een generieke naam).
+
+INGREDIËNTEN: ${ings}
+
+EU-14 CODES: ${table}
+
+Antwoord ALLEEN als JSON array. Gebruik "maybe":true voor twijfelachtige/mogelijke allergenen:
+[
+  {"code":"G","name":"Gluten","maybe":false},
+  {"code":"M","name":"Melk","maybe":true}
+]
+Lege array [] als geen allergenen. Geen andere tekst.` }]
+    }, '01-recept-studio');
+    const m = (d.content?.[0]?.text || '').match(/\[[\s\S]*?\]/);
+    if (m) {
+      const al = JSON.parse(m[0]);
+      const rec = getRecipe(activeId);
+      rec.allergens = al;
+      saveRecipes();
+      renderAllergens(al);
+      renderSidebar();
+      if (!silent) {
+        const confirmed = al.filter(a => !a.maybe).length;
+        const maybe     = al.filter(a => a.maybe).length;
+        showToast(`${confirmed} allergeen${confirmed !== 1 ? 's' : ''} gedetecteerd${maybe ? ` · ${maybe} twijfelachtig` : ''}`);
+      }
+    }
+  } catch(e) { logError('detectAllergens', e); if (!silent) showToast('Fout bij detectie'); }
+}
+
+// ═══════════════════════════════════════════════════
+// ALLERGEN MATRIX
+// ═══════════════════════════════════════════════════
+
+function renderMatrix() {
+  const content = document.getElementById('matrixContent');
+  let rs = recipes;
+  if (matrixFilter !== 'all') rs = rs.filter(r => (r.allergens||[]).some(a => a.code === matrixFilter));
+
+  if (!rs.length) {
+    content.innerHTML = `<div class="matrix-empty">${recipes.length === 0 ? 'Nog geen recepten — maak eerst recepten aan.' : 'Geen recepten gevonden voor dit filter.'}</div>`;
+    buildMatrixFilter();
+    return;
+  }
+
+  let html = `<table class="matrix-table"><thead><tr><th class="th-dish">Gerecht</th>`;
+  EU14.forEach(a => html += `<th class="th-alg"><div class="th-alg-inner" title="${a.name}">${a.icon || ''} ${a.code}</div></th>`);
+  html += `</tr></thead><tbody>`;
+
+  rs.forEach(r => {
+    const codes = (r.allergens||[]).map(a => a.code);
+    html += `<tr><td class="td-dish" onclick="openRecipeFromMatrix('${r.id}')" title="${esc(r.title)}">${esc(r.title||'Naamloos')}</td>`;
+    EU14.forEach(a => html += `<td class="td-cell"><div class="${codes.includes(a.code) ? 'cell-yes' : 'cell-no'}" title="${a.name}: ${codes.includes(a.code) ? 'aanwezig' : 'afwezig'}"></div></td>`);
+    html += `</tr>`;
+  });
+  html += `</tbody></table>`;
+  content.innerHTML = html;
+  buildMatrixFilter();
+}
+
+function buildMatrixFilter() {
+  let html = `<button class="filter-chip${matrixFilter==='all'?' active':''}" onclick="setMatFilter(this,'all')">Alle gerechten</button>`;
+  EU14.forEach(a => html += `<button class="filter-chip${matrixFilter===a.code?' active':''}" onclick="setMatFilter(this,'${a.code}')">${a.icon} ${a.name}</button>`);
+  document.getElementById('matrixFilter').innerHTML = html;
+}
+
+function setMatFilter(btn, code) { matrixFilter = code; renderMatrix(); }
+
+function openRecipeFromMatrix(id) { openRecipe(id); }
+
+// ═══════════════════════════════════════════════════
+// VOICE RECORDING
+// ═══════════════════════════════════════════════════
+
+async function toggleRecord() {
+  if (isRecording) stopRecord();
+  else             startRecord();
+}
+
+async function startRecord() {
+  try {
+    const stream = await navigator.mediaDevices.getUserMedia({ audio: true });
+    audioChunks = [];
+    mediaRec = new MediaRecorder(stream);
+    mediaRec.ondataavailable = e => { if (e.data.size > 0) audioChunks.push(e.data); };
+    mediaRec.onstop = processRecording;
+    mediaRec.start(200);
+    isRecording = true;
+    document.getElementById('btnRecord').classList.add('rec');
+    document.getElementById('btnRecord').textContent = '⏹ Stop opname';
+    document.getElementById('recTimer').style.display = 'inline';
+    document.getElementById('btnGen').style.display = 'none';
+    const pi = document.getElementById('promptInp');
+    if (pi) pi.placeholder = 'Opname bezig — druk Stop als je klaar bent...';
+    let s = 0;
+    recTimerInt = setInterval(() => {
+      s++;
+      document.getElementById('recTimer').textContent = `${Math.floor(s/60)}:${(s%60).toString().padStart(2,'0')}`;
+    }, 1000);
+  } catch(e) { showToast('Microfoon toegang geweigerd'); }
+}
+
+function stopRecord() {
+  clearInterval(recTimerInt);
+  if (mediaRec && isRecording) { mediaRec.stop(); mediaRec.stream.getTracks().forEach(t => t.stop()); }
+  isRecording = false;
+  document.getElementById('btnRecord').classList.remove('rec');
+  document.getElementById('btnRecord').textContent = '🎙️ Inspreken';
+  document.getElementById('recTimer').style.display = 'none';
+  const piStop = document.getElementById('promptInp');
+  if (piStop) piStop.placeholder = 'Verwerken...';
+}
+
+async function processRecording() {
+  // Show generate button so user can trigger generation
+  const promptEl = document.getElementById('promptInp');
+  if (promptEl && !promptEl.value.trim()) {
+    promptEl.placeholder = 'Opname klaar — typ eventueel extra instructies en klik Genereer...';
+  }
+  document.getElementById('btnGen').style.display = 'inline-block';
+  transcribed = '[audio-opname]';
+}
+
+function onPromptInput() {
+  const hasText = document.getElementById('promptInp').value.trim().length > 0;
+  document.getElementById('btnGen').style.display = hasText ? 'inline-block' : 'none';
+}
+
+async function generateRecipe() {
+
+  const promptText = document.getElementById('promptInp').value.trim();
+  const titleHint  = document.getElementById('recTitle').value.trim();
+  const ingHint    = document.getElementById('ingList').querySelectorAll('.ing-name');
+  const ingText    = Array.from(ingHint).map(i => i.value).filter(Boolean).join(', ');
+
+  const context = promptText || titleHint || ingText || transcribed || '';
+  if (!context) { showToast('Typ een recept of opdracht om te beginnen'); return; }
+
+  const btn = document.getElementById('btnGen');
+  btn.disabled = true;
+  const piGen = document.getElementById('promptInp');
+  if (piGen) piGen.placeholder = 'Recept genereren...';
+
+  const ingredienten = JSON.parse(localStorage.getItem('klaar_ingredienten') || '[]');
+  const ingLib = ingredienten.length > 0
+    ? `\nBESCHIKBARE INGREDIËNTENBIBLIOTHEEK:\n` + ingredienten.map(i => `- ${i.naam} (${i.inkoopprijs||'?'}/${i.eenheid||'kg'})`).join('\n')
+    : '';
+  const table = EU14.map(a => `${a.code}=${a.name}`).join(', ');
+
+  try {
+    const d = await klaarAI({
+        model: 'claude-haiku-4-5-20251001', max_tokens: 1800,
+        system: `Je bent een professionele kok met 15+ jaar ervaring in de Nederlandse horecakeuken. Je schrijft recepturen voor koks in een brigadeomgeving — geen huishoudelijke taal, geen vage hoeveelheden.
+
+STANDAARDEN:
+- Ingrediënten in exacte grammen of milliliters, nooit "naar smaak" of "een scheutje"
+- Porties zijn restaurant-yields: eiwit 150-180g ruw per couverte, bijgerecht 80-120g, sauzen 60-80ml per portie
+- Stappen in 3 blokken: MISE EN PLACE → BEREIDING → AFWERKING + SERVICE
+- Vermeld pan-temperaturen (°C), kerntemperaturen, rusttijden
+- Gebruik vakjargon waar passend: sauteren, bruneren, deglaceren, monteren, passeren, blancheren, confiten
+- Smaakopbouw: umami-basis → zuurbalans → vet voor body → finishing
+- Notes bevatten: koelketen (temp, houdbaarheid), prep-aanwijzingen voor service, eventuele variaties
+- Detecteer ALLE EU-14 allergenen correct: ${table}
+- maybe:true alleen bij kruisbesmettingsrisico of twijfel (bijv. sporen)
+
+Retourneer UITSLUITEND geldige JSON, geen tekst eromheen.`,
+        messages: [{ role: 'user', content: `Maak een professionele horecareceptuur voor: "${context}"${ingLib}
+
+Retourneer ALLEEN dit JSON-object (geen markdown, geen uitleg):
+{
+  "title": "Naam van het gerecht",
+  "type": "savoury|sweet|drink|snack|sauce",
+  "prep": "XX min",
+  "cook": "XX min",
+  "servings": 4,
+  "ingredients": [
+    {"amount": "180g", "name": "tournedos van runderhaas"},
+    {"amount": "20g", "name": "geklaarde boter"}
+  ],
+  "steps": [
+    "MISE EN PLACE: beschrijf al het snijwerk, marinades en voorbereiding.",
+    "BEREIDING: chronologische stappen met pan-temperaturen (°C) en tijden.",
+    "AFWERKING: finishing, saus monteren, garnering.",
+    "SERVICE: plating, kerntemperatuur controle, warmhoudinstructies."
+  ],
+  "notes": "Prep: hoe ver van tevoren en hoe bewaren. Houdbaar: X dgn bij X°C. Variaties of seizoensaanpassingen.",
+  "allergens": [{"code": "M", "name": "Melk", "maybe": false}]
+}` }]
+    }, '01-recept-studio');
+    const m = (d.content?.[0]?.text || '').match(/\{[\s\S]*\}/);
+    if (m) applyGenerated(JSON.parse(m[0]));
+    else showToast('Kon recept niet verwerken');
+  } catch(e) { logError('generateRecipe', e); showToast('Genereren mislukt — probeer opnieuw'); }
+
+  btn.disabled = false;
+  btn.style.display = 'none';
+  // Clear the prompt input after generation
+  const promptEl = document.getElementById('promptInp');
+  if (promptEl) promptEl.value = '';
+}
+
+function applyGenerated(rec) {
+  if (!activeId) newRecipe();
+  if (rec.title)    document.getElementById('recTitle').value   = rec.title;
+  if (rec.type)     document.getElementById('mType').value      = rec.type;
+  if (rec.prep)     document.getElementById('mPrep').value      = rec.prep;
+  if (rec.cook)     document.getElementById('mCook').value      = rec.cook;
+  if (rec.servings) document.getElementById('mServings').value  = rec.servings;
+  if (rec.notes)    document.getElementById('recNotes').value   = rec.notes;
+  if (rec.ingredients) renderIngredients(rec.ingredients);
+  if (rec.steps)       renderSteps(rec.steps);
+  if (rec.allergens)   renderAllergens(rec.allergens);
+
+  const r = getRecipe(activeId);
+  if (r) {
+    r.title     = rec.title || r.title;
+    r.type      = rec.type  || r.type;
+    // Normalize allergens — ensure maybe field exists
+    r.allergens = (rec.allergens || []).map(a => ({ code: a.code, name: a.name, maybe: !!a.maybe }));
+    r.recipe    = { prep: rec.prep||'', cook: rec.cook||'', servings: rec.servings||4, ingredients: rec.ingredients||[], steps: rec.steps||[], notes: rec.notes||'' };
+    saveRecipes();
+  }
+  renderSidebar();
+  updateChatCtx(rec.title);
+  updateSugs(getRecipe(activeId));
+  showToast(`✓ "${rec.title}" gegenereerd`);
+}
+
+// ═══════════════════════════════════════════════════
+// PRINT
+// ═══════════════════════════════════════════════════
+
+function printRecipe() { if (activeId) { saveRecipe(); window.print(); } }
+
+// ═══════════════════════════════════════════════════
+// CHAT
+// ═══════════════════════════════════════════════════
+
+function updateChatCtx(title) {
+  document.getElementById('chatCtx').textContent = title ? `🍳 ${title}` : '— geen recept open';
+}
+
+function updateSugs(recipe) {
+  const el = document.getElementById('chatSugs');
+  if (recipe && recipe.id && currentView === 'gerechten') {
+    el.innerHTML = `
+      <button class="chat-sug" onclick="chatSuggest('Verbeter de bereidingstechniek in dit recept — meer precisie in temperaturen en timing')">🌡️ Techniek aanscherpen</button>
+      <button class="chat-sug" onclick="chatSuggest('Analyseer de kostprijs van dit recept. Kloppen de hoeveelheden met de ingrediëntenbibliotheek? Wat is een reële verkoopprijs bij 30% food cost?')">💰 Kostprijscheck</button>
+      <button class="chat-sug" onclick="chatSuggest('Geef allergeenvrije alternatieven voor de kritieke ingrediënten in dit recept en geef aan wat dit betekent voor de allergenenkaart')">⚠️ Allergeenvervangers</button>`;
+  } else if (currentView === 'allergenen') {
+    el.innerHTML = `
+      <button class="chat-sug" onclick="chatSuggest('Welke recepten zijn veilig voor gasten met glutenintolerantie? Check ook kruisbesmetting.')">🌾 Glutenveilig</button>
+      <button class="chat-sug" onclick="chatSuggest('Welk recept heeft het hoogste allergeenrisico voor service?')">⚠️ Hoogste risico</button>
+      <button class="chat-sug" onclick="chatSuggest('Schrijf een NVWA-conforme allergenendeclaratie voor mijn menukaart')">📋 NVWA-verklaring</button>`;
+  } else {
+    el.innerHTML = `
+      <button class="chat-sug" onclick="chatSuggest('Schrijf een seizoensrecept vanuit mijn ingrediëntenbibliotheek — denk als een chef de partie')">📚 Seizoensrecept</button>
+      <button class="chat-sug" onclick="chatSuggest('Welke recepten kunnen worden voorbereid (mis en place) voor service zonder kwaliteitsverlies?')">⏱️ Prep-analyse</button>
+      <button class="chat-sug" onclick="chatSuggest('Welke recepten missen nog allergeendetectie? Loop alle recepten na.')">🔍 Allergeencheck</button>`;
+  }
+}
+
+function chatBuildPrompt() {
+  const recepten     = JSON.parse(localStorage.getItem('klaar_recipes')      || '[]');
+  const ingredienten = JSON.parse(localStorage.getItem('klaar_ingredienten') || '[]');
+  const active       = activeId ? getRecipe(activeId) : null;
+
+  let activeBlock = '';
+  if (active) {
+    const ings  = (active.recipe?.ingredients||[]).map(i => `  ${i.amount} ${i.name}`).join('\n');
+    const steps = (active.recipe?.steps||[]).map((s,i) => `  ${i+1}. ${s}`).join('\n');
+    const al    = (active.allergens||[]).map(a => `${a.code}${a.maybe?' (mogelijk)':''}`).join(', ');
+    activeBlock = `OPEN RECEPT — "${active.title}" [id: ${active.id}]
+Type: ${active.type} | Yield: ${active.recipe?.servings} covers | Mise en place: ${active.recipe?.prep} | Bereiding: ${active.recipe?.cook}
+Ingrediënten:\n${ings || '  (geen)'}
+Bereiding:\n${steps || '  (geen)'}
+Notities: ${active.recipe?.notes || '—'}
+Allergenen: ${al || 'nog niet gedetecteerd'}`;
+  }
+
+  const recLijst = recepten.slice(0,30).map(r => {
+    const al = (r.allergens||[]).filter(a=>!a.maybe).map(a=>a.code).join(',');
+    return `  ${r.title||'Naamloos'} [${r.folder||'keuken'}${al?', '+al:''}]`;
+  }).join('\n');
+
+  const ingLijst = ingredienten.length > 0
+    ? ingredienten.slice(0,30).map(i => `  ${i.naam}: €${i.inkoopprijs||'?'}/${i.eenheid||'kg'} (${i.leverancier||'onbekend'})`).join('\n')
+    : '  (leeg)';
+
+  const eu14str = EU14.map(a => `${a.code}=${a.name}`).join(', ');
+
+  return `Je bent een ervaren kok en keukenconsultant voor de Nederlandse horeca. Je denkt vanuit mise en place, brigade-logica en voedselveiligheid — niet vanuit een huishoudkeuken.
+
+WERKWIJZE:
+Schrijf recepturen als een professional: exacte grammen en milliliters, temperaturen in °C, kerntemperaturen waar van toepassing. Stappen gestructureerd: MISE EN PLACE → BEREIDING → AFWERKING → SERVICE. Porties zijn restaurant-yields (150-180g eiwit per couverte, niet "een kipfilet"). Pas vakjargon toe waar het past, maar schrijf begrijpelijk — geen jargon om het jargon.
+
+KLAAR-ECOSYSTEEM — dit is de kern van je adviesrol:
+De receptenmodule is de databasis van het hele systeem. Alles wat hier staat voedt andere modules:
+- Ingrediënten koppelen aan de inkoopbibliotheek → kostprijsberekening per portie wordt automatisch berekend
+- Allergenendetectie hier → vult de EU-14 allergenenkaart
+- Receptuurdata → menu-engineering, inkoop, food cost in andere modules
+Als ingrediënten ontbreken, vage hoeveelheden hebben of niet in de bibliotheek staan, heeft dat direct gevolgen voor de kostprijsberekening en allergenenkaart. Wijs de gebruiker hier proactief op.
+
+JOUW ROL:
+1. Sparren: techniek verbeteren, smaakbalans, alternatieven, schalen, seizoensaanpassingen, food cost optimalisatie
+2. Recepten aanmaken of aanpassen via KLAAR-acties
+3. Allergenenadvies (NVWA, kruisbesmetting) en terugkoppeling naar wat dit betekent voor de allergenenkaart
+
+KLAAR-ACTIES (gebruik ALTIJD wanneer gebruiker een recept wil aanmaken of aanpassen):
+
+Nieuw recept:
+[KLAAR:SAVE_RECIPE:{"title":"...","type":"savoury","folder":"keuken","recipe":{"prep":"20 min","cook":"35 min","servings":4,"ingredients":[{"amount":"180g","name":"kalfsentrecôte"},{"amount":"15g","name":"geklaarde boter"}],"steps":["MISE EN PLACE: Entrecôte 30 min voor bereiding op kamertemperatuur brengen. Snij in gelijkmatige medallions van 60g.","BEREIDING: Pan op hoog vuur (200°C). Kalfsvlees droogdeppen, seasonen met grof zout. Sear 90 sec per kant in geklaarde boter tot Maillardkorst. Kerntemperatuur 54°C voor medium-rare.","AFWERKING: 3-4 min rusten onder folie. Glaceren met jus réduite."],"notes":"Prep: portioneer en vacumeer voor service. Houdbaar 3 dgn gekoeld (0-2°C)."},"allergens":[{"code":"M","name":"Melk","maybe":false}]}]
+
+Bestaand recept bijwerken:
+[KLAAR:UPDATE_RECIPE:{"id":"${activeId || 'RECEPT_ID'}","recipe":{"ingredients":[...],"steps":[...]}}]
+
+LIVE DATA:
+${activeBlock || '(Geen recept open — spar over algemene keukenonderwerpen of vraag een nieuw recept)'}
+
+ALLE RECEPTEN IN DE KAART (${recepten.length}):
+${recLijst || '  (nog geen recepten)'}
+
+INGREDIËNTENBIBLIOTHEEK:
+${ingLijst}
+
+WERKREGELS:
+- "Recept uit bibliotheek" = gebruik UITSLUITEND de ingrediënten uit de bibliotheek hierboven
+- Bij UPDATE_RECIPE: gebruik het exacte id van het open recept, geef altijd volledige ingredient- en stap-arrays terug
+- Schrijf stappen als een professioneel recept: MISE EN PLACE → BEREIDING → AFWERKING → SERVICE
+- Vermeld kerntemperaturen, pan-temperaturen en rusttijden waar relevant
+- EU-14 allergenen: ${eu14str}
+
+RESPONSLENGTE EN STIJL:
+- Schrijf als een ervaren collega-kok, niet als een kookboekschrijver
+- Max 3-4 zinnen voor eenvoudige vragen, 6-8 voor complexe technische vragen
+- Gebruik vakjargon maar leg het kort uit als het niet voor de hand ligt
+- Geen headers, geen bold, geen bullet points tenzij stap-voor-stap nodig
+- Max 1 emoji per bericht, niet als decoratie
+- Altijd in het Nederlands`;
+}
+
+async function chatSend() {
+  if (_chatStreaming) return;
+
+  const inp = document.getElementById('chatInp');
+  const txt = inp.value.trim();
+  if (!txt) return;
+  inp.value = ''; inp.style.height = 'auto';
+
+  chatAppend('user', txt);
+  _chatHistory.push({ role: 'user', content: txt });
+  const messages = _chatHistory.slice(-12);
+
+  _chatStreaming = true;
+  document.getElementById('chatSendBtn').disabled = true;
+
+  // Typing indicator
+  const typing = document.createElement('div');
+  typing.className = 'chat-typing'; typing.id = '_typing';
+  typing.innerHTML = '<span></span><span></span><span></span>';
+  document.getElementById('chatMsgs').appendChild(typing);
+  chatScroll();
+
+  let fullText = '';
+  try {
+    const res = await klaarAIStream({
+      model: 'claude-haiku-4-5-20251001', max_tokens: 1200, stream: true,
+      system: chatBuildPrompt(),
+      messages
+    }, '01-recept-studio');
+
+    document.getElementById('_typing')?.remove();
+    if (!res.ok) { const e = await res.json().catch(()=>{}); throw new Error(e?.error?.message || 'HTTP '+res.status); }
+
+    const wrap = document.createElement('div'); wrap.className = 'chat-msg assistant';
+    const bubble = document.createElement('div'); bubble.className = 'chat-bubble';
+    wrap.appendChild(bubble);
+    document.getElementById('chatMsgs').appendChild(wrap);
+
+    const reader = res.body.getReader(); const dec = new TextDecoder(); let buf = '';
+    while (true) {
+      const { done, value } = await reader.read(); if (done) break;
+      buf += dec.decode(value, { stream: true });
+      const lines = buf.split('\n'); buf = lines.pop() || '';
+      for (const line of lines) {
+        if (!line.startsWith('data: ')) continue;
+        const raw = line.slice(6).trim(); if (raw === '[DONE]') continue;
+        try {
+          const p = JSON.parse(raw);
+          if (p.type === 'content_block_delta' && p.delta?.type === 'text_delta') {
+            fullText += p.delta.text;
+            // Strip actie-tags uit weergave tijdens streaming
+            // Verwijder alles vanaf [KLAAR: tot het einde (tag is altijd aan het eind)
+            const displayText = fullText.replace(/\[KLAAR:[\s\S]*$/, '').trim();
+            bubble.innerHTML = chatFmt(displayText);
+            chatScroll();
+          }
+        } catch(e) {}
+      }
+    }
+
+    // Execute actions + clean display
+    const clean = chatExecActions(fullText);
+    bubble.innerHTML = chatFmt(clean);
+    _chatHistory.push({ role: 'assistant', content: fullText });
+
+  } catch(err) {
+    logError('chatSend', err, { activeId });
+    document.getElementById('_typing')?.remove();
+    chatAppend('assistant', 'Er ging iets mis: ' + err.message);
+  }
+
+  _chatStreaming = false;
+  document.getElementById('chatSendBtn').disabled = false;
+  chatScroll();
+}
+
+/**
+ * Parst [KLAAR:TYPE:{...}] of [KLAAR:TYPE:[...]] tags uit tekst.
+ * Gebruikt een balanced-brace parser i.p.v. regex, zodat JSON arrays (met ]) correct worden verwerkt.
+ */
+function parseKlaarActions(text) {
+  const MARKER = '[KLAAR:';
+  const results = [];
+  let pos = 0;
+
+  while (pos < text.length) {
+    const start = text.indexOf(MARKER, pos);
+    if (start === -1) break;
+
+    const typeStart = start + MARKER.length;
+    const colon = text.indexOf(':', typeStart);
+    if (colon === -1) { pos = start + 1; continue; }
+
+    const type = text.slice(typeStart, colon);
+    if (!/^[A-Z_]{2,30}$/.test(type)) { pos = start + 1; continue; }
+
+    const jsonStart = colon + 1;
+    if (jsonStart >= text.length) { pos = start + 1; continue; }
+
+    // Zoek het einde van de JSON door haakjes te tellen
+    let depth = 0, inStr = false, esc = false, endIdx = -1;
+    for (let i = jsonStart; i < text.length; i++) {
+      const c = text[i];
+      if (esc)             { esc = false; continue; }
+      if (c === '\\' && inStr) { esc = true; continue; }
+      if (c === '"')       { inStr = !inStr; continue; }
+      if (inStr)           { continue; }
+      if (c === '{' || c === '[') depth++;
+      else if (c === '}' || c === ']') {
+        depth--;
+        if (depth === 0) { endIdx = i; break; }
+      }
+    }
+
+    if (endIdx === -1 || text[endIdx + 1] !== ']') { pos = start + 1; continue; }
+
+    results.push({
+      type,
+      jsonStr:   text.slice(jsonStart, endIdx + 1),
+      fullMatch: text.slice(start, endIdx + 2),
+    });
+    pos = endIdx + 2;
+  }
+  return results;
+}
+
+function chatExecActions(text) {
+  const actions = parseKlaarActions(text);
+  for (const action of actions) {
+    try {
+      const p = JSON.parse(action.jsonStr);
+      executeKlaarAction(action.type, p);
+    } catch(e) {
+      logError('chatExecActions', e, { type: action.type, json: action.jsonStr.slice(0, 120) });
+      console.warn('[KLAAR] Action parse error:', e.message, action.jsonStr.slice(0, 120));
+    }
+  }
+  // Strip alle actie-tags uit de weergavetekst
+  let clean = text;
+  for (const a of [...actions].reverse()) clean = clean.replace(a.fullMatch, '');
+  return clean.trim();
+}
+
+function executeKlaarAction(type, p) {
+  if (type === 'SAVE_RECIPE') {
+    const id = 'rec_' + Date.now() + '_' + Math.random().toString(36).slice(2,6);
+    const newR = {
+      id,
+      title:     p.title  || 'AI Recept',
+      folder:    p.folder  || 'keuken',
+      status:    'draft',
+      type:      p.type    || 'savoury',
+      allergens: (p.allergens || []).map(a => ({ code: a.code, name: a.name, maybe: !!a.maybe })),
+      recipe:    p.recipe  || { prep:'', cook:'', servings:4, ingredients:[], steps:[], notes:'' },
+      createdAt: new Date().toISOString(),
+      addedBy:   'ai-chat',
+    };
+    // Normaliseer ingrediënten in het nieuwe recept
+    if (newR.recipe.ingredients?.length) {
+      newR.recipe.ingredients = newR.recipe.ingredients.map(normalizeIngredient);
+    }
+    recipes.unshift(newR);
+    saveRecipes();
+    renderSidebar();
+    openRecipe(id);
+    showToast(`✓ "${newR.title}" aangemaakt`);
+  }
+  else if (type === 'UPDATE_RECIPE') {
+    const targetId = p.id || activeId;
+    if (!targetId) return;
+    const r = getRecipe(targetId);
+    if (!r) { showToast('Recept niet gevonden voor update'); return; }
+    if (p.title)     r.title     = p.title;
+    if (p.type)      r.type      = p.type;
+    if (p.folder)    r.folder    = p.folder;
+    if (p.allergens) r.allergens = p.allergens.map(a => ({ code: a.code, name: a.name, maybe: !!a.maybe }));
+    if (p.recipe) {
+      r.recipe = { ...(r.recipe || {}), ...p.recipe };
+      if (r.recipe.ingredients?.length) {
+        r.recipe.ingredients = r.recipe.ingredients.map(normalizeIngredient);
+      }
+    }
+    r.updatedAt = new Date().toISOString();
+    saveRecipes();
+    if (targetId === activeId) openRecipe(targetId);
+    renderSidebar();
+    showToast(`✓ "${r.title}" bijgewerkt`);
+  }
+}
+
+function chatAppend(role, text) {
+  const d = document.createElement('div');
+  d.className = `chat-msg ${role}`;
+  d.innerHTML = chatFmt(text);
+  document.getElementById('chatMsgs').appendChild(d);
+  chatScroll();
+  return d;
+}
+
+function chatFmt(t) {
+  return (t||'').replace(/&/g,'&amp;').replace(/</g,'&lt;').replace(/>/g,'&gt;').replace(/\n/g,'<br>');
+}
+
+function chatScroll() { const el = document.getElementById('chatMsgs'); el.scrollTop = el.scrollHeight; }
+function chatSuggest(t) { document.getElementById('chatInp').value = t; chatSend(); }
+function chatShowNoKey() { chatAppend('sys', '⚠ Geen API-sleutel — klik ⚙ Instellingen'); openSettings(); }
+function chatKeyDown(e)  { if (e.key === 'Enter' && !e.shiftKey) { e.preventDefault(); chatSend(); } }
+function chatAutoResize(el) { el.style.height = 'auto'; el.style.height = Math.min(el.scrollHeight,80)+'px'; }
+
+// ═══════════════════════════════════════════════════
+// UTILS
+// ═══════════════════════════════════════════════════
+
+function showToast(msg, ms = 2500) {
+  const el = document.getElementById('toast');
+  el.textContent = msg; el.classList.add('show');
+  setTimeout(() => el.classList.remove('show'), ms);
+}
+
+function esc(s) {
+  return (s||'').replace(/&/g,'&amp;').replace(/</g,'&lt;').replace(/>/g,'&gt;').replace(/"/g,'&quot;');
+}
+</script>
+</body>
+</html>

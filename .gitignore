@@ -1,0 +1,28 @@
+# ─── Gevoelige bestanden — NOOIT in git ───────────────
+KLAAR-API-KEYS.md
+.env
+.env.local
+.env.*
+*.key
+*.pem
+
+# ─── macOS rommel ─────────────────────────────────────
+.DS_Store
+**/.DS_Store
+
+# ─── Backups (groot, niet nuttig in git) ─────────────
+backups/
+*.backup
+index_backup_*.html
+
+# ─── Debug / test bestanden ───────────────────────────
+debug.html
+test-*.html
+check-html.py
+
+# ─── Node / dependencies ──────────────────────────────
+node_modules/
+.npm/
+
+# ─── Vercel ───────────────────────────────────────────
+.vercel/
