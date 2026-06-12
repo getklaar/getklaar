@@ -546,6 +546,187 @@
     }
     .gate-benefit::before { content: '✓'; color: var(--accent); flex-shrink: 0; font-weight: 700; }
 
+    /* ═══════════════════════════════════════
+       INTRO SPLASH
+    ═══════════════════════════════════════ */
+    #introSplash {
+      position: fixed; inset: 0; z-index: 9999;
+      background: #0a0a0a;
+      display: flex; flex-direction: column;
+      align-items: center; justify-content: center;
+      cursor: pointer; user-select: none;
+      overflow: hidden;
+    }
+    #introSplash.fade-out {
+      animation: splashOut 0.55s cubic-bezier(0.4,0,1,1) forwards;
+    }
+    @keyframes splashOut { to { opacity: 0; pointer-events: none; } }
+
+    .splash-logo {
+      font-family: 'Bebas Neue', sans-serif;
+      font-size: clamp(88px, 17vw, 168px);
+      letter-spacing: 0.14em; line-height: 1;
+      display: flex;
+    }
+    .splash-letter {
+      display: inline-block; color: #e8ff47;
+      opacity: 0; transform: translateY(55px);
+      animation: letterDrop 0.48s cubic-bezier(0.16,1,0.3,1) forwards;
+    }
+    .splash-letter:nth-child(1){animation-delay:.04s}
+    .splash-letter:nth-child(2){animation-delay:.1s}
+    .splash-letter:nth-child(3){animation-delay:.16s}
+    .splash-letter:nth-child(4){animation-delay:.22s}
+    .splash-letter:nth-child(5){animation-delay:.28s}
+    @keyframes letterDrop { to { opacity:1; transform:translateY(0); } }
+
+    .splash-underline {
+      height: 2px; background: #e8ff47; width: 0;
+      margin: 18px 0 26px;
+      animation: lineGrow 0.4s cubic-bezier(0.4,0,0.2,1) 0.52s forwards;
+    }
+    @keyframes lineGrow { to { width: clamp(88px, 17vw, 168px); } }
+
+    .splash-tag {
+      font-family: 'DM Mono', monospace;
+      font-size: clamp(9px, 1.3vw, 12px);
+      letter-spacing: 0.28em; text-transform: uppercase;
+      color: #666; opacity: 0;
+      animation: fadeUp 0.4s ease 0.8s forwards;
+    }
+    .splash-nocc {
+      font-family: 'DM Mono', monospace;
+      font-size: clamp(8px, 1.1vw, 10px);
+      letter-spacing: 0.18em; color: #e8ff47;
+      opacity: 0; margin-top: 6px;
+      animation: fadeUp 0.4s ease 1s forwards;
+    }
+    .splash-cta {
+      margin-top: 52px;
+      font-family: 'DM Mono', monospace; font-size: 12px;
+      letter-spacing: 0.1em; text-transform: uppercase;
+      color: #0a0a0a; background: #e8ff47;
+      border: none; padding: 14px 36px; cursor: pointer;
+      opacity: 0;
+      animation: fadeUp 0.4s ease 1.2s forwards;
+      transition: transform 0.15s;
+    }
+    .splash-cta:hover { transform: translateY(-2px); }
+    .splash-hint {
+      position: absolute; bottom: 32px;
+      font-family: 'DM Mono', monospace; font-size: 10px;
+      color: #333; letter-spacing: 3px; text-transform: uppercase;
+      opacity: 0; animation: fadeUp 0.3s ease 1.5s forwards;
+    }
+    /* subtle scanline overlay on splash */
+    #introSplash::after {
+      content:''; position:absolute; inset:0; pointer-events:none;
+      background: repeating-linear-gradient(
+        0deg, transparent, transparent 2px, rgba(0,0,0,0.03) 2px, rgba(0,0,0,0.03) 4px
+      );
+    }
+    @keyframes fadeUp { from{opacity:0;transform:translateY(8px)} to{opacity:1;transform:translateY(0)} }
+
+    /* ═══════════════════════════════════════
+       HERO — NO-CC BADGE
+    ═══════════════════════════════════════ */
+    .nocc-strip {
+      display: flex; gap: 20px; align-items: center;
+      margin-top: 14px; flex-wrap: wrap;
+    }
+    .nocc-item {
+      font-family: 'DM Mono', monospace; font-size: 10px;
+      color: var(--gray); letter-spacing: 1px; text-transform: uppercase;
+      display: flex; align-items: center; gap: 5px;
+    }
+    .nocc-item::before { content: '✓'; color: var(--accent); font-weight: 700; }
+
+    /* ═══════════════════════════════════════
+       INTERACTIVE DEMO CHAT (hero)
+    ═══════════════════════════════════════ */
+    .live-demo-wrap {
+      margin-top: 48px; max-width: 560px;
+    }
+    .live-demo-header {
+      display: flex; align-items: center; gap: 10px; margin-bottom: 0;
+    }
+    .live-demo-dot { width: 7px; height: 7px; border-radius: 50%; background: var(--accent); animation: pulse 2s infinite; }
+    .live-demo-label {
+      font-family: 'DM Mono', monospace; font-size: 10px;
+      color: var(--gray); text-transform: uppercase; letter-spacing: 3px;
+    }
+    .live-demo-label span { color: var(--accent); }
+    .live-demo-box {
+      border: 1px solid var(--border); background: var(--surface);
+      margin-top: 12px;
+    }
+    .live-demo-msgs {
+      min-height: 120px; max-height: 280px; overflow-y: auto;
+      padding: 16px; display: flex; flex-direction: column; gap: 10px;
+      scroll-behavior: smooth;
+    }
+    .live-demo-msgs::-webkit-scrollbar { width: 3px; }
+    .live-demo-msgs::-webkit-scrollbar-thumb { background: var(--border); }
+    .ldm-user {
+      align-self: flex-end;
+      background: var(--accent); color: var(--black);
+      padding: 8px 14px; font-size: 13px; font-weight: 500;
+      max-width: 85%; line-height: 1.5;
+    }
+    .ldm-bot {
+      align-self: flex-start;
+      background: var(--muted); border: 1px solid var(--border);
+      color: var(--white); padding: 10px 14px; font-size: 13px;
+      max-width: 90%; line-height: 1.6;
+    }
+    .ldm-bot strong { color: var(--accent); }
+    .ldm-typing {
+      align-self: flex-start;
+      background: var(--muted); border: 1px solid var(--border);
+      padding: 10px 16px; font-family: 'DM Mono', monospace;
+      font-size: 11px; color: var(--gray);
+    }
+    .ldm-gate {
+      align-self: stretch;
+      background: rgba(232,255,71,0.05); border: 1px solid rgba(232,255,71,0.2);
+      padding: 14px 16px; font-size: 13px; color: var(--white); line-height: 1.6;
+      text-align: center;
+    }
+    .ldm-gate-btn {
+      display: inline-block; margin-top: 10px;
+      background: var(--accent); color: var(--black);
+      font-family: 'DM Mono', monospace; font-size: 11px; font-weight: 700;
+      letter-spacing: 1px; text-transform: uppercase;
+      border: none; padding: 9px 20px; cursor: pointer;
+    }
+    .live-demo-input-row {
+      border-top: 1px solid var(--border);
+      display: flex; align-items: center; gap: 0;
+    }
+    .live-demo-input {
+      flex: 1; background: transparent; border: none; outline: none;
+      color: var(--white); font-family: 'DM Sans', sans-serif; font-size: 13px;
+      padding: 12px 16px;
+    }
+    .live-demo-input::placeholder { color: var(--gray); }
+    .live-demo-send {
+      background: none; border: none; border-left: 1px solid var(--border);
+      color: var(--accent); font-family: 'DM Mono', monospace; font-size: 11px;
+      padding: 12px 16px; cursor: pointer; letter-spacing: 1px;
+      transition: background 0.1s;
+    }
+    .live-demo-send:hover { background: var(--muted); }
+    .live-demo-suggestions {
+      padding: 8px 14px 12px; display: flex; flex-wrap: wrap; gap: 6px;
+      border-top: 1px solid var(--border); background: var(--black);
+    }
+    .live-demo-sugg {
+      font-family: 'DM Mono', monospace; font-size: 9px; letter-spacing: 0.5px;
+      border: 1px solid var(--border); color: var(--gray); background: none;
+      padding: 4px 9px; cursor: pointer; transition: all 0.1s;
+    }
+    .live-demo-sugg:hover { border-color: var(--accent); color: var(--accent); }
+
     /* TRIAL BANNER */
     #trialBanner {
       background: rgba(255,165,0,0.06); border-bottom: 1px solid rgba(255,165,0,0.2);
@@ -574,55 +755,38 @@
   <h1 class="hero-title">Spreek.<br>Scan. <em>Klaar.</em></h1>
   <p class="hero-sub">De eerste horeca-app die je begrijpt en direct actie onderneemt. Geen formulieren invullen. Geen handleiding. Gewoon zeggen wat je wil — en het is geregeld.</p>
   <div class="hero-ctas">
-    <button class="hero-cta-primary" onclick="showAuthGate()">Gratis starten — 14 dagen <span style="opacity:.7; font-size:13px;">geen creditcard</span></button>
+    <button class="hero-cta-primary" onclick="showAuthGate()">Gratis starten — 14 dagen →</button>
     <a href="#modules" class="hero-cta-secondary">Bekijk modules ↓</a>
   </div>
-  <div class="hero-demo">
-    <div class="hero-demo-label">Zo werkt de AI-assistent</div>
-    <div class="hero-demo-window">
-      <div class="demo-msg-container" id="demoMessages">
-        <div class="demo-pair active" data-idx="0">
-          <div class="demo-user">"koeling nr. 2 staat op 8 graden, al 2 uur"</div>
-          <div class="demo-bot">⚠️ 8°C overschrijdt de HACCP-norm (&lt;7°C). Ik heb dit gelogd als afwijking. Verplaats bederfelijke producten en laat de technicus bellen. Wil ik ook een correctieve actie vastleggen?</div>
-        </div>
-        <div class="demo-pair" data-idx="1">
-          <div class="demo-user">"scan deze factuur van Hanos" [foto geüpload]</div>
-          <div class="demo-bot">✅ 23 producten gevonden en opgeslagen. Let op: kipfilet €10,20/kg — dat is +18% vs jouw vorige levering van €8,60. Wil je de kostprijs van je kipgerechten herberekenen?</div>
-        </div>
-        <div class="demo-pair" data-idx="2">
-          <div class="demo-user">"mijn foodcost zit te hoog, ik weet niet waar het zit"</div>
-          <div class="demo-bot">Je drie duurste gerechten zijn: Ribeye (foodcost 41%), Zalmtartaar (38%) en Gamba's (36%). Je target is 28%. De Ribeye alleen al kost je €340/maand extra marge. Wil ik concrete prijssuggesties berekenen?</div>
-        </div>
-        <div class="demo-pair" data-idx="3">
-          <div class="demo-user">"heeft de NVWA iets te zoeken bij mijn allergenenkaart?"</div>
-          <div class="demo-bot">3 recepten missen allergeendata: Huissalade, Dagsoep en Kindermenu. Dit zijn direct risico's bij een inspectie — boetes lopen op tot €1.500. Zal ik een checklist maken van wat ontbreekt?</div>
-        </div>
-        <div class="demo-pair" data-idx="4">
-          <div class="demo-user">"bruiloft zaterdag 80 personen, budget €3.200"</div>
-          <div class="demo-bot">✅ Event aangemaakt. Op basis van je ingrediëntenprijzen: kostprijs geschat op €18,40/pp → marge €21,60/pp (54%). Dat is ruim boven je target. Wil ik een keukensheet en boodschappenlijst genereren?</div>
-        </div>
-        <div class="demo-pair" data-idx="5">
-          <div class="demo-user">"zet mijn foodcost target op 29%"</div>
-          <div class="demo-bot">✅ Foodcost target bijgewerkt naar 29%. 4 gerechten zitten nu net boven target: Carpaccio (31%), Kaassoufflé (30%), Tonijnsalade (33%) en Vegaburger (30%). Wil ik je een aangepaste menukaart-analyse sturen?</div>
-        </div>
-        <div class="demo-pair" data-idx="6">
-          <div class="demo-user">"spreek recept in" [spreekt Bolognese in]</div>
-          <div class="demo-bot">✅ Recept aangemaakt: Klassieke Bolognese — 14 ingrediënten, bereidingstijd 45 min. Allergenen gedetecteerd: gluten, melk, selderij. Kostprijs berekend: €2,18/portie bij 4 personen. Opgeslagen in je bibliotheek.</div>
-        </div>
-        <div class="demo-pair" data-idx="7">
-          <div class="demo-user">"wat moet ik morgen bestellen voor het weekend?"</div>
-          <div class="demo-bot">Op basis van je weekend-recepten en huidige voorraad: bestel bij Hanos — kipfilet 8kg, rundergehakt 5kg, zalmfilet 4kg, verse basilicum 500g. Totaalprijs geschat: €187. Wil ik een bestelbonnetje opmaken?</div>
-        </div>
+  <div class="nocc-strip">
+    <div class="nocc-item">Geen creditcard</div>
+    <div class="nocc-item">Alleen je email</div>
+    <div class="nocc-item">Direct live</div>
+    <div class="nocc-item">14 dagen gratis</div>
+  </div>
+
+  <!-- LIVE INTERACTIEVE DEMO CHAT -->
+  <div class="live-demo-wrap">
+    <div class="live-demo-header">
+      <div class="live-demo-dot"></div>
+      <div class="live-demo-label">AI-Assistent <span>Live Demo</span> — probeer het zelf</div>
+    </div>
+    <div class="live-demo-box">
+      <div class="live-demo-msgs" id="liveDemoMsgs">
+        <div class="ldm-bot">👋 Ik ben de Klaar AI-assistent. Stel me een vraag over je restaurant — foodcost, HACCP, recepten, leveranciers, catering... Ik geef je direct een concreet antwoord.</div>
       </div>
-      <div class="demo-dots">
-        <span class="demo-dot active" onclick="setDemo(0)"></span>
-        <span class="demo-dot" onclick="setDemo(1)"></span>
-        <span class="demo-dot" onclick="setDemo(2)"></span>
-        <span class="demo-dot" onclick="setDemo(3)"></span>
-        <span class="demo-dot" onclick="setDemo(4)"></span>
-        <span class="demo-dot" onclick="setDemo(5)"></span>
-        <span class="demo-dot" onclick="setDemo(6)"></span>
-        <span class="demo-dot" onclick="setDemo(7)"></span>
+      <div class="live-demo-input-row">
+        <input class="live-demo-input" id="liveDemoInput" type="text"
+               placeholder="Bijv: mijn foodcost is te hoog, waar zit het?"
+               onkeydown="if(event.key==='Enter')liveDemoSend()" maxlength="200" />
+        <button class="live-demo-send" onclick="liveDemoSend()">Stuur →</button>
+      </div>
+      <div class="live-demo-suggestions">
+        <button class="live-demo-sugg" onclick="liveDemoFill('koeling staat op 8 graden')">Koeling afwijking</button>
+        <button class="live-demo-sugg" onclick="liveDemoFill('mijn foodcost is te hoog')">Foodcost te hoog</button>
+        <button class="live-demo-sugg" onclick="liveDemoFill('allergenenkaart klopt niet')">Allergenen risico</button>
+        <button class="live-demo-sugg" onclick="liveDemoFill('catering 60 personen zaterdag')">Catering event</button>
+        <button class="live-demo-sugg" onclick="liveDemoFill('wat moet ik morgen bestellen')">Inkoopadvies</button>
       </div>
     </div>
   </div>
@@ -663,7 +827,7 @@
 <div class="section">
   <div class="section-header">
     <div class="section-title">Modules</div>
-    <div class="section-meta">5 live — elk met eigen AI-assistent</div>
+    <div class="section-meta">6 live — elk met eigen AI-assistent</div>
   </div>
   <div class="module-grid">
 
@@ -700,14 +864,15 @@
       <div class="module-arrow">→ Open module</div>
     </a>
 
-    <div class="module-card coming-soon">
-      <div class="module-card-top"><span class="module-icon">🔥</span><span class="module-status status-soon">Binnenkort</span></div>
+    <a class="module-card active" href="./05-menubuilder/klaar-menubuilder.html">
+      <div class="module-card-top"><span class="module-icon">🍽️</span><span class="module-status status-live">● Live</span></div>
       <div class="module-number">MODULE 05</div>
-      <div class="module-name">Drukte Heatmap</div>
-      <div class="module-price">€49 / maand</div>
-      <div class="module-desc">POS + weersverwachting + geschiedenis → druktekaart per shift. Nooit meer verrast worden.</div>
-      <a href="mailto:info@getklaar.app?subject=Interesse%20in%20Drukte%20Heatmap" class="interest-btn">Meld interesse →</a>
-    </div>
+      <div class="module-name">Menubuilder</div>
+      <div class="module-price">€24 / maand</div>
+      <div class="module-desc">Bouw winstgevende menu's met menu engineering AI. Analyseert sterren, ploegpaarden en raadsels. Hot zones, anker­prijzen, beschrijvingen via AI — direct gekoppeld aan je recepten en kostprijzen.</div>
+      <div class="module-roi">📋 Beter menu = hogere gemiddelde bon — menu engineering levert 8–15% meer omzet</div>
+      <div class="module-arrow">→ Open module</div>
+    </a>
 
     <div class="module-card coming-soon">
       <div class="module-card-top"><span class="module-icon">📅</span><span class="module-status status-soon">Binnenkort</span></div>
@@ -729,12 +894,12 @@
     </a>
 
     <div class="module-card coming-soon">
-      <div class="module-card-top"><span class="module-icon">📋</span><span class="module-status status-soon">Binnenkort</span></div>
+      <div class="module-card-top"><span class="module-icon">🔥</span><span class="module-status status-soon">Binnenkort</span></div>
       <div class="module-number">MODULE 08</div>
-      <div class="module-name">Menu Builder</div>
-      <div class="module-price">€24 / maand</div>
-      <div class="module-desc">Bouw winstgevende menu's direct gekoppeld aan live kostprijsdata en allergeneninformatie.</div>
-      <a href="mailto:info@getklaar.app?subject=Interesse%20in%20Menu%20Builder" class="interest-btn">Meld interesse →</a>
+      <div class="module-name">Drukte Heatmap</div>
+      <div class="module-price">€49 / maand</div>
+      <div class="module-desc">POS + weersverwachting + geschiedenis → druktekaart per shift. Nooit meer verrast worden.</div>
+      <a href="mailto:info@getklaar.app?subject=Interesse%20in%20Drukte%20Heatmap" class="interest-btn">Meld interesse →</a>
     </div>
 
     <div class="module-card coming-soon">
@@ -1498,6 +1663,11 @@ function chatAutoResize(el) {
 // AUTH GATE (Supabase OTP)
 // =====================================================================
 async function showAuthGate() {
+  // Dev modus: direct door
+  if (localStorage.getItem('klaar_devmode') === 'klaar2026') {
+    window.location.href = './01-recept-studio/klaar-recept-studio.html';
+    return;
+  }
   // Al ingelogd? Ga direct naar de app
   const session = await klaarGetSession();
   if (session) {
@@ -1565,6 +1735,12 @@ async function gateSubmitCode() {
 }
 
 async function initSession() {
+  // Dev modus: toon badge
+  if (localStorage.getItem('klaar_devmode') === 'klaar2026') {
+    const headerCta = document.getElementById('headerCta');
+    if (headerCta) { headerCta.textContent = '⚙ Dev modus actief'; headerCta.style.opacity = '.7'; }
+    return;
+  }
   const session = await klaarGetSession();
   if (!session) return;
 
@@ -1579,21 +1755,194 @@ async function initSession() {
   }
 }
 
-// Demo rotatie
-let _demoIdx = 0, _demoTimer;
-function setDemo(idx) {
-  document.querySelectorAll('.demo-pair').forEach((el, i) => el.classList.toggle('active', i === idx));
-  document.querySelectorAll('.demo-dot').forEach((el, i) => el.classList.toggle('active', i === idx));
-  _demoIdx = idx;
-  clearInterval(_demoTimer);
-  _demoTimer = setInterval(() => setDemo((_demoIdx + 1) % 8), 4500);
+// =====================================================================
+// INTRO SPLASH
+// =====================================================================
+function dismissSplash() {
+  const splash = document.getElementById('introSplash');
+  if (!splash || splash.classList.contains('fade-out')) return;
+  splash.classList.add('fade-out');
+  sessionStorage.setItem('klaar_intro_seen', '1');
+  setTimeout(() => { if (splash.parentNode) splash.remove(); }, 600);
 }
 
+(function initSplash() {
+  if (sessionStorage.getItem('klaar_intro_seen')) {
+    const s = document.getElementById('introSplash');
+    if (s) s.remove();
+    return;
+  }
+  // Auto-dismiss after 4.2s
+  setTimeout(dismissSplash, 4200);
+  // Dismiss on scroll
+  window.addEventListener('wheel', dismissSplash, { once: true, passive: true });
+  window.addEventListener('touchmove', dismissSplash, { once: true, passive: true });
+})();
+
+// =====================================================================
+// LIVE DEMO CHAT (geen auth vereist — scripted responses)
+// =====================================================================
+const _DEMO_KB = [
+  { keys: ['koeling','temperatuur','graden','haccp','afwijking','koud','warm'],
+    resp: '⚠️ Temperatuurafwijking gedetecteerd. 8°C overschrijdt de HACCP-norm (&lt;7°C voor koeling). Aanbevolen acties:\n\n1. Verplaats bederfelijke producten naar koeling 2 (4.2°C)\n2. Bel de technicus — log tijdstempel\n3. Documenteer de afwijking in het HACCP-logboek\n\nWil ik een correctieve actie vastleggen met tijdstempel en verantwoordelijke?' },
+  { keys: ['foodcost','food cost','marge','kostprijs','duur','te hoog','verlies','winst'],
+    resp: 'Op basis van een gemiddelde horeca-menukaart zijn dit de meest voorkomende pijnpunten:\n\n• <strong>Ribeye / steaks</strong> — foodcost 40-45%, target is 28%\n• <strong>Vis gerechten</strong> — sterke prijsfluctuatie (±25%) onderschat\n• <strong>Dagsuggesties</strong> — vaak niet doorberekend op actuele inkoopprijs\n\nIn de echte app verbind ik me met jóuw recepten en leveranciersfacturen. Dan zie je exact waar per euro marge weglekt.' },
+  { keys: ['allergen','allergie','nvwa','inspectie','gluten','melk','noten','boete'],
+    resp: '⚠️ NVWA-risico gevonden. Veelvoorkomende problemen:\n\n• Huissalade, soep van de dag en kindermenu hebben vaak geen allergeenregistratie\n• 14 verplichte allergenen moeten zichtbaar zijn op de menukaart\n• Boetes bij een inspectie lopen op tot <strong>€1.500 per overtreding</strong>\n\nIn Klaar scan je een recept in en worden allergenen automatisch gedetecteerd en bijgehouden.' },
+  { keys: ['catering','event','bruiloft','feest','personen','pp','buffet','receptie'],
+    resp: '✅ Catering event berekend. Voorbeeld: 60 personen, 3-gangen:\n\n• Kostprijs p.p.: €18,40 (foodcost 30%)\n• Verkoopprijs advies: €62 p.p. (marge 70%)\n• Totale omzet: €3.720\n\nKlaar genereert automatisch een keukensheet, mis-en-place lijst en inkooporder op basis van jouw recepten en ingrediëntenprijzen.' },
+  { keys: ['bestell','inkoop','leverancier','hanos','sligro','bidfood','voorraad','wat nodig'],
+    resp: 'Inkoopadvies op basis van standaard weekend-patronen:\n\n• Kipfilet: 8kg (meest verkochte eiwit vrijdag/zaterdag)\n• Rundergehakt: 5kg\n• Verse kruiden (basilicum, peterselie): 500g elk\n• Slagroom / boter: buffervoorraad +20%\n\nIn de echte app leer ik van jouw bestelhistorie en koppel ik direct aan leverancierscatalogi.' },
+  { keys: ['recept','bolognese','pasta','saus','ingrediënt','bereidingstijd','portie'],
+    resp: '✅ Recept aangemaakt. Demo: Klassieke Bolognese\n\n• 14 ingrediënten opgeslagen\n• Kostprijs: €2,18/portie bij 4 personen\n• Bereidingstijd: 45 min\n• Allergenen: gluten ✓ melk ✓ selderij ✓\n\nIn Klaar spreek je het recept in — ik zet het automatisch om naar een gestructureerd recept, bereken de kostprijs en koppel het aan je menukaart.' },
+  { keys: ['menu','kaart','prijs','aanpassen','verhog','verlag','gerecht'],
+    resp: 'Menukaart analyse (demo-data):\n\n• Beste marge-performers: Pasta Carbonara (72%), Dagsoep (68%), Bruschetta (65%)\n• Laagste marge: Ribeye (59%), T-bone (61%)\n• Psychologisch advies: Ribeye en T-bone zijn <strong>anker-gerechten</strong> — verhoog ze niet, maar gebruik ze om andere gerechten goedkoop te laten lijken.\n\nIn Klaar zie je dit in real-time per gerecht op basis van jouw actuele inkoopprijzen.' },
+];
+
+const _DEMO_DEFAULT = 'Goede vraag! Dit is een demoversie — mijn antwoorden zijn gebaseerd op typische horeca-situaties.\n\nIn de <strong>echte app</strong> verbind ik me met jóuw recepten, jóuw leveranciersfacturen en jóuw HACCP-data. Dan geef ik antwoorden die precies kloppen met jouw zaak.\n\nGratis proberen? Alleen je email nodig — geen creditcard, geen installatie.';
+
+let _ldmCount = 0;
+
+function liveDemoFill(text) {
+  const inp = document.getElementById('liveDemoInput');
+  if (inp) { inp.value = text; inp.focus(); }
+}
+
+function liveDemoSend() {
+  const inp = document.getElementById('liveDemoInput');
+  const msgs = document.getElementById('liveDemoMsgs');
+  if (!inp || !msgs) return;
+  const text = inp.value.trim();
+  if (!text) return;
+  inp.value = '';
+
+  // User bubble
+  const userEl = document.createElement('div');
+  userEl.className = 'ldm-user';
+  userEl.textContent = text;
+  msgs.appendChild(userEl);
+  msgs.scrollTop = msgs.scrollHeight;
+
+  _ldmCount++;
+
+  // After 3 messages → show gate
+  if (_ldmCount > 3) {
+    setTimeout(() => {
+      const gate = document.createElement('div');
+      gate.className = 'ldm-gate';
+      gate.innerHTML = '💡 Je hebt de AI nu 3 keer gevraagd. Zin om hem op jóuw zaak los te laten?<br><span style="font-size:12px;color:var(--gray);">Geen creditcard. Alleen je email. 14 dagen gratis.</span>';
+      const btn = document.createElement('button');
+      btn.className = 'ldm-gate-btn';
+      btn.textContent = 'Gratis starten →';
+      btn.onclick = showAuthGate;
+      gate.appendChild(document.createElement('br'));
+      gate.appendChild(btn);
+      msgs.appendChild(gate);
+      msgs.scrollTop = msgs.scrollHeight;
+    }, 400);
+    return;
+  }
+
+  // Typing indicator
+  const typing = document.createElement('div');
+  typing.className = 'ldm-typing';
+  typing.id = '_ldmTyping';
+  typing.innerHTML = '<span style="animation:blink 1.2s infinite;display:inline-block">▋</span> Klaar denkt na...';
+  msgs.appendChild(typing);
+  msgs.scrollTop = msgs.scrollHeight;
+
+  // Find matching response
+  const lc = text.toLowerCase();
+  let response = _DEMO_DEFAULT;
+  for (const entry of _DEMO_KB) {
+    if (entry.keys.some(k => lc.includes(k))) {
+      response = entry.resp;
+      break;
+    }
+  }
+
+  // Simulate response delay + streaming
+  const delay = 600 + Math.random() * 700;
+  setTimeout(() => {
+    document.getElementById('_ldmTyping')?.remove();
+    const botEl = document.createElement('div');
+    botEl.className = 'ldm-bot';
+    msgs.appendChild(botEl);
+    msgs.scrollTop = msgs.scrollHeight;
+
+    // Stream character by character
+    let i = 0;
+    const speed = 12; // ms per char
+    function typeChar() {
+      if (i < response.length) {
+        botEl.innerHTML = response.slice(0, i + 1).replace(/\n/g, '<br>');
+        i++;
+        msgs.scrollTop = msgs.scrollHeight;
+        setTimeout(typeChar, speed);
+      }
+    }
+    typeChar();
+  }, delay);
+}
+
+// =====================================================================
+// 5-MINUTEN TRIAL POPUP
+// =====================================================================
+function show5MinPopup() {
+  // Skip als al ingelogd of al getoond
+  if (sessionStorage.getItem('klaar_5min_shown')) return;
+  klaarGetSession().then(session => {
+    if (session) return;
+    sessionStorage.setItem('klaar_5min_shown', '1');
+    const gate = document.getElementById('emailGate');
+    const label = gate.querySelector('.gate-label');
+    const title = gate.querySelector('.gate-title');
+    const sub = gate.querySelector('#gateStepEmail .gate-sub');
+    if (label) label.textContent = 'Je bent er al 5 minuten';
+    if (title) { title.innerHTML = 'De app is nog<br>beter van binnen.'; }
+    if (sub) sub.textContent = 'Start gratis — alleen je email. Geen creditcard, geen automatische afschrijving.';
+    gate.classList.add('visible');
+    document.getElementById('gateStepEmail').style.display = '';
+    document.getElementById('gateStepCode').style.display = 'none';
+    setTimeout(() => { document.getElementById('gateEmail')?.focus(); }, 100);
+  });
+}
+
+// =====================================================================
+// INIT
+// =====================================================================
 document.addEventListener('DOMContentLoaded', () => {
   initSession();
-  _demoTimer = setInterval(() => setDemo((_demoIdx + 1) % 8), 4500);
+
+  // 5-minuten popup (alleen als niet ingelogd)
+  setTimeout(show5MinPopup, 5 * 60 * 1000);
+
+  // Magic link afhandelen
+  window.klaarSupabase.auth.onAuthStateChange((event, session) => {
+    if ((event === 'SIGNED_IN' || event === 'TOKEN_REFRESHED') && session) {
+      const params = new URLSearchParams(window.location.search);
+      const redirect = params.get('redirect');
+      window.location.href = redirect || './01-recept-studio/klaar-recept-studio.html';
+    }
+  });
 });
 </script>
+
+<!-- INTRO SPLASH -->
+<div id="introSplash" onclick="dismissSplash()">
+  <div class="splash-logo">
+    <span class="splash-letter">K</span>
+    <span class="splash-letter">L</span>
+    <span class="splash-letter">A</span>
+    <span class="splash-letter">A</span>
+    <span class="splash-letter">R</span>
+  </div>
+  <div class="splash-underline"></div>
+  <div class="splash-tag">Besturingssysteem voor de Horeca</div>
+  <div class="splash-nocc">Alleen je email &nbsp;·&nbsp; Geen creditcard &nbsp;·&nbsp; Direct live</div>
+  <button class="splash-cta" onclick="dismissSplash()">Bekijk de app →</button>
+  <div class="splash-hint">Klik ergens om door te gaan</div>
+</div>
 
 <!-- TRIAL BANNER -->
 <div id="trialBanner">
@@ -1611,26 +1960,31 @@ document.addEventListener('DOMContentLoaded', () => {
 
     <!-- STAP 1: e-mail invullen -->
     <div id="gateStepEmail">
-      <p class="gate-sub">Vul je e-mail in. We sturen je een inlogcode — geen wachtwoord nodig.</p>
+      <p class="gate-sub">Alleen je email. We sturen je een inlogcode — geen wachtwoord, geen creditcard.</p>
       <div class="gate-benefits">
         <div class="gate-benefit">Alle 6 live modules direct beschikbaar</div>
         <div class="gate-benefit">AI-assistent in elke module inbegrepen</div>
         <div class="gate-benefit">Scan facturen, spreek recepten in, log HACCP direct via chat</div>
         <div class="gate-benefit">Werkt op elke browser, ook tablet en telefoon</div>
       </div>
+      <div style="display:flex;gap:12px;align-items:center;margin-bottom:16px;padding:10px 12px;background:rgba(232,255,71,0.06);border:1px solid rgba(232,255,71,0.15);">
+        <span style="font-size:18px;">✉️</span>
+        <span style="font-family:'DM Mono',monospace;font-size:10px;color:var(--accent);letter-spacing:1px;line-height:1.5;">GEEN CREDITCARD NODIG<br><span style="color:var(--gray);">Geen automatische afschrijving. Ooit.</span></span>
+      </div>
       <input type="email" class="gate-input" id="gateEmail" placeholder="jouw@email.nl" onkeydown="if(event.key==='Enter')gateSubmitEmail()" />
-      <button class="gate-submit" onclick="gateSubmitEmail()">Code ontvangen →</button>
-      <div class="gate-fine">Na 14 dagen stuur je ons een mailtje om door te gaan. Geen automatische afschrijving.</div>
+      <button class="gate-submit" onclick="gateSubmitEmail()">Stuur me een inlogcode →</button>
+      <div class="gate-fine">Na 14 dagen stuur je ons een mailtje om door te gaan. Nooit automatisch.</div>
     </div>
 
-    <!-- STAP 2: OTP code invoeren -->
+    <!-- STAP 2: magic link of OTP code -->
     <div id="gateStepCode" style="display:none">
-      <p class="gate-sub" id="gateCodeHint">Code gestuurd naar jouw e-mail.</p>
-      <p class="gate-sub" style="opacity:.55; font-size:13px; margin-top:6px;">Controleer ook je spam-map. De code is 10 minuten geldig.</p>
+      <p class="gate-sub" id="gateCodeHint">Email gestuurd.</p>
+      <p class="gate-sub" style="font-size:14px; margin-top:8px; line-height:1.6;">Klik op de <strong style="color:var(--white);">inloglink</strong> in je email — je wordt dan automatisch ingelogd.<br><span style="opacity:.5; font-size:12px;">Controleer ook je spam-map.</span></p>
+      <p class="gate-sub" style="opacity:.45; font-size:12px; margin-top:18px; border-top:1px solid var(--border); padding-top:14px;">Heb je een 6-cijferige code ontvangen? Vul die dan hieronder in:</p>
       <input type="text" class="gate-input" id="gateCode" placeholder="123456" maxlength="6" inputmode="numeric"
              onkeydown="if(event.key==='Enter')gateSubmitCode()"
-             style="letter-spacing:6px; text-align:center; font-size:24px; font-family:'DM Mono',monospace;" />
-      <button class="gate-submit" onclick="gateSubmitCode()">Inloggen →</button>
+             style="letter-spacing:6px; text-align:center; font-size:24px; font-family:'DM Mono',monospace; margin-top:8px;" />
+      <button class="gate-submit" onclick="gateSubmitCode()">Inloggen met code →</button>
       <button onclick="document.getElementById('gateStepEmail').style.display='';document.getElementById('gateStepCode').style.display='none';"
               style="display:block;background:none;border:none;color:var(--gray);cursor:pointer;font-size:13px;margin-top:10px;padding:0;">
         ← Ander e-mailadres

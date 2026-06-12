@@ -534,6 +534,39 @@
     .chat-send:hover{background:#d4e83d;}
     .chat-send:disabled{background:var(--muted);color:var(--gray);cursor:not-allowed;}
 
+    /* ── PERSONA SELECTOR ── */
+    .persona-strip{
+      border-bottom:1px solid var(--border);
+      padding:8px 10px 6px;flex-shrink:0;background:var(--surface);
+    }
+    .persona-header-row{
+      display:flex;align-items:center;justify-content:space-between;margin-bottom:6px;
+    }
+    .persona-lbl{
+      font-family:'DM Mono',monospace;font-size:9px;
+      color:var(--gray);letter-spacing:.14em;text-transform:uppercase;
+    }
+    .persona-active-tag{
+      font-family:'DM Mono',monospace;font-size:9px;
+      color:var(--lime);opacity:.75;letter-spacing:.04em;
+      max-width:140px;overflow:hidden;text-overflow:ellipsis;white-space:nowrap;
+    }
+    .persona-scroll{
+      display:flex;gap:4px;overflow-x:auto;padding-bottom:1px;
+    }
+    .persona-scroll::-webkit-scrollbar{height:2px;}
+    .persona-scroll::-webkit-scrollbar-thumb{background:var(--border);}
+    .persona-pill{
+      flex-shrink:0;
+      font-family:'DM Mono',monospace;font-size:9px;letter-spacing:.05em;
+      border:1px solid var(--border);color:var(--gray);background:none;
+      padding:3px 8px;cursor:pointer;transition:all .12s;white-space:nowrap;
+    }
+    .persona-pill:hover{border-color:var(--lime);color:var(--lime);}
+    .persona-pill.active{
+      background:rgba(232,255,71,.1);border-color:var(--lime);color:var(--lime);
+    }
+
     /* ── MODALS ── */
     .modal-ov{
       position:fixed;inset:0;background:rgba(0,0,0,.75);
@@ -814,6 +847,14 @@
       <span class="chat-hdr-title">AI Assistent</span>
       <span class="chat-ctx" id="chatCtx">— geen recept open</span>
     </div>
+    <!-- PERSONA SELECTOR -->
+    <div class="persona-strip">
+      <div class="persona-header-row">
+        <span class="persona-lbl">Keuken modus</span>
+        <span class="persona-active-tag" id="personaTag">—</span>
+      </div>
+      <div class="persona-scroll" id="personaPills"></div>
+    </div>
     <div class="chat-msgs" id="chatMsgs">
       <div class="chat-msg sys">Open een recept om mee te sparren, of stel een algemene vraag.</div>
     </div>
@@ -857,6 +898,183 @@ const FOLDERS = [
   { id:'koffie', name:'Koffie', icon:'☕' },
   { id:'archief',name:'Archief',icon:'📦' },
 ];
+
+// ═══════════════════════════════════════════════════
+// CHEF / ZAAK PERSONA DATA
+// ═══════════════════════════════════════════════════
+const CHEF_PERSONAS = [
+  {
+    id: 'bistro',
+    label: 'Bistro',
+    tagline: 'Klassiek, marge-bewust, dagkaart',
+    context: `KEUKEN TYPE — Bistro / Brasserie:
+Kenmerken: 30-60 couverts, dagkaart 8-12 gangen, hoge tafelrotatie, klassiek Frans/Europees fundament.
+Prioriteiten: food cost (target 28-32%) staat voorop, dan snelheid, dan creativiteit.
+Porties: genereus maar gecontroleerd — eiwit 160-180g ruw, bijgerecht 100g, saus 70ml per bord.
+Techniek: klassieke brigade, mise en place voor één kok draaibaar, dag-prep voorbereidbaar.
+Stijl: comfort food elevated — klassiekers met een twist, seizoensgebonden, herkenbaar voor de gast.
+Advies: praktisch en haalbaar, focus op eenvoud die consistent uitvoerbaar is.`
+  },
+  {
+    id: 'ala-carte',
+    label: 'À la carte',
+    tagline: 'Vast menu, brigade, herhaalbaar',
+    context: `KEUKEN TYPE — À la carte Restaurant:
+Kenmerken: 40-80 couverts, vast menu 12-20 gangen, seizoenswissels elke 6-8 weken.
+Prioriteiten: consistentie staat voorop — recepturen zijn productiebeschrijvingen die door iedere brigadekok uitvoerbaar zijn.
+Porties: restaurant-standaard — eiwit 150-170g ruw, bijgerecht 80-100g, saus 60ml.
+Techniek: full brigade, elke stap gedocumenteerd voor replicatie. Bereidingswindow per gang max 4 min.
+Stijl: exact, documenteerbaar, denk in batches en mise-en-place-planning per service.
+Advies: schaalbaar, bestand tegen brigadeomgeving, reproduceerbaar zonder chefaanwezigheid.`
+  },
+  {
+    id: 'fine-dining',
+    label: 'Fine Dining',
+    tagline: 'Hoge techniek, premium product, precisie',
+    context: `KEUKEN TYPE — Fine Dining / Gastronomisch:
+Kenmerken: 20-40 couverts, 7-12 gangen menu, amuses, intermezzo's, petit fours. Hoge investering per couverte (€80-250+).
+Prioriteiten: product kwaliteit en creativiteit staan voorop — food cost is secundair (35-45% is acceptabel bij premium).
+Porties: architecturaal en klein — eiwit 80-120g per gang, bijgerecht 40-60g, sauzen als quenelle of streep.
+Techniek: sous-vide (precisie tot 0.1°C), emulsies, gelering, vacuüm, dry-aging, Maillard-beheersing.
+Stijl: innovatief en technisch — bord als canvas, 4-6 elementen per gang, textuur- en temperatuurcontrast.
+Advies: leg smaakcompositie per gang uit (zuur/vet/bitter/zoet/umami-balans), plus menuverloop.`
+  },
+  {
+    id: 'grand-cafe',
+    label: 'Grand Café',
+    tagline: 'Volume, doorlopend, breed publiek',
+    context: `KEUKEN TYPE — Grand Café / Brasserie:
+Kenmerken: 80-200 couverts, doorlopende bediening van 11u tot 22u, lunchmenu + à la carte, breed publiek.
+Prioriteiten: snelheid en volume staan voorop — ticket time max 12-15 min per gang.
+Porties: groot en zichtbaar — eiwit 180-220g, bijgerecht 120-150g, royaal opgediend.
+Techniek: simpel en repliceerbaar door parttime koks met wisselende ervaring, max 3 handelingen per gang.
+Stijl: herkenbaar, toegankelijk, weinig componenten per bord — geen tweepinsettherapie.
+Advies: standaardiseerbaar, snel opmaakbaar, grote batches mogelijk, minimale à-la-minute-handelingen.`
+  },
+  {
+    id: 'eetcafe',
+    label: 'Eetcafé',
+    tagline: 'Eerlijk eten, solo kok, food cost first',
+    context: `KEUKEN TYPE — Eetcafé / Kroeg met keuken:
+Kenmerken: 30-60 couverts, 1-2 koks in de keuken, kaart van 8-14 gerechten, stamgastenpubliek.
+Prioriteiten: food cost is kritisch (target 24-27%) — kleine marges, hoog volume is de businesslogica.
+Porties: ruim en eerlijk — eiwit 200g, bijgerecht 150g, zichtbaar vers en huisgemaakt.
+Techniek: simpel maar goed — braden, stoven, grillen. Geen sous-vide, geen 6 componenten per bord.
+Stijl: down-to-earth, vertrouwd, volkskeuken elevated zonder poeha.
+Advies: wat kan één kok gestroomlijnde service aan? Minimale mise en place, maximaal 5 ingrediënten per gerecht.`
+  },
+  {
+    id: 'fast-casual',
+    label: 'Fast Casual',
+    tagline: 'Standaardisatie, training-proof',
+    context: `KEUKEN TYPE — Fast Casual / Lunchroom:
+Kenmerken: hoog volume, snelle service (onder 8 min), wisselende koks, strikt gestandaardiseerde kaart.
+Prioriteiten: consistentie en herhaalbaarheid staan voorop — elk gerecht door een onervaren medewerker uitvoerbaar.
+Porties: gram-gestuurd voor kostenbeheer — portioneer altijd met weegschaal, geen oogmaat.
+Techniek: ultra simpel — assemblage-model, geen knife skills vereist, warmhoud- en regeneratieovens.
+Stijl: stap-voor-stap instructies, geen ruimte voor interpretatie: "als X → altijd Y".
+Advies: training-first — schrijf voor iemand zonder horecachef-achtergrond maar wel gemotiveerd.`
+  },
+  {
+    id: 'catering',
+    label: 'Catering',
+    tagline: 'Volumes, transport, voedselveiligheid',
+    context: `KEUKEN TYPE — Catering / Eventcatering:
+Kenmerken: 50-1000+ personen, centrale productie, koud of warm transport, regenereren op locatie.
+Prioriteiten: voedselveiligheid is hard constraint, daarna volume-efficiëntie, dan food cost.
+Porties: exact voor aantallen — geen variatie per couverte, altijd schaalberekening meegeven.
+Techniek: cook-chill, vacuüm-sealen, regeneratieovens, batch cooking, koeltijden zijn wet.
+Stijl: logistiek-gedreven — elk recept bevat regeneratie-instructies (temp, tijd, eindtemp ≥75°C).
+Advies: denk altijd in transport — hoe vervoer je dit warm/koud/veilig? Voeg schaalfactor toe (bijv. ×80).`
+  },
+  {
+    id: 'patisserie',
+    label: 'Patisserie',
+    tagline: 'Gramnauwkeurig, suiker, shelf life',
+    context: `KEUKEN TYPE — Patisserie / Banketbakkerij:
+Kenmerken: suiker- en meelgebaseerde producten, gram-precisie is wet, shelf life is productstrategie.
+Prioriteiten: precisie en consistentie — 1g afwijking kan product ruïneren. Creativiteit binnen kaders.
+Porties: altijd in gewicht (g), nooit "een eetlepel". Batches zijn wiskundige verhoudingen.
+Techniek: chocoladetempereren (28°C/31°C/29°C), vla-bereidingen, rijzingstiming, gelering, suikertrekken.
+Stijl: exact en reproduceerbaar — vermeld altijd temperaturen, wateractiviteit en bewaaradviezen.
+Advies: geef altijd de wiskundige verhouding (bijv. 2:1 chocolade:room voor ganache), shelf life per product.`
+  },
+  {
+    id: 'traiteur',
+    label: 'Traiteur',
+    tagline: 'Luxe catering, events, presentatie',
+    context: `KEUKEN TYPE — Traiteur / Luxe Catering:
+Kenmerken: high-end eventcatering, 30-300 personen, kwaliteitsproducten, professionele presentatie op locatie.
+Prioriteiten: kwaliteit en presentatie staan voorop, logistiek is de tweede constraint, food cost is hoger dan gangbaar (35-42%).
+Porties: fine-dining portionering maar cateringvolume — kleine maar presentabele hapjes en gangen.
+Techniek: mise en place planning op locatie, cold chain, opmaak ter plekke. Geen sous-vide op locatie.
+Stijl: luxueus en herkenbaar — premium producten, elegante presentatie, gastenervaring centraal.
+Advies: voeg altijd opbouw-instructies toe voor locatie-gebruik en hoe het 2-3 uur na bereiding er nog goed uitziet.`
+  },
+  {
+    id: 'zorginstelling',
+    label: 'Zorginstelling',
+    tagline: 'Dieet, textuur, extra veiligheid',
+    context: `KEUKEN TYPE — Zorginstelling / Zorgcatering:
+Kenmerken: vaste bewoners of patiënten, dieetkaarten, textuurwijzigingen (normaal / fijn gemalen / gepureerd), medicijn-interacties.
+Prioriteiten: voedselveiligheid + voedingswaarde zijn hard constraints — allergenen zijn juridisch bindend.
+Porties: kleiner (senioren: 120-150g eiwit), maar caloriedichtheid hoog. Vezelrijke basis.
+Techniek: textuurmodificatie (malen, passeren, gelling agents voor terugvormen), zout- en vetbeperking.
+Stijl: zorg-sensitief — bewust van kauw- en slikproblemen, altijd textuurvariant meegeven (I/II/III).
+Advies: voor elk recept voedingswaarde per portie vermelden. De "core 4" checken: temperatuur, tijd, koeling, besmetting.`
+  },
+  {
+    id: 'gastronomisch',
+    label: 'Gastronomisch',
+    tagline: 'Michelinlevel, R&D, experimenteel',
+    context: `KEUKEN TYPE — Gastronomisch / Sterrenniveau:
+Kenmerken: 15-30 couverts, multi-course tasting menu, eigen R&D-keuken, chef-driven, internationale inspiratie.
+Prioriteiten: creativiteit en techniek staan voorop. Food cost is geen eerste constraint — product kwaliteit is heilig.
+Porties: architecturaal — per component 20-50g, bord als canvas, 5-8 elementen per gang.
+Techniek: modernistische keuken — spherificatie, gelering, emulsies, anti-griddle, rotary evaporator, precision fermentatie.
+Stijl: innovatief en technisch — leg altijd het waarom van smaakcombinaties uit (flavorpairing, aromakoppeling, contrast-principe).
+Advies: denk in menuverloop (zoet-zuur-vet-bitter-umami progressie over alle gangen), refereer aan technieken en bronnen.`
+  },
+];
+
+// ─── Persona helpers ──────────────────────────────
+const PERSONA_KEY = 'klaar_chef_persona';
+
+function getActivePersona() {
+  const id = localStorage.getItem(PERSONA_KEY) || 'bistro';
+  return CHEF_PERSONAS.find(p => p.id === id) || CHEF_PERSONAS[0];
+}
+
+function setPersona(id, silent = false) {
+  localStorage.setItem(PERSONA_KEY, id);
+  // Update pills
+  document.querySelectorAll('.persona-pill').forEach(el => {
+    el.classList.toggle('active', el.dataset.id === id);
+  });
+  // Update tag
+  const p = getActivePersona();
+  const tag = document.getElementById('personaTag');
+  if (tag) tag.textContent = p.tagline;
+  // Notify in chat
+  if (!silent) chatAppend('sys', `Keuken modus → ${p.label}. De assistent past zijn aanpak aan.`);
+}
+
+function initPersonaSelector() {
+  const pills = document.getElementById('personaPills');
+  if (!pills) return;
+  CHEF_PERSONAS.forEach(p => {
+    const btn = document.createElement('button');
+    btn.className = 'persona-pill';
+    btn.dataset.id = p.id;
+    btn.textContent = p.label;
+    btn.title = p.tagline;
+    btn.onclick = () => setPersona(p.id);
+    pills.appendChild(btn);
+  });
+  // Restore saved persona (silent = true → geen chatbericht bij laden)
+  const saved = localStorage.getItem(PERSONA_KEY) || 'bistro';
+  setPersona(saved, true);
+}
 
 // ═══════════════════════════════════════════════════
 // FOUTLOGGER — automatisch bijhouden voor debugging
@@ -1385,6 +1603,7 @@ let _chatStreaming = false;
   renderSidebar();
   renderGrid();
   updateSugs();
+  initPersonaSelector();
   // Verberg noKeyBanner — API key is niet meer nodig
   const banner = document.getElementById('noKeyBanner');
   if (banner) banner.style.display = 'none';
@@ -2025,11 +2244,12 @@ async function generateRecipe() {
   try {
     const d = await klaarAI({
         model: 'claude-haiku-4-5-20251001', max_tokens: 1800,
-        system: `Je bent een professionele kok met 15+ jaar ervaring in de Nederlandse horecakeuken. Je schrijft recepturen voor koks in een brigadeomgeving — geen huishoudelijke taal, geen vage hoeveelheden.
+        system: `Je bent een professionele kok voor de Nederlandse horeca. Je schrijft recepturen voor koks — geen huishoudelijke taal, geen vage hoeveelheden.
 
-STANDAARDEN:
+${getActivePersona().context}
+
+STANDAARDEN (gelden altijd, ongeacht keuken type):
 - Ingrediënten in exacte grammen of milliliters, nooit "naar smaak" of "een scheutje"
-- Porties zijn restaurant-yields: eiwit 150-180g ruw per couverte, bijgerecht 80-120g, sauzen 60-80ml per portie
 - Stappen in 3 blokken: MISE EN PLACE → BEREIDING → AFWERKING + SERVICE
 - Vermeld pan-temperaturen (°C), kerntemperaturen, rusttijden
 - Gebruik vakjargon waar passend: sauteren, bruneren, deglaceren, monteren, passeren, blancheren, confiten
@@ -2037,6 +2257,7 @@ STANDAARDEN:
 - Notes bevatten: koelketen (temp, houdbaarheid), prep-aanwijzingen voor service, eventuele variaties
 - Detecteer ALLE EU-14 allergenen correct: ${table}
 - maybe:true alleen bij kruisbesmettingsrisico of twijfel (bijv. sporen)
+- Pas porties aan op het keuken type hierboven — fine dining is kleiner, eetcafé is royaler
 
 Retourneer UITSLUITEND geldige JSON, geen tekst eromheen.`,
         messages: [{ role: 'user', content: `Maak een professionele horecareceptuur voor: "${context}"${ingLib}
@@ -2136,6 +2357,7 @@ function updateSugs(recipe) {
 }
 
 function chatBuildPrompt() {
+  const persona      = getActivePersona();
   const recepten     = JSON.parse(localStorage.getItem('klaar_recipes')      || '[]');
   const ingredienten = JSON.parse(localStorage.getItem('klaar_ingredienten') || '[]');
   const active       = activeId ? getRecipe(activeId) : null;
@@ -2164,7 +2386,11 @@ Allergenen: ${al || 'nog niet gedetecteerd'}`;
 
   const eu14str = EU14.map(a => `${a.code}=${a.name}`).join(', ');
 
-  return `Je bent een ervaren kok en keukenconsultant voor de Nederlandse horeca. Je denkt vanuit mise en place, brigade-logica en voedselveiligheid — niet vanuit een huishoudkeuken.
+  return `Je bent een ervaren kok en keukenconsultant voor de Nederlandse horeca. Je denkt vanuit mise en place, brigade-logica en voedselveiligheid — nooit vanuit een huishoudkeuken.
+
+══════════════════════════════
+${persona.context}
+══════════════════════════════
 
 WERKWIJZE:
 Schrijf recepturen als een professional: exacte grammen en milliliters, temperaturen in °C, kerntemperaturen waar van toepassing. Stappen gestructureerd: MISE EN PLACE → BEREIDING → AFWERKING → SERVICE. Porties zijn restaurant-yields (150-180g eiwit per couverte, niet "een kipfilet"). Pas vakjargon toe waar het past, maar schrijf begrijpelijk — geen jargon om het jargon.

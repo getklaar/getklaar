@@ -1,0 +1,1405 @@
+<!DOCTYPE html>
+<html lang="nl">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Klaar — Menubuilder</title>
+  <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2/dist/umd/supabase.min.js"></script>
+  <script src="../klaar-client.js"></script>
+  <link href="https://fonts.googleapis.com/css2?family=Bebas+Neue&family=DM+Mono:wght@400;500&family=DM+Sans:wght@300;400;500;600&display=swap" rel="stylesheet">
+  <style>
+    :root {
+      /* === Klaar Design System v1 === */
+      --black:   #0a0a0a;
+      --surface: #111111;
+      --surface2:#161616;
+      --border:  #222222;
+      --border2: #333333;
+      --lime:    #e8ff47;
+      --white:   #eeeeee;
+      --gray:    #666666;
+      --muted:   #3a3a3a;
+      --lbg:     #f6f4f0;
+      --lsurface:#ffffff;
+      --lborder: #e2ddd6;
+      --lborder2:#ccc8c0;
+      --ltext:   #1a1a1a;
+      --lmuted:  #999591;
+      --danger:  #c0392b;
+      --complete:#27ae60;
+      /* Matrix (semantisch) */
+      --ster-kleur:    #c8960a;
+      --ploeg-kleur:   #2471a3;
+      --raadsel-kleur: #7d3c98;
+      --hond-kleur:    #888888;
+      --hdr: 54px;
+    }
+    * { box-sizing: border-box; margin: 0; padding: 0; }
+    body { font-family: 'DM Sans', sans-serif; background: var(--black); color: var(--white); height: 100vh; display: flex; flex-direction: column; overflow: hidden; }
+    a { text-decoration: none; color: inherit; }
+
+    /* ── NAV / HEADER ── */
+    .nav {
+      height: var(--hdr); flex-shrink: 0;
+      background: var(--surface); border-bottom: 1px solid var(--border);
+      display: flex; align-items: center; padding: 0 16px; gap: 10px; z-index: 100;
+      position: sticky; top: 0;
+    }
+    .back-link {
+      font-size: 11px; font-family: 'DM Mono', monospace; color: var(--white);
+      display: flex; align-items: center; gap: 5px; white-space: nowrap;
+      padding: 4px 10px; border: 1px solid var(--border); transition: all .15s;
+    }
+    .back-link:hover { border-color: var(--lime); color: var(--lime); }
+    .h-div { width: 1px; height: 20px; background: var(--border); flex-shrink: 0; }
+    .logo { font-family: 'Bebas Neue', sans-serif; font-size: 24px; color: var(--lime); letter-spacing: .04em; line-height: 1; }
+    .mod-badge { font-family: 'DM Mono', monospace; font-size: 9px; color: var(--gray); letter-spacing: .12em; text-transform: uppercase; white-space: nowrap; }
+    .nav-logo { display: none; } /* oud element — verborgen */
+
+    .nav-tabs {
+      display: flex; gap: 2px; flex: 1;
+      background: var(--surface2); padding: 3px;
+      max-width: 360px; margin-left: 6px;
+    }
+    .nav-tab {
+      flex: 1; padding: 5px 12px; font-size: 10px; font-family: 'DM Mono', monospace;
+      color: var(--gray); background: none; border: none; cursor: pointer;
+      letter-spacing: .08em; text-transform: uppercase; transition: all .2s;
+      white-space: nowrap; text-align: center;
+    }
+    .nav-tab:hover { color: var(--white); background: rgba(255,255,255,.05); }
+    .nav-tab.actief { background: var(--lime); color: #000; font-weight: 600; }
+
+    .nav-acties { display: flex; gap: 6px; align-items: center; margin-left: auto; }
+    .btn-hdr {
+      padding: 4px 12px; height: 28px; font-size: 10px; font-family: 'DM Mono', monospace;
+      background: none; border: 1px solid var(--border); color: var(--gray);
+      cursor: pointer; letter-spacing: .06em; text-transform: uppercase; transition: all .15s;
+      white-space: nowrap;
+    }
+    .btn-hdr:hover { border-color: var(--white); color: var(--white); }
+    .btn-hdr.primary { background: var(--lime); color: #000; border-color: var(--lime); font-weight: 700; }
+    .btn-hdr.primary:hover { background: #d4e83d; }
+
+    /* ── BODY LAYOUT ── */
+    .app { display: flex; flex: 1; overflow: hidden; }
+    .hoofd { flex: 1; overflow-y: auto; padding: 22px 26px; background: var(--lbg); color: var(--ltext); }
+    .card  { color: var(--ltext); }
+    .overlay-inhoud { color: var(--ltext); }
+    .hoofd::-webkit-scrollbar { width: 3px; }
+    .hoofd::-webkit-scrollbar-thumb { background: var(--lborder2); }
+
+    /* ── TABS ── */
+    .tab { display: none; }
+    .tab.actief { display: block; animation: fadeIn .15s ease; }
+    @keyframes fadeIn { from { opacity: 0; transform: translateY(4px); } to { opacity: 1; transform: none; } }
+
+    /* ── CARDS ── */
+    .card { background: var(--lsurface); border: 1px solid var(--lborder); padding: 18px; margin-bottom: 14px; }
+    .card-titel { font-size: 11px; font-family: 'DM Mono', monospace; letter-spacing: .09em; text-transform: uppercase; color: var(--lmuted); margin-bottom: 14px; display: flex; align-items: center; gap: 8px; }
+
+    /* ── BUTTONS ── */
+    .btn { padding: 6px 14px; border: 1px solid var(--lborder2); font-size: 11px; font-family: 'DM Mono', monospace; letter-spacing: .05em; cursor: pointer; transition: all .15s; white-space: nowrap; background: none; color: var(--ltext); text-transform: uppercase; }
+    .btn:hover { border-color: var(--ltext); }
+    .btn-primair { background: var(--lime); color: #000; border-color: var(--lime); font-weight: 700; }
+    .btn-primair:hover { background: #d4e83d; }
+    .btn-primair:disabled { opacity: .5; cursor: default; }
+    .btn-secundair { background: rgba(232,255,71,.1); color: #555; border-color: rgba(232,255,71,.3); }
+    .btn-secundair:hover { background: rgba(232,255,71,.2); color: #000; }
+    .btn-klein { padding: 3px 10px; font-size: 10px; }
+    .btn-ghost { background: none; border-color: transparent; color: var(--lmuted); }
+    .btn-ghost:hover { color: var(--ltext); border-color: var(--lborder2); }
+    .btn-gevaar { background: none; border-color: rgba(192,57,43,.4); color: var(--danger); }
+    .btn-gevaar:hover { background: rgba(192,57,43,.08); }
+
+    /* ── STATS ── */
+    .stats-rij { display: grid; grid-template-columns: repeat(4, 1fr); gap: 1px; background: var(--lborder); border: 1px solid var(--lborder); margin-bottom: 18px; }
+    .stat-kaart { background: var(--lsurface); padding: 16px; text-align: center; }
+    .stat-getal { font-family: 'Bebas Neue', sans-serif; font-size: 34px; color: var(--ltext); line-height: 1; }
+    .stat-label { font-size: 10px; font-family: 'DM Mono', monospace; letter-spacing: .08em; text-transform: uppercase; color: var(--lmuted); margin-top: 4px; }
+
+    /* ── MATRIX ── */
+    .matrix-grid { display: grid; grid-template-columns: 1fr 1fr; gap: 16px; }
+    .matrix-item { display: flex; align-items: center; gap: 10px; padding: 8px 12px; margin-bottom: 5px; background: var(--lbg); border-left: 2px solid transparent; transition: all .15s; }
+    .matrix-item:hover { background: rgba(232,255,71,.04); border-left-color: rgba(232,255,71,.25); }
+    .kw-badge { padding: 2px 8px; font-family: 'DM Mono', monospace; font-size: 10px; font-weight: 600; letter-spacing: .07em; white-space: nowrap; }
+    .kw-ster    { background: rgba(200,150,10,.1);  color: #8a6200; border: 1px solid rgba(200,150,10,.3); }
+    .kw-ploegpaard { background: rgba(36,113,163,.1); color: #1a4f74; border: 1px solid rgba(36,113,163,.3); }
+    .kw-raadsel { background: rgba(125,60,152,.1); color: #5b2c6f; border: 1px solid rgba(125,60,152,.3); }
+    .kw-hond    { background: rgba(136,136,136,.1); color: var(--lmuted); border: 1px solid var(--lborder2); }
+
+    /* ── BUILDER ── */
+    .builder-grid { display: grid; grid-template-columns: 260px 1fr; gap: 14px; min-height: 520px; }
+    .cat-item { display: flex; align-items: center; gap: 8px; padding: 8px 10px; cursor: pointer; border-left: 2px solid transparent; transition: all .15s; margin-bottom: 2px; }
+    .cat-item:hover { background: rgba(232,255,71,.04); }
+    .cat-item.actief { background: rgba(232,255,71,.09); border-left-color: var(--lime); color: var(--ltext); }
+    .cat-item.actief .btn-ghost { color: rgba(0,0,0,.5); }
+    .cat-item.actief .btn-ghost:hover { color: var(--ltext); background: rgba(0,0,0,.06); }
+
+    /* ── GERECHT KAART ── */
+    .gerecht-kaart { display: flex; align-items: flex-start; gap: 10px; padding: 10px 12px; margin-bottom: 6px; background: var(--lsurface); border: 1px solid var(--lborder); border-left: 2px solid transparent; transition: all .15s; cursor: grab; }
+    .gerecht-kaart:hover { border-left-color: var(--lime); }
+    .gerecht-kaart.dragging { opacity: .4; }
+    .gerecht-kaart.drag-over { border-left-color: var(--lime); background: rgba(232,255,71,.04); }
+    .hot-zone { border-left-color: var(--ster-kleur); }
+    .sleep-handvat { color: var(--lborder2); font-size: 16px; cursor: grab; flex-shrink: 0; }
+
+    /* ── PREVIEW ── */
+    .preview-layout { display: grid; grid-template-columns: 180px 1fr; gap: 14px; }
+    .preview-canvas { background: white; border: 1px solid var(--lborder); min-height: 600px; overflow: auto; }
+    .menu-preview-inhoud { padding: 44px; max-width: 700px; margin: 0 auto; }
+
+    /* ── CHAT PANEL ── */
+    .chat-panel { width: 0; overflow: hidden; transition: width .28s ease; border-left: 1px solid var(--border); background: var(--surface); flex-shrink: 0; }
+    .chat-panel.open { width: 340px; }
+    .chat-inner { width: 340px; height: 100%; display: flex; flex-direction: column; overflow: hidden; }
+    .chat-header { padding: 14px 18px; border-bottom: 1px solid var(--border); background: var(--surface2); display: flex; align-items: center; justify-content: space-between; flex-shrink: 0; }
+    .chat-header span { font-family: 'Bebas Neue', sans-serif; font-size: 18px; letter-spacing: .05em; color: var(--lime); }
+    .chat-berichten { flex: 1; overflow-y: auto; padding: 14px; display: flex; flex-direction: column; gap: 8px; }
+    .chat-berichten::-webkit-scrollbar { width: 3px; }
+    .chat-berichten::-webkit-scrollbar-thumb { background: var(--border); }
+    .chat-bericht { padding: 9px 13px; font-size: 13px; line-height: 1.6; max-width: 94%; white-space: pre-wrap; }
+    .bericht-ai { background: var(--surface2); color: var(--white); border: 1px solid var(--border); align-self: flex-start; }
+    .bericht-ai strong { color: var(--lime); }
+    .bericht-user { background: var(--lime); color: #000; align-self: flex-end; font-weight: 500; }
+    .chat-invoer { padding: 10px; border-top: 1px solid var(--border); background: var(--black); display: flex; gap: 6px; flex-shrink: 0; }
+    .chat-input { flex: 1; padding: 9px 12px; background: var(--surface); border: 1px solid var(--border); color: var(--white); font-family: 'DM Sans', sans-serif; font-size: 13px; resize: none; outline: none; }
+    .chat-input:focus { border-color: var(--lime); }
+    .chat-input::placeholder { color: var(--gray); }
+
+    /* ── FORMS ── */
+    input, select, textarea { border: 1px solid var(--lborder); padding: 7px 10px; font-size: 12px; font-family: 'DM Sans', sans-serif; color: var(--ltext); background: var(--lsurface); width: 100%; transition: border-color .15s; outline: none; border-radius: 0; }
+    input:focus, select:focus, textarea:focus { border-color: var(--lborder2); }
+    label { display: block; font-size: 10px; font-family: 'DM Mono', monospace; letter-spacing: .09em; text-transform: uppercase; color: var(--lmuted); margin-bottom: 5px; }
+    .form-rij { margin-bottom: 12px; }
+
+    /* ── OVERLAY ── */
+    .overlay { position: fixed; inset: 0; background: rgba(10,10,10,.75); z-index: 200; display: flex; align-items: center; justify-content: center; }
+    .overlay-inhoud { background: var(--lsurface); border: 1px solid var(--lborder); padding: 24px; width: 540px; max-height: 85vh; overflow-y: auto; }
+
+    /* ── CHIPS ── */
+    .chips { display: flex; flex-wrap: wrap; gap: 5px; }
+    .chip { padding: 4px 12px; font-size: 11px; font-family: 'DM Mono', monospace; letter-spacing: .05em; cursor: pointer; border: 1px solid var(--lborder2); background: var(--lbg); color: var(--lmuted); transition: all .12s; user-select: none; }
+    .chip:hover { border-color: var(--ltext); color: var(--ltext); }
+    .chip.actief { background: var(--lime); color: #000; border-color: var(--lime); font-weight: 700; }
+
+    /* ── MISC BADGES ── */
+    .badge-inline { font-size: 10px; font-family: 'DM Mono', monospace; padding: 1px 6px; letter-spacing: .05em; }
+    .badge-v  { background: rgba(39,174,96,.1);  color: #1a6e40; border: 1px solid rgba(39,174,96,.3); }
+    .badge-ve { background: rgba(39,174,96,.18); color: #0e5028; border: 1px solid rgba(39,174,96,.4); }
+    .badge-gf { background: rgba(200,150,10,.1); color: #7a5800; border: 1px solid rgba(200,150,10,.3); }
+    .hot-label { font-size: 10px; font-family: 'DM Mono', monospace; background: rgba(200,150,10,.1); color: #7a5800; padding: 1px 7px; border: 1px solid rgba(200,150,10,.3); margin-left: auto; flex-shrink: 0; letter-spacing: .06em; }
+
+    .leeg { text-align: center; padding: 44px 20px; color: var(--lmuted); }
+    .leeg .icoon { font-size: 44px; margin-bottom: 12px; }
+
+    /* ── AANBEVELINGEN ── */
+    .aanbeveling { padding: 12px 14px; margin-bottom: 8px; font-size: 13px; border-left: 3px solid var(--lborder2); }
+    .aanbeveling strong { display: block; margin-bottom: 4px; font-size: 11px; font-family: 'DM Mono', monospace; letter-spacing: .08em; text-transform: uppercase; }
+    .aanbeveling-ster    { background: rgba(200,150,10,.06);  border-left-color: var(--ster-kleur); }
+    .aanbeveling-raadsel { background: rgba(125,60,152,.05);  border-left-color: var(--raadsel-kleur); }
+    .aanbeveling-ploeg   { background: rgba(36,113,163,.06);  border-left-color: var(--ploeg-kleur); }
+    .aanbeveling-hond    { background: rgba(136,136,136,.05); border-left-color: var(--hond-kleur); }
+
+    /* ── HOT GUIDE ── */
+    .hot-guide { background: rgba(200,150,10,.06); border: 1px solid rgba(200,150,10,.2); padding: 12px 14px; margin-top: 12px; }
+    .hot-guide-titel { font-size: 10px; font-family: 'DM Mono', monospace; letter-spacing: .1em; text-transform: uppercase; color: var(--ster-kleur); margin-bottom: 8px; }
+    .hot-guide-item { font-size: 12px; color: var(--lmuted); margin-bottom: 4px; line-height: 1.6; }
+
+    /* ── SJABLONEN ── */
+    .sjabloon-grid { display: grid; grid-template-columns: repeat(3, 1fr); gap: 8px; }
+    .sjabloon-btn { padding: 10px 8px; border: 1px solid var(--lborder2); background: var(--lbg); cursor: pointer; font-size: 11px; font-family: 'DM Mono', monospace; letter-spacing: .05em; text-align: center; transition: all .15s; text-transform: uppercase; }
+    .sjabloon-btn:hover { border-color: var(--ltext); background: rgba(232,255,71,.04); }
+
+    /* ── SPINNER ── */
+    .spinner { display: inline-block; width: 12px; height: 12px; border: 2px solid rgba(0,0,0,.2); border-top-color: #000; border-radius: 50%; animation: spin .7s linear infinite; vertical-align: middle; }
+    .bericht-ai .spinner { border: 2px solid rgba(255,255,255,.2); border-top-color: var(--lime); }
+    @keyframes spin { to { transform: rotate(360deg); } }
+
+    /* ── NOTIF ── */
+    .notif { position: fixed; top: calc(var(--hdr) + 8px); right: 20px; padding: 9px 16px; font-size: 11px; font-family: 'DM Mono', monospace; letter-spacing: .07em; font-weight: 600; z-index: 1000; transition: opacity .25s; }
+    .notif-ok   { background: rgba(39,174,96,.92);  color: #fff; border: 1px solid rgba(39,174,96,.5); }
+    .notif-fout { background: rgba(192,57,43,.92);  color: #fff; border: 1px solid rgba(192,57,43,.5); }
+
+    @media print {
+      .nav, .chat-panel, .preview-layout > .card:first-child { display: none !important; }
+      .preview-canvas { border: none; }
+      .hoofd { padding: 0; }
+      .tab { display: block !important; }
+      .tab:not(#tab-preview) { display: none !important; }
+    }
+  </style>
+</head>
+<body>
+
+<!-- Navigation -->
+<nav class="nav">
+  <a class="back-link" href="../index.html">← Klaar</a>
+  <span class="h-div"></span>
+  <span class="logo">KLAAR</span>
+  <span class="mod-badge">MODULE 05 — MENUBUILDER</span>
+  <div class="nav-tabs">
+    <button class="nav-tab actief" id="tab-btn-analyse" onclick="naarTab('analyse',this)">Analyse</button>
+    <button class="nav-tab" id="tab-btn-bouwen" onclick="naarTab('bouwen',this)">Bouwen</button>
+    <button class="nav-tab" id="tab-btn-preview" onclick="naarTab('preview',this)">Preview</button>
+    <button class="nav-tab" id="tab-btn-instellingen" onclick="naarTab('instellingen',this)">Instellingen</button>
+  </div>
+  <div class="nav-acties">
+    <button class="btn-hdr" onclick="toggleChat()">Assistent</button>
+    <button class="btn-hdr primary" onclick="slaMenuOp()">Opslaan</button>
+    <span id="gebruikerLabel" style="font-size:10px;color:var(--gray);font-family:'DM Mono',monospace;margin-left:4px;"></span>
+    <button class="btn-hdr" onclick="klaarSignOut()">Uitloggen</button>
+  </div>
+</nav>
+
+<div class="app">
+  <main class="hoofd">
+
+    <!-- ── TAB: ANALYSE ── -->
+    <div class="tab actief" id="tab-analyse">
+      <div style="display:flex;align-items:center;justify-content:space-between;margin-bottom:18px;">
+        <div>
+          <h2 style="font-size:20px;">Menu Engineering Analyse</h2>
+          <p style="font-size:13px;color:var(--tekst-licht);margin-top:2px;">Classificeer gerechten op winstgevendheid &amp; populariteit (Kasavana &amp; Smith matrix)</p>
+        </div>
+        <button class="btn btn-primair" onclick="importeerRecepten()">↙ Laad uit Recept Studio</button>
+      </div>
+
+      <!-- Stats -->
+      <div class="stats-rij">
+        <div class="stat-kaart"><div class="stat-getal" id="st-sterren">–</div><div class="stat-label">⭐ Sterren</div></div>
+        <div class="stat-kaart"><div class="stat-getal" id="st-ploeg">–</div><div class="stat-label">🐴 Ploegpaarden</div></div>
+        <div class="stat-kaart"><div class="stat-getal" id="st-raadsel">–</div><div class="stat-label">❓ Raadsels</div></div>
+        <div class="stat-kaart"><div class="stat-getal" id="st-hond">–</div><div class="stat-label">🐕 Honden</div></div>
+      </div>
+
+      <div class="matrix-grid">
+        <!-- SVG Matrix -->
+        <div class="card">
+          <div class="card-titel">📈 Winstmarge vs. Populariteit</div>
+          <svg id="matrixSvg" viewBox="0 0 400 400" style="width:100%;border:1px solid var(--rand);border-radius:8px;background:#FAFAFA;">
+            <rect x="0" y="0" width="200" height="200" fill="#F5EEF8" opacity="0.6"/>
+            <rect x="200" y="0" width="200" height="200" fill="#FFFDE7" opacity="0.6"/>
+            <rect x="0" y="200" width="200" height="200" fill="#F5F5F5" opacity="0.6"/>
+            <rect x="200" y="200" width="200" height="200" fill="#E3F2FD" opacity="0.6"/>
+            <text x="100" y="22" text-anchor="middle" font-size="11" fill="#8E44AD" font-weight="600">❓ Raadsel</text>
+            <text x="300" y="22" text-anchor="middle" font-size="11" fill="#9A6800" font-weight="600">⭐ Ster</text>
+            <text x="100" y="394" text-anchor="middle" font-size="11" fill="#888" font-weight="600">🐕 Hond</text>
+            <text x="300" y="394" text-anchor="middle" font-size="11" fill="#1A5276" font-weight="600">🐴 Ploegpaard</text>
+            <line x1="200" y1="0" x2="200" y2="400" stroke="#ccc" stroke-width="1" stroke-dasharray="5,4"/>
+            <line x1="0" y1="200" x2="400" y2="200" stroke="#ccc" stroke-width="1" stroke-dasharray="5,4"/>
+            <text x="200" y="412" text-anchor="middle" font-size="9" fill="#aaa">Minder populair ← | → Meer populair</text>
+            <text x="-130" y="200" text-anchor="middle" font-size="9" fill="#aaa" transform="rotate(-90,10,200)">Lagere marge ↓ | ↑ Hogere marge</text>
+            <g id="matrixPunten"></g>
+          </svg>
+          <div style="font-size:11px;color:var(--tekst-licht);margin-top:8px;line-height:1.5;">
+            Bijdragemarge (€) = verkoopprijs − kostprijs. Populariteit = aantal verkopen.
+          </div>
+        </div>
+
+        <!-- Items list -->
+        <div class="card">
+          <div class="card-titel" style="justify-content:space-between;">
+            <span>Gerechten & classificatie</span>
+          </div>
+          <div id="matrixLijst">
+            <div class="leeg">
+              <div class="icoon">🍳</div>
+              <p style="margin-bottom:14px;">Klik op "Laad uit Recept Studio" om te beginnen</p>
+              <button class="btn btn-primair" onclick="importeerRecepten()">↙ Laad recepten</button>
+            </div>
+          </div>
+        </div>
+      </div>
+
+      <!-- Recommendations -->
+      <div id="aanbevelingenWrap" style="display:none;">
+        <div class="card">
+          <div class="card-titel">💡 Menu Engineering Aanbevelingen</div>
+          <div id="aanbevelingen"></div>
+        </div>
+      </div>
+    </div>
+
+    <!-- ── TAB: BOUWEN ── -->
+    <div class="tab" id="tab-bouwen">
+      <div style="display:flex;align-items:center;justify-content:space-between;margin-bottom:18px;">
+        <div>
+          <h2 style="font-size:20px;">Menu Bouwen</h2>
+          <p style="font-size:13px;color:var(--tekst-licht);margin-top:2px;">Sleep gerechten om te herordenen. Positie 1 en laatste = hot zones.</p>
+        </div>
+        <div style="display:flex;gap:8px;">
+          <button class="btn btn-secundair" onclick="voegCategorieToe()">+ Categorie</button>
+          <button class="btn btn-primair" onclick="voegGerechtToe()">+ Gerecht</button>
+        </div>
+      </div>
+
+      <div class="builder-grid">
+        <!-- Category sidebar -->
+        <div>
+          <div class="card" style="padding:14px;">
+            <div style="font-size:13px;font-weight:600;margin-bottom:10px;color:var(--tekst-licht);">CATEGORIEËN</div>
+            <div id="categorieenLijst"></div>
+            <button class="btn btn-ghost" style="width:100%;margin-top:8px;font-size:12px;" onclick="voegCategorieToe()">+ Categorie toevoegen</button>
+          </div>
+
+          <!-- Sjablonen -->
+          <div class="card" style="padding:14px;">
+            <div style="font-size:12px;font-weight:600;margin-bottom:10px;color:var(--tekst-licht);">SNELSTART SJABLONEN</div>
+            <div class="sjabloon-grid">
+              <div class="sjabloon-btn" onclick="laadSjabloon('bistro')">🍷<br>Bistro</div>
+              <div class="sjabloon-btn" onclick="laadSjabloon('cafe')">☕<br>Café</div>
+              <div class="sjabloon-btn" onclick="laadSjabloon('finedining')">🕯<br>Fine Dining</div>
+              <div class="sjabloon-btn" onclick="laadSjabloon('borrel')">🍺<br>Borrelkaart</div>
+              <div class="sjabloon-btn" onclick="laadSjabloon('dagmenu')">📋<br>Dagmenu</div>
+              <div class="sjabloon-btn" onclick="laadSjabloon('terras')">🌞<br>Terras</div>
+            </div>
+          </div>
+
+          <!-- Hot zone guide -->
+          <div class="hot-guide">
+            <div class="hot-guide-titel">🎯 Plaatsingsregels</div>
+            <div class="hot-guide-item">🥇 Positie 1 &amp; laatste = meest besteld</div>
+            <div class="hot-guide-item">⚓ Duurste item eerst = ankerprijseffect</div>
+            <div class="hot-guide-item">📦 Max 7 items per categorie</div>
+            <div class="hot-guide-item">⭐ Sterren en Raadsels in hot zones</div>
+            <div class="hot-guide-item">💶 Gebruik alleen getallen, geen €-teken</div>
+          </div>
+        </div>
+
+        <!-- Items area -->
+        <div class="card" id="gerechtKaart">
+          <div class="card-titel" style="justify-content:space-between;">
+            <span id="actieveCatTitel">Selecteer een categorie →</span>
+            <div style="display:flex;gap:6px;" id="catActiesBalk" style="display:none;">
+              <button class="btn btn-secundair btn-klein" onclick="voegGerechtToe()">+ Gerecht</button>
+              <button class="btn btn-secundair btn-klein" id="btnHernoem" onclick="hernoemActieveCat()">✏️ Hernoemen</button>
+            </div>
+          </div>
+          <div id="gerechtenLijst">
+            <div class="leeg">
+              <div class="icoon">👆</div>
+              <p>Selecteer een categorie links</p>
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <!-- ── TAB: PREVIEW ── -->
+    <div class="tab" id="tab-preview">
+      <div class="preview-layout">
+        <!-- Controls -->
+        <div>
+          <div class="card" style="padding:14px;">
+            <div style="font-size:13px;font-weight:600;margin-bottom:12px;color:var(--tekst-licht);">OPTIES</div>
+
+            <div class="form-rij">
+              <label>Weergave</label>
+              <select id="prevModus" onchange="renderPreview()">
+                <option value="print">📄 Print (A4)</option>
+                <option value="digitaal">📱 Digitaal</option>
+              </select>
+            </div>
+
+            <div class="form-rij">
+              <label>Kleur</label>
+              <select id="prevKleur" onchange="renderPreview()">
+                <option value="oranje">🟠 Klaar Oranje</option>
+                <option value="zwart">⚫ Klassiek</option>
+                <option value="groen">🟢 Vers Groen</option>
+                <option value="blauw">🔵 Modern Blauw</option>
+                <option value="bordeaux">🍷 Bordeaux</option>
+              </select>
+            </div>
+
+            <div class="form-rij">
+              <label>Lettertype</label>
+              <select id="prevFont" onchange="renderPreview()">
+                <option value="serif">Klassiek (Serif)</option>
+                <option value="modern">Modern (Sans)</option>
+              </select>
+            </div>
+
+            <div class="form-rij">
+              <label>Prijsweergave</label>
+              <select id="prevPrijs" onchange="renderPreview()">
+                <option value="getal">Alleen getal (16)</option>
+                <option value="euro">Met symbool (€16)</option>
+              </select>
+            </div>
+
+            <hr style="margin:14px 0;border:none;border-top:1px solid var(--rand);">
+            <button class="btn btn-primair" style="width:100%;margin-bottom:7px;" onclick="window.print()">🖨 Afdrukken</button>
+            <button class="btn btn-secundair" style="width:100%;" onclick="exportAlsPDF()">📥 PDF</button>
+          </div>
+
+          <!-- Tips -->
+          <div class="card" style="padding:12px;font-size:12px;color:var(--tekst-licht);line-height:1.6;">
+            <strong style="color:var(--tekst);display:block;margin-bottom:6px;">💡 Print tips</strong>
+            Druk af op A4, liggend of staand. Gebruik "Achtergrondafbeeldingen afdrukken" voor kleuren.
+          </div>
+        </div>
+
+        <!-- Preview canvas -->
+        <div class="preview-canvas" id="previewCanvas">
+          <div id="menuPreviewInhoud" class="menu-preview-inhoud">
+            <!-- Rendered by JS -->
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <!-- ── TAB: INSTELLINGEN ── -->
+    <div class="tab" id="tab-instellingen">
+      <h2 style="font-size:20px;margin-bottom:18px;">Instellingen</h2>
+
+      <div style="display:grid;grid-template-columns:1fr 1fr;gap:14px;">
+        <div class="card">
+          <div class="card-titel">🏠 Restaurant</div>
+          <div class="form-rij">
+            <label>Restaurantnaam</label>
+            <input type="text" id="instRestaurant" placeholder="Bijv. Bistro De Smid" oninput="autoSlaOp()">
+          </div>
+          <div class="form-rij">
+            <label>Menu titel</label>
+            <input type="text" id="instMenuNaam" placeholder="Bijv. A la carte" oninput="autoSlaOp()">
+          </div>
+          <div class="form-rij">
+            <label>Type restaurant</label>
+            <select id="instType" onchange="autoSlaOp()">
+              <option value="cafe">☕ Café / Lunchroom</option>
+              <option value="bistro" selected>🍷 Bistro / Brasserie</option>
+              <option value="casual">🍔 Eetcafé / Casual</option>
+              <option value="finedining">🕯 Fine Dining</option>
+              <option value="terras">🌞 Terras / Borrelbar</option>
+            </select>
+          </div>
+          <div class="form-rij">
+            <label>Subtitel / tagline <span style="font-weight:400;">(optioneel)</span></label>
+            <input type="text" id="instSubtitel" placeholder="Bijv. Verse Italiaanse keuken" oninput="autoSlaOp()">
+          </div>
+        </div>
+
+        <div class="card">
+          <div class="card-titel">🌍 Talen</div>
+          <div style="font-size:12px;color:var(--tekst-licht);margin-bottom:10px;">Selecteer de talen die op het menu verschijnen</div>
+          <div class="chips" id="taalChips">
+            <div class="chip actief" data-taal="nl" onclick="toggleTaal(this)">🇳🇱 Nederlands</div>
+            <div class="chip" data-taal="en" onclick="toggleTaal(this)">🇬🇧 Engels</div>
+            <div class="chip" data-taal="de" onclick="toggleTaal(this)">🇩🇪 Duits</div>
+            <div class="chip" data-taal="fr" onclick="toggleTaal(this)">🇫🇷 Frans</div>
+          </div>
+
+          <hr style="margin:14px 0;border:none;border-top:1px solid var(--rand);">
+
+          <div class="card-titel" style="margin-bottom:10px;">📋 Dagmenu</div>
+          <div class="form-rij">
+            <label>Dagmenu header tekst</label>
+            <input type="text" id="instDagmenu" placeholder="Menu van de dag" oninput="autoSlaOp()">
+          </div>
+          <div class="form-rij">
+            <label>Vandaag's datum tonen?</label>
+            <select id="instDatumTonen" onchange="autoSlaOp()">
+              <option value="ja">Ja, datum tonen</option>
+              <option value="nee">Nee</option>
+            </select>
+          </div>
+        </div>
+      </div>
+
+      <div class="card">
+        <div class="card-titel">📏 Menu structuur advies per type</div>
+        <div id="structuurAdvies" style="font-size:13px;color:var(--tekst-licht);line-height:1.7;"></div>
+      </div>
+    </div>
+
+  </main>
+
+  <!-- AI Chat panel -->
+  <aside class="chat-panel" id="chatPanel">
+    <div class="chat-inner">
+      <div class="chat-header">
+        <span>💬 AI Menu Assistent</span>
+        <button class="btn btn-ghost btn-klein" onclick="toggleChat()">✕</button>
+      </div>
+      <div class="chat-berichten" id="chatBerichten">
+        <div class="chat-bericht bericht-ai">Hoi! Ik ben je menu engineering assistent. Ik kan:\n\n• Gerecht beschrijvingen schrijven\n• Je menu analyseren\n• Prijsstrategie adviseren\n• Categorienamen suggereren\n• Plaatsingsadvies geven\n\nWat wil je weten?</div>
+      </div>
+      <div style="padding:8px 12px;border-top:1px solid var(--rand);">
+        <div style="display:flex;flex-wrap:wrap;gap:4px;margin-bottom:8px;">
+          <button class="chip" style="font-size:11px;" onclick="snelVraag('Analyseer mijn menu en geef concrete verbeterpunten')">Analyseer menu</button>
+          <button class="chip" style="font-size:11px;" onclick="snelVraag('Welke gerechten moet ik highlighten?')">Welke highlighten?</button>
+          <button class="chip" style="font-size:11px;" onclick="snelVraag('Geef tips voor mijn categorienamen')">Betere namen</button>
+        </div>
+      </div>
+      <div class="chat-invoer">
+        <textarea class="chat-input" id="chatInvoer" placeholder="Stel een vraag..." rows="2"
+          onkeydown="if(event.key==='Enter'&&!event.shiftKey){event.preventDefault();chatVerstuur();}"></textarea>
+        <button class="btn btn-primair" onclick="chatVerstuur()" id="chatBtn" style="align-self:flex-end;">↑</button>
+      </div>
+    </div>
+  </aside>
+</div>
+
+<!-- ── ITEM EDITOR OVERLAY ── -->
+<div class="overlay" id="itemOverlay" style="display:none;" onclick="if(event.target===this)sluitItemEditor()">
+  <div class="overlay-inhoud" onclick="event.stopPropagation()">
+    <h3 id="itemEditorTitel" style="margin-bottom:18px;font-size:17px;">Gerecht toevoegen</h3>
+    <input type="hidden" id="editItemId">
+    <input type="hidden" id="editCatId">
+
+    <div style="display:grid;grid-template-columns:1fr 1fr;gap:11px;">
+      <div class="form-rij" style="grid-column:1/-1;">
+        <label>Naam (NL) *</label>
+        <input type="text" id="editNaam" placeholder="Bijv. Huisgemaakte lasagne">
+      </div>
+      <div class="form-rij" style="grid-column:1/-1;">
+        <label>Naam (EN) <span style="font-weight:400;">optioneel</span></label>
+        <input type="text" id="editNaamEn" placeholder="Bijv. Homemade lasagna">
+      </div>
+      <div class="form-rij" style="grid-column:1/-1;">
+        <label>Beschrijving</label>
+        <textarea id="editBeschrijving" placeholder="Beschrijf dit gerecht – smaak, herkomst, bereiding..." rows="3" style="resize:vertical;"></textarea>
+        <button class="btn btn-secundair btn-klein" style="margin-top:5px;" onclick="aiGenereerBeschrijving()" id="aiDescBtn">✨ AI schrijft beschrijving</button>
+      </div>
+      <div class="form-rij">
+        <label>Verkoopprijs (€)</label>
+        <input type="number" id="editPrijs" placeholder="16" step="0.5" min="0">
+      </div>
+      <div class="form-rij">
+        <label>Kostprijs (€)</label>
+        <input type="number" id="editKostprijs" placeholder="5.50" step="0.10" min="0">
+      </div>
+    </div>
+
+    <div class="form-rij">
+      <label>Badge / highlight</label>
+      <div class="chips" id="badgeChips">
+        <div class="chip actief" data-badge="" onclick="kiesBadge(this)">Geen</div>
+        <div class="chip" data-badge="chef" onclick="kiesBadge(this)">👨‍🍳 Chef's keuze</div>
+        <div class="chip" data-badge="seizoen" onclick="kiesBadge(this)">🌿 Seizoen</div>
+        <div class="chip" data-badge="nieuw" onclick="kiesBadge(this)">✨ Nieuw</div>
+        <div class="chip" data-badge="populair" onclick="kiesBadge(this)">🔥 Populair</div>
+        <div class="chip" data-badge="aanrader" onclick="kiesBadge(this)">⭐ Aanrader</div>
+      </div>
+    </div>
+
+    <div class="form-rij">
+      <label>Dieet</label>
+      <div class="chips" id="dieetChips">
+        <div class="chip" data-d="V" onclick="this.classList.toggle('actief')">🌱 Vegetarisch (V)</div>
+        <div class="chip" data-d="VE" onclick="this.classList.toggle('actief')">🌿 Vegan (VE)</div>
+        <div class="chip" data-d="GF" onclick="this.classList.toggle('actief')">🌾 Glutenvrij (GF)</div>
+      </div>
+    </div>
+
+    <div class="form-rij">
+      <label>Allergenen (EU-14) — selecteer wat erin zit</label>
+      <div class="chips" id="allergeenChips" style="gap:4px;"></div>
+    </div>
+
+    <div style="display:flex;justify-content:flex-end;gap:8px;margin-top:18px;">
+      <button class="btn btn-ghost" onclick="sluitItemEditor()">Annuleren</button>
+      <button class="btn btn-primair" onclick="slaItemOp()">Gerecht opslaan</button>
+    </div>
+  </div>
+</div>
+
+<!-- ── CATEGORY DIALOG ── -->
+<div class="overlay" id="catDialog" style="display:none;" onclick="if(event.target===this)sluitCatDialog()">
+  <div class="overlay-inhoud" style="width:380px;" onclick="event.stopPropagation()">
+    <h3 id="catDialogTitel" style="margin-bottom:16px;">Categorie toevoegen</h3>
+    <div class="form-rij">
+      <label>Naam</label>
+      <input type="text" id="catNaamInput" placeholder="Bijv. Voorgerechten" onkeydown="if(event.key==='Enter')bevestigCat()">
+    </div>
+    <div style="display:flex;justify-content:flex-end;gap:8px;margin-top:16px;">
+      <button class="btn btn-ghost" onclick="sluitCatDialog()">Annuleren</button>
+      <button class="btn btn-primair" onclick="bevestigCat()">Opslaan</button>
+    </div>
+  </div>
+</div>
+
+<script>
+// ═══════════════════════════════════════════════════════════════
+// KLAAR MENUBUILDER — Module 05
+// ═══════════════════════════════════════════════════════════════
+
+const EU14_ALLERGENEN = [
+  'Gluten','Schaal/schelpdieren','Eieren','Vis','Pinda','Soja',
+  'Melk','Noten','Selderij','Mosterd','Sesamzaad','Zwaveldioxide','Lupine','Weekdieren'
+]
+
+const SJABLONEN = {
+  bistro: ['Aperitiefhapjes','Soepen','Voorgerechten','Hoofdgerechten','Bijgerechten','Kaasplank','Desserts','Koffie & digestieven'],
+  cafe: ['Ontbijt','Lunches','Soepen & salades','Hartige snacks','Taart & gebak','Dranken'],
+  finedining: ['Amuses','Entrées','Tussengerechten','Hoofdgerechten','Kaasplank','Desserts','Friandises'],
+  borrel: ['Borrelhapjes','Bittergarnituur','Kaas & vleeswaren','Warme hapjes','Dips & brood','Bieren & wijnen'],
+  dagmenu: ['Dagmenu – Voorgerecht','Dagmenu – Hoofdgerecht','Dagmenu – Dessert','Dagaanbieding dranken'],
+  terras: ['Drankjes & aperitieven','Hapjes','Broodjes & salades','Warme gerechten','Desserts']
+}
+
+const STRUCTUUR_ADVIES = {
+  cafe: 'Café/lunchroom: 20-35 items totaal, max 6 per categorie. Drinks als eerste categorie (hogere beverage attach rate). Dagmenu apart vermelden voor vaste gasten.',
+  bistro: 'Bistro/brasserie: 30-45 items totaal, max 8 per categorie. Start met aperitiefhapjes voor hogere bon. 7 voorgerechten, 10 hoofdgerechten, 7 desserts is de ideale structuur (Horecava 2024).',
+  casual: 'Eetcafé/casual: 35-50 items totaal, max 8 per categorie. Duidelijke categorieën met herkenbare namen. Bijgerechten los voor upsell mogelijkheid.',
+  finedining: 'Fine dining: 20-30 items totaal, max 5 per categorie. Witte ruimte is key: minder is meer. Geen prijskolom – prijs aan het einde van de beschrijving.',
+  terras: 'Terras/borrel: 15-25 items totaal, max 6 per categorie. Nadruk op dranken en hapjes. Dranken als eerste categorie. Borrelplank/sharing als ankerpunt.'
+}
+
+// ── State ─────────────────────────────────────────────────────
+let sessie = null
+let recepten = []
+let matrixItems = []
+let actieveCatId = null
+let editCatModus = null   // null = nieuw, anders catId
+let chatBezig = false
+let dragItemId = null
+
+let menu = {
+  restaurant: '',
+  naam: 'A la carte menu',
+  subtitel: '',
+  type: 'bistro',
+  talen: ['nl'],
+  dagmenu_titel: 'Menu van de dag',
+  datum_tonen: 'ja',
+  categorieen: []
+}
+
+// ── Init ──────────────────────────────────────────────────────
+;(async function init() {
+  sessie = await klaarRequireAuth()
+  if (!sessie) return
+
+  document.getElementById('gebruikerLabel').textContent = sessie.user?.email || ''
+
+  laadMenuOpslag()
+  vulInstellingenFormulier()
+  renderAllergenenChips()
+  renderCategorieenLijst()
+  renderStructuurAdvies()
+  renderPreview()
+  toonNotif('Menubuilder geladen ✓', 'ok')
+})()
+
+// ── Opslag ────────────────────────────────────────────────────
+function laadMenuOpslag() {
+  const raw = localStorage.getItem('klaar_menu')
+  if (raw) {
+    try {
+      const opgeslagen = JSON.parse(raw)
+      menu = { ...menu, ...opgeslagen }
+    } catch(e) {}
+  }
+}
+
+function slaMenuOp() {
+  localStorage.setItem('klaar_menu', JSON.stringify(menu))
+  toonNotif('Opgeslagen ✓', 'ok')
+}
+
+function autoSlaOp() {
+  menu.restaurant = document.getElementById('instRestaurant').value
+  menu.naam = document.getElementById('instMenuNaam').value
+  menu.subtitel = document.getElementById('instSubtitel').value
+  menu.type = document.getElementById('instType').value
+  menu.dagmenu_titel = document.getElementById('instDagmenu').value
+  menu.datum_tonen = document.getElementById('instDatumTonen').value
+  localStorage.setItem('klaar_menu', JSON.stringify(menu))
+  renderStructuurAdvies()
+}
+
+function vulInstellingenFormulier() {
+  document.getElementById('instRestaurant').value = menu.restaurant || ''
+  document.getElementById('instMenuNaam').value = menu.naam || ''
+  document.getElementById('instSubtitel').value = menu.subtitel || ''
+  document.getElementById('instType').value = menu.type || 'bistro'
+  document.getElementById('instDagmenu').value = menu.dagmenu_titel || ''
+  document.getElementById('instDatumTonen').value = menu.datum_tonen || 'ja'
+  const talen = menu.talen || ['nl']
+  document.querySelectorAll('#taalChips .chip').forEach(c => {
+    c.classList.toggle('actief', talen.includes(c.dataset.taal))
+  })
+}
+
+function toggleTaal(chip) {
+  chip.classList.toggle('actief')
+  menu.talen = Array.from(document.querySelectorAll('#taalChips .chip.actief')).map(c => c.dataset.taal)
+  autoSlaOp()
+}
+
+function renderStructuurAdvies() {
+  const type = document.getElementById('instType')?.value || menu.type
+  document.getElementById('structuurAdvies').textContent = STRUCTUUR_ADVIES[type] || ''
+}
+
+// ── Tab navigatie ─────────────────────────────────────────────
+function naarTab(naam, btn) {
+  document.querySelectorAll('.tab').forEach(t => t.classList.remove('actief'))
+  document.querySelectorAll('.nav-tab').forEach(t => t.classList.remove('actief'))
+  document.getElementById('tab-' + naam).classList.add('actief')
+  if (btn) btn.classList.add('actief')
+  if (naam === 'preview') renderPreview()
+}
+
+function toggleChat() {
+  document.getElementById('chatPanel').classList.toggle('open')
+}
+
+// ── Recepten importeren ───────────────────────────────────────
+function importeerRecepten() {
+  const raw = localStorage.getItem('klaar_recipes')
+  if (!raw) {
+    toonNotif('Geen recepten gevonden. Maak recepten aan in Module 01 (Recept Studio).', 'fout')
+    return
+  }
+  try {
+    const data = JSON.parse(raw)
+    recepten = Array.isArray(data) ? data : []
+    if (recepten.length === 0) {
+      toonNotif('Geen recepten gevonden in Recept Studio', 'fout')
+      return
+    }
+    matrixItems = recepten.map(r => ({
+      id: r.id || r.naam,
+      naam: r.naam || r.name || 'Onbekend',
+      prijs: parseFloat(r.verkoopprijs || r.prijs) || 0,
+      kostprijs: parseFloat(r.kostprijs) || 0,
+      verkopen: parseInt(r.verkopen) || 0,
+      kwadrant: null
+    })).filter(i => i.naam !== 'Onbekend')
+
+    const zonderData = matrixItems.filter(i => i.prijs === 0 || i.kostprijs === 0 || i.verkopen === 0)
+    if (zonderData.length > 0) {
+      toonVerkoopInvoer()
+    } else {
+      classificeerEnRender()
+    }
+    toonNotif(recepten.length + ' recepten geladen ✓', 'ok')
+  } catch(e) {
+    toonNotif('Fout bij laden recepten', 'fout')
+  }
+}
+
+function toonVerkoopInvoer() {
+  const lijst = document.getElementById('matrixLijst')
+  lijst.innerHTML = `
+    <div style="font-size:13px;color:var(--tekst-licht);margin-bottom:14px;line-height:1.5;">
+      Voer de gemiddelde verkoopprijs en het aantal verkopen per maand in voor een nauwkeurige analyse.
+      <br>Ontbrekende kostprijs kun je ook hier invullen.
+    </div>
+    <div style="display:grid;grid-template-columns:1fr 70px 70px 70px;gap:6px;margin-bottom:8px;font-size:11px;color:var(--tekst-licht);font-weight:600;">
+      <span>Gerecht</span><span style="text-align:center;">Prijs €</span><span style="text-align:center;">Kostpr.</span><span style="text-align:center;">Verkopen</span>
+    </div>
+    ${matrixItems.map((item, idx) => `
+      <div style="display:grid;grid-template-columns:1fr 70px 70px 70px;gap:6px;margin-bottom:7px;align-items:center;">
+        <span style="font-size:13px;font-weight:500;overflow:hidden;text-overflow:ellipsis;white-space:nowrap;">${item.naam}</span>
+        <input type="number" value="${item.prijs || ''}" min="0" step="0.5" placeholder="0"
+          style="text-align:center;padding:5px 6px;"
+          oninput="matrixItems[${idx}].prijs=parseFloat(this.value)||0">
+        <input type="number" value="${item.kostprijs || ''}" min="0" step="0.1" placeholder="0"
+          style="text-align:center;padding:5px 6px;"
+          oninput="matrixItems[${idx}].kostprijs=parseFloat(this.value)||0">
+        <input type="number" value="${item.verkopen || ''}" min="0" placeholder="0"
+          style="text-align:center;padding:5px 6px;"
+          oninput="matrixItems[${idx}].verkopen=parseInt(this.value)||0">
+      </div>
+    `).join('')}
+    <button class="btn btn-primair" style="width:100%;margin-top:10px;" onclick="classificeerEnRender()">
+      📊 Analyseer menu
+    </button>
+  `
+}
+
+function classificeerEnRender() {
+  if (matrixItems.length === 0) return
+
+  const gemCm = matrixItems.reduce((s, i) => s + (i.prijs - i.kostprijs), 0) / matrixItems.length
+  const gemVerk = matrixItems.reduce((s, i) => s + i.verkopen, 0) / matrixItems.length
+
+  matrixItems = matrixItems.map(i => ({
+    ...i,
+    cm: i.prijs - i.kostprijs,
+    kwadrant: (i.prijs - i.kostprijs) >= gemCm
+      ? (i.verkopen >= gemVerk ? 'ster' : 'raadsel')
+      : (i.verkopen >= gemVerk ? 'ploegpaard' : 'hond')
+  }))
+
+  document.getElementById('st-sterren').textContent = matrixItems.filter(i => i.kwadrant === 'ster').length
+  document.getElementById('st-ploeg').textContent = matrixItems.filter(i => i.kwadrant === 'ploegpaard').length
+  document.getElementById('st-raadsel').textContent = matrixItems.filter(i => i.kwadrant === 'raadsel').length
+  document.getElementById('st-hond').textContent = matrixItems.filter(i => i.kwadrant === 'hond').length
+
+  tekenMatrixSVG(gemCm, gemVerk)
+  renderMatrixLijst()
+  renderAanbevelingen()
+}
+
+function tekenMatrixSVG(gemCm, gemVerk) {
+  const maxCm = Math.max(...matrixItems.map(i => i.cm), gemCm * 1.5, 1)
+  const maxVerk = Math.max(...matrixItems.map(i => i.verkopen), gemVerk * 1.5, 1)
+  const kleuren = { ster: '#E8B800', ploegpaard: '#2471A3', raadsel: '#7D3C98', hond: '#999' }
+
+  const g = document.getElementById('matrixPunten')
+  g.innerHTML = matrixItems.map(item => {
+    const xRaw = 10 + (item.verkopen / maxVerk) * 380
+    const yRaw = 390 - (item.cm / maxCm) * 380
+    const x = Math.max(12, Math.min(388, xRaw))
+    const y = Math.max(12, Math.min(388, yRaw))
+    const label = item.naam.length > 14 ? item.naam.slice(0, 12) + '…' : item.naam
+    return `<g>
+      <circle cx="${x}" cy="${y}" r="9" fill="${kleuren[item.kwadrant]}" opacity="0.85" stroke="white" stroke-width="1.5"/>
+      <text x="${x}" y="${y - 13}" text-anchor="middle" font-size="9" fill="#333">${label}</text>
+    </g>`
+  }).join('')
+}
+
+function renderMatrixLijst() {
+  const volgorde = ['ster', 'raadsel', 'ploegpaard', 'hond']
+  const labels = { ster: '⭐ Sterren', raadsel: '❓ Raadsels', ploegpaard: '🐴 Ploegpaarden', hond: '🐕 Honden' }
+  const l = document.getElementById('matrixLijst')
+  l.innerHTML = volgorde.map(kw => {
+    const items = matrixItems.filter(i => i.kwadrant === kw)
+    if (!items.length) return ''
+    return `<div style="margin-bottom:14px;">
+      <div style="font-size:11px;font-weight:700;letter-spacing:1px;color:var(--tekst-licht);margin-bottom:6px;">${labels[kw].toUpperCase()}</div>
+      ${items.map(i => `
+        <div class="matrix-item">
+          <span class="kw-badge kw-${kw}">${labels[kw].split(' ')[0]}</span>
+          <span style="flex:1;font-size:13px;font-weight:500;overflow:hidden;text-overflow:ellipsis;white-space:nowrap;">${i.naam}</span>
+          <span style="font-size:12px;color:var(--tekst-licht);">€${i.cm.toFixed(2)}</span>
+          <span style="font-size:12px;color:var(--tekst-licht);margin-left:6px;width:28px;text-align:right;">${i.verkopen}×</span>
+          <button class="btn btn-secundair btn-klein" onclick='toevoegenAanMenu("${i.id}")' style="margin-left:4px;">+ Menu</button>
+        </div>`).join('')}
+    </div>`
+  }).join('')
+}
+
+function renderAanbevelingen() {
+  const sterren = matrixItems.filter(i => i.kwadrant === 'ster')
+  const raadsels = matrixItems.filter(i => i.kwadrant === 'raadsel')
+  const ploeg = matrixItems.filter(i => i.kwadrant === 'ploegpaard')
+  const honden = matrixItems.filter(i => i.kwadrant === 'hond')
+  const html = []
+
+  if (sterren.length) html.push(`<div class="aanbeveling aanbeveling-ster">
+    <strong>⭐ Sterren — bescherm en spotlight</strong>
+    <span style="color:var(--tekst-licht);">${sterren.map(i=>i.naam).join(', ')}</span><br>
+    Zet op positie 1 of 2 in hun categorie. Train personeel om dit aan te bevelen. Verander het recept niet. Overweeg 5–8% prijsverhoging — gasten merken het nauwelijks.
+  </div>`)
+
+  if (raadsels.length) html.push(`<div class="aanbeveling aanbeveling-raadsel">
+    <strong>❓ Raadsels — betere zichtbaarheid</strong>
+    <span style="color:var(--tekst-licht);">${raadsels.map(i=>i.naam).join(', ')}</span><br>
+    Hoge winstmarge maar weinig besteld. Verplaats naar hot zone (positie 1 of laatste). Herschrijf beschrijving met zintuiglijke taal. Voeg "Chef's keuze" badge toe.
+  </div>`)
+
+  if (ploeg.length) html.push(`<div class="aanbeveling aanbeveling-ploeg">
+    <strong>🐴 Ploegpaarden — margeverbetering</strong>
+    <span style="color:var(--tekst-licht);">${ploeg.map(i=>i.naam).join(', ')}</span><br>
+    Populair maar lage marge. Overweeg €1–2 prijsverhoging (vaak onzichtbaar voor gast). Verkoop altijd met bijgerecht of drank. Zoek goedkopere grondstofvariant zonder kwaliteitsverlies.
+  </div>`)
+
+  if (honden.length) html.push(`<div class="aanbeveling aanbeveling-hond">
+    <strong>🐕 Honden — evalueer en archiveer</strong>
+    <span style="color:var(--tekst-licht);">${honden.map(i=>i.naam).join(', ')}</span><br>
+    Weinig besteld én lage marge. Test 1 kwartaal met herschreven beschrijving en betere positie. Als nog steeds zwak: verwijder tenzij nodig voor dieetwensen.
+  </div>`)
+
+  document.getElementById('aanbevelingen').innerHTML = html.join('')
+  document.getElementById('aanbevelingenWrap').style.display = 'block'
+}
+
+// ── Menu bouwen ───────────────────────────────────────────────
+function renderCategorieenLijst() {
+  const el = document.getElementById('categorieenLijst')
+  if (!menu.categorieen.length) {
+    el.innerHTML = `<div style="font-size:12px;color:var(--tekst-licht);text-align:center;padding:16px;">
+      Kies een sjabloon of voeg zelf categorieën toe.
+    </div>`
+    return
+  }
+  el.innerHTML = menu.categorieen.map((cat, idx) => `
+    <div class="cat-item ${actieveCatId === cat.id ? 'actief' : ''}" onclick="selecteerCat('${cat.id}')">
+      <span style="font-size:13px;cursor:grab;color:#ccc;">⠿</span>
+      <span style="flex:1;font-size:13px;font-weight:500;overflow:hidden;text-overflow:ellipsis;">${cat.naam}</span>
+      <span style="font-size:12px;opacity:0.65;flex-shrink:0;">${cat.items.length}</span>
+      <button class="btn btn-ghost" style="padding:2px 5px;font-size:11px;"
+        onclick="event.stopPropagation();bewerkCat('${cat.id}')">✏</button>
+      <button class="btn btn-ghost" style="padding:2px 5px;font-size:11px;"
+        onclick="event.stopPropagation();verwijderCat('${cat.id}')">✕</button>
+    </div>
+  `).join('')
+}
+
+function selecteerCat(id) {
+  actieveCatId = id
+  renderCategorieenLijst()
+  renderGerechtenLijst()
+  document.getElementById('catActiesBalk').style.display = 'flex'
+}
+
+function renderGerechtenLijst() {
+  const cat = menu.categorieen.find(c => c.id === actieveCatId)
+  if (!cat) return
+  const waarschuwing = cat.items.length > 7 ? ` ⚠️ ${cat.items.length} items (max aanbevolen: 7)` : ` (${cat.items.length})`
+  document.getElementById('actieveCatTitel').textContent = cat.naam + waarschuwing
+
+  const el = document.getElementById('gerechtenLijst')
+  if (!cat.items.length) {
+    el.innerHTML = `<div class="leeg">
+      <div class="icoon">🍽</div>
+      <p>Nog geen gerechten.</p>
+      <button class="btn btn-primair" style="margin-top:12px;" onclick="voegGerechtToe()">+ Gerecht toevoegen</button>
+    </div>`
+    return
+  }
+
+  el.innerHTML = cat.items.map((item, idx) => {
+    const isHot = idx === 0 || idx === cat.items.length - 1
+    const isAanrader = idx === 0  // eerste = ankerpositie
+    const dietBadges = (item.dietair || []).map(d =>
+      `<span class="badge-inline badge-${d.toLowerCase()}">${d}</span>`).join('')
+    const badgeIcons = { chef:'👨‍🍳', seizoen:'🌿', nieuw:'✨', populair:'🔥', aanrader:'⭐' }
+    const badgeHtml = item.badge ? `<span style="font-size:13px;">${badgeIcons[item.badge]||''}</span>` : ''
+    const prijs = formatPrijs(item.prijs)
+    const cm = item.kostprijs ? `<div style="font-size:11px;color:var(--tekst-licht);">CM: €${(item.prijs - item.kostprijs).toFixed(2)}</div>` : ''
+
+    return `<div class="gerecht-kaart ${isHot ? 'hot-zone' : ''}"
+        draggable="true" data-id="${item.id}" data-cat="${cat.id}"
+        ondragstart="dragStart(event)" ondragover="dragOver(event)" ondrop="dragDrop(event)" ondragleave="dragLeave(event)">
+      <span class="sleep-handvat">⠿</span>
+      <div style="flex:1;min-width:0;">
+        <div style="display:flex;align-items:center;gap:5px;flex-wrap:wrap;">
+          <span style="font-size:14px;font-weight:600;">${item.naam}</span>
+          ${badgeHtml}${dietBadges}
+          ${isHot ? '<span class="hot-label">🎯 Hot Zone</span>' : ''}
+          ${idx === 0 && cat.items.length > 1 ? '<span class="hot-label" style="background:#EAF4FB;color:#1A5276;">⚓ Anker</span>' : ''}
+        </div>
+        ${item.beschrijving ? `<div style="font-size:12px;color:var(--tekst-licht);margin-top:2px;overflow:hidden;text-overflow:ellipsis;white-space:nowrap;max-width:380px;">${item.beschrijving}</div>` : ''}
+      </div>
+      <div style="text-align:right;flex-shrink:0;margin-right:4px;">
+        <div style="font-size:15px;font-weight:600;">${prijs}</div>
+        ${cm}
+      </div>
+      <div style="display:flex;flex-direction:column;gap:3px;flex-shrink:0;">
+        <button class="btn btn-secundair btn-klein" onclick="openItemEditor('${cat.id}','${item.id}')">✏️</button>
+        <button class="btn btn-gevaar btn-klein" onclick="verwijderItem('${cat.id}','${item.id}')">🗑</button>
+      </div>
+    </div>`
+  }).join('')
+}
+
+function formatPrijs(prijs) {
+  if (!prijs) return '–'
+  const val = parseFloat(prijs)
+  const modus = document.getElementById('prevPrijs')?.value || 'getal'
+  return modus === 'euro' ? `€${val % 1 === 0 ? val : val.toFixed(2)}` : `${val % 1 === 0 ? val : val.toFixed(2)}`
+}
+
+// ── Drag and drop ─────────────────────────────────────────────
+function dragStart(e) {
+  dragItemId = e.currentTarget.dataset.id
+  e.currentTarget.classList.add('dragging')
+  e.dataTransfer.effectAllowed = 'move'
+}
+
+function dragOver(e) {
+  e.preventDefault()
+  e.dataTransfer.dropEffect = 'move'
+  e.currentTarget.classList.add('drag-over')
+}
+
+function dragLeave(e) {
+  e.currentTarget.classList.remove('drag-over')
+}
+
+function dragDrop(e) {
+  e.preventDefault()
+  e.currentTarget.classList.remove('drag-over')
+  const targetId = e.currentTarget.dataset.id
+  if (!dragItemId || dragItemId === targetId) return
+  const cat = menu.categorieen.find(c => c.id === actieveCatId)
+  if (!cat) return
+  const van = cat.items.findIndex(i => i.id === dragItemId)
+  const naar = cat.items.findIndex(i => i.id === targetId)
+  if (van === -1 || naar === -1) return
+  const [verplaatst] = cat.items.splice(van, 1)
+  cat.items.splice(naar, 0, verplaatst)
+  localStorage.setItem('klaar_menu', JSON.stringify(menu))
+  renderGerechtenLijst()
+  dragItemId = null
+}
+
+// ── Categorie management ──────────────────────────────────────
+function voegCategorieToe() {
+  editCatModus = null
+  document.getElementById('catDialogTitel').textContent = 'Categorie toevoegen'
+  document.getElementById('catNaamInput').value = ''
+  document.getElementById('catDialog').style.display = 'flex'
+  setTimeout(() => document.getElementById('catNaamInput').focus(), 80)
+}
+
+function bewerkCat(id) {
+  editCatModus = id
+  const cat = menu.categorieen.find(c => c.id === id)
+  document.getElementById('catDialogTitel').textContent = 'Categorie hernoemen'
+  document.getElementById('catNaamInput').value = cat?.naam || ''
+  document.getElementById('catDialog').style.display = 'flex'
+  setTimeout(() => document.getElementById('catNaamInput').focus(), 80)
+}
+
+function hernoemActieveCat() {
+  if (actieveCatId) bewerkCat(actieveCatId)
+}
+
+function sluitCatDialog() {
+  document.getElementById('catDialog').style.display = 'none'
+}
+
+function bevestigCat() {
+  const naam = document.getElementById('catNaamInput').value.trim()
+  if (!naam) return
+  if (editCatModus) {
+    const cat = menu.categorieen.find(c => c.id === editCatModus)
+    if (cat) cat.naam = naam
+  } else {
+    const id = 'cat_' + Date.now()
+    menu.categorieen.push({ id, naam, items: [] })
+    actieveCatId = id
+  }
+  sluitCatDialog()
+  localStorage.setItem('klaar_menu', JSON.stringify(menu))
+  renderCategorieenLijst()
+  renderGerechtenLijst()
+}
+
+function verwijderCat(id) {
+  const cat = menu.categorieen.find(c => c.id === id)
+  if (!confirm(`Categorie "${cat?.naam}" en alle ${cat?.items.length || 0} gerechten verwijderen?`)) return
+  menu.categorieen = menu.categorieen.filter(c => c.id !== id)
+  if (actieveCatId === id) actieveCatId = menu.categorieen[0]?.id || null
+  localStorage.setItem('klaar_menu', JSON.stringify(menu))
+  renderCategorieenLijst()
+  renderGerechtenLijst()
+}
+
+function laadSjabloon(type) {
+  const namen = SJABLONEN[type]
+  if (!namen) return
+  if (menu.categorieen.length && !confirm(`Categorieën vervangen door het "${type}" sjabloon? Gerechten blijven bewaard.`)) return
+  const alleItems = menu.categorieen.flatMap(c => c.items)
+  menu.categorieen = namen.map((naam, idx) => ({ id: 'cat_' + Date.now() + '_' + idx, naam, items: [] }))
+  // Herplaats bestaande items in eerste categorie
+  if (alleItems.length) menu.categorieen[0].items = alleItems
+  actieveCatId = menu.categorieen[0]?.id || null
+  localStorage.setItem('klaar_menu', JSON.stringify(menu))
+  renderCategorieenLijst()
+  renderGerechtenLijst()
+  toonNotif('Sjabloon "' + type + '" geladen ✓', 'ok')
+}
+
+// ── Item management ───────────────────────────────────────────
+function renderAllergenenChips() {
+  document.getElementById('allergeenChips').innerHTML = EU14_ALLERGENEN.map(a =>
+    `<div class="chip" data-al="${a}" onclick="this.classList.toggle('actief')">${a}</div>`
+  ).join('')
+}
+
+function voegGerechtToe() {
+  if (!actieveCatId) {
+    toonNotif('Selecteer eerst een categorie', 'fout')
+    return
+  }
+  openItemEditor(actieveCatId, null)
+}
+
+function toevoegenAanMenu(receptId) {
+  const r = recepten.find(r => (r.id || r.naam) === receptId)
+  if (!r) return
+  if (!menu.categorieen.length) {
+    menu.categorieen.push({ id: 'cat_' + Date.now(), naam: 'Gerechten', items: [] })
+  }
+  const catId = actieveCatId || menu.categorieen[0].id
+  const cat = menu.categorieen.find(c => c.id === catId)
+  if (!cat) return
+  const nieuw = {
+    id: 'item_' + Date.now(),
+    naam: r.naam || r.name || 'Nieuw gerecht',
+    naam_en: '',
+    beschrijving: r.omschrijving || '',
+    prijs: parseFloat(r.verkoopprijs || r.prijs) || 0,
+    kostprijs: parseFloat(r.kostprijs) || 0,
+    badge: '',
+    dietair: r.dietair || [],
+    allergenen: r.allergenen || []
+  }
+  cat.items.push(nieuw)
+  if (!actieveCatId) actieveCatId = catId
+  localStorage.setItem('klaar_menu', JSON.stringify(menu))
+  renderCategorieenLijst()
+  renderGerechtenLijst()
+  toonNotif(nieuw.naam + ' toegevoegd ✓', 'ok')
+}
+
+function openItemEditor(catId, itemId) {
+  const cat = menu.categorieen.find(c => c.id === catId)
+  const item = itemId ? cat?.items.find(i => i.id === itemId) : null
+  document.getElementById('itemEditorTitel').textContent = item ? 'Gerecht bewerken' : 'Gerecht toevoegen'
+  document.getElementById('editItemId').value = itemId || ''
+  document.getElementById('editCatId').value = catId
+  document.getElementById('editNaam').value = item?.naam || ''
+  document.getElementById('editNaamEn').value = item?.naam_en || ''
+  document.getElementById('editBeschrijving').value = item?.beschrijving || ''
+  document.getElementById('editPrijs').value = item?.prijs || ''
+  document.getElementById('editKostprijs').value = item?.kostprijs || ''
+  document.querySelectorAll('#badgeChips .chip').forEach(c =>
+    c.classList.toggle('actief', c.dataset.badge === (item?.badge || '')))
+  document.querySelectorAll('#dieetChips .chip').forEach(c =>
+    c.classList.toggle('actief', (item?.dietair || []).includes(c.dataset.d)))
+  document.querySelectorAll('#allergeenChips .chip').forEach(c =>
+    c.classList.toggle('actief', (item?.allergenen || []).includes(c.dataset.al)))
+  document.getElementById('itemOverlay').style.display = 'flex'
+  setTimeout(() => document.getElementById('editNaam').focus(), 80)
+}
+
+function sluitItemEditor() {
+  document.getElementById('itemOverlay').style.display = 'none'
+}
+
+function kiesBadge(chip) {
+  document.querySelectorAll('#badgeChips .chip').forEach(c => c.classList.remove('actief'))
+  chip.classList.add('actief')
+}
+
+function slaItemOp() {
+  const catId = document.getElementById('editCatId').value
+  const itemId = document.getElementById('editItemId').value
+  const naam = document.getElementById('editNaam').value.trim()
+  if (!naam) { toonNotif('Vul een naam in', 'fout'); return }
+  const item = {
+    id: itemId || 'item_' + Date.now(),
+    naam,
+    naam_en: document.getElementById('editNaamEn').value.trim(),
+    beschrijving: document.getElementById('editBeschrijving').value.trim(),
+    prijs: parseFloat(document.getElementById('editPrijs').value) || 0,
+    kostprijs: parseFloat(document.getElementById('editKostprijs').value) || 0,
+    badge: document.querySelector('#badgeChips .chip.actief')?.dataset.badge || '',
+    dietair: Array.from(document.querySelectorAll('#dieetChips .chip.actief')).map(c => c.dataset.d),
+    allergenen: Array.from(document.querySelectorAll('#allergeenChips .chip.actief')).map(c => c.dataset.al)
+  }
+  const cat = menu.categorieen.find(c => c.id === catId)
+  if (!cat) return
+  if (itemId) {
+    const idx = cat.items.findIndex(i => i.id === itemId)
+    if (idx !== -1) cat.items[idx] = item
+  } else {
+    cat.items.push(item)
+  }
+  sluitItemEditor()
+  localStorage.setItem('klaar_menu', JSON.stringify(menu))
+  renderGerechtenLijst()
+  toonNotif('Gerecht opgeslagen ✓', 'ok')
+}
+
+function verwijderItem(catId, itemId) {
+  const cat = menu.categorieen.find(c => c.id === catId)
+  if (!cat) return
+  cat.items = cat.items.filter(i => i.id !== itemId)
+  localStorage.setItem('klaar_menu', JSON.stringify(menu))
+  renderGerechtenLijst()
+}
+
+// ── Preview ───────────────────────────────────────────────────
+function renderPreview() {
+  const kleurKaart = {
+    oranje: '#E8622A', zwart: '#1a1a1a', groen: '#2E7D32', blauw: '#1565C0', bordeaux: '#7B1D3A'
+  }
+  const kleur = kleurKaart[document.getElementById('prevKleur')?.value || 'oranje'] || '#E8622A'
+  const fontFam = (document.getElementById('prevFont')?.value || 'serif') === 'serif'
+    ? "Georgia, 'Times New Roman', serif"
+    : "-apple-system, BlinkMacSystemFont, 'Segoe UI', sans-serif"
+
+  const modus = document.getElementById('prevModus')?.value || 'print'
+  const container = document.getElementById('previewCanvas')
+  container.style.maxWidth = modus === 'digitaal' ? '390px' : '900px'
+
+  let h = `<div style="font-family:${fontFam};padding:${modus === 'digitaal' ? '24px 16px' : '48px'};max-width:680px;margin:0 auto;">`
+  if (menu.restaurant) {
+    h += `<div style="text-align:center;font-size:${modus === 'digitaal' ? '24px' : '30px'};font-weight:700;margin-bottom:6px;">${menu.restaurant}</div>`
+  }
+  if (menu.naam) {
+    h += `<div style="text-align:center;font-size:14px;color:#888;margin-bottom:${modus === 'digitaal' ? '24px' : '36px'};letter-spacing:1px;">${menu.naam}</div>`
+  }
+  if (menu.subtitel) {
+    h += `<div style="text-align:center;font-size:13px;color:#aaa;margin-top:-20px;margin-bottom:28px;">${menu.subtitel}</div>`
+  }
+
+  const zichtbaar = menu.categorieen.filter(c => c.items.length > 0)
+  if (!zichtbaar.length) {
+    h += `<div style="text-align:center;color:#bbb;padding:60px 0;font-size:15px;">
+      Geen gerechten. Ga naar het Bouwen tabblad om categorieën en gerechten toe te voegen.
+    </div>`
+  }
+
+  zichtbaar.forEach(cat => {
+    h += `<div style="font-size:11px;font-weight:700;letter-spacing:3px;text-transform:uppercase;color:${kleur};border-bottom:1px solid #eee;padding-bottom:5px;margin-bottom:18px;margin-top:32px;">${cat.naam}</div>`
+    cat.items.forEach((item, idx) => {
+      const uitgelicht = item.badge !== ''
+      const achtergrond = uitgelicht ? `background:${kleur}12;padding:12px;border-radius:8px;border-left:3px solid ${kleur};margin-bottom:16px;` : 'margin-bottom:16px;'
+      const prijs = formatPrijs(item.prijs)
+      const badgeLabels = { chef: `<span style="font-size:10px;color:${kleur};margin-left:6px;font-weight:600;">CHEF'S KEUZE</span>`,
+        seizoen: `<span style="font-size:10px;color:#2E7D32;margin-left:6px;font-weight:600;">🌿 SEIZOEN</span>`,
+        nieuw: `<span style="font-size:10px;color:#1565C0;margin-left:6px;font-weight:600;">✨ NIEUW</span>`,
+        populair: `<span style="font-size:10px;color:#C0392B;margin-left:6px;font-weight:600;">🔥 POPULAIR</span>`,
+        aanrader: `<span style="font-size:10px;color:${kleur};margin-left:6px;font-weight:600;">⭐ AANRADER</span>` }
+      const badgeHtml = item.badge ? (badgeLabels[item.badge] || '') : ''
+      const dieetHtml = (item.dietair || []).map(d => {
+        const c = {V:'#E8F5E9',VE:'#E0F2F1',GF:'#FFF3E0'}[d] || '#eee'
+        const t = {V:'#2E7D32',VE:'#00695C',GF:'#E65100'}[d] || '#555'
+        return `<span style="font-size:10px;padding:1px 4px;border-radius:3px;background:${c};color:${t};font-weight:600;">${d}</span>`
+      }).join(' ')
+      h += `<div style="${achtergrond}display:flex;gap:14px;align-items:flex-start;">
+        <div style="flex:1;min-width:0;">
+          <div style="display:flex;align-items:center;gap:4px;flex-wrap:wrap;">
+            <span style="font-size:${modus==='digitaal'?'14px':'15px'};font-weight:600;">${item.naam}</span>
+            ${badgeHtml}${dieetHtml ? `<span>${dieetHtml}</span>` : ''}
+          </div>
+          ${item.beschrijving ? `<div style="font-size:12px;color:#888;margin-top:3px;font-style:italic;line-height:1.55;">${item.beschrijving}</div>` : ''}
+        </div>
+        <div style="font-size:16px;font-weight:700;white-space:nowrap;flex-shrink:0;color:${kleur};">${prijs}</div>
+      </div>`
+    })
+  })
+  h += '</div>'
+  document.getElementById('menuPreviewInhoud').innerHTML = h
+}
+
+function exportAlsPDF() {
+  toonNotif('Gebruik afdrukken → "Opslaan als PDF" in je browser', 'ok')
+  setTimeout(() => window.print(), 600)
+}
+
+// ── AI beschrijving ───────────────────────────────────────────
+async function aiGenereerBeschrijving() {
+  const naam = document.getElementById('editNaam').value.trim()
+  if (!naam) { toonNotif('Vul eerst een naam in', 'fout'); return }
+  const btn = document.getElementById('aiDescBtn')
+  btn.innerHTML = '<span class="spinner"></span> Bezig...'
+  btn.disabled = true
+  try {
+    const res = await klaarAI({
+      model: 'claude-haiku-4-5-20251001',
+      max_tokens: 180,
+      messages: [{ role: 'user', content: `Schrijf een pakkende menukaart beschrijving (1-2 zinnen, max 55 woorden) voor het gerecht: "${naam}". Gebruik zintuiglijke taal: textuur, smaak, herkomst, bereidingswijze. Schrijf in het Nederlands. Gebruik geen "lekker" of "heerlijk" als enige omschrijving. Geef alleen de beschrijving terug.` }]
+    }, '05-menubuilder')
+    document.getElementById('editBeschrijving').value = res.content?.[0]?.text?.trim() || ''
+    toonNotif('Beschrijving gegenereerd ✓', 'ok')
+  } catch(e) {
+    toonNotif('AI fout: ' + e.message, 'fout')
+  } finally {
+    btn.innerHTML = '✨ AI schrijft beschrijving'
+    btn.disabled = false
+  }
+}
+
+// ── Chat ──────────────────────────────────────────────────────
+async function chatVerstuur() {
+  const el = document.getElementById('chatInvoer')
+  const txt = el.value.trim()
+  if (!txt || chatBezig) return
+  chatBezig = true
+  document.getElementById('chatBtn').disabled = true
+  el.value = ''
+  voegBerichtToe(txt, 'user')
+  const typId = voegBerichtToe('', 'ai', true)
+
+  const menuCtx = menu.categorieen.length
+    ? `Huidig menu: ${menu.categorieen.length} categorieën, ${menu.categorieen.reduce((s,c)=>s+c.items.length,0)} gerechten. Restaurant type: ${menu.type}. Categorieën: ${menu.categorieen.map(c => c.naam + ' (' + c.items.map(i => i.naam).join(', ') + ')').join('; ')}.`
+    : 'Er is nog geen menu opgebouwd.'
+  const matrixCtx = matrixItems.length
+    ? `Matrix: ${matrixItems.filter(i=>i.kwadrant==='ster').length} sterren, ${matrixItems.filter(i=>i.kwadrant==='raadsel').length} raadsels, ${matrixItems.filter(i=>i.kwadrant==='ploegpaard').length} ploegpaarden, ${matrixItems.filter(i=>i.kwadrant==='hond').length} honden.`
+    : ''
+
+  try {
+    const resp = await klaarAIStream({
+      model: 'claude-sonnet-4-6',
+      max_tokens: 450,
+      stream: true,
+      system: `Je bent een expert menu engineer gespecialiseerd in de Nederlandse en Belgische horeca. Je combineert menu engineering (Kasavana & Smith matrix), menu psychologie (golden triangle, serial position, decoy pricing), en kennis van de Nederlandse horeca markt. Je weet van: aspergeseizoen, borrelcultuur, dagschotel tradities, en Dutch design preferences.
+
+${menuCtx} ${matrixCtx}
+
+Geef praktische, concrete adviezen. Antwoord in het Nederlands. Beknopt maar nuttig.`,
+      messages: [{ role: 'user', content: txt }]
+    }, '05-menubuilder')
+
+    const reader = resp.body.getReader()
+    const decoder = new TextDecoder()
+    let buf = '', vol = ''
+    const typEl = document.getElementById(typId)
+    while (true) {
+      const { done, value } = await reader.read()
+      if (done) break
+      buf += decoder.decode(value, { stream: true })
+      const lijnen = buf.split('\n')
+      buf = lijnen.pop() || ''
+      for (const lijn of lijnen) {
+        if (!lijn.startsWith('data: ')) continue
+        const d = lijn.slice(6).trim()
+        if (d === '[DONE]') break
+        try {
+          const p = JSON.parse(d)
+          const delta = p.delta?.text || p.delta?.value || ''
+          if (delta) {
+            vol += delta
+            if (typEl) typEl.textContent = vol
+            document.getElementById('chatBerichten').scrollTop = 9999
+          }
+        } catch {}
+      }
+    }
+    if (typEl && !vol) typEl.textContent = 'Geen antwoord ontvangen.'
+  } catch(e) {
+    const el2 = document.getElementById(typId)
+    if (el2) el2.textContent = 'Fout: ' + e.message
+  } finally {
+    chatBezig = false
+    document.getElementById('chatBtn').disabled = false
+  }
+}
+
+function snelVraag(tekst) {
+  document.getElementById('chatInvoer').value = tekst
+  chatVerstuur()
+  if (!document.getElementById('chatPanel').classList.contains('open')) toggleChat()
+}
+
+function voegBerichtToe(tekst, van, geefId = false) {
+  const div = document.createElement('div')
+  div.className = 'chat-bericht bericht-' + van
+  div.textContent = tekst
+  if (geefId) {
+    const id = 'msg_' + Date.now()
+    div.id = id
+    document.getElementById('chatBerichten').appendChild(div)
+    document.getElementById('chatBerichten').scrollTop = 9999
+    return id
+  }
+  document.getElementById('chatBerichten').appendChild(div)
+  document.getElementById('chatBerichten').scrollTop = 9999
+}
+
+// ── Notifications ─────────────────────────────────────────────
+function toonNotif(tekst, type) {
+  const el = document.createElement('div')
+  el.className = 'notif notif-' + (type || 'ok')
+  el.textContent = tekst
+  document.body.appendChild(el)
+  setTimeout(() => { el.style.opacity = '0'; setTimeout(() => el.remove(), 300) }, 2800)
+}
+</script>
+</body>
+</html>
