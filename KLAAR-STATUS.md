@@ -31,11 +31,12 @@
 | 02 | Allergenenkaart | `02-allergenenkaart/klaar-allergenenkaart.html` | ✅ Werkt | 4/4 ✓ | ✅ klaarRequireAuth | 2 (1×AI, 1×stream) |
 | 03 | HACCP | `03-haccp/klaar-haccp.html` | ✅ Werkt | 4/4 ✓ | ✅ klaarRequireAuth | 2 (1×AI, 1×stream) |
 | 04 | Kostprijs Calculator | `04-kostprijs/klaar-kostprijs.html` | ⚠️ Niet getest na fix | 5/5 ✓ | ✅ klaarRequireAuth | 1 (stream) |
+| 05 | Menubuilder | `05-menubuilder/klaar-menubuilder.html` | ✅ Nieuw gebouwd | 1/1 ✓ | ✅ klaarRequireAuth | 2 (AI + stream) |
 | 07 | Leveranciers | `07-leveranciers/klaar-leveranciers.html` | ✅ Werkt | 4/4 ✓ | ✅ klaarRequireAuth | 3 (2×AI, 1×stream) |
 | 10 | Catering & Events | `10-catering-events/klaar-catering.html` | ✅ Werkt | 4/4 ✓ | ✅ klaarRequireAuth | 1 (stream) |
 | — | Dashboard | `index.html` | ✅ Supabase OTP | 3/3 ✓ | ✅ showAuthGate | — |
 
-**Ontbrekende modules (nummergaten):** 05, 06, 08, 09 — niet gebouwd, niet gepland.  
+**Ontbrekende modules (nummergaten):** 06, 08, 09 — niet gebouwd, niet gepland.  
 **Module 07:** geen MODULE.md aanwezig.  
 **Module 04:** script tag fix van 2026-06-12 niet visueel getest in browser.
 
@@ -185,10 +186,21 @@ Aanpak: voeg sync-functies toe aan `klaar-client.js` (`klaarSave`, `klaarLoad`),
 | 2026-06-12 | Alle 6 modules: klaarRequireAuth + klaarAI/klaarAIStream + CDN | ✅ 0 directe Anthropic calls |
 | 2026-06-12 | Edge Function update: streaming passthrough toegevoegd | ✅ Deployed |
 | 2026-06-12 | Health check: alle script tags balanced, 0 directe Anthropic calls | ✅ |
+| 2026-06-12 | Module 05 Menubuilder gebouwd: matrix, builder, preview, AI assistent | ✅ |
+| 2026-06-12 | index.html: Module 05 live gezet (verving coming soon) — nu 6 modules live | ✅ |
+| 2026-06-12 | Geplande taken: wekelijkse health check + menu insights (maandag) | ✅ |
 
 ---
 
 ## Volgende concrete stap
+
+**Prioriteit 0 (nu doen):** Test Module 05 Menubuilder:
+1. Open `05-menubuilder/klaar-menubuilder.html`
+2. Laad recepten uit Module 01 via "Laad uit Recept Studio" knop
+3. Voer verkoopdata in → analyseer matrix
+4. Maak categorieën via sjabloon → voeg gerechten toe
+5. Test AI beschrijving genereren + chat assistent
+6. Bekijk Print preview
 
 **Prioriteit 1 (deze week):** Test de auth flow end-to-end in de browser:
 1. Open `index.html` → klik "Gratis starten"

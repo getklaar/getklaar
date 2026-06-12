@@ -12,6 +12,7 @@ KLAAR-API-KEYS.md
 
 # ─── Backups (groot, niet nuttig in git) ─────────────
 backups/
+*/backups/
 *.backup
 index_backup_*.html
 

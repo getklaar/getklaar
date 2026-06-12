@@ -1,0 +1,228 @@
+╔══════════════════════════════════════════════════════════════════════════════╗
+║                        KLAAR — SESSIE BRIEFING                              ║
+║                        Geschreven: 2026-06-12                               ║
+╚══════════════════════════════════════════════════════════════════════════════╝
+
+Hoi. Lees dit even rustig door voordat je verdergaat.
+Dit is een privé overzicht van alles wat er gedaan is en hoe het systeem nu werkt.
+
+━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━
+DEEL 1 — WAT IS ER GEDAAN?
+━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━
+
+VOOR: Klaar was een lokale demo. Elke gebruiker moest zijn eigen Anthropic
+API key invoeren. Geen accounts, geen server-side logica. Onverkoopbaar als SaaS.
+
+NA: Klaar is een echte SaaS-applicatie. Dit is er gebouwd:
+
+1. SUPABASE DATABASE
+   → 5 tabellen: profiles, recipes, ingredients, haccp_logs, api_usage
+   → Row Level Security: elke gebruiker ziet alleen zijn eigen data
+   → Automatische triggers: profiel aanmaken bij registratie
+
+2. SUPABASE AUTH (EMAIL OTP)
+   → Geen wachtwoorden — email in + 6-cijferige code = ingelogd
+   → Werkt op file://, lokaal, en via Vercel
+   → index.html heeft 2-stap login modal (email → code → redirect naar Module 01)
+   → Alle 6 modules redirecten naar login als niet ingelogd
+
+3. ANTHROPIC AI PROXY (EDGE FUNCTION)
+   → Jouw Anthropic API key staat server-side (niemand ziet hem)
+   → Alle AI-calls: Browser → Supabase Edge Function → Anthropic
+   → Edge Function checkt of je ingelogd bent voor hij iets doorstuurt
+   → Streaming werkt (chat-widgets tonen tekst real-time)
+   → Token-gebruik opgeslagen per gebruiker (voor billing later)
+
+4. ALLE 6 MODULES BIJGEWERKT
+   → index.html + Module 01, 02, 03, 04, 07, 10
+   → 0 directe Anthropic API calls meer in de code
+   → klaar-client.js: gedeelde bibliotheek die elke module inlaadt
+
+5. MODULE 05: MENUBUILDER (nieuw gebouwd)
+   → Gebaseerd op uitgebreide menu engineering research
+   → Laadt recepten en kostprijzen direct vanuit Module 01
+   → Menu psychology: golden triangle, decoy pricing, anchor pricing
+   → Live menu preview + AI assistent voor aanpassingen
+   → Export als PDF of print-ready versie
+
+━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━
+DEEL 2 — HOE WERKT DE ARCHITECTUUR?
+━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━
+
+GEBRUIKER OPENT KLAAR
+    ↓ Login met email + OTP code (Supabase Auth)
+    ↓ Sessie-token opgeslagen in browser
+    ↓ Module opent → checkt of token geldig is
+    ↓ Gebruiker gebruikt AI-feature
+    ↓ Browser stuurt verzoek naar Supabase Edge Function (met sessie-token)
+    ↓ Edge Function checkt token → stuurt door naar Anthropic (jouw API key)
+    ↓ Antwoord logt gebruik → terug naar browser
+
+WAAROM DIT BETER IS:
+- Gebruiker hoeft geen Anthropic account aan te maken
+- Jij betaalt Anthropic, jij rekent door aan de klant
+- API key onzichtbaar voor iedereen
+- Code kopiëren werkt niet (geen geldige Supabase sessie)
+
+━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━
+DEEL 3 — DE DEVELOPMENT WORKFLOW
+━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━
+
+STAP 1 — LOKAAL TESTEN
+  → Open /Desktop/Klaar/index.html in Chrome
+  → Auth, AI, alle modules werken lokaal
+  → Geen server nodig
+
+STAP 2 — COMMITTEN
+  → Terminal: cd /Users/cloudchief/Desktop/Klaar
+  → git add .
+  → git commit -m "Wat je deed"
+  → git push
+
+STAP 3 — AUTO-DEPLOY (Vercel)
+  → Vercel detecteert push → binnen 60 sec live op getklaar.app
+  → Niks handmatig doen
+
+STAP 4 — CONTROLEREN
+  → Open getklaar.app → test of alles werkt
+
+BRANCHES (voor grote features):
+  → git checkout -b feature/naam
+  → Werk + test lokaal
+  → git checkout main && git merge feature/naam && git push
+
+━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━
+DEEL 4 — IP BESCHERMING
+━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━
+
+1. PRIVATE GITHUB REPO → code onzichtbaar voor buitenstaanders
+2. SUPABASE PROXY → code is nutteloos zonder geldige inlog-sessie
+3. ANTHROPIC KEY → staat NOOIT in HTML, alleen in Supabase Secrets
+4. ROW LEVEL SECURITY → elke gebruiker ziet alleen zijn eigen data
+
+EERLIJK: HTML/CSS/JS is leesbaar via DevTools. Onvermijdelijk bij web-apps.
+Jouw echte bescherming: server-side logica, klantdata (lock-in), en snelheid
+waarmee je nieuwe features bouwt. Concurrent kan de UI kopiëren maar niet
+de backend, niet de data, niet het klantvertrouwen.
+
+JURIDISCH (nog te doen):
+  → LICENSE bestand in repo (proprietary, niet open source)
+  → Terms of Service in de app
+  → Handelsnaam "Klaar" registreren als nog niet gedaan
+
+━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━
+DEEL 5 — AUTOMATISCHE TAKEN
+━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━
+
+Draaien automatisch via Claude Cowork scheduled tasks:
+
+DAGELIJKS (09:00):
+  → Git backup commit + push naar GitHub
+
+WEKELIJKS (maandag 08:00):
+  → Usage report: hoeveel AI-tokens verbruikt, welke modules populair
+
+WEKELIJKS (maandag 09:00):
+  → Health check: script tags, directe API calls, KLAAR-STATUS.md update
+
+━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━
+DEEL 6 — ÉÉN CHAT OF MEERDERE PROJECTEN?
+━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━
+
+ADVIES: Blijf in deze chat voor de kern van het product.
+
+Claude vat lange sessies automatisch samen. KLAAR-STATUS.md is je "geheugen"
+tussen sessies. Splitsen kost meer overhead dan het oplevert.
+
+WANNEER WEL SPLITSEN:
+  → Aparte marketing website
+  → Admin dashboard (intern tool)
+  → Mobile app
+
+PRAKTISCHE TIP:
+  → Start elke sessie: "Lees KLAAR-STATUS.md en vertel me de status"
+  → Claude weet meteen waar je was, geen herhaling nodig
+
+━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━
+DEEL 7 — HUIDIGE MODULE OVERZICHT
+━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━
+
+01 Recept Studio          ✅ Live, AI proxy, auth
+02 Allergenenkaart        ✅ Live, AI proxy, auth
+03 HACCP Assistent        ✅ Live, AI proxy, auth
+04 Kostprijs Calculator   ⚠️  Live, auth, browsertest nog uitstaand
+05 Menubuilder            ✅ Nieuw gebouwd (menu engineering + AI)
+07 Leveranciersbeheer     ✅ Live, AI proxy, auth
+10 Catering & Events      ✅ Live, AI proxy, auth
+
+━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━
+DEEL 8 — VOLGENDE STAPPEN (volgorde van prioriteit)
+━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━
+
+1. TESTEN (doe dit als eerste)
+   → Open index.html lokaal in Chrome
+   → Log in met je email
+   → Test Module 01: recept genereren, allergeendetectie, chat
+   → Test Module 04: BEREKEN tab + chat widget
+   → Test Module 05 Menubuilder: recepten laden, menu bouwen, AI aanpassen
+
+2. GITHUB REPO (als nog niet klaar)
+   → cd /Users/cloudchief/Desktop/Klaar
+   → git init && git add . && git commit -m "Initial commit"
+   → GitHub.com → New repo (private) → remote toevoegen → push
+
+3. VERCEL KOPPELEN
+   → vercel.com → New Project → GitHub repo importeren
+   → Auto-deploy is dan actief
+
+4. CUSTOM DOMEIN
+   → Vercel: Settings → Domains → getklaar.app toevoegen
+   → DNS instellen bij je provider (Vercel legt uit hoe)
+
+5. DATA SYNC FASE 2 (volgende grote bouwfase)
+   → Recepten/ingrediënten van localStorage → Supabase database
+   → Dan pas is klantdata écht veilig (nu verloren bij cache wissen)
+
+6. BILLING
+   → Stripe integratie
+   → subscription_tier in profielen aansturen
+   → Quota enforcement in Edge Function
+
+━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━
+BESTANDEN DIE BELANGRIJK ZIJN
+━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━
+
+/Desktop/Klaar/
+  ├── index.html                    ← Dashboard + login
+  ├── klaar-client.js               ← Gedeelde auth + AI bibliotheek ⭐
+  ├── KLAAR-STATUS.md               ← Technische projectstatus (voor Claude) ⭐
+  ├── KLAAR-API-KEYS.md             ← API keys (NOOIT in git zetten!) 🔒
+  ├── KLAAR-BRIEFING.txt            ← Dit bestand
+  ├── .gitignore                    ← Beschermt API keys in git
+  ├── vercel.json                   ← Vercel deployment config
+  ├── 01-recept-studio/
+  ├── 02-allergenenkaart/
+  ├── 03-haccp/
+  ├── 04-kostprijs/
+  ├── 05-menubuilder/               ← NIEUW
+  ├── 07-leveranciers/
+  ├── 10-catering-events/
+  └── supabase/
+      ├── schema.sql
+      └── functions/ai-proxy/       ← Edge Function (live op Supabase)
+
+━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━
+CREDENTIALS (bewaar veilig, staat ook in KLAAR-API-KEYS.md)
+━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━
+
+Supabase project:   imiqoxsjdynliydsuihc
+Supabase URL:       https://imiqoxsjdynliydsuihc.supabase.co
+Supabase dashboard: https://supabase.com/dashboard/project/imiqoxsjdynliydsuihc
+Vercel dashboard:   https://vercel.com/dashboard
+
+━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━
+
+Je hebt een serieuze SaaS-basis neergezet. De volgende grote stap na
+testen: data sync naar Supabase (Fase 2), daarna billing.
+
+— Claude, 2026-06-12
