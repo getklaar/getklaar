@@ -1914,6 +1914,23 @@ function show5MinPopup() {
 document.addEventListener('DOMContentLoaded', () => {
   initSession();
 
+  // Module card clicks: toon auth gate als niet ingelogd, navigeer direct als wel ingelogd
+  document.querySelectorAll('.module-card.active[href]').forEach(card => {
+    card.addEventListener('click', async (e) => {
+      e.preventDefault();
+      const href = card.getAttribute('href');
+      const session = await klaarGetSession();
+      if (session) {
+        window.location.href = href;
+        return;
+      }
+      // Sla redirect op in URL zonder page reload, dan toon auth gate
+      const absUrl = new URL(href, window.location.href).href;
+      history.replaceState(null, '', '?redirect=' + encodeURIComponent(absUrl));
+      showAuthGate();
+    });
+  });
+
   // 5-minuten popup (alleen als niet ingelogd)
   setTimeout(show5MinPopup, 5 * 60 * 1000);
 
