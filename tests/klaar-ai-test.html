@@ -420,26 +420,27 @@ ${fases}
 BELANGRIJK: Volg de fases strikt. Ga pas door naar de volgende fase als het turn-nummer dat aangeeft.
 Gebruik je echte Hanos-data en menuprijzen als ze relevant zijn voor de module die je test.
 
-KLANTOBSERVATIES — VERPLICHT, ELKE BEURT:
-Je MOET aan het EINDE van ELKE beurt precies 1 observatie loggen vanuit klantperspectief.
-Geen uitzondering — ook als iets goed werkt, schrijf dan op wat je verwachtte of wat opvalt.
+VERPLICHT FORMAAT — ALTIJD PRECIES ZO:
+Je bericht bestaat uit TWEE delen, in deze volgorde:
 
-Denk: "Ik betaal voor dit. Wat stoor ik me aan, wat mist er, wat vind ik fijn of juist irritant?"
+1. EERSTE REGEL — altijd een observatie:
+[OBS: wat je als klant opmerkt of mist, max 15 woorden]
 
-Voorbeelden:
-- "Horeko had directe CSV-import, hier moet ik alles handmatig — dat kost me uren"
-- "Ik zie geen knop om dit op te slaan, onduidelijk of het automatisch gaat"
-- "De berekening klopt, maar ik snap niet waar ik de foodcost% terugvind"
-- "Goed dat dit bestaat, maar mijn kok van 52 snapt dit scherm echt niet"
+2. DAARNA — je normale bericht (max 2 zinnen):
+Je reactie als Marco op het laatste Klaar-antwoord.
 
-Formaat — exact zo, op de LAATSTE regel van je bericht:
-[OBS: <jouw klant-signaal in 1-2 zinnen>]
+VOORBEELD van een correct bericht:
+[OBS: Geen duidelijke startknop — in Horeko wist ik meteen waar ik moest klikken]
+Ik zie nu de module, maar waar is de knop "Nieuw recept"? Die zie ik nergens.
 
-SCHRIJFREGELS:
-- Schrijf ALLEEN Marco's bericht. Niets anders. Geen uitleg, geen meta.
-- Max 2-3 zinnen chat + verplichte [OBS: ...] op de laatste regel.
-- Gebruik je echte data als dat relevant is voor de huidige module.
-- Reageer concreet op het laatste Klaar-antwoord.`;
+NOG EEN VOORBEELD:
+[OBS: De berekening werkt maar ik snap niet waar de foodcost% straks terugkomt]
+OK die ribeye staat er in. €28,50 per kg kloppen met mijn Hanos factuur. Maar waar zie ik nu de marge?
+
+REGELS:
+- Begin ALTIJD met [OBS: ...] — dit is de eerste regel, geen uitzondering
+- Daarna max 2 zinnen als Marco
+- Schrijf ALLEEN dit — geen uitleg, geen meta, geen intro`;
 }
 
 const KLAAR_PROMPT = `Je bent de Klaar AI-assistent — ingebouwde hulp van Klaar horeca-software.
@@ -610,6 +611,43 @@ function renderText(t) {
 function scrollChat() {
   const c = document.getElementById('chatBody');
   if (c) c.scrollTop = c.scrollHeight;
+}
+
+// Failsafe: destilleer klant-observatie als Marco geen [OBS:...] schreef
+function autoExtractKlantObs(text, turn) {
+  const t = text.toLowerCase();
+
+  // Detecteer frustratiesignalen
+  const signals = [
+    { kw: ['zie niet', 'zie nergens', 'vind niet', 'kan niet vinden', 'waar is'], prefix: 'Kan knop/functie niet vinden:' },
+    { kw: ['in horeko', 'bij horeko', 'horeko had', 'horeko kon'], prefix: 'Vergelijking met Horeko:' },
+    { kw: ['te ingewikkeld', 'te complex', 'snapt dit niet', 'begrijp niet', 'niet duidelijk', 'onduidelijk'], prefix: 'UX te complex:' },
+    { kw: ['mobiel', 'telefoon', 'ipad', 'tablet'], prefix: 'Mobiel gebruik:' },
+    { kw: ['ontbreekt', 'mist', 'niet mogelijk', 'kan dat niet', 'kan dit niet'], prefix: 'Ontbrekende functie:' },
+    { kw: ['automatisch', 'handmatig', 'zelf invoeren', 'alles opnieuw'], prefix: 'Verwacht automatisering:' },
+    { kw: ['mijn kok', 'medewerker', 'personeel', 'collega'], prefix: 'Bruikbaarheid voor team:' },
+    { kw: ['opslaan', 'sla op', 'opgeslagen', 'bewaard'], prefix: 'Opslaan onduidelijk:' },
+    { kw: ['fout', 'klopt niet', 'verkeerd', 'onjuist', 'afwijking'], prefix: 'Fout of afwijking:' },
+    { kw: ['hoe', 'waar', 'welke knop', 'wat moet ik'], prefix: 'Gebruiker zoekt weg:' }
+  ];
+
+  let found = null;
+  for (const sig of signals) {
+    if (sig.kw.some(k => t.includes(k))) {
+      // Pak de zin met het keyword
+      const sentences = text.split(/[.!?]+/).filter(s => s.trim().length > 5);
+      const match = sentences.find(s => sig.kw.some(k => s.toLowerCase().includes(k)));
+      if (match) { found = `${sig.prefix} "${match.trim()}"`; break; }
+    }
+  }
+
+  // Geen specifiek signaal maar Marco reageerde — registreer algemene feedback
+  if (!found && text.trim().length > 20) {
+    const firstSentence = text.split(/[.!?]/)[0].trim();
+    if (firstSentence.length > 10) found = `Klant-feedback turn ${turn}: "${firstSentence}"`;
+  }
+
+  return found;
 }
 
 function addObs(from, text, turn) {
@@ -830,7 +868,7 @@ Genereer NU Marco's volgende bericht. Reageer realistisch op het bovenstaande en
         message: trigger,
         history: testerHist.slice(-12),
         systemContext: TESTER_PROMPT_BUILT,
-        maxTokens: 200
+        maxTokens: 350
       }, tok => appendToken(marcoId, tok));
     } catch(e) {
       marcoRaw = getFallback(turn + 1);
@@ -840,8 +878,14 @@ Genereer NU Marco's volgende bericht. Reageer realistisch op het bovenstaande en
     finalizeMsg(marcoId, marcoClean, marcoObs, '', false);
     conv.push({ from:'marco', content:marcoClean, turn: turn + 0.5 });
 
-    // Log observaties van Marco
-    marcoObs.forEach(o => addObs('marco', o, turn + 1));
+    // Log observaties van Marco — met failsafe als OBS tag ontbreekt
+    if (marcoObs.length > 0) {
+      marcoObs.forEach(o => addObs('marco', o, turn + 1));
+    } else if (marcoClean.trim().length > 10) {
+      // Failsafe: destilleer observatie automatisch uit Marco's tekst
+      const autoObs = autoExtractKlantObs(marcoClean, turn + 1);
+      if (autoObs) addObs('marco', autoObs, turn + 1);
+    }
 
     await sleep(delay);
   }
