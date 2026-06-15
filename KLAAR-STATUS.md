@@ -1,6 +1,6 @@
 # KLAAR — Project Status
 
-**Bijgewerkt:** 2026-06-12  
+**Bijgewerkt:** 2026-06-15 (auto health check)
 **Scan door:** sessie health check  
 **Doel van dit document:** centrale referentie voor elke nieuwe sessie — lees dit altijd eerst, update het altijd als laatste.
 
@@ -189,6 +189,7 @@ Aanpak: voeg sync-functies toe aan `klaar-client.js` (`klaarSave`, `klaarLoad`),
 | 2026-06-12 | Module 05 Menubuilder gebouwd: matrix, builder, preview, AI assistent | ✅ |
 | 2026-06-12 | index.html: Module 05 live gezet (verving coming soon) — nu 6 modules live | ✅ |
 | 2026-06-12 | Geplande taken: wekelijkse health check + menu insights (maandag) | ✅ |
+| 2026-06-15 | Health Check — script tags OK (8/8 balanced), 8 backups te veel (kostprijs 17, recept-studio 11) | ✅ Alle modules groen |
 
 ---
 
