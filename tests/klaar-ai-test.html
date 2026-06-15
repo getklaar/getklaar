@@ -1009,6 +1009,8 @@ MODULE 01 — Recept Studio
   Marge preview: verkoopprijs invullen → foodcost% + brutomarge live zichtbaar.
   Kleur: groen (<25%), oranje (25-33%), rood (>33%) foodcost%.
   Kloon-functie aanwezig. Verkoopprijs opgeslagen per recept.
+  AI-ASSISTENT KENT JOUW BIBLIOTHEEK: als je de AI vraagt een recept te maken, gebruikt hij de exacte namen uit jouw ingrediëntenbibliotheek. Ingrediënten die niet in je bibliotheek staan worden gemarkeerd met * — zo zie je direct wat je nog moet inkopen/aanmaken.
+  Na het aanmaken van een AI-recept toont Klaar hoeveel ingrediënten zijn gekoppeld aan de bibliotheek en welke nieuw zijn. Kostprijs wordt direct berekend voor gekoppelde ingrediënten.
   localStorage key: klaar_recipes
 
 MODULE 02 — Allergenenkaart
@@ -1042,19 +1044,16 @@ MODULE 05 — Menubuilder
 
 MODULE 07 — Leveranciers
   Facturen uploaden (foto, scan, PDF) → OCR via Claude Vision AI.
-  Verwerkt producten en prijzen in ingrediëntenbibliotheek.
-  AUTO-SYNC: na elke factuur-opslag worden klaar_ingredienten automatisch bijgewerkt met de nieuwste inkoopprijs. Module 01 (Recept Studio) en Module 04 (Kostprijs) herberekenen onmiddellijk via klaarDataUpdate event — dit werkt al.
-  KOPPELSTATUS MODAL: na elke factuur-opslag verschijnt een scherm "Ingrediënten koppelen" met:
-    - Groen: welke producten zijn automatisch gekoppeld aan een bestaand ingrediënt (prijs bijgewerkt)
-    - Oranje: welke producten NIET zijn gekoppeld — de gebruiker kan ze direct aanmaken als ingrediënt (naam aanpassen + knop "Aanmaken") of koppelen aan een bestaand ingrediënt via dropdown
-    - "Alles aanmaken" knop maakt alle ongekoppelde producten in één klik aan als ingrediënt
-    - Eenmaal aangemaakt/gekoppeld: beschikbaar in Recept Studio en Kostprijs
-  Ingredient-matching werkt op woordniveau: "Zalm filet 1kg" matcht automatisch op "zalm filet" of "zalm".
-  Als een koppeling eenmaal handmatig is gemaakt, herkent Klaar bij volgende facturen hetzelfde product automatisch.
-  Prijstrend per ingredient over tijd bijhouden — al beschikbaar in het systeem.
-  PRIJSSTIJGINGSALERT: bij opslaan factuur → als een product >10% duurder is dan vorige inkoop, verschijnt een alert met welke producten gestegen zijn en hoe veel %, met directe link naar Module 04.
-  Deduplicatie: als factuurNr al in systeem zit, vraagt Klaar bevestiging vóór opslaan.
-  Factuur-import via Smart Scanner (Module 08) of direct in Module 07.
+  INLINE KOPPELSTATUS (vóór opslaan): elke productregel in het reviewscherm heeft een "Koppeling" kolom:
+    - Groen ✓ + ingredientnaam: product matcht automatisch met bestaand ingrediënt in de bibliotheek
+    - Gele "+ NIEUW" badge: product onbekend, wordt nieuw ingrediënt
+    - Productnaam aanpassen in veld → koppelstatus herlaadt live
+  AUTO-SYNC: na opslaan worden klaar_ingredienten bijgewerkt. Module 01 en 04 herberekenen via klaarDataUpdate.
+  KOPPELSTATUS MODAL (na opslaan): groen = gekoppeld, oranje = nieuw te koppelen. "Alles aanmaken" voor bulk.
+  Ingredient-matching op woordniveau: "Zalm filet 1kg" matcht automatisch op "zalm".
+  Zelflerend: eenmaal handmatig gekoppeld → volgende facturen matchen automatisch.
+  PRIJSSTIJGINGSALERT: product >10% duurder → alert met % + link naar Module 04.
+  Deduplicatie: factuurNr al aanwezig → bevestiging vragen.
   localStorage keys: klaar_inkopen, klaar_ingredienten, klaar_producten
 
 MODULE 08 — Smart Scanner (NIEUW)
@@ -1112,6 +1111,31 @@ Doe dit ZONDER extra uitleg of excuses. Gewoon loggen en antwoord geven. Geen "h
 
 const MODULE_POOL = [
   // ══════════════════════════════════════════════════
+  //  EERSTE BEZOEK — discovery & onboarding
+  // ══════════════════════════════════════════════════
+  {
+    module: 'Eerste verkenning',
+    scenarios: [
+      {
+        opening: `Hoi, Marco hier van Bistro De Gouden Lepel. Ik heb net een demo gezien van Klaar en ben hier nu voor het eerst zelf aan het rondkijken. Ik gebruik nu Horeko voor HACCP en een Excel voor kostprijzen — aparte programma's. Waar raad jij me aan om te beginnen?`,
+        followups: [
+          `OK ik zie het dashboard. Er zijn een hoop modules. Ik ga beginnen met Leveranciers want ik heb vanmorgen een Hanos-factuur gekregen. Is dat het eerste wat ik altijd doe — factuur inladen — zodat de rest vanzelf klopt?`,
+          `Ik heb de factuur ingeladen. Ik zie nu een tabel met 14 producten en een kolom "Koppeling". 11 staan groen, 3 geel NIEUW. Eerlijk gezegd snap ik nog niet helemaal wat dat NIEUW betekent — worden die nu automatisch ingrediënten of niet?`,
+          `En nu ik die factuur heb opgeslagen — ik ga naar Recept Studio. Mijn ribeye-recept staat al in Klaar (ik heb het handmatig ingevoerd gisteren). Klopt de kostprijs nu automatisch op basis van die Hanos-factuur? Of moet ik nog iets doen?`,
+        ]
+      },
+      {
+        opening: `Marco van De Gouden Lepel. Ik overweeg Klaar aan te schaffen maar ik ben kritisch. Ik heb 18 jaar horeca — ik heb al 3 softwarepakketten geprobeerd en telkens viel het tegen. Wat maakt Klaar anders voor een restaurant zoals ik: 40-60 couverts, 2 leveranciers, 12 recepten?`,
+        followups: [
+          `Oké, die factuur-naar-kostprijs koppeling klinkt interessant. Leg me uit hoe dat werkt in de praktijk. Als ik maandag een Hanos-factuur scan, wanneer zie ik dan de nieuwe prijs in mijn ribeye-recept staan?`,
+          `Dat snapt ik. Maar wat als mijn medewerker Jan de factuur verkeerd inscan en een prijs van €2,85 invoert terwijl het €28,50 moet zijn? Hoe vangt Klaar dat op? Want in Excel had ik dat ook al een keer en dat kostte me een maand foute berekeningen.`,
+          `En voor HACCP — ik heb nu Horeko waarvoor ik €89 per maand betaal. Als ik overstap naar Klaar, kan ik dan ook mijn historische HACCP-data meenemen? Of begin ik opnieuw?`,
+        ]
+      },
+    ]
+  },
+
+  // ══════════════════════════════════════════════════
   //  RECEPT STUDIO
   // ══════════════════════════════════════════════════
   {
@@ -1127,7 +1151,16 @@ const MODULE_POOL = [
         ]
       },
       {
-        // B: Nieuw recept (bruiloft dessert) + allergenenkoppeling
+        // B: AI-recept aanmaken vanuit bibliotheek (nieuwe feature)
+        opening: `Marco hier. Ik heb net alle ingrediënten ingevoerd via Leveranciers — 38 producten in de bibliotheek. Iemand vertelde me dat de AI in de Recept Studio automatisch recepten kan aanmaken op basis van wat ik al heb ingekocht. Klopt dat? Want ik wil een zalmgerecht erbij maar weet niet wat er al in mijn bibliotheek zit.`,
+        followups: [
+          `Ik heb in de chat getypt "maak een zalm-risotto voor 4 personen op basis van mijn bibliotheek". Het recept is aangemaakt — ik zie een toast "5 gekoppeld, 2 nieuw (kappertjes, dille)". Wat betekent die melding precies? Die 2 nieuwe — worden die nu automatisch aangemaakt of moet ik daar iets voor doen?`,
+          `Die kappertjes en dille staan dus nog niet in mijn ingrediëntenbibliotheek. Ik koop ze normaal bij Hanos. Moet ik die dan eerst handmatig toevoegen in Leveranciers om de kostprijs te zien? En kan de AI dat voor me doen als ik de Hanos-factuur inscan?`,
+          `De kostprijs bar onder het recept zegt nu "3/7 gekoppeld". Ik wil 100% gekoppeld hebben voor een accurate foodcost. Welke stap is nu het snelst: handmatig ingrediënten toevoegen in Module 04, of wachten op de volgende Hanos-factuur?`,
+        ]
+      },
+      {
+        // C: Nieuw recept (bruiloft dessert) + allergenenkoppeling
         opening: `Marco hier. Voor de bruiloft van 28 september wil ik een speciale dessert toevoegen: chocolate fondant met vanille-ijs. Zelfgemaakt vanille-ijs. Ik wil het recept aanmaken EN direct de allergenen instellen. Waar begin ik in Klaar?`,
         followups: [
           `Ingrediënten fondant: pure chocolade 70% €12/kg, boter €7,20/kg, eieren €0,28/stuk, suiker €1,20/kg, bloem €0,80/kg. Per portie: 80g chocolade, 40g boter, 2 eieren, 30g suiker, 10g bloem. Wat is de kostprijs per portie?`,
@@ -1211,7 +1244,7 @@ const MODULE_POOL = [
         // A: Full margevergelijking menu + Hanos prijsstijging impact
         opening: `Marco van De Gouden Lepel. Mijn 5 hoofdgerechten: ribeye €38,50, zalm €27,50, kip €22,50, tonijn €29,50, risotto funghi €19,50. Ingrediëntenprijzen staan in het systeem. Ik wil een overzicht: foodcost% EN brutomarge per portie in euro. Kan de Kostprijs Calculator dat genereren?`,
         followups: [
-          `Hanos-prijzen zijn gestegen: ribeye was €27,80 (mei) nu €28,50 (+2,5%), pijnboompitten €29,50 → €32,00 (+8,5%), olijfolie €17,80 → €18,50 (+3,9%). Dat staat in het systeem als historische prijzen. Hoeveel foodcost% ben ik kwijtgeraakt op de caprese door die pijnboompitten-stijging?`,
+          `Hanos-prijzen zijn gestegen: ribeye was €27,80 nu €28,50 (+2,5%), olijfolie €17,80 → €18,50 (+3,9%), carnaroli rijst €21,00 → €22,80 (+8,5%). Dat staat in het systeem. Hoeveel foodcost% ben ik kwijtgeraakt op de risotto funghi door die rijststijging? En welke gerechten worden het meest geraakt?`,
           `Worst-case scenario: ribeye gaat naar €32/kg volgend kwartaal. Mijn break-even verkoopprijs voor 30% foodcost dan? En wat als ik de portie verklein naar 260g? Kan Klaar die scenario's simuleren?`,
           `Mijn vaste lasten: huur €3.800, personeel €5.500, overige €1.200 = €10.500/maand. Ik draai gemiddeld 50 couverts per avond, 5 avonden. Ribeye = 35% van bestellingen. Hoeveel ribeye-couverts minimaal voor break-even op dat gerecht?`,
         ]
@@ -1235,17 +1268,17 @@ const MODULE_POOL = [
     module: 'Leveranciers',
     scenarios: [
       {
-        // A: Multi-leverancier prijsvergelijking + prijsalert
-        opening: `Hallo, Marco hier. Ik heb drie leveranciers nu in Klaar: Hanos, Bidfood en Delhaize Pro. Ik zie dat de pijnboompitten bij Hanos nu €32/kg zijn. Maar Bidfood heeft ze ook — ik weet niet voor welke prijs. Hoe kan ik in Klaar zien of ik goedkoper kan inkopen voor hetzelfde product?`,
+        // A: Eerste keer factuur inscannen — ontdekking koppelstatus
+        opening: `Marco hier, De Gouden Lepel. Ik ga nu voor het eerst een echte Hanos-factuur inladen in Klaar. Ik heb de factuur van 10 juni als foto. Waar begin ik precies — Leveranciers module of Smart Scanner?`,
         followups: [
-          `De Hanos facturen tonen een prijstrend voor rijst: €21,00 (april) → €21,50 (mei) → €22,80 (jun) — dat is +8,5% in 3 maanden. Ziet Klaar dat automatisch in een grafiek? En kan ik een alert zetten: "als rijst boven €25/pak gaat, stuur me een melding"?`,
-          `Ik wil de Bidfood factuur BF-2026-44821 even controleren. Tonijn staat op €7,60 per stuk (200g). Maar mijn vishandelaar zei vorige week €6,80. Kan ik het factuurbedrag in Klaar aanpassen of moet de factuur opnieuw gescand worden?`,
-          `Burrata in het systeem: 4 stuks voorraad, THW was gisteren (14 jun). Ze zijn nog goed maar ik moet bestellen. Hoe maak ik een bestelorder aan vanuit Klaar — een PDF die ik naar Bidfood kan mailen?`,
+          `OK ik heb de foto geüpload via Leveranciers. Ik zie nu een reviewscherm met productregels. Er staat een kolom "Koppeling" — sommige hebben een groen vinkje met een naam, andere een geel "NIEUW" badge. Wat betekent dat precies en moet ik iets doen met die NIEUW-producten vóór ik opslaat?`,
+          `Ik zie dat "Carnaroli rijst 5kg" groen staat als "carnaroli risotto rijst" in mijn bibliotheek. Maar "Hanos Premium Olijfolie 5L" staat als NIEUW terwijl ik olijfolie al in mijn recepten gebruik. Hoe zorg ik dat die volgende keer automatisch herkend wordt?`,
+          `Ik heb nu op opslaan gedrukt. Er verschijnt een scherm "Ingrediënten koppelen" — 11 gekoppeld, 3 nieuw. Die 3 nieuwe: roodbaars, mul en zeebaars. Ik gebruik die voor mijn bouillabaisse maar die staat nog niet als recept. Moet ik die 3 eerst aanmaken in Leveranciers of kan ik dat ook vanuit de Recept Studio?`,
         ]
       },
       {
-        // B: Hanos factuur scan + data reconciliatie
-        opening: `Marco hier. Ik heb net de Hanos factuur van mei 27 (H-2026-082117) erbij gelegd. Ribeye was €27,80/kg, nu is het €28,50/kg. En pijnboompitten gingen van €29,50 naar €32,00. Dat staat al in Klaar als historische data. Hoe zie ik meteen de impact op mijn receptkostprijzen?`,
+        // B: Hanos prijstrend + impact op recepten
+        opening: `Marco hier. Na de laatste Hanos-factuur zie ik in Klaar dat de ribeye van €27,80 naar €28,50 is gegaan — Klaar geeft ook een alert dat dit +2,5% is. Nu komt Hanos volgende week weer langs. Ik wil weten: welke van mijn recepten worden het hardst geraakt als ribeye naar €31/kg gaat?`,
         followups: [
           `Ik zie de prijstrend in Leveranciers maar ik wil weten: welke recepten worden het meest geraakt als de olijfolie prijs stijgt van €18,50 naar €22,00? Die prijs is al flink gestegen (€15,80 in maart). Kan Klaar me een impact-analyse geven over alle recepten?`,
           `Mijn gemiddelde bestelling bij Hanos is nu €700-900 per keer. Ze bellen me regelmatig met "speciale aanbiedingen" — bijv. deze week 10% korting op zalm. Maar ik weet nooit hoeveel ik dan moet bestellen. Kan Klaar een minimum- en maximumvoorraad bijhouden en me vertellen hoeveel ik moet bestellen?`,
@@ -1274,8 +1307,8 @@ const MODULE_POOL = [
         // B: Hanos factuur inscannen — correctie workflow
         opening: `Marco hier. Ik heb een foto gemaakt van de Hanos factuur van 10 juni. Die factuur staat al in het systeem maar ik wil de scan ook testen. Ik scan het via Smart Scanner — wat verwacht Klaar te doen: factuur als leveranciersbon verwerken?`,
         followups: [
-          `De scanner herkent het als "leveranciersfactuur, betrouwbaarheid 94%". In het review-scherm zie ik 14 regels. Maar regel 8 klopt niet: scanner leest "Pijnboompitten 1kg €28,00" maar op de factuur staat €32,00. Kan ik dat corrigeren in het review-scherm?`,
-          `Na opslaan: worden de nieuwe prijzen automatisch bijgewerkt in de ingrediëntenbibliotheek? Dus als de scanner €32,00 voor pijnboompitten verwerkt, ziet mijn caprese-recept dan automatisch de hogere kostprijs?`,
+          `De scanner herkent het als "leveranciersfactuur, betrouwbaarheid 94%". In het review-scherm zie ik 14 regels. Ik zie nu die "Koppeling" kolom — 11 groen, 3 geel NIEUW. Maar regel 5 klopt niet: scanner leest "Carnaroli rijst €21,00" maar op de factuur staat €22,80. Kan ik dat corrigeren in het review-scherm? En verandert de koppelstatus dan ook?`,
+          `Als ik nu opslaat — worden de bijgewerkte prijzen automatisch doorgestuurd naar de ingrediëntenbibliotheek? En als de carnaroli-rijstprijs stijgt, ziet mijn risotto-recept dat dan direct in de kostprijs?`,
           `Ik heb ook een oude supermarktbon van de Jumbo — af en toe koop ik spullen bij als er iets ontbreekt. Kan de Smart Scanner dat ook inscannen? Dan wil ik het registreren als noodinkoop met hogere prijs.`,
         ]
       },
@@ -1323,8 +1356,8 @@ const MODULE_POOL = [
         opening: `MARCO HIER — service loopt. Gast vraagt: "Ik ben allergisch voor mosterd EN vis. Wat kan ik eten?" Ik heb 5 minuten. Welke van mijn 9 gerechten (5 hoofdgerechten + 4 starters) bevatten GEEN MO en GEEN V? Ik heb geen tijd om elk recept open te klikken.`,
         followups: [
           `OK dus ribeye, kip, risotto ai funghi, caprese, soupe à l'oignon zijn mosterd-EN-vis-vrij. Maar de gast vraagt ook: "zit er truffel in?" — mijn truffelboter bij de ribeye, is dat een allergen? En heeft Klaar truffel als subcomponent van de melk-allergeen (M) gedocumenteerd?`,
-          `Goed, ribeye is de keuze. Maar de gast wil ook een starter. Soupe à l'oignon heeft G (gluten) — hij is ook glutenintolerant zei hij net. Caprese heeft N (noten, pijnboompitten). Wat blijft er dan over voor hem als starter?`,
-          `Ik heb geen enkel hoofdgerecht en starter vrij voor deze gast. Wat nu? Kan ik een gerecht AAN DE KAART AANPASSEN — bijv. caprese zonder pijnboompitten, als huisvariant? En moet ik dat dan ook als aparte allergeenwijziging registreren?`,
+          `Goed, ribeye is de keuze. Maar de gast wil ook een starter. Soupe à l'oignon heeft G (gluten) — hij is ook glutenintolerant zei hij net. Caprese heeft N (noten). Burrata prosciutto heeft M (melk). Wat blijft er over?`,
+          `Alleen de zalmtartaar als starter maar die heeft V (vis) — ook verboden voor deze gast. Niets kan. Wat nu? Kan ik on-the-fly een aangepaste variant registreren — bijv. burrata zonder dressing, en moet ik die als aparte allergeen-variant vastleggen in Klaar?`,
         ]
       },
     ]
@@ -1382,89 +1415,91 @@ function getFollowup(t) {
 
 function buildTesterPrompt(fases) {
   return `Je bent Marco Visser — eigenaar/chef-kok Bistro De Gouden Lepel, Amsterdam Pijp. 44 jaar, 18 jaar horeca.
-Je test nu Klaar horeca-software en vergelijkt het met je oude werkwijze (Horeko + Excel + Word).
+Je bekijkt nu Klaar horeca-software voor het EERST serieus. Je hebt een demo gevolgd, maar gaat nu echt zelf uitproberen. Je vergelijkt met je oude werkwijze (Horeko + Excel + Word).
 
 JOUW ECHTE DATA (volledig, gebruik dit in vragen):
-${MARCO_DATA}
+\${MARCO_DATA}
 
-━━━━━━━━━━━━━━━━━━━━━━━━━━━━
-JOUW KARAKTER — STRIKT VOLGEN
-━━━━━━━━━━━━━━━━━━━━━━━━━━━━
+━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━
+JOUW KARAKTER — GEVARIEERD EN REALISTISCH
+━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━
 
-TAALSTIJL: Je typt zoals je praat. Kort. Soms ongeduldig. Geen formele zinnen.
-Voorbeelden:
+TAALSTIJL: Je typt zoals je praat. Kort. Geen formele zinnen. Maar je toon VARIEERT per situatie:
+
+Wanneer iets werkt zoals je hoopt:
+• "wacht, dat is echt slim eigenlijk"
+• "oh interessant, dus dat koppelt automatisch?"
+• "ok dat scheelt me echt werk — maar werkt dat ook als..."
+
+Wanneer je iets niet snap of het niet werkt:
 • "ja maar HOE dan precies, welke knop?"
-• "dat begrijp ik maar Jan doet dat nooit goed, die man is 52"
-• "wacht ik zie nu een scherm met X maar Y staat er niet, wat nu"
-• "OK dat klopt maar mijn probleem is eigenlijk dit:"
-• "ahhh okee, dat scheelt me echt tijd"
+• "ik zie dat scherm niet, bij mij staat er iets anders"
 • "dat werkt niet want bij mij staat..."
 
+Wanneer je vergelijkt met je oude manier:
+• "in Horeko deed ik dit altijd zo — dit is anders maar niet per se beter"
+• "in Excel had ik dit in 2 min gedaan eerlijk gezegd"
+• "ok dit is SNELLER dan wat ik had, dat geef ik toe"
+
+Wanneer je sceptisch bent maar open:
+• "dat klinkt goed maar ik ga het zelf testen"
+• "hm, ik geloof het pas als ik het zie"
+• "ok maar hoe gaat dat in de praktijk op een drukke vrijdagavond?"
+
 HORECA KENNIS — JE KENT DIT VAN BINNEN:
-• Foodcost% = (inkoopkost portie / verkoopprijs incl. BTW) × 100. Target fine dining: 28-32%.
-• Brutomarge per portie = verkoopprijs minus kostprijs in euro
-• Mise en place = alles voorbereiden voor service (12u deadline altijd!)
-• Couverts = tafels/personen. "50 couverts vanavond" = drukke avond.
-• NVWA = Nederlandse Voedsel en Waren Autoriteit. Inspectie = SERIEUS. Boetes.
-• FIFO = First In First Out. Oudste product eerst gebruiken. THW = tenminste houdbaar tot.
-• Kerntemperatuur: kip ALTIJD 75°C, vis 63°C, rood vlees min 54°C voor medium-rare.
-• Portioneren = afwegen en vacuum-snijden voor service. "mise en place klaar" = portionering klaar.
-• Factuur reconciliatie = factuur vs. werkelijke levering vergelijken.
+• Foodcost% = inkoopkost portie / verkoopprijs × 100. Target fine dining: 28-32%.
+• Brutomarge per portie = verkoopprijs minus kostprijs
+• Mise en place = alles klaar voor service (12u deadline heilig)
+• Couverts = personen aan tafel. "50 couverts" = goede avond.
+• NVWA inspectie = serieus. Boetes. Reputatieschade.
+• FIFO = oudste product eerst. THW = tenminste houdbaar tot.
+• Kerntemperaturen: kip 75°C, vis 63°C, rood vlees 54°C medium-rare.
 
 JE VRAAGT DOOR — ALTIJD:
-Als het antwoord vaag is vraag je exact door:
-• "Welke module precies?"
-• "Ja maar WAAR zie ik dat dan? Welke knop?"
-• "En als ik dan klik op X, wat gebeurt er dan?"
-• "OK ik probeer dat maar dat werkt niet want [beschrijving scherm]"
-• Je geeft NOOIT op na 1 antwoord — vraag minimaal 2 vervolgvragen per module.
+Vaag antwoord → exact doorvragen:
+• "Welke module precies? Waar klik ik?"
+• "En als ik dat doe, wat zie ik dan op het scherm?"
+• "Maar dat werkt toch niet als [concrete situatie]?"
+• Geef NOOIT op na 1 antwoord — minimaal 2 vervolgvragen per onderwerp.
 
 JE DENKT AAN JE TEAM:
-• Jan (52): commis-kok, doet ochtendronde. Basistelefoon, geen QR. Vergeet soms metingen.
-• Ahmed (32): sous-chef, tech-savvy, avondmetingen 18:00. Betrouwbaar maar druk.
-• Lisa (25): stagiaire, enthousiast, mag zelfstandig invoeren.
-• Sarah/Tom/Nadia: bediening — geen keukenkennis, moeten allergenen snel kunnen checken.
-Vraag: "maar Jan snapt dit toch nooit?" / "Ahmed doet dit wel maar hoe logt hij met zijn naam?"
+• Jan (52): commis, ochtendrondes. Basistelefoon. Vergeet soms iets.
+• Ahmed (32): sous-chef, tech-savvy, avond. Betrouwbaar.
+• Lisa (25): stagiaire, enthousiast, mag invoeren.
+• Sarah/Tom/Nadia: bediening — moeten allergenen snel kunnen checken.
+Denk aan: "maar Jan snapt dit toch nooit?" / "Ahmed kan dit wel maar hoe logt hij met zijn naam?"
 
-JE DENKT AAN RISICO'S:
-• NVWA-inspectie volgende week vrijdag — alles moet kloppen
-• Bruiloft 28 september — 80 personen, 1 lactose-gast, €1.200 aanbetaling al betaald
+JE DENKT AAN RISICO'S EN DEADLINES:
+• NVWA-inspectie volgende week vrijdag
+• Bruiloft 28 september — 80 personen, €1.200 aanbetaling
 • Vriezer afwijking vandaag — ribeye in gevaar?
 • Burrata THW gisteren — FIFO urgent
-• Allergeenincident caprese pijnboompitten — Sarah wist het niet
 
-JE REKENT MEE EN TWIJFELT SOMS:
-• Je maakt berekeningen maar vraagt of Klaar hetzelfde uitkomt
-• Je vergelijkt: "in Excel deed ik dit altijd zo — is dit hetzelfde?"
-• Je test aannames: "wacht, als ik 260g ribeye neem i.p.v. 300g, bespaar ik dan €0,70/portie?"
-• Je twijfelt aan marges: "dat foodcost% lijkt me te laag, klopt dat echt?"
+ANTI-HERHALING — CRUCIAAL:
+• Breng een ingrediënt of probleem NOOIT twee keer op in hetzelfde gesprek
+• Varieer welk recept, leverancier of teamlid je noemt
+• Als je het ene scenario over ribeye had, gebruik dan zalm of risotto voor het volgende
+• Spreek over de app alsof je hem voor het EERST echt verkent — niet alsof je al expert bent
 
-JE VOELT TIJDSDRUK (gebruik dit regelmatig):
-• "ik heb 10 minuten voor service begint"
-• "de bruiloft is over 3 maanden, ik moet dit nu regelen"
-• "NVWA is volgende week, geen tijd"
-• "het is 11:30 en de mise en place is nog niet klaar"
-
-JE VERGELIJKT MET CONCURRENT/OUDE WERKWIJZE:
-• "in Horeko kon ik dit sneller"
-• "in Excel had ik dit in 2 minuten"
-• "een collega restauranthouder gebruikt Lightspeed — die heeft ook [feature X]"
-• "dit is eigenlijk toch wel omslachtig vergeleken met gewoon een Word-document"
-• "of zeg maar hoe dit beter is dan een Google Sheet dan"
+JE VERGELIJKT MAAR NIET ALTIJD NEGATIEF:
+• Soms: "dit is eerlijk gezegd beter dan mijn Excel"
+• Soms: "Horeko had dit wel maar was duurder"
+• Soms: "een collega gebruikt Lightspeed — die heeft dat ook, maar dan met [X erbij]"
+• Je bent open voor overtuigd worden — je wilt waarde zien
 
 ━━━━━━━━━━━━━━━━━━━━
 FASE STRUCTUUR DEZE RUN:
 ━━━━━━━━━━━━━━━━━━━━
-${fases}
+\${fases}
 
 ━━━━━━━━━━━━━━━━━━━━
 KRITISCHE EVALUATIE (laatste turns):
 ━━━━━━━━━━━━━━━━━━━━
 - Noem 3 concrete dingen die je MIST in Klaar. Wees specifiek.
-- Vergelijk: wat gaat beter dan voor Klaar, wat NIET?
-- Geef een "aanbevelingsscore" 1-10 voor collega-restauranthouders. Onderbouw.
-- Zeg of je de bruiloft goed kan voorbereiden met Klaar.
-- Noem 1 functie die als die er was, je direct overtuigd was.
+- Wat gaat beter dan je verwacht had? Wat valt tegen?
+- Aanbevelingsscore 1-10 voor andere restauranthouders. Onderbouw met voorbeelden.
+- Kun je de bruiloft goed voorbereiden met Klaar? En de NVWA-inspectie?
+- Noem 1 functie die — als die er was — je direct zou overtuigen.
 
 ━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━
 VERPLICHT FORMAAT — ELKE BEURT:
@@ -1475,11 +1510,15 @@ DEEL 1 — observatie (eerste regel):
 [OBS: korte observatie als horeca-ondernemer, max 15 woorden]
 
 DEEL 2 — je bericht (max 2-3 zinnen):
-Jouw reactie als Marco. Kort. Direct. In je eigen taalstijl.
+Jouw reactie als Marco. Kort. Direct. Varieer in toon.
 
-GOED VOORBEELD:
+GOED VOORBEELD A (ontdekking):
+[OBS: Koppelstatus in reviewscherm voor opslaan — direct zichtbaar wat matcht, handig]
+Wacht dat is slim — ik zie nu al vóór ik opsla welke producten gekoppeld zijn. Maar die 3 met NIEUW erbij, wat gebeurt er daarmee als ik gewoon op opslaan druk?
+
+GOED VOORBEELD B (frustratie):
 [OBS: Foodcost% klopt maar sub-recept invoer ontbreekt — kan gratin niet als component toevoegen]
-€8,55 ribeye alleen klopt. Maar die aardappelgratin is een batch-recept, portie 100g. Kan ik recept-in-recept doen of moet ik een vaste prijs per portie invoeren?
+€8,55 ribeye klopt. Maar de aardappelgratin is een batchrecept van 10 porties. Kan ik recept-in-recept doen of moet ik een vaste kostprijs per portie handmatig ingeven?
 
 SLECHT VOORBEELD (niet doen):
 [OBS: Test loopt goed]
@@ -1487,10 +1526,11 @@ Bedankt voor uw uitleg. Dat is erg duidelijk. Ik begrijp nu hoe het werkt.
 
 REGELS:
 - Altijd beginnen met [OBS: ...]
-- Max 2-3 zinnen erna
-- Gebruik echte getallen: Hanos-prijzen, receptnamen, personnamen
+- Max 2-3 zinnen daarna
+- Gebruik echte getallen uit MARCO_DATA — Hanos-prijzen, receptnamen, personnel
 - Trek nooit te snel conclusie "het werkt perfect" — vraag altijd iets door
-- Als je iets niet begrijpt, zeg dat expliciet: "sorry ik begrijp dit niet precies"`;
+- Noem NOOIT twee keer hetzelfde ingrediënt of probleem in één gesprek
+- Als je iets niet begrijpt: "sorry ik begrijp dit niet precies, wat bedoel je met X?"`;
 }
 
 // ══════════════════════════════════════════════════════
@@ -2004,13 +2044,17 @@ function clearAll() {
 
 function getFallback(module) {
   const fb = {
-    'Recept Studio': 'Mijn ribeye-recept staat in het systeem. €28,50/kg, portie 300g. Wat is de foodcost per portie?',
+    'Eerste verkenning': 'Ik ben nieuw in Klaar. Ik heb 12 recepten en 3 leveranciers. Waar begin ik het best?',
+    'Recept Studio': 'Kan de AI een recept aanmaken op basis van wat er al in mijn ingrediëntenbibliotheek staat?',
     'HACCP Logger': 'Vriezer stond vanochtend op -14,3°C. Hoe leg ik de corrigerende maatregel vast?',
-    'Kostprijs Calculator': 'Welk van mijn 4 gerechten heeft de beste marge? Ribeye €38,50, zalm €27,50, risotto €19,50, caprese €12,50.',
-    'Allergenenkaart': 'De caprese heeft pijnboompitten — dus N (noten) allergen. Hoe laat ik dit zien op de allergeenkaart voor gasten?',
-    'Leveranciers': 'Hanos factuur van vorige week staat in het systeem. Kan ik de prijstrend van ribeye zien over de afgelopen 3 bestellingen?',
-    'Smart Scanner': 'Ik wil een handgeschreven recept scannen. Hoe doe ik dat en herkent de scanner het type document automatisch?',
-    'Kritische evaluatie': 'Eerlijk: Klaar werkt grotendeels goed maar ik mis X en Y. Wat doen jullie hieraan?',
+    'Kostprijs Calculator': 'Welk van mijn hoofdgerechten heeft de beste marge? Ribeye €38,50, zalm €27,50, risotto €19,50.',
+    'Allergenenkaart': 'Een gast vraagt welke gerechten geen gluten én geen melk bevatten. Hoe filter ik dat snel?',
+    'Leveranciers': 'Ik heb net een Hanos-factuur ingescand. In het reviewscherm staan 3 producten met NIEUW. Wat doe ik daarmee?',
+    'Smart Scanner': 'Ik wil een handgeschreven recept scannen. Herkent de scanner het type document automatisch?',
+    'Cross-module: HACCP → Menu impact': 'Vriezer afwijking — ribeye erin. Is het nog veilig voor vanavond?',
+    'Cross-module: Leverancier → Kostprijs ripple': 'Zalm gaat +31% in prijs. Wat is de nieuwe foodcost% en wat doe ik?',
+    'Cross-module: Tijdsdruk service': 'Service loopt. Gast: mosterd- én visallergie. Welke gerechten kan hij eten?',
+    'Kritische evaluatie': 'Eerlijk oordeel na alles gezien te hebben: wat mist Klaar nog en wat werkt goed?',
   };
   return fb[module] || 'Kun je dat concreter uitleggen met een voorbeeld uit mijn situatie?';
 }
