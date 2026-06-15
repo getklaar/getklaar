@@ -3,810 +3,666 @@
 <head>
   <meta charset="UTF-8" />
   <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-  <title>Klaar — AI Test Suite</title>
+  <title>Klaar — AI Gesprekssimulator</title>
   <link href="https://fonts.googleapis.com/css2?family=Bebas+Neue&family=DM+Sans:wght@400;500;600&family=DM+Mono:wght@400;500&display=swap" rel="stylesheet">
   <style>
     :root {
-      --black: #0a0a0a; --surface: #111; --muted: #1a1a1a;
+      --black: #0a0a0a; --surface: #111; --muted: #161616;
       --border: #222; --accent: #e8ff47; --white: #f5f2eb;
       --gray: #888; --green: #47ff8a; --red: #ff4f4f; --orange: #ffa500;
+      --blue: #4faff4;
     }
     * { margin:0; padding:0; box-sizing:border-box; }
     body { background:var(--black); color:var(--white); font-family:'DM Sans',sans-serif; font-size:14px; line-height:1.5; }
     h1,h2,h3 { font-family:'Bebas Neue',sans-serif; letter-spacing:1px; }
 
-    /* ── LAYOUT ── */
-    .page { max-width: 1100px; margin: 0 auto; padding: 40px 24px; }
-    .header { border-bottom: 1px solid var(--border); padding-bottom: 20px; margin-bottom: 32px; }
-    .header-title { font-size: 40px; color: var(--accent); }
-    .header-sub { font-family:'DM Mono',monospace; font-size:11px; color:var(--gray); letter-spacing:2px; margin-top:4px; }
+    .page { max-width:1280px; margin:0 auto; padding:32px 24px; }
 
-    /* ── CONFIG ── */
-    .config-bar {
-      background: var(--surface); border: 1px solid var(--border);
-      padding: 14px 18px; margin-bottom: 24px;
-      display: flex; align-items: center; gap: 16px; flex-wrap: wrap;
-    }
-    .config-label { font-family:'DM Mono',monospace; font-size:10px; color:var(--gray); letter-spacing:2px; }
-    .config-input {
-      background: var(--muted); border: 1px solid var(--border); color:var(--white);
-      font-family:'DM Mono',monospace; font-size:11px; padding: 6px 10px;
-      flex: 1; min-width: 260px;
-    }
-    .config-input:focus { outline:none; border-color:var(--accent); }
-    .config-delay {
-      background: var(--muted); border:1px solid var(--border); color:var(--white);
-      font-family:'DM Mono',monospace; font-size:11px; padding: 6px 10px; width:80px;
-    }
+    /* HEADER */
+    .header { border-bottom:1px solid var(--border); padding-bottom:16px; margin-bottom:24px; display:flex; justify-content:space-between; align-items:flex-end; flex-wrap:wrap; gap:8px; }
+    .header-title { font-size:36px; color:var(--accent); }
+    .header-sub { font-family:'DM Mono',monospace; font-size:10px; color:var(--gray); letter-spacing:2px; margin-top:2px; }
+    .header-badge { font-family:'DM Mono',monospace; font-size:9px; letter-spacing:1px; padding:4px 10px; border:1px solid var(--border); color:var(--gray); }
 
-    /* ── PERSONA CARDS ── */
-    .section-title { font-size:24px; margin-bottom:16px; }
-    .personas { display:grid; grid-template-columns:repeat(5,1fr); gap:12px; margin-bottom:28px; }
-    @media(max-width:800px){ .personas { grid-template-columns:repeat(2,1fr); } }
-    .persona-card {
-      background: var(--surface); border: 1px solid var(--border);
-      padding: 16px; cursor:pointer; transition:all 0.15s; position:relative;
-    }
-    .persona-card:hover { border-color:rgba(232,255,71,0.4); }
-    .persona-card.selected { border-color:var(--accent); background:rgba(232,255,71,0.05); }
-    .persona-card.selected::before {
-      content:'✓'; position:absolute; top:8px; right:10px;
-      color:var(--accent); font-size:12px; font-weight:700;
-    }
-    .persona-emoji { font-size:28px; margin-bottom:8px; }
-    .persona-name { font-family:'Bebas Neue',sans-serif; font-size:16px; letter-spacing:1px; }
-    .persona-type { font-family:'DM Mono',monospace; font-size:9px; color:var(--accent); letter-spacing:1px; margin-bottom:6px; }
-    .persona-desc { font-size:11px; color:var(--gray); line-height:1.5; }
-    .persona-q-count {
-      font-family:'DM Mono',monospace; font-size:9px; color:var(--gray);
-      margin-top:8px; letter-spacing:1px;
-    }
+    /* CONFIG */
+    .config-bar { background:var(--surface); border:1px solid var(--border); padding:12px 16px; margin-bottom:16px; display:flex; align-items:center; gap:14px; flex-wrap:wrap; }
+    .config-label { font-family:'DM Mono',monospace; font-size:10px; color:var(--gray); letter-spacing:1px; white-space:nowrap; }
+    .config-input { background:var(--muted); border:1px solid var(--border); color:var(--white); font-family:'DM Mono',monospace; font-size:11px; padding:6px 10px; flex:1; min-width:200px; }
+    .config-select { background:var(--muted); border:1px solid var(--border); color:var(--white); font-family:'DM Mono',monospace; font-size:11px; padding:6px 8px; }
+    .config-input:focus, .config-select:focus { outline:none; border-color:var(--accent); }
 
-    /* ── CONTROLS ── */
-    .controls { display:flex; gap:10px; margin-bottom:28px; flex-wrap:wrap; }
-    .btn {
-      font-family:'DM Mono',monospace; font-size:11px; font-weight:700; letter-spacing:1px;
-      padding: 11px 24px; cursor:pointer; border:none; transition:opacity 0.1s;
-      text-transform:uppercase;
-    }
+    /* CONTROLS */
+    .controls { display:flex; gap:10px; margin-bottom:20px; align-items:center; flex-wrap:wrap; }
+    .btn { font-family:'DM Mono',monospace; font-size:11px; font-weight:700; letter-spacing:1px; padding:10px 22px; cursor:pointer; border:none; text-transform:uppercase; transition:opacity 0.1s; }
     .btn-primary { background:var(--accent); color:var(--black); }
     .btn-secondary { background:none; border:1px solid var(--border); color:var(--gray); }
     .btn-secondary:hover { border-color:var(--accent); color:var(--accent); }
     .btn-danger { background:none; border:1px solid var(--red); color:var(--red); }
     .btn:hover { opacity:0.85; }
-    .btn:disabled { opacity:0.35; cursor:not-allowed; }
+    .btn:disabled { opacity:0.3; cursor:not-allowed; }
+    .run-status { font-family:'DM Mono',monospace; font-size:10px; color:var(--gray); }
 
-    /* ── PROGRESS ── */
-    .progress-bar-wrap {
-      background: var(--muted); height:3px; margin-bottom:20px; display:none;
-    }
-    .progress-bar-fill { height:100%; background:var(--accent); transition:width 0.3s; width:0%; }
+    /* PROGRESS */
+    .progress-wrap { background:var(--muted); height:3px; margin-bottom:16px; display:none; }
+    .progress-fill { height:100%; background:var(--accent); transition:width 0.4s; width:0%; }
 
-    /* ── STATS ROW ── */
-    .stats-row {
-      display:grid; grid-template-columns:repeat(6,1fr); gap:1px;
-      background:var(--border); border:1px solid var(--border); margin-bottom:20px;
-      display:none;
-    }
-    .stat-box { background:var(--surface); padding:12px 14px; }
+    /* STATS */
+    .stats-row { display:grid; grid-template-columns:repeat(5,1fr); gap:1px; background:var(--border); border:1px solid var(--border); margin-bottom:20px; display:none; }
+    .stat-box { background:var(--surface); padding:10px 14px; }
     .stat-label { font-family:'DM Mono',monospace; font-size:8px; color:var(--gray); letter-spacing:2px; }
-    .stat-val { font-family:'Bebas Neue',sans-serif; font-size:26px; margin-top:2px; }
-    .stat-val.ok { color:var(--green); }
-    .stat-val.warn { color:var(--orange); }
-    .stat-val.bad { color:var(--red); }
-    .stat-val.neutral { color:var(--white); }
+    .stat-val { font-family:'Bebas Neue',sans-serif; font-size:24px; margin-top:2px; }
+    .stat-green { color:var(--green); } .stat-red { color:var(--red); } .stat-orange { color:var(--orange); } .stat-white { color:var(--white); }
 
-    /* ── LIVE FEED ── */
-    .feed { margin-bottom:24px; display:none; }
-    .feed-header {
-      padding: 10px 16px; background:var(--surface); border:1px solid var(--border);
-      font-family:'Bebas Neue',sans-serif; font-size:18px; letter-spacing:1px;
-      display:flex; justify-content:space-between; align-items:center;
-    }
-    .feed-status { font-family:'DM Mono',monospace; font-size:10px; color:var(--gray); }
-    .feed-body { border:1px solid var(--border); border-top:none; max-height:400px; overflow-y:auto; }
-    .feed-item { border-bottom:1px solid var(--border); }
-    .feed-item:last-child { border-bottom:none; }
-    .feed-q {
-      padding:10px 14px; background:rgba(232,255,71,0.04);
-      font-size:12px; color:var(--white); border-bottom:1px solid rgba(232,255,71,0.08);
-      display:flex; gap:10px; align-items:flex-start;
-    }
-    .feed-q-num { font-family:'DM Mono',monospace; font-size:10px; color:var(--accent); flex-shrink:0; margin-top:1px; }
-    .feed-a { padding:10px 14px 12px; font-size:12px; color:var(--gray); line-height:1.6; }
-    .feed-a.streaming { color:var(--white); }
-    .feed-a.error { color:var(--red); }
-    .feed-meta { padding:4px 14px 8px; display:flex; gap:12px; }
-    .feed-badge {
-      font-family:'DM Mono',monospace; font-size:9px; letter-spacing:1px;
-      padding: 2px 7px; border:1px solid;
-    }
-    .badge-ok { color:var(--green); border-color:rgba(71,255,138,0.3); }
-    .badge-warn { color:var(--orange); border-color:rgba(255,165,0,0.3); }
-    .badge-err { color:var(--red); border-color:rgba(255,79,79,0.3); }
-    .badge-neutral { color:var(--gray); border-color:var(--border); }
+    /* MAIN LAYOUT */
+    .main-layout { display:grid; grid-template-columns:1fr 340px; gap:16px; margin-bottom:24px; }
+    @media(max-width:900px){ .main-layout { grid-template-columns:1fr; } }
 
-    /* ── REPORT ── */
+    /* CHAT PANEL */
+    .chat-wrap { display:none; }
+    .chat-header { padding:10px 16px; background:var(--surface); border:1px solid var(--border); font-size:16px; display:flex; justify-content:space-between; align-items:center; }
+    .chat-status { font-family:'DM Mono',monospace; font-size:10px; color:var(--gray); }
+    .chat-body { border:1px solid var(--border); border-top:none; height:540px; overflow-y:auto; background:var(--black); padding:12px; display:flex; flex-direction:column; gap:12px; }
+
+    /* MESSAGES */
+    .msg { display:flex; flex-direction:column; gap:4px; max-width:88%; }
+    .msg-marco { align-self:flex-end; }
+    .msg-klaar { align-self:flex-start; }
+    .msg-label { font-family:'DM Mono',monospace; font-size:9px; letter-spacing:1px; color:var(--gray); }
+    .msg-marco .msg-label { text-align:right; color:var(--accent); }
+    .msg-klaar .msg-label { color:var(--blue); }
+    .msg-bubble { padding:10px 14px; font-size:13px; line-height:1.6; border-radius:2px; }
+    .msg-marco .msg-bubble { background:rgba(232,255,71,0.08); border:1px solid rgba(232,255,71,0.2); color:var(--white); }
+    .msg-klaar .msg-bubble { background:var(--surface); border:1px solid var(--border); color:var(--white); }
+    .msg-bubble.streaming::after { content:'▍'; animation:blink 0.7s infinite; color:var(--accent); }
+    .msg-bubble.error { border-color:var(--red); color:var(--red); }
+    .msg-meta { font-family:'DM Mono',monospace; font-size:9px; color:var(--gray); display:flex; gap:8px; }
+    .msg-marco .msg-meta { justify-content:flex-end; }
+    @keyframes blink { 0%,100%{opacity:1} 50%{opacity:0} }
+
+    /* ISSUES PANEL */
+    .issues-wrap { display:none; }
+    .issues-header { padding:10px 14px; background:var(--surface); border:1px solid var(--border); font-size:16px; }
+    .issues-body { border:1px solid var(--border); border-top:none; height:540px; overflow-y:auto; background:var(--black); }
+    .issue-item { padding:10px 14px; border-bottom:1px solid var(--border); font-size:12px; display:flex; gap:10px; align-items:flex-start; }
+    .issue-item:last-child { border-bottom:none; }
+    .issue-sev { font-family:'DM Mono',monospace; font-size:9px; padding:2px 6px; border:1px solid; flex-shrink:0; margin-top:1px; }
+    .sev-crit { color:var(--red); border-color:rgba(255,79,79,0.4); }
+    .sev-high { color:var(--orange); border-color:rgba(255,165,0,0.4); }
+    .sev-med { color:var(--blue); border-color:rgba(79,175,244,0.4); }
+    .sev-low { color:var(--gray); border-color:var(--border); }
+    .issue-text { color:var(--white); line-height:1.5; }
+    .no-issues { padding:20px 14px; font-family:'DM Mono',monospace; font-size:10px; color:var(--gray); text-align:center; }
+
+    /* RAPPORT */
     .report { display:none; }
-    .report-header { padding:16px 20px; background:var(--surface); border:1px solid var(--border); margin-bottom:16px; }
+    .report-header { padding:16px 20px; background:var(--surface); border:1px solid var(--border); margin-bottom:12px; display:flex; justify-content:space-between; align-items:center; flex-wrap:wrap; gap:8px; }
     .report-title { font-size:28px; }
     .report-sub { font-family:'DM Mono',monospace; font-size:10px; color:var(--gray); margin-top:4px; }
-    .bugs-section { background:var(--surface); border:1px solid var(--border); margin-bottom:16px; }
-    .bugs-header { padding:12px 16px; border-bottom:1px solid var(--border); font-size:18px; }
-    .bug-item {
-      padding:10px 16px; border-bottom:1px solid var(--border); font-size:12px;
-      display:flex; gap:12px; align-items:flex-start;
-    }
-    .bug-item:last-child { border-bottom:none; }
-    .bug-sev { font-family:'DM Mono',monospace; font-size:9px; padding:2px 7px; border:1px solid; flex-shrink:0; }
-    .sev-high { color:var(--red); border-color:rgba(255,79,79,0.3); }
-    .sev-med { color:var(--orange); border-color:rgba(255,165,0,0.3); }
-    .sev-low { color:var(--green); border-color:rgba(71,255,138,0.3); }
-    .bug-text { color:var(--white); line-height:1.5; }
-    .all-qa { background:var(--surface); border:1px solid var(--border); }
-    .all-qa-header { padding:12px 16px; border-bottom:1px solid var(--border); font-size:18px; display:flex; justify-content:space-between; align-items:center; }
-    .qa-item { border-bottom:1px solid var(--border); }
-    .qa-item:last-child { border-bottom:none; }
-    .qa-q {
-      padding:10px 16px; cursor:pointer; display:flex; gap:10px; align-items:flex-start;
-      transition:background 0.1s;
-    }
-    .qa-q:hover { background:var(--muted); }
-    .qa-idx { font-family:'DM Mono',monospace; font-size:10px; color:var(--accent); flex-shrink:0; width:32px; }
-    .qa-text { font-size:12px; flex:1; }
-    .qa-persona { font-family:'DM Mono',monospace; font-size:9px; color:var(--gray); }
-    .qa-status { font-size:11px; flex-shrink:0; }
-    .qa-a { padding:0 16px 12px 58px; font-size:12px; color:var(--gray); line-height:1.6; display:none; }
-    .qa-a.open { display:block; }
-    .export-btn { font-family:'DM Mono',monospace; font-size:10px; letter-spacing:1px; background:none; border:1px solid var(--border); color:var(--gray); padding:5px 12px; cursor:pointer; }
+    .report-score { font-size:40px; color:var(--accent); }
+    .report-score-label { font-family:'DM Mono',monospace; font-size:9px; color:var(--gray); }
+    .report-grid { display:grid; grid-template-columns:1fr 1fr; gap:12px; margin-bottom:12px; }
+    @media(max-width:700px){ .report-grid { grid-template-columns:1fr; } }
+    .report-block { background:var(--surface); border:1px solid var(--border); }
+    .report-block-header { padding:10px 16px; border-bottom:1px solid var(--border); font-size:18px; display:flex; justify-content:space-between; align-items:center; }
+    .issue-row { padding:8px 16px; border-bottom:1px solid var(--border); font-size:12px; display:flex; gap:10px; align-items:flex-start; }
+    .issue-row:last-child { border-bottom:none; }
+    .transcript-block { background:var(--surface); border:1px solid var(--border); margin-bottom:12px; }
+    .transcript-header { padding:10px 16px; border-bottom:1px solid var(--border); font-size:18px; display:flex; justify-content:space-between; align-items:center; }
+    .export-btn { font-family:'DM Mono',monospace; font-size:10px; padding:4px 12px; background:none; border:1px solid var(--border); color:var(--gray); cursor:pointer; }
     .export-btn:hover { border-color:var(--accent); color:var(--accent); }
-
-    /* ── COMPETITIVE CONTEXT ── */
-    .context-box { background:var(--surface); border:1px solid var(--border); padding:18px 20px; margin-bottom:24px; }
-    .context-title { font-size:18px; margin-bottom:10px; }
-    .context-grid { display:grid; grid-template-columns:1fr 1fr; gap:12px; }
-    @media(max-width:600px){ .context-grid { grid-template-columns:1fr; } }
-    .context-item { font-size:12px; color:var(--gray); line-height:1.6; }
-    .context-item strong { color:var(--white); }
+    .transcript-turn { border-bottom:1px solid var(--border); }
+    .transcript-turn:last-child { border-bottom:none; }
+    .transcript-q { padding:8px 16px; background:rgba(232,255,71,0.03); font-size:12px; display:flex; gap:10px; }
+    .transcript-a { padding:8px 16px; font-size:12px; color:var(--gray); }
+    .t-num { font-family:'DM Mono',monospace; font-size:10px; color:var(--accent); flex-shrink:0; }
+    .t-from { font-family:'DM Mono',monospace; font-size:9px; color:var(--gray); flex-shrink:0; }
   </style>
 </head>
 <body>
 <div class="page">
 
-  <!-- HEADER -->
   <div class="header">
-    <div class="header-title">Klaar — AI Test Suite</div>
-    <div class="header-sub">100+ vragen · 5 persona's · live API · bug detectie · herbruikbaar</div>
-  </div>
-
-  <!-- COMPETITIVE CONTEXT -->
-  <div class="context-box">
-    <div class="context-title">Concurrentie Context</div>
-    <div class="context-grid">
-      <div class="context-item">
-        <strong>Hanos GRIP</strong> — Bestelapp van Hanos. Fokus op inkoop/bestellen. Geen kostprijsberekening, geen HACCP, geen AI. Klaar klopt het op: alles-in-één + AI die meedenkt.
-      </div>
-      <div class="context-item">
-        <strong>appHoreca</strong> — Recepten, kostprijs, HACCP, allergenen. Geen AI. Geen events/catering. Geen voice. Prijsmodel: abonnement per module. Klaar klopt het op: AI-first, voice, catering, eenvoud.
-      </div>
-      <div class="context-item">
-        <strong>Exact Horeko</strong> — Enterprise-gericht. 100+ leverancierskoppelingen, HR, planning. Complex en duur. Klaar klopt het op: 5 min. live, geen installatie, AI-assistent, geen onboarding traject.
-      </div>
-      <div class="context-item">
-        <strong>HACCPro</strong> — Alleen HACCP. Klaar heeft dit ook, plus 5 andere modules, plus AI die je HACCP-data begrijpt en acties kan uitvoeren via spraak.
-      </div>
+    <div>
+      <div class="header-title">KLAAR AI SIMULATOR</div>
+      <div class="header-sub">TWEE-AI TEST · MARCO (TESTER) ↔ KLAAR ASSISTENT</div>
     </div>
+    <div class="header-badge">INTERN · NIET VOOR KLANTEN</div>
   </div>
 
   <!-- CONFIG -->
   <div class="config-bar">
     <span class="config-label">API ENDPOINT</span>
-    <input class="config-input" id="apiUrl" value="https://www.getklaar.app/api/demo-chat" placeholder="https://www.getklaar.app/api/demo-chat" />
+    <input class="config-input" id="apiUrl" value="https://www.getklaar.app/api/demo-chat" />
+    <span class="config-label">TURNS</span>
+    <select class="config-select" id="turnCount">
+      <option value="10">10 (snel)</option>
+      <option value="25">25</option>
+      <option value="50">50</option>
+      <option value="100" selected>100 (volledig)</option>
+    </select>
     <span class="config-label">DELAY (ms)</span>
-    <input class="config-delay" id="apiDelay" type="number" value="1200" min="500" max="5000" />
+    <input class="config-select" id="delay" type="number" value="800" min="300" max="3000" style="width:80px;">
   </div>
-
-  <!-- PERSONAS -->
-  <div class="section-title">Selecteer persona('s)</div>
-  <div class="personas" id="personaGrid"></div>
 
   <!-- CONTROLS -->
   <div class="controls">
-    <button class="btn btn-primary" id="btnRun" onclick="runTests()">▶ Test uitvoeren</button>
-    <button class="btn btn-secondary" onclick="selectAll()">Alle 5 selecteren</button>
-    <button class="btn btn-secondary" onclick="selectNone()">Deselecteren</button>
-    <button class="btn btn-danger" id="btnStop" onclick="stopTests()" disabled>■ Stop</button>
-    <span id="runStatus" style="font-family:'DM Mono',monospace;font-size:11px;color:var(--gray);align-self:center;"></span>
+    <button class="btn btn-primary" id="btnRun" onclick="startTest()">▶ Simulatie starten</button>
+    <button class="btn btn-danger" id="btnStop" onclick="stopTest()" disabled>■ Stop</button>
+    <button class="btn btn-secondary" onclick="clearAll()">↺ Reset</button>
+    <span class="run-status" id="runStatus"></span>
   </div>
 
-  <!-- PROGRESS BAR -->
-  <div class="progress-bar-wrap" id="progressWrap">
-    <div class="progress-bar-fill" id="progressBar"></div>
+  <!-- PROGRESS -->
+  <div class="progress-wrap" id="progressWrap">
+    <div class="progress-fill" id="progressFill"></div>
   </div>
 
-  <!-- LIVE STATS -->
+  <!-- STATS -->
   <div class="stats-row" id="statsRow">
-    <div class="stat-box"><div class="stat-label">TOTAAL</div><div class="stat-val neutral" id="statTotal">0</div></div>
-    <div class="stat-box"><div class="stat-label">VOLTOOID</div><div class="stat-val ok" id="statDone">0</div></div>
-    <div class="stat-box"><div class="stat-label">FOUTEN</div><div class="stat-val bad" id="statErrors">0</div></div>
-    <div class="stat-box"><div class="stat-label">GEM. WOORDEN</div><div class="stat-val neutral" id="statWords">–</div></div>
-    <div class="stat-box"><div class="stat-label">GEM. TIJD (s)</div><div class="stat-val neutral" id="statTime">–</div></div>
-    <div class="stat-box"><div class="stat-label">BUGS</div><div class="stat-val warn" id="statBugs">0</div></div>
+    <div class="stat-box"><div class="stat-label">TURN</div><div class="stat-val stat-white" id="statTurn">0/0</div></div>
+    <div class="stat-box"><div class="stat-label">ISSUES</div><div class="stat-val stat-red" id="statIssues">0</div></div>
+    <div class="stat-box"><div class="stat-label">KRITIEK</div><div class="stat-val stat-red" id="statCrit">0</div></div>
+    <div class="stat-box"><div class="stat-label">GEM. TIJD (s)</div><div class="stat-val stat-white" id="statTime">–</div></div>
+    <div class="stat-box"><div class="stat-label">KWALITEIT</div><div class="stat-val stat-green" id="statQuality">–</div></div>
   </div>
 
-  <!-- LIVE FEED -->
-  <div class="feed" id="feed">
-    <div class="feed-header">
-      <span>Live Feed</span>
-      <span class="feed-status" id="feedStatus">–</span>
+  <!-- MAIN LAYOUT: CHAT + ISSUES -->
+  <div class="main-layout">
+    <!-- CHAT -->
+    <div class="chat-wrap" id="chatWrap">
+      <div class="chat-header">
+        <span>💬 Gesprek</span>
+        <span class="chat-status" id="chatStatus">–</span>
+      </div>
+      <div class="chat-body" id="chatBody"></div>
     </div>
-    <div class="feed-body" id="feedBody"></div>
+
+    <!-- ISSUES -->
+    <div class="issues-wrap" id="issuesWrap">
+      <div class="issues-header">⚠ Gevonden issues</div>
+      <div class="issues-body" id="issuesBody">
+        <div class="no-issues" id="noIssuesMsg">Nog geen issues gevonden</div>
+      </div>
+    </div>
   </div>
 
-  <!-- REPORT -->
+  <!-- RAPPORT -->
   <div class="report" id="report">
     <div class="report-header">
-      <div class="report-title">Test Rapport</div>
-      <div class="report-sub" id="reportMeta"></div>
+      <div>
+        <div class="report-title">Test Rapport</div>
+        <div class="report-sub" id="reportMeta"></div>
+      </div>
+      <div style="text-align:right">
+        <div class="report-score" id="reportScore">–</div>
+        <div class="report-score-label">KWALITEITSSCORE</div>
+      </div>
     </div>
-    <div class="bugs-section" id="bugsSection">
-      <div class="bugs-header">🐛 Bugs & Verbeterpunten</div>
+    <div class="report-grid">
+      <div class="report-block" id="reportIssues">
+        <div class="report-block-header"><span>🐛 Issues</span><span id="issueCount" style="font-family:'DM Mono',monospace;font-size:10px;color:var(--gray);"></span></div>
+      </div>
+      <div class="report-block" id="reportStats">
+        <div class="report-block-header"><span>📊 Statistieken</span></div>
+      </div>
     </div>
-    <div class="all-qa" id="allQA">
-      <div class="all-qa-header">
-        <span>Alle vragen &amp; antwoorden</span>
+    <div class="transcript-block">
+      <div class="transcript-header">
+        <span>📝 Volledig transcript</span>
         <button class="export-btn" onclick="exportCSV()">Export CSV</button>
       </div>
+      <div id="transcriptBody"></div>
     </div>
   </div>
 
 </div>
 
 <script>
-// ═══════════════════════════════════════════════════════════════════
-// PERSONA DEFINITIES
-// ═══════════════════════════════════════════════════════════════════
-const PERSONAS = [
-  {
-    id: 'marco',
-    emoji: '👨‍🍳',
-    name: 'Marco',
-    type: 'RESTAURANT EIGENAAR / CHEF',
-    desc: 'Bistro De Gouden Lepel, 45 couverts, Amsterdam. 12 jaar in het vak. Kookt zelf 4 avonden, wil stoppen met Excel.',
-    context: `Je bent de Klaar AI-assistent voor Marco, eigenaar en chef-kok van Bistro De Gouden Lepel in Amsterdam.
-Marco heeft 45 couverts, 8 FTE personeel, kookt mediterraanse keuken.
-Hij bestelt bij Hanos en Bidfood. Zijn foodcost zit rond de 32%.
-Hij heeft 3 koelcellen en een vriezer.
-Hij is gefrustreerd door Excel en wil alles op één plek.
-Antwoord beknopt, praktisch, altijd Nederlands.`,
-    questions: [
-      // Onboarding & oriëntatie
-      "Wat kan Klaar voor mij betekenen als chef-kok en restauranthouder?",
-      "Hoe verschilt Klaar van appHoreca of Horeko?",
-      "Ik gebruik nu Excel voor mijn recepten en kostprijs. Wat win ik door over te stappen?",
-      "Hoelang duurt het voordat Klaar echt nuttig is voor mijn zaak?",
-      // Kostprijs & marges
-      "Mijn ribeye staat voor €34 op de kaart, inkoop is €18 per portie. Wat is mijn foodcost % en is dat gezond?",
-      "Wat is een normale foodcost % voor een bistro in Amsterdam?",
-      "Hoe bereken ik de kostprijs van een gerecht inclusief mise-en-place verlies?",
-      "Ik maak een eigen fond die ik in 4 gerechten gebruik. Hoe voer ik dat in?",
-      "Mijn zalmprijs is bij Hanos met 18% gestegen. Hoe zie ik de impact op al mijn recepten direct?",
-      // HACCP & voedselveiligheid
-      "Ik heb morgen een onaangekondigde NVWA inspectie. Wat moet ik aantonen?",
-      "Hoe log ik temperaturen via Klaar? Ik heb 3 koelcellen en 1 vriezer.",
-      "Een medewerker heeft een vis gemeten op 11 graden in de koeling. Wat nu?",
-      "Hoe ver terug bewaart Klaar mijn HACCP-logs voor een inspectie?",
-      // Leveranciers
-      "Ik bestel bij Hanos en Bidfood. Hoe koppel ik mijn facturen aan Klaar?",
-      "Kan ik zien welke producten het meeste in prijs zijn gestegen het afgelopen kwartaal?",
-      // Menu & kaart
-      "Welk type gerecht levert mij de meeste marge op? Hoe analyseer ik dat?",
-      "Ik wil een nieuw seizoensmenu maken. Hoe helpt de Menubuilder mij?",
-      "Ik heb een signature dish die ik niet van de kaart wil halen maar die nauwelijks marge heeft. Advies?",
-      // Allergenen
-      "Een gast vraagt om een glutenvrije variant van mijn pasta. Hoe check ik dit snel?",
-      // Events & catering
-      "Ik doe af en toe private dining voor 20 man. Kan Klaar me helpen met de kostprijs per persoon?",
-      // Vergelijking & besluit
-      "Waarom zou ik Klaar gebruiken in plaats van gewoon in Hanos GRIP de prijzen bijhouden?",
-      "Wat is de eerste concrete stap die ik vandaag moet zetten om te beginnen met Klaar?"
-    ]
-  },
-  {
-    id: 'fatima',
-    emoji: '🥙',
-    name: 'Fatima',
-    type: 'CAFETARIA / BROODJESZAAK',
-    desc: 'Cafetaria Zuider, Rotterdam. 18 jaar zelfstandig. Snelle service, 60 SKUs, HACCP tijdrovend.',
-    context: `Je bent de Klaar AI-assistent voor Fatima, eigenaar van Cafetaria Zuider in Rotterdam.
-Fatima heeft een afhaalzaak met broodjes, snacks, dagschotels. Ze heeft 4 medewerkers.
-Ze heeft problemen met HACCP-papierwerk en weet niet goed wat haar marges zijn per product.
-Ze bestelt bij een lokale groothandel en parttime bij Hanos.
-Ze is niet tech-savvy maar kan wel goed met haar telefoon overweg.
-Antwoord beknopt, praktisch, altijd Nederlands.`,
-    questions: [
-      // Eerste kennismaking
-      "Ik heb een cafetaria. Heeft Klaar ook iets voor mij of is het alleen voor grote restaurants?",
-      "Ik werk nu met papieren HACCP-lijsten. Hoe werkt dit digitaal in Klaar?",
-      "Hoeveel tijd kost het om Klaar in te stellen voor een cafetaria?",
-      // HACCP dagelijks
-      "Hoe log ik elke ochtend mijn koelkasttemperaturen in Klaar? Ik heb 2 koelkasten.",
-      "Mijn medewerker neemt een temperatuur af om 8 uur. Hoe doet ze dat snel via Klaar?",
-      "Kan ik via spraak een HACCP-log invoeren? Dan hoef ik niet te typen.",
-      "Wat doe ik in Klaar als de temperatuur van mijn koeling te hoog is?",
-      "Hoe print ik mijn HACCP-overzicht af voor een inspectie?",
-      // Kostprijs eenvoudig
-      "Mijn broodje kroket kost me 1,20 aan inkoop. Ik verkoop het voor 4,50. Is dat goed?",
-      "Wat is een normaal foodcost percentage voor een cafetaria?",
-      "Mijn kroketten zijn 10% duurder geworden. Moet ik mijn prijs aanpassen?",
-      "Hoe voer ik mijn 10 meest verkochte producten in om de marges te zien?",
-      // Allergenen
-      "Een klant vraagt of mijn kroket gluten bevat. Hoe check ik dit in Klaar?",
-      "Moet ik als cafetaria allergenen bijhouden? Ik dacht dat dit alleen voor restaurants was.",
-      // Leveranciers
-      "Kan ik mijn facturen van de groothandel gewoon inscannen in Klaar?",
-      "Ik wil weten welke producten het meeste schommelen in prijs. Hoe doe ik dat?",
-      // Praktisch
-      "Werkt Klaar ook op mijn telefoon? Ik heb geen computer op de werkvloer.",
-      "Mijn medewerker spreekt niet zo goed Nederlands. Kan zij ook makkelijk HACCP loggen?",
-      "Wat kost Klaar? Is er een gratis versie?",
-      "Wat is het verschil tussen Klaar en gewoon een papieren HACCP-formulier?"
-    ]
-  },
-  {
-    id: 'jeroen',
-    emoji: '🎪',
-    name: 'Jeroen',
-    type: 'CATERING ONDERNEMER',
-    desc: 'JC Catering, Brabant. Events van 30 tot 400 personen. Wil inkoop en kostprijs automatiseren.',
-    context: `Je bent de Klaar AI-assistent voor Jeroen, eigenaar van JC Catering in Brabant.
-Jeroen organiseert catering-events van 30 tot 400 personen: bruiloften, bedrijfsfeesten, BBQs.
-Hij heeft een team van 4 vaste medewerkers en flexibel oproepkrachten per event.
-Zijn grootste uitdaging: kostprijs per persoon berekenen en inkooplijsten per event genereren.
-Hij bestelt groot bij Hanos en Sligro. Zijn events staan 2-6 maanden vooruit gepland.
-Antwoord beknopt, praktisch, altijd Nederlands.`,
-    questions: [
-      // Events & planning
-      "Ik heb een bruiloft van 120 personen in september. Hoe help je me met de voorbereiding?",
-      "Kan ik in Klaar een event aanmaken en direct de kostprijs per persoon berekenen?",
-      "Hoe genereer ik een inkooplijst per event op basis van mijn recepten en het aantal gasten?",
-      "Ik heb 3 events volgende maand. Kan ik ze allemaal bijhouden in Klaar?",
-      "Een klant wil een 3-gangen diner voor 80 personen. Wat is een realistisch budget per persoon bij 30% foodcost?",
-      // Kostprijs catering
-      "Mijn risotto voor 40 personen kost me €180 aan ingrediënten. Inclusief arbeid en overhead wil ik 35% foodcost. Wat moet ik rekenen?",
-      "Hoe verwerk ik mise-en-place verlies (bijv. 20% bij groenten schillen) in mijn kostprijsberekening?",
-      "Ik werk met seizoensproducten. Hoe houd ik mijn inkoopprijzen actueel in Klaar?",
-      "Hoe voeg ik een cateraar-opslag toe bovenop de ingredient kosten?",
-      // Keukensheet
-      "Kan Klaar een keukensheet genereren voor mijn team voor een event van 150 personen?",
-      "Hoe maak ik een tijdsplanning voor een event? Wanneer moet wat klaar zijn in de keuken?",
-      // Leveranciers & inkoop
-      "Ik bestel bij Hanos. Kan ik mijn Hanos-facturen direct inlezen in Klaar?",
-      "Mijn Hanos-aanbieding loopt af volgende week. Kan ik zien welke producten ik daarna duurder ga inkopen?",
-      // HACCP catering
-      "Bij catering werk ik op externe locaties. Hoe log ik HACCP-temperaturen als ik onderweg ben?",
-      "Hoe bewijs ik bij een NVWA controle dat mijn cateringleveranciers voedselveilig zijn?",
-      // Allergenen
-      "Een gast op een event heeft een notenallergie. Hoe check ik snel alle gerechten op noten?",
-      "Kan ik per event een allergenenkaart genereren voor de bediening?",
-      // Business inzichten
-      "Welke van mijn standaard event-menus heeft de hoogste marge?",
-      "Ik wil weten hoeveel ik verdien per uur arbeid bij verschillende event-types. Kan Klaar dit berekenen?",
-      // Vergelijking
-      "Ik gebruik nu Hanos GRIP om te bestellen. Wat voegt Klaar toe wat GRIP niet biedt?",
-      "Wat is de eerste stap om mijn komend event al in Klaar in te richten?"
-    ]
-  },
-  {
-    id: 'lisa',
-    emoji: '🏨',
-    name: 'Lisa',
-    type: 'HOTEL F&B MANAGER',
-    desc: 'Hotel Meridian Utrecht, 4-sterren, 180 kamers. Restaurant + bar + room service. HACCP kritisch.',
-    context: `Je bent de Klaar AI-assistent voor Lisa, Food & Beverage Manager van Hotel Meridian in Utrecht.
-Lisa beheert 3 outlets: restaurant (80 couverts), bar/lounge, en room service.
-Ze heeft 15 keukenmedewerkers, 10 bedieningsstaf. Budget: €2.3M omzet F&B per jaar.
-Allergenen zijn kritisch (internationaal publiek). HACCP moet waterdicht zijn.
-Ze bestelt bij Hanos, Albert Heijn To Go en meerdere specialty leveranciers.
-Ze rapporteert aan de General Manager. Ze wil data-gedreven beslissingen maken.
-Antwoord beknopt, professioneel, altijd Nederlands.`,
-    questions: [
-      // Overzicht & aansturing
-      "Hoe helpt Klaar mij als F&B manager van een hotel met meerdere outlets?",
-      "Kan ik in Klaar onderscheid maken tussen mijn restaurant, bar en room service?",
-      "Hoe rapporteer ik mijn foodcost % per outlet aan de General Manager?",
-      // Kostprijs & marges hotel
-      "Wat is een benchmark foodcost % voor een 4-sterren hotel restaurant?",
-      "Mijn F&B omzet is €2.3M. Bij een gemiddelde foodcost van 31%, wat zijn mijn ingredient kosten per jaar?",
-      "Hoe voeg ik een Champagne-arrangement toe (drankjes + hapjes) en bereken ik de marge per persoon?",
-      "Mijn drank-marge is veel hoger dan food-marge. Hoe analyseer ik dit in Klaar?",
-      // HACCP hotel
-      "In een hotel moeten meerdere medewerkers in shifts HACCP loggen. Hoe werkt dat in Klaar?",
-      "Hoe stel ik in dat elke dienst (ochtend/middag/avond) een eigen HACCP-checklist heeft?",
-      "Mijn koelcel temperatuur is om 3 uur 's nachts afgeweken. Hoe zie ik dit de volgende ochtend in Klaar?",
-      // Allergenen kritisch
-      "We hebben dagelijks gasten met meerdere allergieën. Hoe verwerkt Klaar dit in de keuken?",
-      "Hoe genereer ik een EU-14 allergenendeclaratie voor mijn volledige restaurant-menu?",
-      "Een gast heeft aangegeven notenallergie te hebben. Hoe checkt mijn keuken dit in Klaar tijdens service?",
-      // Leveranciers & inkoop hotel
-      "Ik werk met 6 verschillende leveranciers. Hoe beheer ik dit overzichtelijk in Klaar?",
-      "Hoe zie ik welke leverancier voor een product de beste prijs-kwaliteit verhouding biedt?",
-      // Events hotel
-      "We organiseren wekelijks business lunches en conferenties. Hoe beheer ik dit in Klaar?",
-      "Hoe reken ik een all-inclusive conference package door (koffie/lunch/borrel) in kostprijs?",
-      // Inzichten
-      "Welke KPI's kan ik maandelijks rapporteren vanuit Klaar aan mijn directie?",
-      "Mijn room service heeft hogere kosten dan het restaurant. Hoe analyseer ik dit?",
-      // Vergelijking & integratie
-      "Wij gebruiken nu PMS Opera en POS Lightspeed. Kan Klaar hiermee integreren?",
-      "Wat is het verschil in implementatietijd tussen Klaar en een systeem als Exact Horeko voor een hotel?"
-    ]
-  },
-  {
-    id: 'daan',
-    emoji: '🚚',
-    name: 'Daan',
-    type: 'FOOD TRUCK EIGENAAR',
-    desc: 'Street Daan, festivals/weekmarkten, Utrecht/Amsterdam. Solo + 1 medewerker. Kosten laag houden.',
-    context: `Je bent de Klaar AI-assistent voor Daan, eigenaar van food truck 'Street Daan'.
-Daan rijdt op festivals, weekmarkten en bedrijfslocaties in Utrecht en Amsterdam.
-Hij heeft 8 vaste menu-items (burgers, frites, veggie wraps). Solo plus 1 medewerker op drukke dagen.
-Zijn grootste uitdaging: inkoopkosten laag houden, HACCP onderweg bijhouden, weten welke items het meest opleveren.
-Hij bestelt bij Hanos en soms bij Makro. Budget is krap, hij wil geen dure software.
-Antwoord heel praktisch, kort en direct, altijd Nederlands.`,
-    questions: [
-      // Oriëntatie klein bedrijf
-      "Ik heb een food truck. Heeft Klaar ook iets voor mij of is het te groot?",
-      "Ik heb maar 8 menu-items. Is Klaar dan niet overdreven?",
-      "Ik ben solo ondernemer. Hoeveel tijd kost Klaar me per week?",
-      // Kostprijs food truck
-      "Mijn smashburger kost me €3,20 aan ingrediënten. Ik verkoop hem voor €11. Wat is mijn foodcost %?",
-      "Ik wil weten welke van mijn 8 items de meeste marge hebben. Hoe doe ik dat?",
-      "Mijn brioche-broodjes zijn 30% duurder geworden. Moet ik mijn burger duurder maken?",
-      "Hoe pas ik snel alle recepten aan als een ingrediënt in prijs stijgt?",
-      "Bij een festival verkoop ik 300 burgers op een dag. Hoe reken ik mijn inkoop daarvoor door?",
-      // HACCP onderweg
-      "Ik ben mobiel. Kan ik HACCP loggen op mijn telefoon in de food truck?",
-      "Hoe log ik een temperatuurmeting van mijn koelbox in de truck?",
-      "Bij een festival ben ik 10 uur bezig. Hoe houd ik mijn HACCP bij zonder papier?",
-      "Mijn producten liggen soms 4 uur in de warmhoud-bak. Wat moet ik in mijn HACCP vastleggen?",
-      // Leveranciers & inkoop
-      "Ik bestel bij Hanos. Kan ik een Hanos-factuur inlezen in Klaar?",
-      "Ik wil weten of ik beter kan bestellen bij Makro of Hanos voor mijn frites. Kan Klaar me helpen?",
-      // Menu optimalisatie
-      "Welk van mijn items verwijder ik als ik de menukaart wil versimpelen?",
-      "Ik wil een nieuw veggie item toevoegen. Hoe test ik of dit winstgevend is?",
-      // Praktisch
-      "Kan ik Klaar gebruiken op mijn telefoon in de food truck, zonder internet?",
-      "Ik heb geen printer in de truck. Hoe werkt dit met Klaar?",
-      // Vergelijking
-      "Ik gebruik nu gewoon mijn hoofd en een WhatsApp notitie voor kosten. Waarom zou ik Klaar nemen?",
-      "Is Klaar gratis of moet ik betalen? Ik heb een krap budget."
-    ]
-  }
-];
+// ══════════════════════════════════════════════════════════════
+// SYSTEEM PROMPTS
+// ══════════════════════════════════════════════════════════════
 
-// ═══════════════════════════════════════════════════════════════════
+const TESTER_PROMPT = `Je enige taak: genereer het VOLGENDE BERICHT van Marco aan de Klaar AI-assistent.
+
+MARCO'S PROFIEL:
+- Marco Visser, eigenaar & chef-kok Bistro De Gouden Lepel, Amsterdam
+- 45 couverts, 8 FTE, mediterraanse keuken (pasta, vis, vlees)
+- Bestelt bij Hanos en Bidfood, foodcost ~32%
+- Heeft 3 koelcellen (groente, vlees, zuivel) + 1 vriezer
+- Net begonnen met Klaar na betaling — EERSTE keer in de app
+- Kookt zelf 4 avonden per week, druk schema, wil alles snel
+
+FASEVERDELING (100 berichten totaal):
+1-20:   ONBOARDING — hoe begin ik, eerste recept invoeren, HACCP instellen
+21-40:  HACCP — dagelijks temperaturen loggen, afwijkingen vastleggen, inspectie prep
+41-60:  RECEPTEN & KOSTPRIJS — meerdere recepten, foodcost %, impact prijsstijgingen
+61-70:  LEVERANCIERS — facturen, prijstrends, vergelijken
+71-80:  ALLERGENEN & MENU — allergenkaart, menubuilder, marge analyseren
+81-90:  EVENTS & CATERING — cateringlevent, kostprijs per persoon
+91-100: KRITISCH — edge cases, ontevredenheid bij vage antwoorden, vergelijkingen
+
+SCHRIJFREGELS:
+- Schrijf ALLEEN Marco's bericht. Niets anders. Geen uitleg.
+- Max 2-3 zinnen. Drukke chef typt kort.
+- Reageer op het laatste Klaar-antwoord EN ga verder met de aangewezen fase
+- Gebruik concrete details: "mijn vriezer op -22", "mijn ribeye voor €34", "45 couverts"
+- Soms sceptisch of ongeduldig als een antwoord te vaag is
+- Vraag concreet door ("maar HOE doe ik dat dan precies?") als instructies onduidelijk zijn`;
+
+const KLAAR_PROMPT = `Je bent de Klaar AI-assistent, de ingebouwde hulp van Klaar horeca-software.
+
+KLAAR MODULES:
+- Recept Studio — recepten invoeren, kostprijs per portie, foodcost % berekenen
+- Allergenenkaart — EU-14 allergenen bijhouden, NVWA-compliant
+- HACCP Logger — temperatuurlogs, afwijkingen, inspectie-ready rapporten
+- Kostprijs Calculator — foodcost %, inkoop vs. verkoopprijs, marges
+- Menubuilder — menukaart analyseren, marge per gerecht, tips
+- Leveranciers — facturen inscannen/uploaden, prijstrends, vergelijken
+- Catering & Events — kostprijs per persoon, keukensheet, inkooplijst
+
+ANTWOORDREGELS:
+- Max 80 woorden. Direct beginnen, geen intro-zin.
+- Noem de module bij naam als je ernaar verwijst (bijv. "In HACCP Logger → ...")
+- Geef concrete stappen wanneer relevant
+- Altijd Nederlands
+- Bij onduidelijke vragen: stel maximaal 1 korte verduidelijkingsvraag
+- Als iets buiten Klaar's scope valt: zeg dat eerlijk in 1 zin`;
+
+// ══════════════════════════════════════════════════════════════
+// FASE HELPER
+// ══════════════════════════════════════════════════════════════
+
+function getPhase(turn) {
+  if (turn <= 20) return 'Onboarding & eerste stappen';
+  if (turn <= 40) return 'HACCP & voedselveiligheid';
+  if (turn <= 60) return 'Recepten & kostprijs';
+  if (turn <= 70) return 'Leveranciers & inkoop';
+  if (turn <= 80) return 'Allergenen & menukaart';
+  if (turn <= 90) return 'Events & catering';
+  return 'Kritische evaluatie';
+}
+
+// ══════════════════════════════════════════════════════════════
 // STATE
-// ═══════════════════════════════════════════════════════════════════
-let selectedPersonas = new Set(['marco']); // default
-let running = false;
-let stopped = false;
-let results = []; // { persona, q, a, words, time, error, bugs[] }
-let bugs = [];
+// ══════════════════════════════════════════════════════════════
 
-// ═══════════════════════════════════════════════════════════════════
-// RENDER PERSONAS
-// ═══════════════════════════════════════════════════════════════════
-function renderPersonas() {
-  const grid = document.getElementById('personaGrid');
-  grid.innerHTML = PERSONAS.map(p => `
-    <div class="persona-card ${selectedPersonas.has(p.id) ? 'selected' : ''}" onclick="togglePersona('${p.id}')" id="pc_${p.id}">
-      <div class="persona-emoji">${p.emoji}</div>
-      <div class="persona-name">${p.name}</div>
-      <div class="persona-type">${p.type}</div>
-      <div class="persona-desc">${p.desc}</div>
-      <div class="persona-q-count">${p.questions.length} VRAGEN</div>
-    </div>
-  `).join('');
-}
+let running = false, stopped = false;
+let conversation = []; // [{from:'marco'|'klaar', content, turn, elapsed, issues:[]}]
+let allIssues = [];
+let totalElapsed = 0, klaarTurns = 0;
 
-function togglePersona(id) {
-  if (selectedPersonas.has(id)) selectedPersonas.delete(id);
-  else selectedPersonas.add(id);
-  renderPersonas();
-}
-function selectAll() { PERSONAS.forEach(p => selectedPersonas.add(p.id)); renderPersonas(); }
-function selectNone() { selectedPersonas.clear(); renderPersonas(); }
+// ══════════════════════════════════════════════════════════════
+// STREAM HELPER — roept /api/demo-chat aan, streamt SSE, geeft tekst terug
+// onToken(text) wordt aangeroepen per token voor live weergave
+// ══════════════════════════════════════════════════════════════
 
-// ═══════════════════════════════════════════════════════════════════
-// TEST RUNNER
-// ═══════════════════════════════════════════════════════════════════
-async function runTests() {
-  if (running) return;
-  if (selectedPersonas.size === 0) { alert('Selecteer minimaal 1 persona.'); return; }
-
-  // Collect questions
-  const queue = [];
-  PERSONAS.forEach(p => {
-    if (selectedPersonas.has(p.id)) {
-      p.questions.forEach(q => queue.push({ persona: p, q }));
-    }
+async function streamCall(apiUrl, payload, onToken) {
+  const res = await fetch(apiUrl, {
+    method: 'POST',
+    headers: { 'Content-Type': 'application/json' },
+    body: JSON.stringify(payload)
   });
+  if (!res.ok) throw new Error(`HTTP ${res.status}`);
 
-  running = true;
-  stopped = false;
-  results = [];
-  bugs = [];
+  const reader = res.body.getReader();
+  const dec = new TextDecoder();
+  let full = '';
+  let buf = '';
 
-  // UI
+  while (true) {
+    const { done, value } = await reader.read();
+    if (done) break;
+    buf += dec.decode(value, { stream: true });
+    const lines = buf.split('\n');
+    buf = lines.pop(); // keep incomplete line
+    for (const line of lines) {
+      if (!line.startsWith('data: ')) continue;
+      const raw = line.slice(6).trim();
+      if (!raw || raw === '[DONE]') continue;
+      try {
+        const p = JSON.parse(raw);
+        const t = (p.type === 'content_block_delta' && p.delta?.type === 'text_delta')
+          ? p.delta.text : '';
+        if (t) { full += t; if (onToken) onToken(t); }
+      } catch(e) {}
+    }
+  }
+  return full.trim();
+}
+
+// ══════════════════════════════════════════════════════════════
+// ISSUE DETECTIE
+// ══════════════════════════════════════════════════════════════
+
+function detectIssues(turn, text, elapsed) {
+  const issues = [];
+  const words = text.trim().split(/\s+/).filter(Boolean).length;
+
+  if (!text.trim()) {
+    issues.push({ sev:'crit', text:`Leeg antwoord bij turn ${turn}` });
+  }
+  if (words > 0 && /^(Hello|Hi |I |The |Yes|No |Of course|Sure|Great)/i.test(text.trim())) {
+    issues.push({ sev:'high', text:`Antwoord begint in het Engels (turn ${turn})` });
+  }
+  if (words > 150) {
+    issues.push({ sev:'med', text:`Antwoord te lang: ${words} woorden (turn ${turn}, max 80)` });
+  }
+  if (words > 0 && words < 5 && turn > 2) {
+    issues.push({ sev:'med', text:`Antwoord erg kort: ${words} woorden (turn ${turn})` });
+  }
+  if (elapsed > 15) {
+    issues.push({ sev:'med', text:`Trage respons: ${elapsed.toFixed(1)}s (turn ${turn})` });
+  }
+  const cantPhrases = ['kan ik niet', 'ben ik niet in staat', 'valt buiten', 'niet mogelijk voor mij', 'niet mijn taak'];
+  if (cantPhrases.some(p => text.toLowerCase().includes(p))) {
+    issues.push({ sev:'high', text:`Assistent geeft "kan niet" antwoord bij turn ${turn}: "${text.slice(0,60)}..."` });
+  }
+  return issues;
+}
+
+// ══════════════════════════════════════════════════════════════
+// UI HELPERS
+// ══════════════════════════════════════════════════════════════
+
+function addMessage(from, content, isStreaming) {
+  const chat = document.getElementById('chatBody');
+  const id = `msg_${Date.now()}`;
+  const div = document.createElement('div');
+  div.className = `msg msg-${from}`;
+  div.id = id;
+  div.innerHTML = `
+    <div class="msg-label">${from === 'marco' ? '👤 MARCO (TESTER)' : '🤖 KLAAR ASSISTENT'}</div>
+    <div class="msg-bubble${isStreaming ? ' streaming' : ''}" id="${id}_bubble">${escHtml(content)}</div>
+    <div class="msg-meta" id="${id}_meta"></div>
+  `;
+  chat.appendChild(div);
+  chat.scrollTop = chat.scrollHeight;
+  return id;
+}
+
+function updateMessage(id, content, meta, hasError) {
+  const bubble = document.getElementById(`${id}_bubble`);
+  const metaEl = document.getElementById(`${id}_meta`);
+  if (bubble) {
+    bubble.classList.remove('streaming');
+    if (hasError) bubble.classList.add('error');
+    bubble.innerHTML = content.replace(/\*\*(.+?)\*\*/g,'<strong>$1</strong>').replace(/\n/g,'<br>');
+  }
+  if (metaEl && meta) metaEl.textContent = meta;
+}
+
+function appendToken(id, token) {
+  const bubble = document.getElementById(`${id}_bubble`);
+  if (!bubble) return;
+  // Strip streaming cursor, add token
+  let cur = bubble.getAttribute('data-raw') || '';
+  cur += token;
+  bubble.setAttribute('data-raw', cur);
+  bubble.innerHTML = cur.replace(/\*\*(.+?)\*\*/g,'<strong>$1</strong>').replace(/\n/g,'<br>');
+  const chat = document.getElementById('chatBody');
+  if (chat) chat.scrollTop = chat.scrollHeight;
+}
+
+function addIssue(issue) {
+  document.getElementById('noIssuesMsg')?.remove();
+  const body = document.getElementById('issuesBody');
+  const div = document.createElement('div');
+  div.className = 'issue-item';
+  div.innerHTML = `<span class="issue-sev sev-${issue.sev}">${issue.sev.toUpperCase()}</span><span class="issue-text">${escHtml(issue.text)}</span>`;
+  body.appendChild(div);
+  body.scrollTop = body.scrollHeight;
+}
+
+function updateStats(turn, maxTurns, elapsed) {
+  document.getElementById('statTurn').textContent = `${turn}/${maxTurns}`;
+  document.getElementById('statIssues').textContent = allIssues.length;
+  document.getElementById('statCrit').textContent = allIssues.filter(i => i.sev === 'crit').length;
+  if (klaarTurns > 0) {
+    document.getElementById('statTime').textContent = (totalElapsed / klaarTurns).toFixed(1);
+  }
+  const quality = klaarTurns > 0
+    ? Math.max(0, Math.round(100 - (allIssues.length / klaarTurns) * 50))
+    : '–';
+  const qEl = document.getElementById('statQuality');
+  qEl.textContent = klaarTurns > 0 ? quality + '%' : '–';
+  qEl.className = 'stat-val ' + (quality > 80 ? 'stat-green' : quality > 60 ? 'stat-orange' : 'stat-red');
+  document.getElementById('progressFill').style.width = (turn / maxTurns * 100) + '%';
+}
+
+function escHtml(s) {
+  return String(s).replace(/&/g,'&amp;').replace(/</g,'&lt;').replace(/>/g,'&gt;');
+}
+
+// ══════════════════════════════════════════════════════════════
+// HOOFD TEST LOOP
+// ══════════════════════════════════════════════════════════════
+
+async function startTest() {
+  if (running) return;
+  const apiUrl = document.getElementById('apiUrl').value.trim();
+  const maxTurns = parseInt(document.getElementById('turnCount').value);
+  const delay = parseInt(document.getElementById('delay').value) || 800;
+
+  running = true; stopped = false;
+  conversation = []; allIssues = []; totalElapsed = 0; klaarTurns = 0;
+
+  // Show UI
   document.getElementById('btnRun').disabled = true;
   document.getElementById('btnStop').disabled = false;
   document.getElementById('progressWrap').style.display = 'block';
   document.getElementById('statsRow').style.display = 'grid';
-  document.getElementById('feed').style.display = 'block';
+  document.getElementById('chatWrap').style.display = 'block';
+  document.getElementById('issuesWrap').style.display = 'block';
   document.getElementById('report').style.display = 'none';
-  document.getElementById('feedBody').innerHTML = '';
-  document.getElementById('statTotal').textContent = queue.length;
+  document.getElementById('chatBody').innerHTML = '';
+  document.getElementById('issuesBody').innerHTML = '<div class="no-issues" id="noIssuesMsg">Nog geen issues gevonden</div>';
 
-  const apiUrl = document.getElementById('apiUrl').value.trim();
-  const delay = parseInt(document.getElementById('apiDelay').value) || 1200;
-  let done = 0, errCount = 0, totalWords = 0, totalTime = 0;
+  // ── TURN 1: hardcoded eerste Marco bericht ──
+  const openingMsg = 'Hallo! Ik heb net mijn Klaar abonnement geactiveerd. Ik ben Marco, eigenaar van Bistro De Gouden Lepel in Amsterdam, 45 couverts. Dit is de eerste keer dat ik de app open. Waar moet ik beginnen?';
+  conversation.push({ from:'marco', content:openingMsg, turn:0 });
+  addMessage('marco', openingMsg, false);
 
-  for (let i = 0; i < queue.length; i++) {
+  for (let turn = 1; turn <= maxTurns; turn++) {
     if (stopped) break;
-    const { persona, q } = queue[i];
 
-    // Update status
-    document.getElementById('feedStatus').textContent = `${persona.name} — vraag ${i+1}/${queue.length}`;
-    document.getElementById('runStatus').textContent = `Bezig: ${persona.name} — ${i+1}/${queue.length}`;
-    document.getElementById('progressBar').style.width = (i / queue.length * 100) + '%';
+    document.getElementById('chatStatus').textContent = `Beurt ${turn}/${maxTurns} · ${getPhase(turn)}`;
+    document.getElementById('runStatus').textContent = `Klaar assistent antwoordt... (${getPhase(turn)})`;
 
-    // Render question in feed
-    const itemId = `feed_${i}`;
-    const feedBody = document.getElementById('feedBody');
-    const item = document.createElement('div');
-    item.className = 'feed-item';
-    item.id = itemId;
-    item.innerHTML = `
-      <div class="feed-q"><span class="feed-q-num">${String(i+1).padStart(3,'0')}</span><span>${q}</span></div>
-      <div class="feed-a streaming" id="${itemId}_a">▍</div>
-      <div class="feed-meta" id="${itemId}_meta"></div>
-    `;
-    feedBody.appendChild(item);
-    feedBody.scrollTop = feedBody.scrollHeight;
+    // ── STAP A: Klaar assistent reageert op laatste Marco bericht ──
+    const klaarHistory = conversation.slice(0, -1).map(m => ({
+      role: m.from === 'marco' ? 'user' : 'assistant',
+      content: m.content
+    }));
+    const latestMarco = conversation[conversation.length - 1].content;
 
     const t0 = Date.now();
-    let answer = '';
-    let error = null;
-    const itemBugs = [];
+    let klaarText = '';
+    const klaarMsgId = addMessage('klaar', '', true);
 
     try {
-      const res = await fetch(apiUrl, {
-        method: 'POST',
-        headers: { 'Content-Type': 'application/json' },
-        body: JSON.stringify({
-          message: q,
-          systemContext: persona.context
-        })
-      });
-
-      if (!res.ok) throw new Error(`HTTP ${res.status}`);
-
-      const reader = res.body.getReader();
-      const dec = new TextDecoder();
-      const ansEl = document.getElementById(`${itemId}_a`);
-      ansEl.innerHTML = '';
-
-      while (true) {
-        const { done: d, value } = await reader.read();
-        if (d) break;
-        const chunk = dec.decode(value);
-        for (const line of chunk.split('\n')) {
-          if (!line.startsWith('data: ')) continue;
-          const raw = line.slice(6).trim();
-          if (raw === '[DONE]') break;
-          try {
-            const p = JSON.parse(raw);
-            // Handle both Anthropic SSE formats
-            const t = (p.delta?.text) || (p.type === 'content_block_delta' && p.delta?.text) || '';
-            if (t) {
-              answer += t;
-              ansEl.innerHTML = answer.replace(/\*\*(.+?)\*\*/g,'<strong>$1</strong>').replace(/\n/g,'<br>');
-              feedBody.scrollTop = feedBody.scrollHeight;
-            }
-          } catch(e) {}
-        }
-      }
+      klaarText = await streamCall(apiUrl, {
+        message: latestMarco,
+        history: klaarHistory.slice(-10),
+        systemContext: KLAAR_PROMPT,
+        maxTokens: 400
+      }, tok => appendToken(klaarMsgId, tok));
     } catch(e) {
-      error = e.message;
-      errCount++;
-      document.getElementById(`${itemId}_a`).className = 'feed-a error';
-      document.getElementById(`${itemId}_a`).textContent = '⚠ ' + e.message;
+      klaarText = '';
+      updateMessage(klaarMsgId, `⚠ API fout: ${e.message}`, '', true);
+      allIssues.push({ sev:'crit', text:`Klaar API fout bij turn ${turn}: ${e.message}` });
+      addIssue({ sev:'crit', text:`Klaar API fout turn ${turn}: ${e.message}` });
     }
 
-    const elapsed = ((Date.now() - t0) / 1000).toFixed(1);
-    const wordCount = answer.trim().split(/\s+/).filter(Boolean).length;
-    if (!error) totalWords += wordCount;
-    totalTime += parseFloat(elapsed);
-    done++;
+    const elapsed = (Date.now() - t0) / 1000;
+    totalElapsed += elapsed;
+    klaarTurns++;
 
-    // Bug detectie
-    if (error) {
-      itemBugs.push({ sev:'high', text:`API fout bij vraag "${q.slice(0,50)}...": ${error}` });
-    }
-    if (!error && wordCount === 0) {
-      itemBugs.push({ sev:'high', text:`Leeg antwoord bij vraag: "${q.slice(0,60)}..."` });
-    }
-    if (!error && wordCount > 120) {
-      itemBugs.push({ sev:'med', text:`Antwoord te lang (${wordCount} woorden) bij: "${q.slice(0,50)}..."` });
-    }
-    if (!error && answer && !answer.match(/[a-zijA-Z]/)) {
-      itemBugs.push({ sev:'high', text:`Geen leesbaar antwoord bij: "${q.slice(0,50)}..."` });
-    }
-    if (!error && answer && /^(Hello|Hi |I |The |In |Yes|No )/i.test(answer.trim())) {
-      itemBugs.push({ sev:'med', text:`Antwoord begint in het Engels bij: "${q.slice(0,50)}..."` });
-    }
-    if (parseFloat(elapsed) > 12) {
-      itemBugs.push({ sev:'med', text:`Trage respons (${elapsed}s) bij: "${q.slice(0,50)}..."` });
-    }
-    bugs.push(...itemBugs);
+    const words = klaarText.trim().split(/\s+/).filter(Boolean).length;
+    updateMessage(klaarMsgId, klaarText, `${words}w · ${elapsed.toFixed(1)}s`, false);
+    conversation.push({ from:'klaar', content:klaarText, turn, elapsed });
 
-    // Render meta badges
-    const metaEl = document.getElementById(`${itemId}_meta`);
-    const badges = [];
-    if (error) badges.push('<span class="feed-badge badge-err">FOUT</span>');
-    else if (wordCount === 0) badges.push('<span class="feed-badge badge-err">LEEG</span>');
-    else if (wordCount > 120) badges.push(`<span class="feed-badge badge-warn">${wordCount}w TE LANG</span>`);
-    else badges.push(`<span class="feed-badge badge-ok">${wordCount}w OK</span>`);
-    badges.push(`<span class="feed-badge badge-neutral">${elapsed}s</span>`);
-    badges.push(`<span class="feed-badge badge-neutral">${persona.name.toUpperCase()}</span>`);
-    if (itemBugs.length) badges.push(`<span class="feed-badge badge-err">${itemBugs.length} BUG(S)</span>`);
-    metaEl.innerHTML = badges.join('');
+    // Issue detectie
+    if (klaarText) {
+      const newIssues = detectIssues(turn, klaarText, elapsed);
+      newIssues.forEach(iss => { allIssues.push(iss); addIssue(iss); });
+    }
 
-    results.push({ persona: persona.name, personaId: persona.id, q, a: answer, words: wordCount, time: parseFloat(elapsed), error, bugs: itemBugs });
+    updateStats(turn, maxTurns, elapsed);
+    if (turn >= maxTurns) break;
+    await sleep(delay);
+    if (stopped) break;
 
-    // Update live stats
-    document.getElementById('statDone').textContent = done;
-    document.getElementById('statErrors').textContent = errCount;
-    document.getElementById('statWords').textContent = done > errCount ? Math.round(totalWords / Math.max(1, done - errCount)) : '–';
-    document.getElementById('statTime').textContent = (totalTime / done).toFixed(1);
-    document.getElementById('statBugs').textContent = bugs.length;
+    // ── STAP B: Tester genereert Marco's volgende bericht ──
+    document.getElementById('runStatus').textContent = `Marco genereert volgende vraag... (${getPhase(turn + 1)})`;
 
-    // Delay between questions
-    if (i < queue.length - 1 && !stopped) await sleep(delay);
+    // Tester perspective: Marco = assistant, Klaar = user
+    const testerHistory = conversation.slice(0, -1).map(m => ({
+      role: m.from === 'marco' ? 'assistant' : 'user',
+      content: m.content
+    }));
+
+    const testerTrigger = `[BEURT ${turn + 1}/${maxTurns} | FASE: ${getPhase(turn + 1)}]\n\nKlaar antwoordde: "${klaarText || '[geen antwoord]'}"\n\nGenereer nu Marco's volgende bericht. Reageer op het bovenstaande en blijf in de fase "${getPhase(turn + 1)}".`;
+
+    const marcoMsgId = addMessage('marco', '', true);
+    let marcoText = '';
+    try {
+      marcoText = await streamCall(apiUrl, {
+        message: testerTrigger,
+        history: testerHistory.slice(-10),
+        systemContext: TESTER_PROMPT,
+        maxTokens: 150
+      }, tok => appendToken(marcoMsgId, tok));
+    } catch(e) {
+      // Fallback: genereer een simpele vraag op basis van fase
+      marcoText = getFallback(turn + 1);
+    }
+
+    updateMessage(marcoMsgId, marcoText, '', false);
+    conversation.push({ from:'marco', content:marcoText, turn: turn + 0.5 });
+
+    await sleep(delay);
   }
 
-  // Done
+  // ── DONE ──
   running = false;
   document.getElementById('btnRun').disabled = false;
   document.getElementById('btnStop').disabled = true;
-  document.getElementById('progressBar').style.width = '100%';
-  document.getElementById('feedStatus').textContent = stopped ? 'Gestopt.' : 'Klaar ✓';
+  document.getElementById('progressFill').style.width = '100%';
+  document.getElementById('chatStatus').textContent = stopped ? 'Gestopt.' : 'Klaar ✓';
   document.getElementById('runStatus').textContent = '';
-  renderReport(done, errCount, totalWords, totalTime);
+  renderReport(maxTurns);
 }
 
-function stopTests() {
-  stopped = true;
-  running = false;
+function stopTest() { stopped = true; running = false; }
+
+function clearAll() {
+  if (running) return;
+  document.getElementById('progressWrap').style.display = 'none';
+  document.getElementById('statsRow').style.display = 'none';
+  document.getElementById('chatWrap').style.display = 'none';
+  document.getElementById('issuesWrap').style.display = 'none';
+  document.getElementById('report').style.display = 'none';
+  document.getElementById('chatBody').innerHTML = '';
+  document.getElementById('btnRun').disabled = false;
+  document.getElementById('btnStop').disabled = true;
+  document.getElementById('runStatus').textContent = '';
+  conversation = []; allIssues = [];
+}
+
+function getFallback(turn) {
+  const fallbacks = {
+    1: 'Hoe begin ik met het instellen van Klaar?',
+    21: 'Hoe log ik een temperatuurmeting in de HACCP Logger?',
+    41: 'Hoe voer ik een nieuw recept in bij Recept Studio?',
+    61: 'Hoe upload ik een factuur van Hanos bij Leveranciers?',
+    71: 'Hoe stel ik de allergenenkaart in voor mijn menu?',
+    81: 'Hoe maak ik een catering event aan voor 80 personen?',
+    91: 'Wat doe ik als een functie niet werkt zoals verwacht?'
+  };
+  const phase = Math.ceil(turn / 10) * 10;
+  return fallbacks[Object.keys(fallbacks).reverse().find(k => parseInt(k) <= turn)] || 'Kun je dat verder uitleggen?';
 }
 
 function sleep(ms) { return new Promise(r => setTimeout(r, ms)); }
 
-// ═══════════════════════════════════════════════════════════════════
+// ══════════════════════════════════════════════════════════════
 // RAPPORT
-// ═══════════════════════════════════════════════════════════════════
-function renderReport(done, errCount, totalWords, totalTime) {
-  const report = document.getElementById('report');
-  report.style.display = 'block';
+// ══════════════════════════════════════════════════════════════
 
-  const avgWords = done > errCount ? Math.round(totalWords / Math.max(1, done - errCount)) : 0;
-  const avgTime = done > 0 ? (totalTime / done).toFixed(1) : 0;
-  const successRate = done > 0 ? Math.round((done - errCount) / done * 100) : 0;
+function renderReport(maxTurns) {
+  const klaarConv = conversation.filter(m => m.from === 'klaar');
+  const quality = klaarConv.length > 0
+    ? Math.max(0, Math.round(100 - (allIssues.length / klaarConv.length) * 50)) : 0;
+  const avgTime = klaarTurns > 0 ? (totalElapsed / klaarTurns).toFixed(2) : '–';
+  const critCount = allIssues.filter(i => i.sev === 'crit').length;
+  const highCount = allIssues.filter(i => i.sev === 'high').length;
+  const medCount = allIssues.filter(i => i.sev === 'med').length;
 
+  document.getElementById('report').style.display = 'block';
   document.getElementById('reportMeta').textContent =
-    `${done} vragen getest · ${done - errCount} succesvol · ${errCount} fouten · ${bugs.length} bugs gevonden · ${new Date().toLocaleString('nl-NL')}`;
+    `${klaarConv.length} assistent-antwoorden · ${allIssues.length} issues · Avg ${avgTime}s responstijd`;
+  document.getElementById('reportScore').textContent = quality + '%';
+  document.getElementById('reportScore').className = 'report-score ' + (quality > 80 ? 'stat-green' : quality > 60 ? 'stat-orange' : 'stat-red');
 
-  // Samenvatting inzichten
-  const insights = [];
-  if (avgWords > 100) insights.push({ sev:'high', text:`Gemiddeld ${avgWords} woorden per antwoord — te lang voor horeca-operators. Streef naar max 60-80 woorden. Fix: system prompt aanscherpen.` });
-  else if (avgWords < 15) insights.push({ sev:'med', text:`Gemiddeld ${avgWords} woorden — antwoorden kunnen te kort zijn. Controleer of de vragen goed beantwoord worden.` });
-  else insights.push({ sev:'low', text:`Gemiddeld ${avgWords} woorden per antwoord — goed binnen de target range.` });
-
-  if (parseFloat(avgTime) > 8) insights.push({ sev:'med', text:`Gemiddelde responstijd ${avgTime}s — aan de hoge kant. Overweeg response streaming als prioriteit, of lagere max_tokens voor eenvoudige vragen.` });
-  else insights.push({ sev:'low', text:`Gemiddelde responstijd ${avgTime}s — acceptabel.` });
-
-  if (errCount > 0) insights.push({ sev:'high', text:`${errCount} API fouten — check of ANTHROPIC_API_KEY correct is ingesteld in Vercel en of het endpoint bereikbaar is.` });
-  if (successRate === 100) insights.push({ sev:'low', text:`100% succesrate — API is stabiel en bereikbaar.` });
-
-  // Check Engels
-  const engAnswers = results.filter(r => r.a && /^(Hello|Hi |I |The |In |Yes|No )/i.test(r.a.trim()));
-  if (engAnswers.length > 0) insights.push({ sev:'high', text:`${engAnswers.length} antwoorden in het Engels! De system prompt wordt mogelijk niet meegestuurd. Check demo-chat.js en de systemContext parameter.` });
-
-  // Leeg
-  const emptyAnswers = results.filter(r => !r.error && r.words === 0);
-  if (emptyAnswers.length > 0) insights.push({ sev:'high', text:`${emptyAnswers.length} lege antwoorden. Mogelijke oorzaak: streaming parsing fout of max_tokens te laag.` });
-
-  // Modules die niet worden gevonden
-  const moduleRefs = results.filter(r => r.a && r.a.includes('['));
-  if (moduleRefs.length > 0) insights.push({ sev:'low', text:`${moduleRefs.length} antwoorden bevatten mogelijk module-links — controleer of deze correct renderen in de UI.` });
-
-  // Alle bugs + inzichten samenvoegen
-  const allBugs = [...insights, ...bugs.filter(b => !insights.some(i => i.text === b.text))];
-
-  const bugsSection = document.getElementById('bugsSection');
-  bugsSection.innerHTML = `<div class="bugs-header">🐛 Bugs & Verbeterpunten (${allBugs.length})</div>`;
-  if (allBugs.length === 0) {
-    bugsSection.innerHTML += '<div class="bug-item"><div class="bug-text" style="color:var(--green)">✓ Geen bugs gevonden</div></div>';
+  // Issues blok
+  const issBlock = document.getElementById('reportIssues');
+  document.getElementById('issueCount').textContent = `${allIssues.length} totaal`;
+  if (allIssues.length === 0) {
+    issBlock.innerHTML += '<div class="issue-row" style="color:var(--green)">✓ Geen issues gevonden</div>';
   } else {
-    const sorted = allBugs.sort((a,b) => ({high:0,med:1,low:2}[a.sev||'low'] - {high:0,med:1,low:2}[b.sev||'low']));
-    bugsSection.innerHTML += sorted.map(b => `
-      <div class="bug-item">
-        <span class="bug-sev sev-${b.sev||'low'}">${(b.sev||'low').toUpperCase()}</span>
-        <div class="bug-text">${b.text}</div>
-      </div>
-    `).join('');
+    allIssues.forEach(iss => {
+      const d = document.createElement('div');
+      d.className = 'issue-row';
+      d.innerHTML = `<span class="issue-sev sev-${iss.sev}">${iss.sev.toUpperCase()}</span><span class="issue-text">${escHtml(iss.text)}</span>`;
+      issBlock.appendChild(d);
+    });
   }
 
-  // Alle Q&A
-  const allQA = document.getElementById('allQA');
-  const qaItems = results.map((r, i) => `
-    <div class="qa-item">
-      <div class="qa-q" onclick="toggleQA(${i})">
-        <span class="qa-idx">${String(i+1).padStart(3,'0')}</span>
-        <span class="qa-text">${r.q}</span>
-        <span class="qa-persona">${r.personaId.toUpperCase()}</span>
-        <span class="qa-status">${r.error ? '❌' : r.words > 120 ? '⚠️' : r.words === 0 ? '⭕' : '✅'}</span>
-      </div>
-      <div class="qa-a" id="qa_a_${i}">
-        ${r.error ? `<span style="color:var(--red)">FOUT: ${r.error}</span>` : r.a.replace(/\*\*(.+?)\*\*/g,'<strong>$1</strong>').replace(/\n/g,'<br>') || '<span style="color:var(--gray)">Leeg antwoord</span>'}
-        <div style="margin-top:8px;font-family:\'DM Mono\',monospace;font-size:9px;color:var(--gray);">${r.words}w · ${r.time}s</div>
-      </div>
-    </div>
-  `).join('');
-  allQA.innerHTML = `
-    <div class="all-qa-header">
-      <span>Alle vragen &amp; antwoorden (${results.length})</span>
-      <button class="export-btn" onclick="exportCSV()">⬇ Export CSV</button>
-    </div>
-    ${qaItems}
-  `;
-}
+  // Stats blok
+  const statsBlock = document.getElementById('reportStats');
+  const statsHtml = [
+    ['Klaar-antwoorden', klaarConv.length],
+    ['Gem. responstijd', avgTime + 's'],
+    ['Kritieke issues', critCount],
+    ['Hoge issues', highCount],
+    ['Medium issues', medCount],
+    ['Kwaliteitsscore', quality + '%'],
+  ].map(([k,v]) => `<div class="issue-row"><span style="color:var(--gray);font-family:'DM Mono',monospace;font-size:10px;min-width:160px">${k}</span><span style="font-weight:600">${v}</span></div>`).join('');
+  statsBlock.innerHTML = statsBlock.innerHTML + statsHtml;
 
-function toggleQA(i) {
-  const el = document.getElementById(`qa_a_${i}`);
-  el.classList.toggle('open');
-}
-
-// ═══════════════════════════════════════════════════════════════════
-// EXPORT
-// ═══════════════════════════════════════════════════════════════════
-function exportCSV() {
-  const rows = [['#','Persona','Vraag','Antwoord','Woorden','Tijd(s)','Fout','Bugs'].join(';')];
-  results.forEach((r, i) => {
-    rows.push([
-      i+1,
-      r.persona,
-      `"${r.q.replace(/"/g,'""')}"`,
-      `"${(r.a||'').replace(/"/g,'""').replace(/\n/g,' ')}"`,
-      r.words,
-      r.time,
-      r.error ? 'JA' : 'NEE',
-      r.bugs.length
-    ].join(';'));
+  // Transcript
+  const tbody = document.getElementById('transcriptBody');
+  const klaarTurnsArr = conversation.filter(m => m.from === 'klaar');
+  klaarTurnsArr.forEach((klaarMsg, i) => {
+    const marcoMsg = conversation.filter(m => m.from === 'marco')[i];
+    const div = document.createElement('div');
+    div.className = 'transcript-turn';
+    div.innerHTML = `
+      <div class="transcript-q"><span class="t-num">${String(i+1).padStart(3,'0')}</span><span class="t-from">MARCO</span><span>${escHtml(marcoMsg?.content || '')}</span></div>
+      <div class="transcript-a"><span class="t-from" style="margin-right:10px">KLAAR</span>${escHtml(klaarMsg.content || '–')}</div>
+    `;
+    tbody.appendChild(div);
   });
-  const blob = new Blob([rows.join('\n')], { type:'text/csv;charset=utf-8;' });
+}
+
+// ══════════════════════════════════════════════════════════════
+// CSV EXPORT
+// ══════════════════════════════════════════════════════════════
+
+function exportCSV() {
+  const rows = [['Turn','Van','Inhoud','Issues']];
+  conversation.forEach((m, i) => {
+    rows.push([i+1, m.from, `"${(m.content||'').replace(/"/g,'""')}"`, '']);
+  });
+  allIssues.forEach(iss => {
+    rows.push(['', 'ISSUE', `"${(iss.text||'').replace(/"/g,'""')}"`, iss.sev]);
+  });
+  const csv = rows.map(r => r.join(',')).join('\n');
   const a = document.createElement('a');
-  a.href = URL.createObjectURL(blob);
+  a.href = URL.createObjectURL(new Blob([csv], { type:'text/csv' }));
   a.download = `klaar-test-${new Date().toISOString().slice(0,10)}.csv`;
   a.click();
 }
-
-// ═══════════════════════════════════════════════════════════════════
-// INIT
-// ═══════════════════════════════════════════════════════════════════
-renderPersonas();
 </script>
 </body>
 </html>
