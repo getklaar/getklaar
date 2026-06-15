@@ -12,7 +12,7 @@ git add \
   tests/klaar-ai-test.html \
   index.html klaar-client.js vercel.json package.json \
   deploy.sh
-git commit -m "feat: intelligente scan→koppel→recept flow + Marco testklant upgrade — inline koppeling-kolom in factuurreview, volledige bibliotheek in AI-recept-prompt, libId-koppeling na SAVE_RECIPE, Marco persona diverser (eerste-bezoek energie, anti-herhaling, toonvariatie), 2 nieuwe test-scenarios (eerste verkenning + AI-recept), pijnboompitten-herhaling eruit"
+git commit -m "feat: allergeenmatrix export + live bediening tab + pre-service checklist + woordlimiet fix — Module 02: A4 kruistabel export (14 allergenen × gerechten, printklaar), live bediening-tab met zoekfunctie op naam/allergen/vrij-van (mobilevriendelijk); Module 10: pre-service checklist met verplichte checks, notities meeprinten op keukensheet; Test: KLAAR_PROMPT max 75 woorden (was 120), maxTokens 350 (was 500), AI mag nooit 'kan niet' zonder alternatief"
 git push
 echo ""
 echo "Klaar! Vercel bouwt nu automatisch (1-2 min)."

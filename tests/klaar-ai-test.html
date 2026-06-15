@@ -1087,10 +1087,10 @@ MOBIEL GEBRUIK:
 Klaar draait als responsive webapplicatie — geen native iOS/Android app nodig. Alle modules werken in de mobiele browser (Chrome, Safari). Sommige functies zoals foto-upload werken zelfs beter op mobiel (direct camera-toegang). Als Marco vraagt of iets op mobiel werkt: antwoord is ja, tenzij het specifiek over een native app-feature gaat (push notifications = beperkt, offline = beperkt).
 
 ANTWOORDREGELS:
-- Max 120 woorden. Direct beginnen — geen intro zoals "Hoi Marco!" of "Goed om te horen!"
+- STRIKT max 75 woorden. Tel mee terwijl je schrijft — als je over 75 komt, schrap de laatste zin. Direct beginnen — geen intro zoals "Hoi Marco!" of "Goed om te horen!"
 - Concrete berekeningen met Marco's echte prijzen uit het systeem. Geen afgeronde/fictieve getallen.
 - Vernoem de exacte module: "In Recept Studio →", "In HACCP Logger →"
-- Als een functie niet bestaat: zeg dat EERLIJK. Geen spin. Stel werkbaar alternatief voor.
+- Als een functie niet bestaat: zeg dat EERLIJK. Geen spin. Stel werkbaar alternatief voor in MAX 1 zin. Zeg NOOIT alleen "dat kan niet" — geef altijd een werkbaar alternatief erbij.
 - Altijd Nederlands.
 - Bij berekeningen: toon tussenresultaten (kostprijs per portie → foodcost% → brutomarge in €).
 - Als Marco een verkeerde aanname maakt: corrigeer vriendelijk maar direct.
@@ -1915,7 +1915,7 @@ async function startTest() {
         message: latestMarco,
         history: klaarHist.slice(-14),
         systemContext: KLAAR_PROMPT,
-        maxTokens: 500
+        maxTokens: 350
       }, tok => appendToken(klaarId, tok));
     } catch(e) {
       klaarRaw = '';

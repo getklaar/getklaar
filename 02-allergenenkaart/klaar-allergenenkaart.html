@@ -1167,6 +1167,13 @@
           </svg>
           Keukensheet
         </button>
+        <button class="btn-print" onclick="printAllergenMatrix()" title="Gerechten × 14 allergenen kruistabel — A4 landscape">
+          <svg width="13" height="13" viewBox="0 0 14 14" fill="none">
+            <rect x="1" y="3" width="12" height="8" rx="1" stroke="currentColor" stroke-width="1.3"/>
+            <path d="M4 3V11M1 6H13" stroke="currentColor" stroke-width="1.3" stroke-linecap="round"/>
+          </svg>
+          Matrix
+        </button>
       </div>
     </div>
   </header>
@@ -1174,6 +1181,7 @@
   <!-- ─── TAB BAR ──────────────────────────────────────────────────── -->
   <div class="tab-bar">
     <button class="tab-btn active" id="tab-allergens" onclick="setMainTab('allergens')">🧾 Allergenenkaart</button>
+    <button class="tab-btn" id="tab-bediening" onclick="setMainTab('bediening')">📱 Bediening</button>
     <button class="tab-btn" id="tab-assistent" onclick="setMainTab('assistent')">👨‍🍳 Kok Assistent</button>
   </div>
 
@@ -1203,6 +1211,37 @@
 
     <!-- Keukensheet (hidden in screen mode, shown when printing keukensheet) -->
     <div class="keukensheet-container" id="keukensheet-container"></div>
+
+  </main>
+  </div>
+
+
+  <!-- ─── VIEW: BEDIENING ──────────────────────────────────────────── -->
+  <div id="view-bediening" style="display:none;">
+  <main class="main" style="max-width:900px;">
+    <div class="page-title-row" style="margin-bottom:20px;">
+      <div>
+        <h1 class="page-title" style="font-size:30px;">Bediening</h1>
+        <p class="page-subtitle">Live allergeenzoeker — ook op telefoon</p>
+      </div>
+    </div>
+
+    <!-- Quick filters -->
+    <div id="bed-quick-filters" style="display:flex;gap:8px;flex-wrap:wrap;margin-bottom:16px;"></div>
+
+    <!-- Search bar -->
+    <div style="position:relative;margin-bottom:18px;">
+      <input type="text" id="bed-search" placeholder="Zoek gerecht of allergen… bv. 'nootvrij' of 'zalm'"
+        style="width:100%;padding:13px 16px;font-size:15px;border:2px solid #e0e0de;border-radius:8px;font-family:'DM Sans',sans-serif;outline:none;transition:border-color 0.15s;"
+        oninput="renderBediening()" onfocus="this.style.borderColor='#0a0a0a'" onblur="this.style.borderColor='#e0e0de'">
+      <span style="position:absolute;right:14px;top:50%;transform:translateY(-50%);font-size:18px;pointer-events:none;">🔍</span>
+    </div>
+
+    <!-- Results count -->
+    <div id="bed-count" style="font-family:'DM Mono',monospace;font-size:10px;color:#888;letter-spacing:0.08em;margin-bottom:14px;text-transform:uppercase;"></div>
+
+    <!-- Cards -->
+    <div id="bed-cards" style="display:flex;flex-direction:column;gap:10px;"></div>
 
   </main>
   </div>
@@ -2057,15 +2096,222 @@
   function setMainTab(tab) {
     _activeTab = tab;
     document.getElementById('view-allergens').style.display = tab === 'allergens' ? 'block' : 'none';
+    document.getElementById('view-bediening').style.display = tab === 'bediening' ? 'block' : 'none';
     document.getElementById('view-assistent').style.display = tab === 'assistent' ? 'block' : 'none';
     document.getElementById('tab-allergens').classList.toggle('active', tab === 'allergens');
+    document.getElementById('tab-bediening').classList.toggle('active', tab === 'bediening');
     document.getElementById('tab-assistent').classList.toggle('active', tab === 'assistent');
     document.getElementById('btn-print').style.display = tab === 'allergens' ? '' : 'none';
+    if (tab === 'bediening') {
+      buildBedieningQuickFilters();
+      renderBediening();
+    }
     if (tab === 'assistent') {
-      // Reload recipes in case they were updated
       const dishSearch = document.getElementById('dish-search');
       if (dishSearch && dishSearch.value) searchDishes(dishSearch.value);
     }
+  }
+
+
+  // ──────────────────────────────────────────────────────────────────
+  // BEDIENING: Live allergeenzoeker
+  // ──────────────────────────────────────────────────────────────────
+  let _bedAllergenFilter = null; // null = geen filter, 'code' = alleen vrij van dit allergen
+
+  // Common "vrij van" quick filters
+  const BED_QUICK = [
+    { label:'Nootvrij',       code:'N',  emoji:'🥜' },
+    { label:'Glutenvrij',     code:'G',  emoji:'🌾' },
+    { label:'Lactosevrij',    code:'M',  emoji:'🥛' },
+    { label:'Vegan',          code:'E',  emoji:'🥚', extra:'M' },
+    { label:'Schaaldierenvrij', code:'S', emoji:'🦐' },
+    { label:'Visvrij',        code:'Vi', emoji:'🐟' },
+    { label:'Ei-vrij',        code:'E',  emoji:'🥚' },
+  ];
+
+  function buildBedieningQuickFilters() {
+    const bar = document.getElementById('bed-quick-filters');
+    if (!bar) return;
+    const allR = loadRecipes();
+    let html = `<span style="font-family:'DM Mono',monospace;font-size:9px;color:#aaa;letter-spacing:.1em;text-transform:uppercase;align-self:center;padding-right:4px">Vrij van:</span>`;
+    BED_QUICK.forEach(f => {
+      // Count recipes that do NOT have this allergen
+      const count = allR.filter(r => !hasAllergen(r, f.code) && !hasMaybeAllergen(r, f.code)
+        && (!f.extra || (!hasAllergen(r, f.extra) && !hasMaybeAllergen(r, f.extra)))).length;
+      const active = _bedAllergenFilter === f.code;
+      html += `<button onclick="toggleBedFilter('${f.code}','${f.extra||''}')"
+        style="padding:7px 14px;border-radius:20px;border:1.5px solid ${active?'#0a0a0a':'#e0e0de'};
+        background:${active?'#0a0a0a':'white'};color:${active?'#e8ff47':'#555'};
+        font-family:'DM Mono',monospace;font-size:11px;cursor:pointer;white-space:nowrap;
+        font-weight:${active?'700':'400'};transition:all .15s;"
+        title="${count} gerecht${count!==1?'en':''} vrij van ${f.label.toLowerCase()}">
+        ${f.emoji} ${f.label} <span style="opacity:.6">(${count})</span>
+      </button>`;
+    });
+    bar.innerHTML = html;
+  }
+
+  let _bedExtraFilter = '';
+  function toggleBedFilter(code, extra) {
+    if (_bedAllergenFilter === code) {
+      _bedAllergenFilter = null; _bedExtraFilter = '';
+    } else {
+      _bedAllergenFilter = code; _bedExtraFilter = extra || '';
+    }
+    buildBedieningQuickFilters();
+    renderBediening();
+  }
+
+  function renderBediening() {
+    const q = (document.getElementById('bed-search')?.value || '').toLowerCase().trim();
+    const allR = loadRecipes();
+    let results = allR;
+
+    // Text search — check name or allergen names
+    if (q) {
+      // Check if query is an allergen name (e.g. "gluten", "noten")
+      const matchedAllergen = [...ALLERGENS, ...EXTRA_ALLERGENS].find(a =>
+        a.name.toLowerCase().includes(q) || a.code.toLowerCase() === q
+      );
+      // Also interpret "nootvrij", "glutenvrij", "lactosevrij" etc.
+      const vrijMatch = ALLERGENS.find(a => {
+        const vrij = a.name.toLowerCase() + 'vrij';
+        const short = a.code.toLowerCase() + 'vrij';
+        return vrij === q || short === q || q.startsWith(a.name.toLowerCase().slice(0,4)) && q.endsWith('vrij');
+      });
+      if (vrijMatch) {
+        results = allR.filter(r => !hasAllergen(r, vrijMatch.code) && !hasMaybeAllergen(r, vrijMatch.code));
+      } else if (matchedAllergen) {
+        results = allR.filter(r => hasAllergen(r, matchedAllergen.code) || hasMaybeAllergen(r, matchedAllergen.code));
+      } else {
+        // Name search
+        results = allR.filter(r => (r.title||'').toLowerCase().includes(q));
+      }
+    }
+
+    // Quick filter (vrij van allergen)
+    if (_bedAllergenFilter) {
+      results = results.filter(r =>
+        !hasAllergen(r, _bedAllergenFilter) && !hasMaybeAllergen(r, _bedAllergenFilter) &&
+        (!_bedExtraFilter || (!hasAllergen(r, _bedExtraFilter) && !hasMaybeAllergen(r, _bedExtraFilter)))
+      );
+    }
+
+    const countEl = document.getElementById('bed-count');
+    const cardsEl = document.getElementById('bed-cards');
+    if (!countEl || !cardsEl) return;
+
+    if (allR.length === 0) {
+      countEl.textContent = '';
+      cardsEl.innerHTML = `<div style="padding:40px;text-align:center;color:#aaa;font-size:14px;">Nog geen recepten. Voeg ze toe in de Recept Studio.</div>`;
+      return;
+    }
+
+    countEl.textContent = `${results.length} van ${allR.length} gerecht${allR.length!==1?'en':''}${_bedAllergenFilter||q?' — gefilterd':''}`;
+
+    if (!results.length) {
+      cardsEl.innerHTML = `<div style="padding:40px;text-align:center;">
+        <div style="font-size:36px;margin-bottom:12px;">🔍</div>
+        <div style="font-size:16px;font-weight:600;margin-bottom:6px;">Geen gerechten gevonden</div>
+        <div style="font-size:13px;color:#888;">Probeer een andere zoekterm of filter</div>
+      </div>`;
+      return;
+    }
+
+    cardsEl.innerHTML = results.map(r => {
+      const allergens = getAllergens(r);
+      const present = ALLERGENS.filter(a => hasAllergen(r, a.code));
+      const maybe = ALLERGENS.filter(a => !hasAllergen(r,a.code) && hasMaybeAllergen(r,a.code));
+      const noAllergens = allergens.length === 0;
+      const folder = getAllFolders().find(f => f.id === getFolder(r));
+      const cat = folder ? `${folder.icon} ${folder.label}` : '';
+
+      const allergenBadges = present.map(a =>
+        `<span style="display:inline-flex;align-items:center;gap:3px;padding:3px 9px;border-radius:4px;background:${a.color};color:white;font-family:'DM Mono',monospace;font-size:10px;font-weight:600;white-space:nowrap;">${a.code} ${a.name}</span>`
+      ).join('');
+      const maybeBadges = maybe.map(a =>
+        `<span style="display:inline-flex;align-items:center;gap:3px;padding:3px 9px;border-radius:4px;border:1.5px dashed ${a.color};color:${a.color};font-family:'DM Mono',monospace;font-size:10px;white-space:nowrap;">${a.code} sporen?</span>`
+      ).join('');
+
+      return `<div style="background:white;border:1px solid #e8e8e6;border-radius:10px;padding:16px 18px;transition:box-shadow .15s;" onmouseover="this.style.boxShadow='0 2px 12px rgba(0,0,0,.08)'" onmouseout="this.style.boxShadow=''">
+        <div style="display:flex;align-items:center;justify-content:space-between;gap:12px;margin-bottom:10px;">
+          <div style="font-size:16px;font-weight:700;color:#111;">${escapeHtml(r.title||'Naamloos')}</div>
+          <span style="font-family:'DM Mono',monospace;font-size:10px;color:#999;white-space:nowrap;">${cat}</span>
+        </div>
+        ${noAllergens
+          ? `<div style="display:inline-flex;align-items:center;gap:6px;padding:5px 12px;background:#f0fdf4;border:1px solid #bbf7d0;border-radius:6px;font-size:13px;font-weight:600;color:#16a34a;">✓ Geen allergenen geregistreerd</div>`
+          : `<div style="display:flex;flex-wrap:wrap;gap:6px;">${allergenBadges}${maybeBadges}</div>`
+        }
+      </div>`;
+    }).join('');
+  }
+
+  // ──────────────────────────────────────────────────────────────────
+  // ALLERGEENMATRIX EXPORT (A4 landscape printbaar)
+  // ──────────────────────────────────────────────────────────────────
+  function printAllergenMatrix() {
+    const filtered = getFilteredRecipes();
+    if (!filtered.length) { alert('Geen gerechten om te exporteren.'); return; }
+
+    const now = new Date().toLocaleDateString('nl-NL', {day:'numeric',month:'long',year:'numeric'});
+
+    // Header row — allergen codes with full names
+    const thCols = ALLERGENS.map(a =>
+      `<th style="background:#0a0a0a;color:#fff;font-family:monospace;font-size:9pt;padding:5pt 3pt;text-align:center;border:0.5pt solid #333;min-width:28pt;white-space:nowrap;writing-mode:horizontal-tb;"><div style="display:flex;flex-direction:column;align-items:center;gap:2pt;"><span style="font-weight:700;font-size:10pt;">${a.code}</span><span style="font-size:7pt;color:#ccc;font-weight:400;">${a.name}</span></div></th>`
+    ).join('');
+
+    // Data rows
+    const rows = filtered.map((r, i) => {
+      const bg = i % 2 === 0 ? '#ffffff' : '#f9f9f7';
+      const cells = ALLERGENS.map(a => {
+        const pres = hasAllergen(r, a.code);
+        const maybe = !pres && hasMaybeAllergen(r, a.code);
+        let cell = pres
+          ? `<td style="text-align:center;border:0.5pt solid #ddd;background:${a.color};-webkit-print-color-adjust:exact;print-color-adjust:exact;"><span style="color:white;font-weight:700;font-size:10pt;">✓</span></td>`
+          : maybe
+          ? `<td style="text-align:center;border:0.5pt solid #ddd;background:#fff8ec;-webkit-print-color-adjust:exact;print-color-adjust:exact;"><span style="color:#f59e0b;font-size:9pt;">~</span></td>`
+          : `<td style="text-align:center;border:0.5pt solid #ddd;"><span style="color:#ccc;font-size:8pt;">—</span></td>`;
+        return cell;
+      }).join('');
+      return `<tr style="background:${bg};"><td style="padding:5pt 8pt;border:0.5pt solid #ddd;font-size:9.5pt;font-weight:500;white-space:nowrap;max-width:150pt;overflow:hidden;text-overflow:ellipsis;">${r.title||'Naamloos'}</td>${cells}</tr>`;
+    }).join('');
+
+    // Legend
+    const legend = `<div style="margin-top:12pt;font-size:8pt;color:#555;display:flex;gap:16pt;font-family:'Helvetica Neue',sans-serif;">
+      <span><span style="display:inline-block;width:12pt;height:12pt;background:#555;vertical-align:middle;margin-right:4pt;"></span>✓ Aanwezig</span>
+      <span><span style="display:inline-block;width:12pt;height:12pt;background:#fff8ec;border:1pt solid #f59e0b;vertical-align:middle;margin-right:4pt;"></span>~ Mogelijk (sporen)</span>
+      <span><span style="display:inline-block;width:12pt;height:12pt;border:1pt solid #ddd;vertical-align:middle;margin-right:4pt;"></span>— Niet aanwezig</span>
+    </div>`;
+
+    const html = `<!DOCTYPE html><html><head><meta charset="UTF-8">
+    <title>Allergenenmatrix — Klaar</title>
+    <style>
+      @page { size: A4 landscape; margin: 10mm 12mm; }
+      body { font-family: 'Helvetica Neue', Helvetica, Arial, sans-serif; margin: 0; }
+      table { border-collapse: collapse; width: 100%; }
+    </style>
+    </head><body>
+    <div style="display:flex;justify-content:space-between;align-items:flex-end;margin-bottom:10pt;border-bottom:2pt solid #0a0a0a;padding-bottom:6pt;">
+      <div>
+        <div style="font-family:'Helvetica Neue',sans-serif;font-size:20pt;font-weight:900;letter-spacing:1pt;color:#0a0a0a;">ALLERGENENMATRIX</div>
+        <div style="font-size:9pt;color:#666;margin-top:2pt;">EU-14 Allergenen · Conform Verordening EU 1169/2011 · ${filtered.length} gerecht${filtered.length!==1?'en':''}</div>
+      </div>
+      <div style="font-size:8pt;color:#999;text-align:right;">Klaar · ${now}</div>
+    </div>
+    <table>
+      <thead><tr>
+        <th style="background:#0a0a0a;color:#e8ff47;font-family:monospace;font-size:10pt;padding:7pt 8pt;text-align:left;border:0.5pt solid #333;min-width:120pt;">GERECHT</th>
+        ${thCols}
+      </tr></thead>
+      <tbody>${rows}</tbody>
+    </table>
+    ${legend}
+    </body></html>`;
+
+    const w = window.open('', '_blank', 'width=1200,height=800');
+    w.document.write(html);
+    w.document.close();
+    setTimeout(() => w.print(), 400);
   }
 
   // ──────────────────────────────────────────────────────────────────
