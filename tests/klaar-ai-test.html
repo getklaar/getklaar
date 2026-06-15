@@ -257,55 +257,190 @@ DOEL: alles overzetten naar Klaar vóór eind volgende maand
 // SYSTEEM PROMPTS
 // ══════════════════════════════════════════════════════
 
-const TESTER_PROMPT = `Je bent Marco Visser — eigenaar/chef-kok Bistro De Gouden Lepel, Amsterdam (45 couverts, 8 FTE, mediterraans).
+// ══════════════════════════════════════════════════════
+// MODULE SCENARIO POOL — elke run pikt random scenario's
+// ══════════════════════════════════════════════════════
+
+const MODULE_POOL = [
+  {
+    module: 'Recept Studio',
+    color: '#e8ff47',
+    scenarios: [
+      'Voer het ribeye-recept in (300g Black Angus, truffelboter) met ingrediënten van de Hanos factuur. Bereken foodcost per portie.',
+      'Maak het zalm-risotto recept aan. Bereken of €27,50 verkoopprijs een gezonde marge geeft.',
+      'Voer de caprese salade in als starter. Bereken foodcost op basis van Hanos-prijzen. Is €12,50 genoeg?',
+      'Kloon een bestaand recept en pas de portiegrootte aan van 300g naar 200g. Herbereken automatisch.',
+      'Voer het risotto ai funghi recept in (vegetarisch). Bereken foodcost en vergelijk marge met de ribeye.'
+    ]
+  },
+  {
+    module: 'Kostprijs Calculator',
+    color: '#e8ff47',
+    scenarios: [
+      'Bereken de foodcost% voor alle 4 menugerechten op basis van de Hanos-factuur. Welke is het meest winstgevend?',
+      'Simuleer wat er met je marges gebeurt als Hanos de ribeye 15% duurder maakt. Hoeveel moet de verkoopprijs dan worden?',
+      'Bereken het break-even punt voor je ribeye. Hoeveel porties moet je per week verkopen om de inkoop terug te verdienen?',
+      'Vergelijk de foodcost van vis vs. vlees gerechten. Welke categorie is lucratiever voor jouw restaurant?',
+      'Jouw zalm kost nu €4,20 per portie. Bij welke inkoopprijs wordt het gerecht verliesgevend bij een verkoopprijs van €27,50?'
+    ]
+  },
+  {
+    module: 'Allergenenkaart',
+    color: '#47ff8a',
+    scenarios: [
+      'Stel de EU-14 allergenenkaart in voor al je menugerechten. Begin met de caprese — heeft die pijnboompitten? (notenallergie)',
+      'Een gast belt: ernstige lactose-intolerantie. Welke gerechten op jouw menu zijn veilig? Hoe snel kun je dit opzoeken?',
+      'Exporteer de allergenenkaart zodat je medewerkers die bij de kassa hebben. Werkt dat op mobiel?',
+      'Je voegt een nieuw seizoensgerecht toe met ricotta. Hoe update je snel de allergenenkaart zonder alles opnieuw in te vullen?',
+      'De NVWA vraagt om een schriftelijk overzicht van allergenen. Genereer een compliant document vanuit Klaar.'
+    ]
+  },
+  {
+    module: 'HACCP Logger',
+    color: '#ff4f4f',
+    scenarios: [
+      'Log de vriezerafwijking van vanochtend: -14,3°C (norm max -18°C). Voeg corrective action toe: motor gecontroleerd, deur was goed dicht.',
+      'Voer de complete ochtendmeting in van 07:15 voor alle 3 koelunits. Koelcel 1 vlees +4,2°C, koelcel 2 vis +2,1°C, vriezer -14,3°C.',
+      'Bereid het HACCP-logboek voor op een NVWA-inspectie volgende week. Wat moet er allemaal in staan?',
+      'Jouw kok vergat gisteren de temperaturen te meten. Kun je dit handmatig met terugwerkende kracht invoeren? Hoe werkt dat?',
+      'Hoe stel je in Klaar in dat medewerkers elke ochtend een reminder krijgen voor de temperatuurmeting?'
+    ]
+  },
+  {
+    module: 'Leveranciers',
+    color: '#4faff4',
+    scenarios: [
+      'Upload Hanos factuur H-2026-089234 (€775,87). Verwerk alle 10 producten met prijzen in het systeem.',
+      'Bekijk de prijstrend van ribeye Black Angus over de afgelopen 3 maanden. Gaat de prijs omhoog?',
+      'Stel een prijsalert in: als zalm boven €5,00 per portie komt, wil je een melding. Hoe werkt dat?',
+      'Voeg een tweede leverancier toe (bijv. Makro) voor vergelijking. Kun je dan prijzen vergelijken per product?',
+      'Je wilt weten welke producten van Hanos het meest prijsfluctuatie hadden het afgelopen kwartaal. Kan Klaar dat laten zien?'
+    ]
+  },
+  {
+    module: 'Menubuilder',
+    color: '#c084fc',
+    scenarios: [
+      'Bouw je volledige menukaart in Klaar: 4 gerechten met verkoopprijzen. Welk gerecht moet je meest promoten op marge?',
+      'Maak een digitale versie van je menukaart die gasten op hun telefoon kunnen scannen via QR-code.',
+      'Analyseer je huidige menu: welk gerecht geeft de beste marge, welk de slechtste? Geef concrete aanbevelingen.',
+      'Stel een seizoensmenu samen voor september inclusief inkooplijst. Hoe werkt dat in Menubuilder?',
+      'Je wilt de ribeye tijdelijk van de kaart halen omdat de inkoopprijs te hoog is. Hoe doe je dat snel?'
+    ]
+  },
+  {
+    module: 'Catering & Events',
+    color: '#ffa500',
+    scenarios: [
+      'Bereken kostprijs per persoon voor een bruiloft van 80 gasten in september. Menu: ribeye of zalm + caprese + dessert.',
+      'Maak een keukensheet voor de bruiloft: timing, inkoop, taakverdeling voor 3 koks.',
+      'Maak een offerte voor een bedrijfsborrel van 40 personen. Borrelhapjes op basis van beschikbare ingrediënten.',
+      'Vergelijk twee menu-opties voor het event: all-in ribeye vs. zalm. Verschil in kostprijs en marge per persoon?',
+      'Hoeveel Hanos-bestellingen heb je nodig voor de bruiloft van 80 personen? Genereer een inkooplijst.'
+    ]
+  }
+];
+
+// ══════════════════════════════════════════════════════
+// TEST PLAN BUILDER — random volgorde + random scenario
+// ══════════════════════════════════════════════════════
+
+let testPlan = []; // [{module, scenario, color, from, to}]
+
+function buildTestPlan(totalTurns) {
+  // Shuffle modules
+  const shuffled = [...MODULE_POOL].sort(() => Math.random() - 0.5);
+  const plan = [];
+  const reservedEnd = 3; // altijd 3 turns kritische afsluiting
+  const mainTurns = totalTurns - reservedEnd;
+  const base = Math.floor(mainTurns / shuffled.length);
+  let turn = 1;
+
+  shuffled.forEach((m, i) => {
+    const t = (i === shuffled.length - 1) ? mainTurns - turn + 1 : base;
+    const scenario = m.scenarios[Math.floor(Math.random() * m.scenarios.length)];
+    plan.push({ module: m.module, scenario, color: m.color, from: turn, to: turn + t - 1 });
+    turn += t;
+  });
+
+  // Vaste afsluiting
+  plan.push({
+    module: 'Kritische evaluatie',
+    scenario: 'Druk opvoeren: wat werkt ECHT niet? Dealbreakers benoemen. Vergelijking met Horeko. Eindbeslissing: blijven of opzeggen?',
+    color: '#ff4f4f',
+    from: turn,
+    to: totalTurns
+  });
+
+  return plan;
+}
+
+function getPhase(t) {
+  const p = testPlan.find(p => t >= p.from && t <= p.to);
+  return p ? p.module : '–';
+}
+
+function getPhaseTip(t) {
+  const p = testPlan.find(p => t >= p.from && t <= p.to);
+  return p ? p.scenario : '';
+}
+
+function getPhaseColor(t) {
+  const p = testPlan.find(p => t >= p.from && t <= p.to);
+  return p ? p.color : '#888';
+}
+
+function buildTesterPrompt() {
+  const fases = testPlan.map(p =>
+    `Turns ${p.from}-${p.to}: ${p.module.toUpperCase()} — ${p.scenario}`
+  ).join('\n');
+
+  return `Je bent Marco Visser — eigenaar/chef-kok Bistro De Gouden Lepel, Amsterdam (45 couverts, 8 FTE, mediterraans).
 Je hebt Klaar net gekocht en gebruikt het voor het eerst. Je stapt over van Horeko + Excel.
 
 JOUW ECHTE DATA:
 ${MARCO_DATA}
 
 JOUW ROL — CRUCIAAL:
-Je bent een ECHTE, BETALENDE klant. Je denkt vanuit dat perspectief:
-"Ik betaal hier voor. Dit moet gewoon werken. Als het dat niet doet, stap ik terug naar Horeko."
+Je bent een ECHTE, BETALENDE klant. Je denkt vanuit: "Ik betaal hier voor. Dit moet gewoon werken."
 
 Je persoonlijkheid:
 - Direct, zakelijk. Druk. Typt kort.
-- Vergelijkt altijd met Horeko ("In Horeko deed ik dit met 2 klikken")
+- Vergelijkt actief met Horeko ("In Horeko deed ik dit met 2 klikken")
 - Vraagt door als iets vaag is ("Maar WELKE knop precies? Ik zie dat niet")
-- Probeert functies echt te gebruiken en beschrijft wat hij ziet ("OK ik zie nu een scherm met X, maar nergens staat Y")
+- Beschrijft wat hij ziet in de app ("OK ik zie nu een scherm met X, maar nergens staat Y")
 - Raakt gefrustreerd als iets niet werkt of te ingewikkeld is
-- Denkt aan zijn medewerkers ("Mijn kok van 52 moet dit ook kunnen — dat gaat niet lukken zo")
-- Vraagt of dingen op mobiel werken (hij heeft geen pc in de keuken)
+- Denkt aan zijn medewerkers ("Mijn kok van 52 moet dit ook kunnen")
+- Vraagt regelmatig of dingen op mobiel werken (hij heeft geen pc in de keuken)
+- Bij de KRITISCHE EVALUATIE: echt kritisch, noem 2-3 concrete dingen die hem storen
 
-FASE STRUCTUUR (50 turns):
-Turns 1-6:   ONBOARDING — kan ik importeren vanuit Horeko? eerste indruk
-Turns 7-14:  HACCP — vriezer afwijking -14,3°C loggen, corrective action, inspectie-voorbereiding
-Turns 15-26: RECEPTEN & KOSTPRIJS — ribeye recept invoeren met echte Hanos-prijzen, foodcost berekenen
-Turns 27-33: LEVERANCIERS — factuur H-2026-089234 uploaden en verwerken
-Turns 34-40: ALLERGENEN & MENU — allergenenkaart instellen, marge per gerecht
-Turns 41-46: EVENTS — bruiloft 80 personen, kostprijs per persoon berekenen
-Turns 47-50: KRITISCH — druk opvoeren, ontevredenheid uiten, dealbreakers benoemen
+FASE STRUCTUUR VOOR DEZE RUN:
+${fases}
+
+BELANGRIJK: Volg de fases strikt. Ga pas door naar de volgende fase als het turn-nummer dat aangeeft.
+Gebruik je echte Hanos-data en menuprijzen als ze relevant zijn voor de module die je test.
 
 KLANTOBSERVATIES — VERPLICHT, ELKE BEURT:
 Je MOET aan het EINDE van ELKE beurt precies 1 observatie loggen vanuit klantperspectief.
-Geen uitzondering — ook als het goed gaat, schrijf dan op wat je verwacht of wat je opvalt.
+Geen uitzondering — ook als iets goed werkt, schrijf dan op wat je verwachtte of wat opvalt.
 
-Denk vanuit: "Ik betaal voor dit. Wat stoor ik me aan, wat mist er, wat vind ik fijn of juist irritant?"
+Denk: "Ik betaal voor dit. Wat stoor ik me aan, wat mist er, wat vind ik fijn of juist irritant?"
 
-Voorbeelden van wat je noteert:
-- Iets dat ontbreekt vs. Horeko ("Horeko had directe CSV-import, hier moet ik alles handmatig")
-- Iets dat te complex is voor jou of je medewerkers
-- Iets dat je verwachtte maar er niet is
-- Iets dat goed werkt maar ook wat er beter kan
-- Iets dat je zou doen besluiten dit abonnement op te zeggen
+Voorbeelden:
+- "Horeko had directe CSV-import, hier moet ik alles handmatig — dat kost me uren"
+- "Ik zie geen knop om dit op te slaan, onduidelijk of het automatisch gaat"
+- "De berekening klopt, maar ik snap niet waar ik de foodcost% terugvind"
+- "Goed dat dit bestaat, maar mijn kok van 52 snapt dit scherm echt niet"
 
-Formaat — exact zo, aan het eind van je bericht:
+Formaat — exact zo, op de LAATSTE regel van je bericht:
 [OBS: <jouw klant-signaal in 1-2 zinnen>]
 
 SCHRIJFREGELS:
 - Schrijf ALLEEN Marco's bericht. Niets anders. Geen uitleg, geen meta.
 - Max 2-3 zinnen chat + verplichte [OBS: ...] op de laatste regel.
-- Gebruik je echte data als dat relevant is.
+- Gebruik je echte data als dat relevant is voor de huidige module.
 - Reageer concreet op het laatste Klaar-antwoord.`;
+}
 
 const KLAAR_PROMPT = `Je bent de Klaar AI-assistent — ingebouwde hulp van Klaar horeca-software.
 
@@ -341,29 +476,7 @@ Je weet wat er wél en niet in de app zit. Als je merkt dat:
 Voeg dan aan het EINDE van je bericht toe:
 [OBS: dev-signaal — wat gebouwd/verbeterd moet worden in Klaar]`;
 
-// ══════════════════════════════════════════════════════
-// FASE HELPER
-// ══════════════════════════════════════════════════════
-
-function getPhase(t) {
-  if (t <= 6)  return 'Onboarding & import';
-  if (t <= 14) return 'HACCP — vriezer afwijking';
-  if (t <= 26) return 'Recepten & kostprijs';
-  if (t <= 33) return 'Leveranciers — Hanos factuur';
-  if (t <= 40) return 'Allergenen & menuanalyse';
-  if (t <= 46) return 'Events — bruiloft 80 personen';
-  return 'Kritische evaluatie';
-}
-
-function getPhaseTip(t) {
-  if (t <= 6)  return 'Vraag over importeren vanuit Horeko of eerste stap in de app.';
-  if (t <= 14) return 'Log de vriezer afwijking van -14.3°C en de corrective action.';
-  if (t <= 26) return 'Voer ribeye recept in met Hanos prijzen. Bereken foodcost.';
-  if (t <= 33) return 'Upload Hanos factuur H-2026-089234. Bekijk prijstrend ribeye.';
-  if (t <= 40) return 'Stel allergenenkaart in. Analyseer welke gerechten meeste marge hebben.';
-  if (t <= 46) return 'Bereken kostprijs voor bruiloft 80 personen in september.';
-  return 'Uit op dealbreakers, vergelijking Horeko, wat werkt echt niet.';
-}
+// (getPhase / getPhaseTip / getPhaseColor zijn nu dynamisch via testPlan — zie boven)
 
 // ══════════════════════════════════════════════════════
 // STATE
@@ -592,6 +705,9 @@ async function startTest() {
   const max = parseInt(document.getElementById('turnCount').value);
   const delay = parseInt(document.getElementById('delay').value) || 600;
 
+  // Bouw random testplan voor deze run
+  testPlan = buildTestPlan(max);
+
   running = true; stopped = false;
   conv = []; observations = []; bugs = []; totalElapsed = 0; klaarCount = 0; totalWords = 0;
 
@@ -609,20 +725,37 @@ async function startTest() {
   document.getElementById('btnRun').disabled = true;
   document.getElementById('btnStop').disabled = false;
 
-  // Turn 1 opening (hardcoded maar realistisch)
-  const opening = 'Hallo, ik ben Marco van Bistro De Gouden Lepel. Ik heb net mijn Klaar abonnement geactiveerd. Ik kom van Horeko en Excel. Mijn eerste vraag: kan ik mijn bestaande HACCP-logboek uit Horeko importeren in Klaar, of moet ik alles opnieuw invoeren?';
+  // Turn 1 opening — past bij de eerste module van het random testplan
+  const firstModule = testPlan[0];
+  const openings = {
+    'Recept Studio': 'Hallo, ik ben Marco van Bistro De Gouden Lepel. Net betaald. Ik wil beginnen met mijn recepten invoeren — ik heb een Hanos factuur van vorige week. Hoe start ik de Recept Studio en hoe voer ik mijn eerste recept in?',
+    'Kostprijs Calculator': 'Hallo, Marco hier, Bistro De Gouden Lepel. Ik kom van Excel en wil eindelijk een echte kostprijsberekening. Ik heb mijn Hanos-factuur bij de hand. Hoe start ik met de Kostprijs Calculator?',
+    'Allergenenkaart': 'Hallo, ik ben Marco, net klant geworden. Ik heb binnenkort een NVWA-controle en mijn allergenenlijst staat nog in een Word-document. Hoe kan ik dat het snelst overzetten in Klaar?',
+    'HACCP Logger': 'Hallo, Marco van Bistro De Gouden Lepel. Ik heb vanochtend een afwijking gemeten bij mijn vriezer: -14,3°C in plaats van -18°C. Ik wil dit direct loggen in Klaar. Hoe doe ik dat?',
+    'Leveranciers': 'Hallo, ik ben Marco, net ingestapt bij Klaar. Ik heb een Hanos factuur van vorige week — H-2026-089234, €775,87. Hoe upload ik die en verwerk ik alle prijzen?',
+    'Menubuilder': 'Hallo, Marco hier van Bistro De Gouden Lepel. Ik wil mijn menukaart digitaal maken in Klaar en meteen zien welke gerechten de beste marge hebben. Hoe begin ik?',
+    'Catering & Events': 'Hallo, ik ben Marco, net klant. Ik heb eind september een bruiloft voor 80 personen. Ik wil de kostprijs per persoon berekenen. Heeft Klaar daar iets voor?'
+  };
+  const opening = openings[firstModule.module] || 'Hallo, ik ben Marco van Bistro De Gouden Lepel. Ik heb net mijn Klaar abonnement geactiveerd. Ik kom van Horeko en Excel. Waar moet ik beginnen?';
+  // Bouw de tester-prompt nu het plan klaar is
+  const TESTER_PROMPT_BUILT = buildTesterPrompt();
+
+  // Toon plan-overzicht bovenaan chat
+  const planDiv = document.createElement('div');
+  planDiv.style.cssText = 'padding:10px 14px;border-bottom:1px solid var(--border);font-family:"DM Mono",monospace;font-size:10px;color:var(--gray);line-height:1.8;';
+  planDiv.innerHTML = '<div style="color:var(--accent);margin-bottom:4px;letter-spacing:1px;">▸ TEST PLAN — DEZE RUN</div>' +
+    testPlan.map(p => `<span style="color:${p.color}">${p.module}</span> <span style="color:#555">turns ${p.from}–${p.to}</span>`).join(' → ');
+  document.getElementById('chatBody').appendChild(planDiv);
+
   conv.push({ from:'marco', content:opening, turn:0 });
   addMsg('marco', opening, false);
-  const openMsgId = addMsg('marco', '', false);
-  document.getElementById(`${openMsgId}_b`)?.remove();
-  // Actually just finalize the first message properly
-  // (already added above, skip duplicate)
 
   for (let turn = 1; turn <= max; turn++) {
     if (stopped) break;
 
     const phase = getPhase(turn);
-    document.getElementById('chatSt').textContent = `Turn ${turn}/${max} · ${phase}`;
+    const phaseColor = getPhaseColor(turn);
+    document.getElementById('chatSt').innerHTML = `Turn ${turn}/${max} · <span style="color:${phaseColor}">${phase}</span>`;
     document.getElementById('runSt').textContent = `Klaar assistent antwoordt... · ${phase}`;
 
     // ── A: Klaar assistent antwoordt op laatste Marco bericht ──
@@ -696,7 +829,7 @@ Genereer NU Marco's volgende bericht. Reageer realistisch op het bovenstaande en
       marcoRaw = await streamCall(apiUrl, {
         message: trigger,
         history: testerHist.slice(-12),
-        systemContext: TESTER_PROMPT,
+        systemContext: TESTER_PROMPT_BUILT,
         maxTokens: 200
       }, tok => appendToken(marcoId, tok));
     } catch(e) {
