@@ -1,0 +1,1079 @@
+<!DOCTYPE html>
+<html lang="nl">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Klaar — Dashboard</title>
+  <link href="https://fonts.googleapis.com/css2?family=Bebas+Neue&family=DM+Sans:ital,wght@0,300;0,400;0,500;0,600;1,400&family=DM+Mono:wght@400;500&display=swap" rel="stylesheet">
+  <style>
+    :root {
+      --black:   #0a0a0a;
+      --surface: #111111;
+      --muted:   #1a1a1a;
+      --border:  #222222;
+      --accent:  #e8ff47;
+      --white:   #f5f2eb;
+      --gray:    #888888;
+      --sidebar: 220px;
+      --ai:      312px;
+      --red:     #ff4f4f;
+      --orange:  #ffa500;
+      --green:   #47ff8a;
+    }
+    * { margin:0; padding:0; box-sizing:border-box; }
+    body {
+      background: var(--black); color: var(--white);
+      font-family: 'DM Sans', sans-serif; font-size: 14px;
+      line-height: 1.5; min-height: 100vh; overflow-x: hidden;
+    }
+
+    /* ── LEFT SIDEBAR ── */
+    .sidebar {
+      width: var(--sidebar); flex-shrink: 0;
+      background: var(--surface);
+      border-right: 1px solid var(--border);
+      display: flex; flex-direction: column;
+      position: fixed; top: 0; left: 0; bottom: 0;
+      z-index: 50; overflow-y: auto;
+    }
+    .sidebar-logo {
+      padding: 20px 20px 16px;
+      font-family: 'Bebas Neue', sans-serif;
+      font-size: 28px; color: var(--accent); letter-spacing: 2px;
+      border-bottom: 1px solid var(--border); flex-shrink: 0;
+    }
+    .sidebar-section { padding: 16px 12px 8px; }
+    .sidebar-label {
+      font-family: 'DM Mono', monospace; font-size: 9px;
+      color: var(--gray); letter-spacing: 3px; text-transform: uppercase;
+      padding: 0 8px; margin-bottom: 4px;
+    }
+    .nav-item {
+      display: flex; align-items: center; gap: 10px;
+      padding: 9px 10px; text-decoration: none; color: var(--gray);
+      font-size: 13px; font-weight: 500;
+      transition: color 0.1s, background 0.1s;
+      position: relative;
+    }
+    .nav-item:hover { color: var(--white); background: var(--muted); }
+    .nav-item.active { color: var(--accent); background: rgba(232,255,71,0.07); }
+    .nav-item.active::before {
+      content: ''; position: absolute; left: 0; top: 0; bottom: 0;
+      width: 2px; background: var(--accent);
+    }
+    .nav-item .nav-icon { font-size: 16px; width: 20px; text-align: center; flex-shrink: 0; }
+    .nav-badge {
+      margin-left: auto; font-family: 'DM Mono', monospace; font-size: 9px;
+      background: rgba(232,255,71,0.12); color: var(--accent);
+      border: 1px solid rgba(232,255,71,0.3); padding: 1px 6px; letter-spacing: 1px;
+    }
+    .nav-badge.soon {
+      background: rgba(136,136,136,0.1); color: var(--gray);
+      border-color: var(--border);
+    }
+    .nav-divider { height: 1px; background: var(--border); margin: 8px 12px; }
+    .sidebar-user {
+      margin-top: auto; padding: 14px 16px;
+      border-top: 1px solid var(--border);
+      font-family: 'DM Mono', monospace; font-size: 10px; color: var(--gray);
+      letter-spacing: 0.5px; flex-shrink: 0;
+    }
+    .sidebar-user-email { color: var(--white); margin-bottom: 8px; font-size: 11px; overflow: hidden; text-overflow: ellipsis; white-space: nowrap; }
+    .sidebar-logout {
+      background: none; border: 1px solid var(--border); color: var(--gray);
+      font-family: 'DM Mono', monospace; font-size: 10px; padding: 5px 10px;
+      cursor: pointer; letter-spacing: 1px; transition: all 0.1s; width: 100%; text-align: left;
+    }
+    .sidebar-logout:hover { border-color: var(--accent); color: var(--accent); }
+
+    /* ── MAIN (between sidebars) ── */
+    .main {
+      margin-left: var(--sidebar);
+      margin-right: var(--ai);
+      min-height: 100vh;
+      display: flex; flex-direction: column;
+    }
+    .topbar {
+      position: sticky; top: 0; z-index: 40;
+      background: var(--black); border-bottom: 1px solid var(--border);
+      padding: 0 24px; height: 52px;
+      display: flex; align-items: center; justify-content: space-between;
+    }
+    .topbar-title {
+      font-family: 'Bebas Neue', sans-serif; font-size: 22px;
+      letter-spacing: 1px; color: var(--white);
+    }
+    .topbar-time {
+      font-family: 'DM Mono', monospace; font-size: 11px; color: var(--gray);
+    }
+    .content { padding: 22px 24px; display: flex; flex-direction: column; gap: 20px; }
+
+    /* ── GREETING ── */
+    .greeting { display: flex; align-items: baseline; gap: 12px; flex-wrap: wrap; }
+    .greeting-text { font-family: 'Bebas Neue', sans-serif; font-size: 32px; letter-spacing: 1px; }
+    .greeting-sub { font-family: 'DM Mono', monospace; font-size: 11px; color: var(--gray); letter-spacing: 1px; }
+
+    /* ── KPI GRID ── */
+    .kpi-grid {
+      display: grid;
+      grid-template-columns: repeat(4, 1fr);
+      gap: 1px; background: var(--border);
+      border: 1px solid var(--border);
+    }
+    .kpi-card {
+      background: var(--surface); padding: 16px 18px;
+      display: flex; flex-direction: column; gap: 4px;
+    }
+    .kpi-label {
+      font-family: 'DM Mono', monospace; font-size: 9px;
+      color: var(--gray); letter-spacing: 2px; text-transform: uppercase;
+    }
+    .kpi-value {
+      font-family: 'Bebas Neue', sans-serif; font-size: 30px;
+      line-height: 1; color: var(--accent); margin: 4px 0 2px;
+    }
+    .kpi-value.ok { color: var(--green); }
+    .kpi-value.warn { color: var(--orange); }
+    .kpi-value.alert { color: var(--red); }
+    .kpi-value.neutral { color: var(--white); }
+    .kpi-meta { font-size: 11px; color: var(--gray); }
+    .kpi-link { font-family: 'DM Mono', monospace; font-size: 9px; color: var(--accent); text-decoration: none; letter-spacing: 1px; margin-top: 6px; display: inline-block; }
+    .kpi-link:hover { text-decoration: underline; }
+
+    /* ── TWO-COL LAYOUT ── */
+    .two-col { display: grid; grid-template-columns: 1fr 1fr; gap: 18px; }
+
+    /* ── WIDGET ── */
+    .widget { background: var(--surface); border: 1px solid var(--border); }
+    .widget-header {
+      padding: 12px 16px; border-bottom: 1px solid var(--border);
+      display: flex; align-items: center; justify-content: space-between;
+    }
+    .widget-title {
+      font-family: 'Bebas Neue', sans-serif; font-size: 16px;
+      letter-spacing: 1px; color: var(--white);
+    }
+    .widget-meta { font-family: 'DM Mono', monospace; font-size: 10px; color: var(--gray); }
+    .widget-link {
+      font-family: 'DM Mono', monospace; font-size: 10px; color: var(--accent);
+      text-decoration: none; letter-spacing: 1px;
+    }
+    .widget-link:hover { text-decoration: underline; }
+    .widget-body { padding: 14px 16px; }
+
+    /* ── EMPTY STATE ── */
+    .empty-state {
+      padding: 22px 16px; text-align: center;
+      font-family: 'DM Mono', monospace; font-size: 11px; color: var(--gray);
+      line-height: 1.6;
+    }
+    .empty-cta {
+      display: inline-block; margin-top: 10px;
+      background: var(--accent); color: var(--black);
+      font-family: 'DM Mono', monospace; font-size: 10px; font-weight: 600;
+      padding: 7px 14px; text-decoration: none; letter-spacing: 1px;
+      transition: opacity 0.1s;
+    }
+    .empty-cta:hover { opacity: 0.85; }
+
+    /* ── PRICE TABLE ── */
+    .price-table { width: 100%; border-collapse: collapse; }
+    .price-table td {
+      padding: 7px 0; font-size: 12px; border-bottom: 1px solid var(--border);
+      vertical-align: middle;
+    }
+    .price-table tr:last-child td { border-bottom: none; }
+    .price-table .pt-name { color: var(--white); font-weight: 500; }
+    .price-table .pt-old { color: var(--gray); font-family: 'DM Mono', monospace; font-size: 10px; text-decoration: line-through; }
+    .price-table .pt-new { font-family: 'DM Mono', monospace; font-size: 10px; }
+    .price-table .pt-pct {
+      font-family: 'DM Mono', monospace; font-size: 10px;
+      font-weight: 600; text-align: right;
+    }
+    .up { color: var(--red); }
+    .down { color: var(--green); }
+
+    /* ── HACCP LOG ── */
+    .haccp-log-item {
+      display: flex; align-items: flex-start; gap: 10px;
+      padding: 8px 0; border-bottom: 1px solid var(--border); font-size: 12px;
+    }
+    .haccp-log-item:last-child { border-bottom: none; }
+    .haccp-dot {
+      width: 7px; height: 7px; border-radius: 50%; flex-shrink: 0;
+      margin-top: 4px;
+    }
+    .haccp-dot.ok { background: var(--green); }
+    .haccp-dot.warn { background: var(--orange); }
+    .haccp-dot.alert { background: var(--red); }
+    .haccp-time { font-family: 'DM Mono', monospace; font-size: 10px; color: var(--gray); }
+
+    /* ── EVENT LIST ── */
+    .event-item {
+      padding: 9px 0; border-bottom: 1px solid var(--border);
+      display: grid; grid-template-columns: 50px 1fr auto; gap: 10px; align-items: center;
+    }
+    .event-item:last-child { border-bottom: none; }
+    .event-date-box {
+      background: var(--muted); border: 1px solid var(--border);
+      text-align: center; padding: 5px 4px;
+    }
+    .event-date-day { font-family: 'Bebas Neue', sans-serif; font-size: 20px; color: var(--accent); line-height: 1; }
+    .event-date-mon { font-family: 'DM Mono', monospace; font-size: 9px; color: var(--gray); letter-spacing: 1px; }
+    .event-name { font-size: 12px; font-weight: 500; }
+    .event-meta { font-size: 11px; color: var(--gray); margin-top: 2px; }
+    .event-persons {
+      font-family: 'DM Mono', monospace; font-size: 10px;
+      color: var(--accent); text-align: right; white-space: nowrap;
+    }
+
+    /* ── TASKS ── */
+    .task-item {
+      display: flex; align-items: flex-start; gap: 10px;
+      padding: 8px 0; border-bottom: 1px solid var(--border); font-size: 12px;
+    }
+    .task-item:last-child { border-bottom: none; }
+    .task-check {
+      width: 15px; height: 15px; border: 1px solid var(--border);
+      background: none; flex-shrink: 0; cursor: pointer;
+      display: flex; align-items: center; justify-content: center;
+      transition: all 0.1s; margin-top: 2px;
+    }
+    .task-check:hover { border-color: var(--accent); }
+    .task-check.done { background: var(--accent); border-color: var(--accent); }
+    .task-check.done::after { content: '✓'; font-size: 9px; color: var(--black); font-weight: 700; }
+    .task-text { color: var(--white); line-height: 1.4; flex: 1; }
+    .task-text.done { color: var(--gray); text-decoration: line-through; }
+    .task-source {
+      font-family: 'DM Mono', monospace; font-size: 9px;
+      color: var(--gray); letter-spacing: 1px; text-transform: uppercase;
+      white-space: nowrap;
+    }
+
+    /* ── VOORRAAD ── */
+    .voorraad-item {
+      display: flex; align-items: center; gap: 10px;
+      padding: 7px 0; border-bottom: 1px solid var(--border); font-size: 12px;
+    }
+    .voorraad-item:last-child { border-bottom: none; }
+    .vrd-bar-track { flex: 1; height: 3px; background: var(--border); }
+    .vrd-bar-fill { height: 100%; background: var(--accent); transition: width 0.3s; }
+    .vrd-bar-fill.low { background: var(--orange); }
+    .vrd-bar-fill.critical { background: var(--red); }
+    .vrd-name { width: 110px; color: var(--white); font-weight: 500; overflow: hidden; text-overflow: ellipsis; white-space: nowrap; }
+    .vrd-qty { font-family: 'DM Mono', monospace; font-size: 10px; color: var(--gray); white-space: nowrap; }
+
+    /* ── RIGHT AI PANEL ── */
+    .ai-panel {
+      position: fixed; top: 0; right: 0; bottom: 0;
+      width: var(--ai);
+      background: var(--surface);
+      border-left: 1px solid rgba(232,255,71,0.18);
+      display: flex; flex-direction: column;
+      z-index: 45;
+    }
+    .ai-panel-header {
+      height: 52px; padding: 0 16px;
+      display: flex; align-items: center; justify-content: space-between;
+      border-bottom: 1px solid rgba(232,255,71,0.15); flex-shrink: 0;
+    }
+    .ai-panel-title {
+      font-family: 'Bebas Neue', sans-serif; font-size: 18px;
+      letter-spacing: 1px; color: var(--accent);
+    }
+    .ai-panel-sub {
+      font-family: 'DM Mono', monospace; font-size: 9px;
+      color: var(--gray); letter-spacing: 1px;
+    }
+    .ai-msgs {
+      flex: 1; overflow-y: auto; padding: 14px 14px 8px;
+      display: flex; flex-direction: column; gap: 8px; scroll-behavior: smooth;
+    }
+    .ai-msgs::-webkit-scrollbar { width: 3px; }
+    .ai-msgs::-webkit-scrollbar-thumb { background: var(--border); }
+    .ai-msg-bot {
+      align-self: flex-start; background: var(--muted); border: 1px solid var(--border);
+      padding: 9px 12px; font-size: 13px; max-width: 94%; line-height: 1.6;
+    }
+    .ai-msg-bot strong { color: var(--accent); }
+    .ai-msg-user {
+      align-self: flex-end; background: var(--accent); color: var(--black);
+      padding: 8px 12px; font-size: 13px; max-width: 86%; font-weight: 500;
+    }
+    .ai-suggestions {
+      padding: 6px 14px 8px; display: flex; flex-wrap: wrap; gap: 5px;
+      border-top: 1px solid rgba(232,255,71,0.08);
+    }
+    .ai-sugg {
+      font-family: 'DM Mono', monospace; font-size: 9px; letter-spacing: 0.5px;
+      border: 1px solid var(--border); color: var(--gray); background: none;
+      padding: 4px 8px; cursor: pointer; transition: all 0.1s;
+    }
+    .ai-sugg:hover { border-color: var(--accent); color: var(--accent); }
+    .ai-input-row {
+      border-top: 1px solid rgba(232,255,71,0.15);
+      display: flex; flex-shrink: 0;
+    }
+    .ai-input {
+      flex: 1; background: transparent; border: none; outline: none;
+      color: var(--white); font-family: 'DM Sans', sans-serif; font-size: 13px;
+      padding: 12px 10px;
+    }
+    .ai-input::placeholder { color: #555; }
+    .ai-voice {
+      background: none; border: none; border-left: 1px solid var(--muted);
+      color: var(--gray); cursor: pointer; padding: 0 10px; font-size: 15px;
+      transition: color 0.1s;
+    }
+    .ai-voice:hover { color: var(--accent); }
+    .ai-voice.rec { color: var(--accent); animation: aiPulse 1s infinite; }
+    @keyframes aiPulse { 0%,100%{opacity:1} 50%{opacity:0.35} }
+    .ai-send {
+      background: var(--accent); border: none; color: var(--black);
+      font-family: 'DM Mono', monospace; font-size: 11px; font-weight: 700;
+      padding: 0 16px; cursor: pointer; letter-spacing: 1px; transition: opacity 0.1s;
+    }
+    .ai-send:hover { opacity: 0.85; }
+    .ai-send:disabled { opacity: 0.4; cursor: not-allowed; }
+
+    /* ── ONBOARDING OVERLAY ── */
+    #onboarding {
+      position: fixed; inset: 0; z-index: 1000;
+      background: rgba(10,10,10,0.95);
+      display: flex; align-items: center; justify-content: center;
+    }
+    #onboarding.hidden { display: none; }
+    .ob-card {
+      background: var(--surface); border: 1px solid var(--border);
+      max-width: 520px; width: calc(100% - 40px);
+    }
+    .ob-header { padding: 28px 28px 0; }
+    .ob-step-indicator {
+      font-family: 'DM Mono', monospace; font-size: 10px; color: var(--gray);
+      letter-spacing: 2px; margin-bottom: 8px;
+    }
+    .ob-title {
+      font-family: 'Bebas Neue', sans-serif; font-size: 32px;
+      letter-spacing: 1px; line-height: 1; margin-bottom: 6px;
+    }
+    .ob-sub { font-size: 13px; color: var(--gray); line-height: 1.6; }
+    .ob-body { padding: 20px 28px; }
+    .ob-step { display: none; }
+    .ob-step.active { display: block; }
+    .ob-list { display: flex; flex-direction: column; gap: 10px; }
+    .ob-item {
+      display: flex; gap: 12px; align-items: flex-start;
+      padding: 12px; background: var(--muted); border: 1px solid var(--border);
+    }
+    .ob-item-icon { font-size: 22px; flex-shrink: 0; }
+    .ob-item-title { font-size: 13px; font-weight: 600; margin-bottom: 2px; }
+    .ob-item-desc { font-size: 12px; color: var(--gray); line-height: 1.5; }
+    .ob-footer {
+      padding: 0 28px 24px;
+      display: flex; align-items: center; justify-content: space-between; gap: 12px;
+    }
+    .ob-dots { display: flex; gap: 6px; }
+    .ob-dot { width: 6px; height: 6px; border-radius: 50%; background: var(--border); transition: background 0.2s; }
+    .ob-dot.active { background: var(--accent); }
+    .ob-btn-next {
+      background: var(--accent); color: var(--black);
+      font-family: 'DM Mono', monospace; font-size: 12px; font-weight: 700;
+      border: none; padding: 11px 24px; cursor: pointer; letter-spacing: 1px;
+    }
+    .ob-btn-next:hover { opacity: 0.85; }
+    .ob-btn-skip {
+      background: none; border: none; color: var(--gray);
+      font-family: 'DM Mono', monospace; font-size: 10px;
+      cursor: pointer; letter-spacing: 1px; padding: 0;
+    }
+    .ob-btn-skip:hover { color: var(--white); }
+
+    /* ── RESPONSIVE ── */
+    @media (max-width: 1100px) {
+      :root { --ai: 0px; }
+      .ai-panel { display: none; }
+      .kpi-grid { grid-template-columns: 1fr 1fr; }
+    }
+    @media (max-width: 700px) {
+      :root { --sidebar: 0px; }
+      .sidebar { display: none; }
+      .two-col { grid-template-columns: 1fr; }
+    }
+  </style>
+</head>
+<body>
+
+<!-- ── ONBOARDING ── -->
+<div id="onboarding" class="hidden">
+  <div class="ob-card">
+    <div class="ob-header">
+      <div class="ob-step-indicator" id="obStepLabel">STAP 1 VAN 3</div>
+      <div class="ob-title" id="obTitle">Welkom bij Klaar 👋</div>
+      <div class="ob-sub" id="obSub">Laten we je restaurant in 3 minuten klaar zetten.</div>
+    </div>
+    <div class="ob-body">
+      <div class="ob-step active" id="obStep1">
+        <div class="ob-list">
+          <div class="ob-item">
+            <div class="ob-item-icon">📄</div>
+            <div>
+              <div class="ob-item-title">Stap 1 — Upload een factuur</div>
+              <div class="ob-item-desc">Ga naar <strong>Leveranciers</strong> en scan je meest recente factuur. De AI leest alle producten en prijzen automatisch uit.</div>
+            </div>
+          </div>
+          <div class="ob-item">
+            <div class="ob-item-icon">💰</div>
+            <div>
+              <div class="ob-item-title">Stap 2 — Bereken je eerste kostprijs</div>
+              <div class="ob-item-desc">Open <strong>Kostprijs</strong> en voeg je bestseller toe. Je ziet direct je foodcost % en marge per gerecht.</div>
+            </div>
+          </div>
+          <div class="ob-item">
+            <div class="ob-item-icon">🌡️</div>
+            <div>
+              <div class="ob-item-title">Stap 3 — Stel HACCP in</div>
+              <div class="ob-item-desc">Voeg je koeleenheden toe. Log daarna temperaturen in 10 seconden via spraak.</div>
+            </div>
+          </div>
+        </div>
+      </div>
+      <div class="ob-step" id="obStep2">
+        <div class="ob-list">
+          <div class="ob-item">
+            <div class="ob-item-icon">🎪</div>
+            <div>
+              <div class="ob-item-title">Catering & Events</div>
+              <div class="ob-item-desc">Event inspreken → gepland, kostprijs berekend, keukensheet klaar. Van 3 uur naar 30 minuten.</div>
+            </div>
+          </div>
+          <div class="ob-item">
+            <div class="ob-item-icon">📋</div>
+            <div>
+              <div class="ob-item-title">Menubuilder</div>
+              <div class="ob-item-desc">Sterren en ploegpaarden analyseren. Gekoppeld aan je kostprijzen.</div>
+            </div>
+          </div>
+        </div>
+      </div>
+      <div class="ob-step" id="obStep3">
+        <div class="ob-list">
+          <div class="ob-item">
+            <div class="ob-item-icon">🤖</div>
+            <div>
+              <div class="ob-item-title">Je AI-assistent staat rechts</div>
+              <div class="ob-item-desc">Altijd zichtbaar. Vraag hem alles over je zaak — recepten, HACCP, events, inkoopprijzen. Inspreken kan ook.</div>
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+    <div class="ob-footer">
+      <button class="ob-btn-skip" onclick="skipOnboarding()">Overslaan</button>
+      <div class="ob-dots">
+        <div class="ob-dot active" id="obDot0"></div>
+        <div class="ob-dot" id="obDot1"></div>
+        <div class="ob-dot" id="obDot2"></div>
+      </div>
+      <button class="ob-btn-next" id="obNextBtn" onclick="onboardingNext()">Volgende →</button>
+    </div>
+  </div>
+</div>
+
+<!-- ── LEFT SIDEBAR ── -->
+<aside class="sidebar">
+  <div class="sidebar-logo">Klaar</div>
+  <div class="sidebar-section">
+    <div class="sidebar-label">Overzicht</div>
+    <a href="#" class="nav-item active" onclick="return false;">
+      <span class="nav-icon">⊞</span> Dashboard
+    </a>
+  </div>
+  <div class="nav-divider"></div>
+  <div class="sidebar-section">
+    <div class="sidebar-label">Modules</div>
+    <a href="../01-recept-studio/klaar-recept-studio.html" class="nav-item">
+      <span class="nav-icon">🍳</span> Recepten
+      <span class="nav-badge">Live</span>
+    </a>
+    <a href="../03-haccp/klaar-haccp.html" class="nav-item">
+      <span class="nav-icon">🌡️</span> HACCP
+      <span class="nav-badge">Live</span>
+    </a>
+    <a href="../04-kostprijs/klaar-kostprijs.html" class="nav-item">
+      <span class="nav-icon">💰</span> Kostprijs
+      <span class="nav-badge">Live</span>
+    </a>
+    <a href="../05-menubuilder/klaar-menubuilder.html" class="nav-item">
+      <span class="nav-icon">📋</span> Menubuilder
+      <span class="nav-badge">Live</span>
+    </a>
+    <a href="../07-leveranciers/klaar-leveranciers.html" class="nav-item">
+      <span class="nav-icon">📦</span> Leveranciers
+      <span class="nav-badge">Live</span>
+    </a>
+    <a href="../10-catering-events/klaar-catering.html" class="nav-item">
+      <span class="nav-icon">🎪</span> Catering
+      <span class="nav-badge">Live</span>
+    </a>
+  </div>
+  <div class="nav-divider"></div>
+  <div class="sidebar-section">
+    <div class="sidebar-label">Binnenkort</div>
+    <a href="#" class="nav-item" style="opacity:0.4;cursor:default;" onclick="return false;">
+      <span class="nav-icon">📅</span> Planning
+      <span class="nav-badge soon">Soon</span>
+    </a>
+  </div>
+  <div class="sidebar-user">
+    <div class="sidebar-user-email" id="sidebarEmail">laden...</div>
+    <button class="sidebar-logout" onclick="klaarSignOut()">→ Uitloggen</button>
+  </div>
+</aside>
+
+<!-- ── MAIN CONTENT ── -->
+<main class="main">
+  <div class="topbar">
+    <div class="topbar-title">Dashboard</div>
+    <div class="topbar-time" id="topbarTime"></div>
+  </div>
+
+  <div class="content">
+    <!-- GREETING -->
+    <div class="greeting">
+      <div class="greeting-text" id="greetingText">Goedemiddag</div>
+      <div class="greeting-sub" id="greetingDate"></div>
+    </div>
+
+    <!-- KPI CARDS -->
+    <div class="kpi-grid">
+      <div class="kpi-card">
+        <div class="kpi-label">HACCP — Logs vandaag</div>
+        <div class="kpi-value neutral" id="kpiHaccpLogs">–</div>
+        <div class="kpi-meta" id="kpiHaccpMeta">Nog geen logs geladen</div>
+        <a href="../03-haccp/klaar-haccp.html" class="kpi-link">Open HACCP →</a>
+      </div>
+      <div class="kpi-card">
+        <div class="kpi-label">Foodcost % — gem. marge</div>
+        <div class="kpi-value neutral" id="kpiFoodcost">–</div>
+        <div class="kpi-meta" id="kpiFoodcostMeta">Geen recepten gevonden</div>
+        <a href="../04-kostprijs/klaar-kostprijs.html" class="kpi-link">Open Kostprijs →</a>
+      </div>
+      <div class="kpi-card">
+        <div class="kpi-label">Volgende event</div>
+        <div class="kpi-value neutral" id="kpiEvent">–</div>
+        <div class="kpi-meta" id="kpiEventMeta">Geen events gepland</div>
+        <a href="../10-catering-events/klaar-catering.html" class="kpi-link">Open Catering →</a>
+      </div>
+      <div class="kpi-card">
+        <div class="kpi-label">Producten in systeem</div>
+        <div class="kpi-value neutral" id="kpiProducten">–</div>
+        <div class="kpi-meta" id="kpiProductenMeta">Scan een factuur om te starten</div>
+        <a href="../07-leveranciers/klaar-leveranciers.html" class="kpi-link">Open Leveranciers →</a>
+      </div>
+    </div>
+
+    <!-- HACCP + EVENTS -->
+    <div class="two-col">
+      <div class="widget">
+        <div class="widget-header">
+          <span class="widget-title">HACCP — Recent</span>
+          <a href="../03-haccp/klaar-haccp.html" class="widget-link">Open →</a>
+        </div>
+        <div class="widget-body" id="haccpLogWidget">
+          <div class="empty-state">
+            Nog geen logs.
+            <br><a href="../03-haccp/klaar-haccp.html" class="empty-cta">Start HACCP →</a>
+          </div>
+        </div>
+      </div>
+      <div class="widget">
+        <div class="widget-header">
+          <span class="widget-title">Agenda — Events</span>
+          <a href="../10-catering-events/klaar-catering.html" class="widget-link">Open →</a>
+        </div>
+        <div class="widget-body" id="eventsWidget">
+          <div class="empty-state">
+            Geen aankomende events.
+            <br><a href="../10-catering-events/klaar-catering.html" class="empty-cta">Plan event →</a>
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <!-- PRIJSWIJZIGINGEN -->
+    <div class="two-col">
+      <div class="widget">
+        <div class="widget-header">
+          <span class="widget-title">📈 Prijsstijgingen</span>
+          <span class="widget-meta" id="prijsStijgersMeta">Top 10</span>
+        </div>
+        <div class="widget-body" id="prijsStijgersWidget">
+          <div class="empty-state">
+            Scan een factuur in Leveranciers om prijstrends te zien.
+            <br><a href="../07-leveranciers/klaar-leveranciers.html" class="empty-cta">Scan factuur →</a>
+          </div>
+        </div>
+      </div>
+      <div class="widget">
+        <div class="widget-header">
+          <span class="widget-title">📉 Prijsdalingen</span>
+          <span class="widget-meta" id="prijsDalersMeta">Top 10</span>
+        </div>
+        <div class="widget-body" id="prijsDalersWidget">
+          <div class="empty-state">Scan een factuur om prijstrends te zien.</div>
+        </div>
+      </div>
+    </div>
+
+    <!-- VOORRAAD + TAKEN -->
+    <div class="two-col">
+      <div class="widget">
+        <div class="widget-header">
+          <span class="widget-title">Voorraad status</span>
+          <a href="../07-leveranciers/klaar-leveranciers.html" class="widget-link">Open →</a>
+        </div>
+        <div class="widget-body" id="voorraadWidget">
+          <div class="empty-state">
+            Geen voorraaddata.
+            <br><a href="../07-leveranciers/klaar-leveranciers.html" class="empty-cta">Voorraadbeheer →</a>
+          </div>
+        </div>
+      </div>
+      <div class="widget">
+        <div class="widget-header">
+          <span class="widget-title">Openstaande taken</span>
+          <span class="widget-meta" id="takenMeta"></span>
+        </div>
+        <div class="widget-body" id="takenWidget">
+          <div class="empty-state">Geen openstaande taken.</div>
+        </div>
+      </div>
+    </div>
+
+  </div><!-- /content -->
+</main>
+
+<!-- ── RIGHT AI PANEL (always visible) ── -->
+<aside class="ai-panel">
+  <div class="ai-panel-header">
+    <div>
+      <div class="ai-panel-title">🤖 Klaar AI</div>
+      <div class="ai-panel-sub">Vraag alles over je zaak</div>
+    </div>
+  </div>
+  <div class="ai-msgs" id="aiMsgs">
+    <div class="ai-msg-bot">Hoi! Ik weet wat er in al je modules staat. Wat wil je weten?</div>
+  </div>
+  <div class="ai-suggestions">
+    <button class="ai-sugg" onclick="aiAutoSend('Wat zijn mijn duurste gerechten?')">Duurste gerechten</button>
+    <button class="ai-sugg" onclick="aiAutoSend('Hoe staat mijn foodcost er voor?')">Foodcost</button>
+    <button class="ai-sugg" onclick="aiAutoSend('Zijn er HACCP-afwijkingen?')">HACCP status</button>
+    <button class="ai-sugg" onclick="aiAutoSend('Wat zijn de grootste prijsstijgingen?')">Prijsstijgingen</button>
+  </div>
+  <div class="ai-input-row">
+    <input class="ai-input" id="aiInput" type="text" placeholder="Stel een vraag of spreek in..."
+           onkeydown="if(event.key==='Enter')aiSend()" maxlength="400" />
+    <button class="ai-voice" id="aiVoiceBtn" onclick="aiVoice()" title="Inspreken (nl)">🎤</button>
+    <button class="ai-send" id="aiSendBtn" onclick="aiSend()">→</button>
+  </div>
+</aside>
+
+<script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2/dist/umd/supabase.min.js"></script>
+<script src="../klaar-client.js"></script>
+<script>
+// ── INIT ─────────────────────────────────────────────────────────
+(async function init() {
+  const session = await klaarRequireAuth();
+  if (!session) return;
+
+  document.getElementById('sidebarEmail').textContent = session.user?.email || '';
+
+  setGreeting();
+  updateClock();
+  setInterval(updateClock, 30000);
+
+  loadKPIs();
+  loadHaccpLogs();
+  loadEvents();
+  loadPrijswijzigingen();
+  loadVoorraad();
+  loadTaken();
+
+  if (!localStorage.getItem('klaar_dashboard_onboarded')) {
+    document.getElementById('onboarding').classList.remove('hidden');
+  }
+})();
+
+// ── CLOCK & GREETING ──────────────────────────────────────────────
+function setGreeting() {
+  const h = new Date().getHours();
+  document.getElementById('greetingText').textContent =
+    h < 12 ? 'Goedemorgen' : h < 18 ? 'Goedemiddag' : 'Goedenavond';
+  const d = new Date();
+  const days = ['zo','ma','di','wo','do','vr','za'];
+  const months = ['jan','feb','mrt','apr','mei','jun','jul','aug','sep','okt','nov','dec'];
+  document.getElementById('greetingDate').textContent =
+    `— ${days[d.getDay()]} ${d.getDate()} ${months[d.getMonth()]} ${d.getFullYear()}`;
+}
+function updateClock() {
+  document.getElementById('topbarTime').textContent =
+    new Date().toLocaleTimeString('nl-NL', { hour:'2-digit', minute:'2-digit' });
+}
+
+// ── KPIs ──────────────────────────────────────────────────────────
+function loadKPIs() {
+  // HACCP — manual measurements in klaar_haccp_koeling (datum: YYYY-MM-DD)
+  // AI-added entries in klaar_haccp_log (datum: YYYY-MM-DD)
+  const todayStr = new Date().toISOString().split('T')[0]; // YYYY-MM-DD
+  const koelingLogs = safeLS('klaar_haccp_koeling', []).filter(l => l.datum === todayStr);
+  const aiLogs = safeLS('klaar_haccp_log', []).filter(l => l.datum === todayStr);
+  const todayLogs = [...koelingLogs, ...aiLogs];
+  const afwijkingen = safeLS('klaar_haccp_afwijkingen', []);
+  const todayAfw = afwijkingen.filter(a => a.datum === todayStr);
+  const kpiHL = document.getElementById('kpiHaccpLogs');
+  kpiHL.textContent = todayLogs.length || '0';
+  kpiHL.className = 'kpi-value ' + (todayAfw.length > 0 ? 'warn' : todayLogs.length > 0 ? 'ok' : 'neutral');
+  document.getElementById('kpiHaccpMeta').textContent =
+    todayLogs.length === 0 ? 'Nog niets gelogd vandaag' :
+    todayAfw.length > 0 ? `${todayAfw.length} afwijking(en)` : 'Alles in orde';
+
+  // Foodcost
+  const recipes = safeLS('klaar_recipes', []);
+  const withCost = recipes.filter(r => r.foodcost_pct || r.kostprijs_pct);
+  if (withCost.length > 0) {
+    const avg = withCost.reduce((s,r) => s + (r.foodcost_pct || r.kostprijs_pct || 0), 0) / withCost.length;
+    const kpiF = document.getElementById('kpiFoodcost');
+    kpiF.textContent = avg.toFixed(1) + '%';
+    kpiF.className = 'kpi-value ' + (avg > 35 ? 'alert' : avg > 28 ? 'warn' : 'ok');
+    document.getElementById('kpiFoodcostMeta').textContent =
+      `${withCost.length} recepten · ` + (avg > 35 ? 'Te hoog' : avg > 28 ? 'Aan de hoge kant' : 'Gezond');
+  } else if (recipes.length > 0) {
+    document.getElementById('kpiFoodcost').textContent = recipes.length;
+    document.getElementById('kpiFoodcostMeta').textContent = `${recipes.length} recepten, geen kostprijs`;
+  }
+
+  // Events
+  const events = safeLS('klaar_events', []);
+  const upcoming = events
+    .filter(e => new Date(e.datum||e.date||e.d||0) >= new Date(new Date().setHours(0,0,0,0)))
+    .sort((a,b) => new Date(a.datum||a.date||a.d) - new Date(b.datum||b.date||b.d));
+  if (upcoming.length > 0) {
+    const next = upcoming[0];
+    const diff = Math.ceil((new Date(next.datum||next.date||next.d) - Date.now()) / 86400000);
+    const kpiE = document.getElementById('kpiEvent');
+    kpiE.textContent = diff <= 0 ? 'Vandaag' : diff === 1 ? 'Morgen' : `${diff}d`;
+    kpiE.className = 'kpi-value ' + (diff <= 1 ? 'warn' : 'neutral');
+    document.getElementById('kpiEventMeta').textContent =
+      (next.naam||next.name||'Event') + ' · ' + (next.personen||next.persons||'?') + ' pers.';
+  }
+
+  // Producten
+  const prod = safeLS('klaar_producten', []);
+  document.getElementById('kpiProducten').textContent = prod.length || '0';
+  document.getElementById('kpiProducten').className = 'kpi-value neutral';
+  document.getElementById('kpiProductenMeta').textContent =
+    prod.length === 0 ? 'Scan een factuur om te starten' : `${prod.length} producten`;
+}
+
+// ── HACCP LOGS ────────────────────────────────────────────────────
+function loadHaccpLogs() {
+  // klaar_haccp_koeling: handmatige metingen {datum, tijd, eenheidNaam, temperatuur, afwijking}
+  // klaar_haccp_log: AI-toegevoegde entries {datum, tijdstip, type, product, waarde, locatie}
+  const koelingLogs = safeLS('klaar_haccp_koeling', []).map(l => ({
+    _datum: l.datum, _tijd: l.tijd,
+    label: l.eenheidNaam || l.locatie || 'Koeling',
+    temp: l.temperatuur,
+    isAfw: l.afwijking === true
+  }));
+  const aiLogs = safeLS('klaar_haccp_log', []).map(l => ({
+    _datum: l.datum, _tijd: l.tijdstip,
+    label: l.locatie || l.product || l.type || 'Log',
+    temp: l.waarde ? parseFloat(l.waarde) : undefined,
+    isAfw: false
+  }));
+  const all = [...koelingLogs, ...aiLogs]
+    .sort((a, b) => (b._datum + (b._tijd||'')) > (a._datum + (a._tijd||'')) ? 1 : -1)
+    .slice(0, 6);
+  if (!all.length) return;
+  document.getElementById('haccpLogWidget').innerHTML = all.map(l => {
+    const isAfw = l.isAfw || (l.temp !== undefined && (l.temp > 8 || l.temp < -25));
+    return `<div class="haccp-log-item">
+      <div class="haccp-dot ${isAfw?'alert':'ok'}"></div>
+      <div style="flex:1;">
+        <div style="color:var(--white);font-size:12px;">${l.label}${l.temp !== undefined ? ' — ' + l.temp + '°C' : ''}</div>
+        <div class="haccp-time">${l._datum||''} ${l._tijd||''}${isAfw?' · ⚠️':''}</div>
+      </div>
+    </div>`;
+  }).join('');
+}
+
+// ── EVENTS ────────────────────────────────────────────────────────
+function loadEvents() {
+  const events = safeLS('klaar_events', []);
+  const now = new Date(new Date().setHours(0,0,0,0));
+  const upcoming = events
+    .filter(e => new Date(e.datum||e.date||e.d||0) >= now)
+    .sort((a,b) => new Date(a.datum||a.date||a.d) - new Date(b.datum||b.date||b.d))
+    .slice(0, 5);
+  if (!upcoming.length) return;
+  const months = ['jan','feb','mrt','apr','mei','jun','jul','aug','sep','okt','nov','dec'];
+  document.getElementById('eventsWidget').innerHTML = upcoming.map(e => {
+    const d = new Date(e.datum||e.date||e.d);
+    return `<div class="event-item">
+      <div class="event-date-box">
+        <div class="event-date-day">${d.getDate()}</div>
+        <div class="event-date-mon">${months[d.getMonth()]}</div>
+      </div>
+      <div>
+        <div class="event-name">${e.naam||e.name||'Event'}</div>
+        <div class="event-meta">${e.locatie||e.location||''}</div>
+      </div>
+      <div class="event-persons">${e.personen||e.persons||e.gasten||'?'} pers.</div>
+    </div>`;
+  }).join('');
+}
+
+// ── PRIJSWIJZIGINGEN ──────────────────────────────────────────────
+function loadPrijswijzigingen() {
+  const prod = safeLS('klaar_producten', []);
+  const withHist = prod.filter(p => {
+    const h = p.prijshistorie||p.prijs_history||p.history;
+    return h && h.length >= 2;
+  });
+  if (!withHist.length) return;
+  const changes = withHist.map(p => {
+    const h = p.prijshistorie||p.prijs_history||p.history;
+    const newP = parseFloat(h[h.length-1].prijs||h[h.length-1].price||0);
+    const oldP = parseFloat(h[h.length-2].prijs||h[h.length-2].price||0);
+    const pct = oldP > 0 ? (newP-oldP)/oldP*100 : 0;
+    return { naam: p.naam||p.name||'–', newP, oldP, pct };
+  }).filter(c => Math.abs(c.pct) > 0.5);
+
+  function tbl(items, cls) {
+    if (!items.length) return '<div class="empty-state">Geen wijzigingen gevonden.</div>';
+    return `<table class="price-table">${items.map(i =>
+      `<tr>
+        <td class="pt-name">${i.naam}</td>
+        <td class="pt-old">€${i.oldP.toFixed(2)}</td>
+        <td class="pt-new ${cls}">€${i.newP.toFixed(2)}</td>
+        <td class="pt-pct ${cls}">${i.pct>0?'+':''}${i.pct.toFixed(1)}%</td>
+      </tr>`).join('')}</table>`;
+  }
+  const stijgers = changes.filter(c=>c.pct>0).sort((a,b)=>b.pct-a.pct).slice(0,10);
+  const dalers = changes.filter(c=>c.pct<0).sort((a,b)=>a.pct-b.pct).slice(0,10);
+  document.getElementById('prijsStijgersWidget').innerHTML = tbl(stijgers,'up');
+  document.getElementById('prijsDalersWidget').innerHTML = tbl(dalers,'down');
+  document.getElementById('prijsStijgersMeta').textContent = `${stijgers.length} producten`;
+  document.getElementById('prijsDalersMeta').textContent = `${dalers.length} producten`;
+}
+
+// ── VOORRAAD ──────────────────────────────────────────────────────
+function loadVoorraad() {
+  const v = safeLS('klaar_voorraad', []);
+  if (!v.length) return;
+  const sorted = [...v].sort((a,b) => {
+    const pA = (a.huidig||a.current||0)/(a.maximum||a.max||1);
+    const pB = (b.huidig||b.current||0)/(b.maximum||b.max||1);
+    return pA - pB;
+  }).slice(0,8);
+  document.getElementById('voorraadWidget').innerHTML = sorted.map(i => {
+    const huidig = i.huidig||i.current||0;
+    const max = i.maximum||i.max||(i.minimum||i.min||1)*3;
+    const pct = Math.min(100,Math.round(huidig/max*100));
+    const cls = pct < 20 ? 'critical' : pct < 40 ? 'low' : '';
+    return `<div class="voorraad-item">
+      <div class="vrd-name">${i.naam||i.name||'–'}</div>
+      <div class="vrd-bar-track"><div class="vrd-bar-fill ${cls}" style="width:${pct}%"></div></div>
+      <div class="vrd-qty">${huidig} ${i.eenheid||i.unit||''}</div>
+    </div>`;
+  }).join('');
+}
+
+// ── TAKEN ─────────────────────────────────────────────────────────
+function loadTaken() {
+  const auto = [];
+  const logs = safeLS('klaar_haccp_log', []);
+  if (!logs.some(l => new Date(l.timestamp||l.ts||0).toDateString() === new Date().toDateString()))
+    auto.push({ tekst:'HACCP — Nog geen temperatuurlog vandaag', bron:'HACCP', done:false });
+  const events = safeLS('klaar_events', []);
+  const soonEvts = events.filter(e => {
+    const diff = (new Date(e.datum||e.date||e.d||0) - Date.now()) / 86400000;
+    return diff >= 0 && diff <= 7;
+  });
+  if (soonEvts.length) auto.push({ tekst:`Catering — ${soonEvts.length} event(s) binnen 7 dagen, inkoop checken`, bron:'Catering', done:false });
+  if (!safeLS('klaar_producten', []).length) auto.push({ tekst:'Upload een factuur in Leveranciers', bron:'Leveranciers', done:false });
+  if (!safeLS('klaar_recipes', []).length) auto.push({ tekst:'Voeg je eerste recept toe in Kostprijs', bron:'Kostprijs', done:false });
+
+  const manual = safeLS('klaar_dashboard_taken', []);
+  const all = [...auto, ...manual];
+  window._dashTaken = all;
+  const open = all.filter(t=>!t.done).length;
+  document.getElementById('takenMeta').textContent = open ? `${open} open` : '';
+  if (!all.length) return;
+  document.getElementById('takenWidget').innerHTML = all.slice(0,8).map((t,i) => `
+    <div class="task-item">
+      <button class="task-check ${t.done?'done':''}" onclick="toggleTask(${i})"></button>
+      <div class="task-text ${t.done?'done':''}">${t.tekst}</div>
+      <div class="task-source">${t.bron||''}</div>
+    </div>`).join('');
+}
+function toggleTask(i) {
+  const all = window._dashTaken || [];
+  if (all[i]) all[i].done = !all[i].done;
+  localStorage.setItem('klaar_dashboard_taken', JSON.stringify(all.filter(t=>!t._auto)));
+  loadTaken();
+}
+
+// ── UTIL ──────────────────────────────────────────────────────────
+function safeLS(key, def) {
+  try { const v = localStorage.getItem(key); return v ? JSON.parse(v) : def; }
+  catch { return def; }
+}
+
+// ── AI ASSISTANT ──────────────────────────────────────────────────
+let aiLoading = false;
+let aiRec = null;
+let aiHistory = []; // conversation history voor context
+
+function buildAIContext() {
+  const recipes = safeLS('klaar_recipes', []);
+  const logs = safeLS('klaar_haccp_log', []).slice(-10);
+  const events = safeLS('klaar_events', []).slice(0,5);
+  const prod = safeLS('klaar_producten', []);
+  const voorraad = safeLS('klaar_voorraad', []);
+  return `Je bent de persoonlijke dashboard-assistent van deze horeca-ondernemer. Gegevens:\n`
+    + `RECEPTEN (${recipes.length}): ${recipes.slice(0,5).map(r=>r.naam||r.name).filter(Boolean).join(', ')||'geen'}\n`
+    + `HACCP LOGS (${logs.length} recent): ${logs.slice(-3).map(l=>`${l.locatie||l.naam||'log'} ${l.temperatuur??l.temp??''}°C`).join(', ')||'geen'}\n`
+    + `EVENTS (${events.length}): ${events.map(e=>`${e.naam||e.name} (${e.datum||e.date||e.d}, ${e.personen||e.persons||'?'}pers)`).join(', ')||'geen'}\n`
+    + `PRODUCTEN: ${prod.length} items · VOORRAAD: ${voorraad.length} items`;
+}
+
+async function aiSend() {
+  const inp = document.getElementById('aiInput');
+  const msg = inp.value.trim();
+  if (!msg || aiLoading) return;
+  inp.value = '';
+  aiLoading = true;
+  document.getElementById('aiSendBtn').disabled = true;
+
+  const userEl = document.createElement('div');
+  userEl.className = 'ai-msg-user';
+  userEl.textContent = msg;
+  const msgs = document.getElementById('aiMsgs');
+  msgs.appendChild(userEl);
+
+  const botEl = document.createElement('div');
+  botEl.className = 'ai-msg-bot';
+  botEl.innerHTML = '<span style="color:var(--gray);font-size:11px;font-family:\'DM Mono\',monospace">▍</span>';
+  msgs.appendChild(botEl);
+  msgs.scrollTop = msgs.scrollHeight;
+
+  aiHistory.push({ role: 'user', content: msg });
+
+  try {
+    const res = await fetch('/api/demo-chat', {
+      method: 'POST',
+      headers: { 'Content-Type': 'application/json' },
+      body: JSON.stringify({
+        message: msg,
+        history: aiHistory.slice(0, -1).slice(-8), // laatste 8 turns (excl. huidige vraag)
+        systemContext: buildAIContext()
+      })
+    });
+    if (!res.ok) throw new Error('api');
+    const reader = res.body.getReader();
+    const dec = new TextDecoder();
+    let full = '', buf = '';
+    botEl.innerHTML = '';
+    while (true) {
+      const { done, value } = await reader.read();
+      if (done) break;
+      buf += dec.decode(value, { stream: true });
+      const lines = buf.split('\n'); buf = lines.pop() || '';
+      for (const line of lines) {
+        if (!line.startsWith('data: ')) continue;
+        const d = line.slice(6).trim();
+        if (d === '[DONE]') continue;
+        try {
+          const j = JSON.parse(d);
+          if (j.type === 'content_block_delta' && j.delta?.type === 'text_delta') {
+            full += j.delta.text;
+            botEl.innerHTML = full.replace(/\*\*(.+?)\*\*/g,'<strong>$1</strong>').replace(/\n/g,'<br>');
+            msgs.scrollTop = msgs.scrollHeight;
+          }
+        } catch {}
+      }
+    }
+    if (!full) botEl.innerHTML = 'Probeer opnieuw.';
+    else aiHistory.push({ role: 'assistant', content: full }); // bewaar antwoord in history
+  } catch {
+    aiHistory.pop(); // verwijder de mislukte vraag uit history
+    botEl.innerHTML = 'Verbindingsfout, probeer opnieuw.';
+  }
+  aiLoading = false;
+  document.getElementById('aiSendBtn').disabled = false;
+}
+
+function aiAutoSend(msg) {
+  document.getElementById('aiInput').value = msg;
+  aiSend();
+}
+
+function aiVoice() {
+  const SR = window.SpeechRecognition || window.webkitSpeechRecognition;
+  const btn = document.getElementById('aiVoiceBtn');
+  const inp = document.getElementById('aiInput');
+  if (!SR) {
+    inp.placeholder = 'Gebruik Chrome voor spraak';
+    setTimeout(() => { inp.placeholder = 'Stel een vraag of spreek in...'; }, 2500);
+    return;
+  }
+  if (aiRec) { try { aiRec.stop(); } catch {} aiRec = null; btn.classList.remove('rec'); return; }
+  aiRec = new SR();
+  aiRec.lang = 'nl-NL';
+  aiRec.interimResults = true;
+  btn.classList.add('rec');
+  aiRec.onresult = function(e) {
+    let final = '', interim = '';
+    for (let i = e.resultIndex; i < e.results.length; i++) {
+      if (e.results[i].isFinal) final += e.results[i][0].transcript;
+      else interim += e.results[i][0].transcript;
+    }
+    inp.value = final || interim;
+  };
+  aiRec.onend = function() {
+    btn.classList.remove('rec');
+    aiRec = null;
+    const val = inp.value.trim();
+    if (val) aiSend();
+  };
+  aiRec.onerror = function() { btn.classList.remove('rec'); aiRec = null; };
+  aiRec.start();
+}
+
+// ── ONBOARDING ────────────────────────────────────────────────────
+let obStep = 0;
+const obSteps = [
+  { label:'STAP 1 VAN 3', title:'Welkom bij Klaar 👋', sub:'Laten we je restaurant snel klaar zetten.' },
+  { label:'STAP 2 VAN 3', title:'Meer modules', sub:'Je hebt toegang tot 6 live modules.' },
+  { label:'STAP 3 VAN 3', title:"Je bent klaar!", sub:'Open een module of stel een vraag aan de AI rechts.' },
+];
+function onboardingNext() {
+  obStep++;
+  if (obStep >= 3) { skipOnboarding(); return; }
+  ['obStep1','obStep2','obStep3'].forEach((id,i) =>
+    document.getElementById(id).classList.toggle('active', i === obStep));
+  ['obDot0','obDot1','obDot2'].forEach((id,i) =>
+    document.getElementById(id).classList.toggle('active', i === obStep));
+  document.getElementById('obStepLabel').textContent = obSteps[obStep].label;
+  document.getElementById('obTitle').textContent = obSteps[obStep].title;
+  document.getElementById('obSub').textContent = obSteps[obStep].sub;
+  if (obStep === 2) document.getElementById('obNextBtn').textContent = 'Start! →';
+}
+function skipOnboarding() {
+  localStorage.setItem('klaar_dashboard_onboarded', '1');
+  document.getElementById('onboarding').classList.add('hidden');
+}
+</script>
+</body>
+</html>

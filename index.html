@@ -53,7 +53,7 @@
     }
 
     /* HERO */
-    .hero { padding: 120px 32px 64px; max-width: 900px; }
+    .hero { padding: 120px 32px 64px; }
     .hero-label {
       font-family: 'DM Mono', monospace; font-size: 11px;
       color: var(--gray); text-transform: uppercase; letter-spacing: 4px;
@@ -71,7 +71,6 @@
     /* STATS */
     .stats-bar {
       display: flex; border-top: 1px solid var(--border); border-bottom: 1px solid var(--border);
-      margin: 0 32px;
     }
     .stat { flex: 1; padding: 20px 24px; border-right: 1px solid var(--border); }
     .stat:last-child { border-right: none; }
@@ -409,9 +408,9 @@
     @media (max-width: 600px) {
       header { padding: 0 20px; }
       .hero { padding: 100px 20px 48px; }
-      .stats-bar { margin: 0 20px; flex-wrap: wrap; }
+      .stats-bar { flex-wrap: wrap; }
       .stat { min-width: 50%; }
-      .section, .flow-section { padding: 40px 20px; }
+      .section, .flow-section { padding: 40px 20px; overflow-x: hidden; }
       footer { padding: 20px; }
       .module-grid { grid-template-columns: 1fr; }
       .stap-grid { grid-template-columns: 1fr; }
@@ -647,11 +646,10 @@
     .demo-section {
       border-top: 2px solid var(--accent);
       background: #050505;
-      padding: 72px 40px 80px;
+      padding: 72px 32px 80px;
     }
     .demo-section-inner {
-      max-width: 860px;
-      margin: 0 auto;
+      max-width: 100%;
     }
     .demo-section-header {
       margin-bottom: 36px;
@@ -820,13 +818,15 @@
 
     /* Hover overlay */
     .mc-overlay {
-      position: absolute; left: 0; right: 0; bottom: -105%;
+      position: absolute; inset: 0;
       background: var(--accent); color: var(--black);
       padding: 22px 24px;
-      transition: bottom 0.28s cubic-bezier(0.2,0,0,1);
+      transform: translateY(100%);
+      transition: transform 0.28s cubic-bezier(0.2,0,0,1);
       display: flex; flex-direction: column; gap: 14px;
+      overflow-y: auto;
     }
-    .mc.mc-live:hover .mc-overlay { bottom: 0; }
+    .mc.mc-live:hover .mc-overlay { transform: translateY(0); }
 
     .mc-overlay-title {
       font-family: 'DM Mono', monospace; font-size: 10px;
@@ -863,10 +863,11 @@
 
     /* AI BANNER */
     .ai-banner {
-      margin: 0 32px 0;
-      border: 1px solid rgba(232,255,71,0.2);
+      border-top: 1px solid rgba(232,255,71,0.2);
+      border-bottom: 1px solid rgba(232,255,71,0.2);
       background: rgba(232,255,71,0.03);
       padding: 28px 32px;
+      margin: 0 -32px 32px;
       display: grid;
       grid-template-columns: 1fr 1fr 1fr;
       gap: 1px;
@@ -890,7 +891,8 @@
     @media (max-width: 600px) {
       .module-grid-v2 { grid-template-columns: 1fr 1fr; }
       .mc-name { font-size: 26px; }
-      .ai-banner { grid-template-columns: 1fr; margin: 0 20px; }
+      .ai-banner { grid-template-columns: 1fr; }
+      .ai-banner { margin: 0 -20px 28px; padding: 24px 20px; }
       .ai-banner-item:not(:first-child) { border-left: none; border-top: 1px solid rgba(232,255,71,0.15); padding-left: 0; padding-top: 20px; }
     }
   </style>
@@ -1908,13 +1910,13 @@ function chatAutoResize(el) {
 async function showAuthGate() {
   // Dev modus: direct door
   if (localStorage.getItem('klaar_devmode') === 'klaar2026') {
-    window.location.href = './01-recept-studio/klaar-recept-studio.html';
+    window.location.href = './dashboard/';
     return;
   }
-  // Al ingelogd? Ga direct naar de app
+  // Al ingelogd? Ga direct naar dashboard
   const session = await klaarGetSession();
   if (session) {
-    window.location.href = './01-recept-studio/klaar-recept-studio.html';
+    window.location.href = './dashboard/';
     return;
   }
   document.getElementById('emailGate').classList.add('visible');
@@ -2212,7 +2214,7 @@ document.addEventListener('DOMContentLoaded', () => {
     if ((event === 'SIGNED_IN' || event === 'TOKEN_REFRESHED') && session) {
       const params = new URLSearchParams(window.location.search);
       const redirect = params.get('redirect');
-      window.location.href = redirect || './01-recept-studio/klaar-recept-studio.html';
+      window.location.href = redirect || './dashboard/';
     }
   });
 });

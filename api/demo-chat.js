@@ -12,40 +12,26 @@
 
 export const config = { runtime: 'edge' };
 
-const SYSTEM_PROMPT = `Je bent de Klaar Assistent — de AI van Klaar, dé horeca-software voor restaurateurs die slimmer willen werken. Je spreekt met bezoekers op de Klaar website die de app nog niet kennen.
+const SYSTEM_PROMPT = `Je bent de Klaar Assistent — AI-adviseur van Klaar horeca-software.
+
+## Antwoordregels (ALTIJD volgen)
+- MAX 60 woorden per antwoord
+- Gebruik bullets (max 3) als er meerdere punten zijn
+- Geen intro-zinnen ("Goed dat je dat vraagt" etc.) — direct beginnen
+- Geen afsluitende vraag tenzij strikt nodig
+- Altijd Nederlands
+
+## Klaar modules
+- Recept Studio — recepten, kostprijs per portie, marge
+- Allergenenkaart — EU-14 allergenen, NVWA-klaar
+- HACCP Logger — temp-logs, afwijkingen, inspectie-klaar
+- Kostprijs — foodcost %, marge berekenen
+- Catering & Events — kostprijs/persoon, keukensheet, inkooplijst
+- Leveranciers — facturen scannen, prijstrends
+- Menubuilder — marge per gerecht, menupsychologie
 
 ## Wie je bent
-Je bent een ervaren horeca-adviseur die ook verstand heeft van software. Direct, concreet, warm — geen omwegen. Je helpt mensen echt verder, en je bent trots op wat Klaar doet.
-
-## Klaar: wat het is
-Een browser-gebaseerde horeca-app. Geen installatie, geen hardware, geen implementatietraject. Je bent in 5 minuten live.
-- Gratis proberen: 14 dagen, alleen je email, geen creditcard, nooit automatisch verlengd
-- Werkt op elke browser: telefoon, tablet, laptop
-
-## De modules die je door en door kent
-**Recept Studio** — Recepten invoeren of inspreken, kostprijs berekenen per portie, marge per gerecht zien, koppelen aan menukaart. Je ziet exact waar marge weglekt.
-
-**Allergenenkaart** — De 14 verplichte allergenen bijhouden per gerecht. NVWA-compliant. Automatisch gedetecteerd uit recepten. Boetes bij inspectie: tot €1.500 per overtreding.
-
-**HACCP Logger** — Temperatuurlogs, afwijkingen direct rapporteren met tijdstempel, correctieve acties vastleggen. Altijd inspectie-klaar, zonder papierwerk.
-
-**Catering & Events** — Kostprijs per persoon berekenen, keukensheet genereren, inkooplijst automatisch aanmaken op basis van recepten en actuele ingrediëntenprijzen.
-
-**Leveranciersbeheer** — Facturen scannen, prijsontwikkeling per product volgen, besteladvies op basis van verbruikspatronen.
-
-**Menubuilder** — Menukaart samenstellen met marge-inzicht per gerecht, psychologische prijszetting, anker-gerechten identificeren.
-
-## Hoe je communiceert
-- Beantwoord vragen écht en volledig — concrete adviezen, cijfers, actiepunten
-- Noem Klaar-functies op een **natuurlijke manier** als ze de situatie direct oplossen. Bv: "In de Recept Studio zie je dit per gerecht" of "Klaar logt dit automatisch met tijdstempel"
-- Wees NIET pushy. Noem de gratis trial hooguit 1x per gesprek, alleen als het écht aansluit
-- Beknopt: horeca-operators zijn druk. Max ~150 woorden per antwoord tenzij meer echt nodig is
-- Gebruik bullet points voor lijsten — houd ze compact
-- Altijd Nederlands
-- Als iemand vraagt "wat kost het?" of "wat kan Klaar?" — wees dan enthousiast en concreet
-
-## Je doel
-Je helpt bezoekers hun horeca-probleem oplossen. Als dat lukt, snappen ze vanzelf waarom Klaar waardevol is. Je bent geen verkooppraatje — je bent een echte adviseur. Maar je bent WEL van Klaar, en je gelooft erin.`;
+Horeca-adviseur. Direct, concreet, warm. Noem gratis trial max 1x per gesprek.`;
 
 const CORS = {
   'Access-Control-Allow-Origin': '*',
@@ -62,9 +48,9 @@ export default async function handler(req) {
     return new Response('Method not allowed', { status: 405, headers: CORS });
   }
 
-  let message, history;
+  let message, history, systemContext, clientMaxTokens;
   try {
-    ({ message, history = [] } = await req.json());
+    ({ message, history = [], systemContext = '', maxTokens: clientMaxTokens = 0 } = await req.json());
   } catch {
     return new Response(JSON.stringify({ error: 'Ongeldig verzoek' }), {
       status: 400, headers: { 'Content-Type': 'application/json', ...CORS }
@@ -90,6 +76,17 @@ export default async function handler(req) {
     { role: 'user', content: message.trim() }
   ];
 
+  // Use module/dashboard system context if provided, otherwise use marketing prompt
+  const finalSystem = systemContext
+    ? `${systemContext}\n\n---\nANTWOORDREGELS: Wees beknopt. Bullets als er meerdere punten zijn. Geen lange intro-zinnen. Altijd Nederlands.`
+    : SYSTEM_PROMPT;
+
+  // Modules specify their own max_tokens (HACCP=2048, Leveranciers=8192, etc.)
+  // Cap at 1500 for cost control; marketing chat stays at 280 (no systemContext)
+  const maxTokens = systemContext
+    ? Math.min(Math.max(clientMaxTokens || 600, 200), 1500)
+    : 280;
+
   const anthropicRes = await fetch('https://api.anthropic.com/v1/messages', {
     method: 'POST',
     headers: {
@@ -99,8 +96,8 @@ export default async function handler(req) {
     },
     body: JSON.stringify({
       model: 'claude-haiku-4-5-20251001',
-      max_tokens: 450,
-      system: SYSTEM_PROMPT,
+      max_tokens: maxTokens,
+      system: finalSystem,
       messages,
       stream: true,
     }),

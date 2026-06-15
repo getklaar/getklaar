@@ -263,7 +263,8 @@ window.addEventListener('DOMContentLoaded', function () {
     // Dropdown panel
     const panel = document.createElement('div')
     panel.id = '_kNavPanel'
-    let panelHtml = `<a class="_kHome" href="${indexHref}">← Dashboard</a><div class="_kSep"></div>`
+    const dashHref = rootDir + 'dashboard/'
+    let panelHtml = `<a class="_kHome" href="${dashHref}">← Dashboard</a><div class="_kSep"></div>`
     KLAAR_MODS.forEach(function (m) {
       const isCur = curMod && curMod.n === m.n
       panelHtml += `<a class="_kMod${isCur ? ' cur' : ''}" href="${rootDir}${m.path}"><span class="_kNum">${m.n}</span>${m.label}</a>`
@@ -294,6 +295,332 @@ window.addEventListener('DOMContentLoaded', function () {
   })
 })()
 
+// ── Module AI Assistent Panel ─────────────────────────────────────
+// Als module al een .chat-panel heeft: voeg alleen voice-knop toe
+// Anders: injecteer volledige AI-zijbalk
+;(function () {
+  window.addEventListener('DOMContentLoaded', function () {
+    const curHref = window.location.href
+    const isIndex = curHref.endsWith('index.html') || curHref.endsWith('/')
+    const isDashboard = curHref.includes('/dashboard/')
+    if (isIndex || isDashboard) return
+
+    // If module already has its own AI panel, only inject voice button
+    if (document.querySelector('.chat-panel') || document.querySelector('.chat-input-area')) {
+      _klaarInjectVoice()
+      return
+    }
+
+    const MODS = [
+      { n: '01', label: 'Recept Studio',   path: '01-recept-studio' },
+      { n: '03', label: 'HACCP',           path: '03-haccp' },
+      { n: '04', label: 'Kostprijs',       path: '04-kostprijs' },
+      { n: '05', label: 'Menubuilder',     path: '05-menubuilder' },
+      { n: '07', label: 'Leveranciers',    path: '07-leveranciers' },
+      { n: '10', label: 'Catering',        path: '10-catering-events' },
+    ]
+    const curMod = MODS.find(m => curHref.includes(m.path))
+    const modName = curMod ? curMod.label : 'Klaar'
+
+    // ── CSS ──
+    const sty = document.createElement('style')
+    sty.textContent = `
+#_kAISide {
+  position: fixed; top: 0; right: -320px; bottom: 0; width: 320px;
+  background: #111; border-left: 1px solid rgba(232,255,71,0.18);
+  display: flex; flex-direction: column; z-index: 8000;
+  transition: right 0.25s cubic-bezier(0.2,0,0,1);
+  font-family: 'DM Sans', sans-serif;
+}
+#_kAISide._open { right: 0; }
+#_kAIHead {
+  padding: 0 16px; height: 52px; display: flex; align-items: center;
+  justify-content: space-between; border-bottom: 1px solid rgba(232,255,71,0.15);
+  flex-shrink: 0;
+}
+#_kAIHeadTitle {
+  font-family: 'Bebas Neue', 'DM Sans', sans-serif; font-size: 18px;
+  letter-spacing: 1px; color: #e8ff47;
+}
+#_kAIClose {
+  background: none; border: none; color: #888; cursor: pointer;
+  font-size: 18px; padding: 4px 8px; transition: color 0.1s;
+}
+#_kAIClose:hover { color: #e8ff47; }
+#_kAIMsgs {
+  flex: 1; overflow-y: auto; padding: 14px 14px 8px; display: flex;
+  flex-direction: column; gap: 8px; scroll-behavior: smooth;
+}
+#_kAIMsgs::-webkit-scrollbar { width: 3px; }
+#_kAIMsgs::-webkit-scrollbar-thumb { background: #333; }
+._kAIBot {
+  background: #1a1a1a; border: 1px solid #2a2a2a;
+  padding: 9px 12px; font-size: 13px; color: #f5f2eb;
+  line-height: 1.6; align-self: flex-start; max-width: 92%;
+}
+._kAIUser {
+  background: #e8ff47; color: #0a0a0a;
+  padding: 8px 12px; font-size: 13px; font-weight: 500;
+  align-self: flex-end; max-width: 86%;
+}
+#_kAISuggest {
+  padding: 6px 14px 8px; display: flex; flex-wrap: wrap; gap: 5px;
+  border-top: 1px solid rgba(232,255,71,0.08);
+}
+._kAISugg {
+  font-family: 'DM Mono', monospace; font-size: 9px; letter-spacing: 0.5px;
+  border: 1px solid #2a2a2a; color: #888; background: none;
+  padding: 4px 8px; cursor: pointer; transition: all 0.1s;
+}
+._kAISugg:hover { border-color: #e8ff47; color: #e8ff47; }
+#_kAIInputRow {
+  border-top: 1px solid rgba(232,255,71,0.15);
+  display: flex; flex-shrink: 0;
+}
+#_kAIInput {
+  flex: 1; background: transparent; border: none; outline: none;
+  color: #f5f2eb; font-family: 'DM Sans', sans-serif; font-size: 13px;
+  padding: 12px 12px;
+}
+#_kAIInput::placeholder { color: #555; }
+#_kAIVoice {
+  background: none; border: none; border-left: 1px solid #1e1e1e;
+  color: #888; cursor: pointer; padding: 0 10px; font-size: 15px;
+  transition: color 0.1s;
+}
+#_kAIVoice:hover, #_kAIVoice._rec { color: #e8ff47; }
+#_kAIVoice._rec { animation: _kPulse 1s infinite; }
+@keyframes _kPulse { 0%,100%{opacity:1} 50%{opacity:0.4} }
+#_kAISend {
+  background: #e8ff47; border: none; color: #0a0a0a;
+  font-family: 'DM Mono', monospace; font-size: 11px; font-weight: 700;
+  padding: 0 16px; cursor: pointer; letter-spacing: 1px; transition: opacity 0.1s;
+}
+#_kAISend:hover { opacity: 0.85; }
+#_kAIToggle {
+  display: flex; align-items: center; gap: 6px;
+  padding: 0 12px; height: 28px;
+  background: none; border: 1px solid rgba(232,255,71,0.35);
+  color: #e8ff47; cursor: pointer;
+  font-family: 'DM Mono', monospace; font-size: 10px;
+  letter-spacing: .09em; text-transform: uppercase; transition: all .15s;
+  white-space: nowrap; flex-shrink: 0;
+}
+#_kAIToggle:hover { background: rgba(232,255,71,0.08); }
+`
+    document.head.appendChild(sty)
+
+    // ── Panel HTML ──
+    const panel = document.createElement('div')
+    panel.id = '_kAISide'
+    panel.innerHTML = `
+      <div id="_kAIHead">
+        <div id="_kAIHeadTitle">🤖 AI — ${modName}</div>
+        <button id="_kAIClose" onclick="document.getElementById('_kAISide').classList.remove('_open')" title="Sluit">✕</button>
+      </div>
+      <div id="_kAIMsgs">
+        <div class="_kAIBot">Hoi! Ik ken ${modName}. Wat wil je weten?</div>
+      </div>
+      <div id="_kAISuggest">
+        <button class="_kAISugg" onclick="_kAISend('Hoe gebruik ik ${modName}?')">Hoe gebruik ik dit?</button>
+        <button class="_kAISugg" onclick="_kAISend('Wat kan ik hier mee besparen?')">Besparen?</button>
+        <button class="_kAISugg" onclick="_kAISend('Geef me een tip voor ${modName}')">Tip</button>
+      </div>
+      <div id="_kAIInputRow">
+        <input id="_kAIInput" type="text" placeholder="Stel een vraag..." maxlength="300"
+               onkeydown="if(event.key==='Enter')_kAISend()" />
+        <button id="_kAIVoice" onclick="_kAIVoice()" title="Inspreken">🎤</button>
+        <button id="_kAISend" onclick="_kAISend()">→</button>
+      </div>
+    `
+    document.body.appendChild(panel)
+
+    // ── Toggle knop in module header ──
+    const actions = document.querySelector('.h-actions') || document.querySelector('.nav-acties')
+    if (actions) {
+      const btn = document.createElement('button')
+      btn.id = '_kAIToggle'
+      btn.innerHTML = '🤖 AI'
+      btn.title = 'AI Assistent openen'
+      btn.addEventListener('click', function (e) {
+        e.stopPropagation()
+        document.getElementById('_kAISide').classList.toggle('_open')
+      })
+      actions.prepend(btn)
+    }
+
+    // ── AI chat logic ──
+    let _kAILoading = false
+    window._kAISend = async function (msg) {
+      const inp = document.getElementById('_kAIInput')
+      const text = msg || inp.value.trim()
+      if (!text || _kAILoading) return
+      inp.value = ''
+      _kAILoading = true
+
+      const msgs = document.getElementById('_kAIMsgs')
+      const uEl = document.createElement('div')
+      uEl.className = '_kAIUser'; uEl.textContent = text
+      msgs.appendChild(uEl)
+      msgs.scrollTop = msgs.scrollHeight
+
+      const thinkEl = document.createElement('div')
+      thinkEl.className = '_kAIBot'
+      thinkEl.innerHTML = '<span style="color:#555;font-family:\'DM Mono\',monospace;font-size:10px">▍</span>'
+      msgs.appendChild(thinkEl)
+      msgs.scrollTop = msgs.scrollHeight
+
+      // Build module context
+      const ctx = `Je bent AI-assistent in de ${modName} module van Klaar horeca-software.`
+        + ` Antwoord in max 60 woorden, bullets als nodig, geen intro-zinnen, altijd Nederlands.`
+
+      try {
+        const res = await fetch('/api/demo-chat', {
+          method: 'POST',
+          headers: { 'Content-Type': 'application/json' },
+          body: JSON.stringify({ message: text, systemContext: ctx })
+        })
+        if (!res.ok) throw new Error('err')
+        const reader = res.body.getReader()
+        const dec = new TextDecoder()
+        let full = ''
+        thinkEl.innerHTML = ''
+        while (true) {
+          const { done, value } = await reader.read()
+          if (done) break
+          const chunk = dec.decode(value)
+          for (const line of chunk.split('\n')) {
+            if (line.startsWith('data: ')) {
+              const d = line.slice(6).trim()
+              if (d === '[DONE]') break
+              try {
+                const j = JSON.parse(d)
+                if (j.type === 'content_block_delta' && j.delta?.type === 'text_delta') {
+                  full += j.delta.text
+                  thinkEl.innerHTML = full.replace(/\*\*(.+?)\*\*/g, '<strong>$1</strong>').replace(/\n/g, '<br>')
+                  msgs.scrollTop = msgs.scrollHeight
+                }
+              } catch {}
+            }
+          }
+        }
+        if (!full) thinkEl.innerHTML = 'Probeer opnieuw.'
+      } catch {
+        thinkEl.innerHTML = 'Verbindingsfout — check je internetverbinding.'
+      }
+      _kAILoading = false
+    }
+
+    // ── Voice input ──
+    let _kRec = null
+    window._kAIVoice = function () {
+      const SR = window.SpeechRecognition || window.webkitSpeechRecognition
+      const btn = document.getElementById('_kAIVoice')
+      if (!SR) {
+        const inp = document.getElementById('_kAIInput')
+        inp.placeholder = 'Gebruik Chrome voor spraak'
+        setTimeout(() => { inp.placeholder = 'Stel een vraag...' }, 2500)
+        return
+      }
+      if (_kRec) { try { _kRec.stop() } catch {} _kRec = null; btn.classList.remove('_rec'); return }
+      _kRec = new SR()
+      _kRec.lang = 'nl-NL'
+      _kRec.interimResults = true
+      btn.classList.add('_rec')
+      _kRec.onresult = function (e) {
+        let final = '', interim = ''
+        for (let i = e.resultIndex; i < e.results.length; i++) {
+          if (e.results[i].isFinal) final += e.results[i][0].transcript
+          else interim += e.results[i][0].transcript
+        }
+        document.getElementById('_kAIInput').value = final || interim
+      }
+      _kRec.onend = function () {
+        btn.classList.remove('_rec')
+        _kRec = null
+        const val = document.getElementById('_kAIInput').value.trim()
+        if (val) _kAISend(val)
+      }
+      _kRec.onerror = function () { btn.classList.remove('_rec'); _kRec = null }
+      _kRec.start()
+    }
+  })
+})()
+
+// ── Voice button injectie voor bestaande .chat-panel modules ─────
+function _klaarInjectVoice() {
+  // Wait a tick for module DOM to finish rendering
+  setTimeout(function () {
+    const inputArea = document.querySelector('.chat-input-area')
+    if (!inputArea) return
+    if (inputArea.querySelector('#_klaarVoiceBtn')) return // al geïnjecteerd
+    const chatInput = inputArea.querySelector('.chat-input') || inputArea.querySelector('textarea')
+    if (!chatInput) return
+
+    // Maak voice-knop (zelfde stijl als .chat-upload-btn)
+    const btn = document.createElement('button')
+    btn.id = '_klaarVoiceBtn'
+    btn.className = 'chat-upload-btn'
+    btn.title = 'Inspreken (nl-NL) — klik om te beginnen, klik opnieuw om te stoppen'
+    btn.textContent = '🎤'
+
+    let rec = null
+    btn.addEventListener('click', function () {
+      const SR = window.SpeechRecognition || window.webkitSpeechRecognition
+      if (!SR) {
+        const prev = chatInput.placeholder
+        chatInput.placeholder = '→ Gebruik Chrome voor spraak'
+        setTimeout(function () { chatInput.placeholder = prev }, 2500)
+        return
+      }
+      if (rec) {
+        try { rec.stop() } catch (e) {}
+        rec = null
+        btn.style.color = ''
+        btn.style.borderColor = ''
+        return
+      }
+      rec = new SR()
+      rec.lang = 'nl-NL'
+      rec.interimResults = true
+      rec.maxAlternatives = 1
+      btn.style.color = '#e8ff47'
+      btn.style.borderColor = '#e8ff47'
+
+      rec.onresult = function (e) {
+        let final = '', interim = ''
+        for (let i = e.resultIndex; i < e.results.length; i++) {
+          if (e.results[i].isFinal) final += e.results[i][0].transcript
+          else interim += e.results[i][0].transcript
+        }
+        chatInput.value = final || interim
+        chatInput.dispatchEvent(new Event('input', { bubbles: true }))
+      }
+      rec.onend = function () {
+        btn.style.color = ''
+        btn.style.borderColor = ''
+        rec = null
+        const val = chatInput.value.trim()
+        if (val) {
+          const sendBtn = inputArea.querySelector('.chat-send')
+          if (sendBtn && !sendBtn.disabled) sendBtn.click()
+        }
+      }
+      rec.onerror = function () {
+        btn.style.color = ''
+        btn.style.borderColor = ''
+        rec = null
+      }
+      rec.start()
+    })
+
+    // Invoegen vóór de send-knop
+    const sendBtn = inputArea.querySelector('.chat-send')
+    if (sendBtn) inputArea.insertBefore(btn, sendBtn)
+    else inputArea.appendChild(btn)
+  }, 200)
+}
+
 // ── Export op window zodat modules het kunnen gebruiken ───────────
 window.klaarGetSession    = klaarGetSession
 window.klaarSignInWithOTP = klaarSignInWithOTP
@@ -302,3 +629,34 @@ window.klaarSignOut       = klaarSignOut
 window.klaarRequireAuth   = klaarRequireAuth
 window.klaarAI            = klaarAI
 window.klaarAIStream      = klaarAIStream
+
+// ── klaarAIStream override: route via Vercel /api/demo-chat ───────
+// Alle modules gebruiken klaarAIStream — dit stuurt ze door naar de
+// werkende API key op Vercel i.p.v. de Supabase proxy.
+// Het Anthropic streaming formaat (SSE) is identiek, dus de modules
+// werken zonder aanpassingen.
+window.klaarAIStream = async function (anthropicBody, moduleName) {
+  const msgs      = anthropicBody.messages || []
+  const lastMsg   = msgs[msgs.length - 1]
+  const message   = typeof lastMsg?.content === 'string'
+    ? lastMsg.content
+    : (lastMsg?.content?.[0]?.text || '')
+
+  const history = msgs.slice(0, -1).map(function (m) {
+    return {
+      role:    m.role,
+      content: typeof m.content === 'string' ? m.content : (m.content?.[0]?.text || '')
+    }
+  })
+
+  // Pass the module's own rich system prompt as systemContext
+  const systemContext = anthropicBody.system || ''
+  // Pass max_tokens from module (HACCP=2048, Leveranciers=8192, etc.) — demo-chat caps at 1500
+  const maxTokens = anthropicBody.max_tokens || 600
+
+  return fetch('/api/demo-chat', {
+    method:  'POST',
+    headers: { 'Content-Type': 'application/json' },
+    body:    JSON.stringify({ message, history, systemContext, maxTokens })
+  })
+}
