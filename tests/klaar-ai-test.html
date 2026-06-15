@@ -3,298 +3,376 @@
 <head>
   <meta charset="UTF-8" />
   <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-  <title>Klaar — AI Gesprekssimulator</title>
+  <title>Klaar — AI Realiteitstest</title>
   <link href="https://fonts.googleapis.com/css2?family=Bebas+Neue&family=DM+Sans:wght@400;500;600&family=DM+Mono:wght@400;500&display=swap" rel="stylesheet">
   <style>
     :root {
-      --black: #0a0a0a; --surface: #111; --muted: #161616;
-      --border: #222; --accent: #e8ff47; --white: #f5f2eb;
-      --gray: #888; --green: #47ff8a; --red: #ff4f4f; --orange: #ffa500;
-      --blue: #4faff4;
+      --black:#0a0a0a; --surface:#111; --muted:#161616; --border:#222;
+      --accent:#e8ff47; --white:#f5f2eb; --gray:#888;
+      --green:#47ff8a; --red:#ff4f4f; --orange:#ffa500; --blue:#4faff4; --purple:#c084fc;
     }
-    * { margin:0; padding:0; box-sizing:border-box; }
-    body { background:var(--black); color:var(--white); font-family:'DM Sans',sans-serif; font-size:14px; line-height:1.5; }
-    h1,h2,h3 { font-family:'Bebas Neue',sans-serif; letter-spacing:1px; }
-
-    .page { max-width:1280px; margin:0 auto; padding:32px 24px; }
+    *{margin:0;padding:0;box-sizing:border-box;}
+    body{background:var(--black);color:var(--white);font-family:'DM Sans',sans-serif;font-size:14px;line-height:1.5;}
+    h1,h2,h3{font-family:'Bebas Neue',sans-serif;letter-spacing:1px;}
+    .page{max-width:1300px;margin:0 auto;padding:28px 20px;}
 
     /* HEADER */
-    .header { border-bottom:1px solid var(--border); padding-bottom:16px; margin-bottom:24px; display:flex; justify-content:space-between; align-items:flex-end; flex-wrap:wrap; gap:8px; }
-    .header-title { font-size:36px; color:var(--accent); }
-    .header-sub { font-family:'DM Mono',monospace; font-size:10px; color:var(--gray); letter-spacing:2px; margin-top:2px; }
-    .header-badge { font-family:'DM Mono',monospace; font-size:9px; letter-spacing:1px; padding:4px 10px; border:1px solid var(--border); color:var(--gray); }
+    .hdr{border-bottom:1px solid var(--border);padding-bottom:14px;margin-bottom:20px;display:flex;justify-content:space-between;align-items:flex-end;flex-wrap:wrap;gap:8px;}
+    .hdr-title{font-size:34px;color:var(--accent);}
+    .hdr-sub{font-family:'DM Mono',monospace;font-size:9px;color:var(--gray);letter-spacing:2px;margin-top:2px;}
+    .hdr-badge{font-family:'DM Mono',monospace;font-size:9px;padding:4px 10px;border:1px solid var(--border);color:var(--gray);}
 
     /* CONFIG */
-    .config-bar { background:var(--surface); border:1px solid var(--border); padding:12px 16px; margin-bottom:16px; display:flex; align-items:center; gap:14px; flex-wrap:wrap; }
-    .config-label { font-family:'DM Mono',monospace; font-size:10px; color:var(--gray); letter-spacing:1px; white-space:nowrap; }
-    .config-input { background:var(--muted); border:1px solid var(--border); color:var(--white); font-family:'DM Mono',monospace; font-size:11px; padding:6px 10px; flex:1; min-width:200px; }
-    .config-select { background:var(--muted); border:1px solid var(--border); color:var(--white); font-family:'DM Mono',monospace; font-size:11px; padding:6px 8px; }
-    .config-input:focus, .config-select:focus { outline:none; border-color:var(--accent); }
+    .cfg{background:var(--surface);border:1px solid var(--border);padding:10px 14px;margin-bottom:14px;display:flex;align-items:center;gap:12px;flex-wrap:wrap;}
+    .cfg-lbl{font-family:'DM Mono',monospace;font-size:10px;color:var(--gray);letter-spacing:1px;white-space:nowrap;}
+    .cfg-inp{background:var(--muted);border:1px solid var(--border);color:var(--white);font-family:'DM Mono',monospace;font-size:11px;padding:5px 9px;flex:1;min-width:180px;}
+    .cfg-sel{background:var(--muted);border:1px solid var(--border);color:var(--white);font-family:'DM Mono',monospace;font-size:11px;padding:5px 7px;}
+    .cfg-inp:focus,.cfg-sel:focus{outline:none;border-color:var(--accent);}
 
     /* CONTROLS */
-    .controls { display:flex; gap:10px; margin-bottom:20px; align-items:center; flex-wrap:wrap; }
-    .btn { font-family:'DM Mono',monospace; font-size:11px; font-weight:700; letter-spacing:1px; padding:10px 22px; cursor:pointer; border:none; text-transform:uppercase; transition:opacity 0.1s; }
-    .btn-primary { background:var(--accent); color:var(--black); }
-    .btn-secondary { background:none; border:1px solid var(--border); color:var(--gray); }
-    .btn-secondary:hover { border-color:var(--accent); color:var(--accent); }
-    .btn-danger { background:none; border:1px solid var(--red); color:var(--red); }
-    .btn:hover { opacity:0.85; }
-    .btn:disabled { opacity:0.3; cursor:not-allowed; }
-    .run-status { font-family:'DM Mono',monospace; font-size:10px; color:var(--gray); }
+    .ctrls{display:flex;gap:8px;margin-bottom:16px;align-items:center;flex-wrap:wrap;}
+    .btn{font-family:'DM Mono',monospace;font-size:11px;font-weight:700;letter-spacing:1px;padding:9px 20px;cursor:pointer;border:none;text-transform:uppercase;transition:opacity 0.1s;}
+    .btn-p{background:var(--accent);color:var(--black);}
+    .btn-s{background:none;border:1px solid var(--border);color:var(--gray);}
+    .btn-s:hover{border-color:var(--accent);color:var(--accent);}
+    .btn-d{background:none;border:1px solid var(--red);color:var(--red);}
+    .btn:hover{opacity:0.85;} .btn:disabled{opacity:0.3;cursor:not-allowed;}
+    .run-st{font-family:'DM Mono',monospace;font-size:10px;color:var(--gray);}
 
     /* PROGRESS */
-    .progress-wrap { background:var(--muted); height:3px; margin-bottom:16px; display:none; }
-    .progress-fill { height:100%; background:var(--accent); transition:width 0.4s; width:0%; }
+    .prog-wrap{background:var(--muted);height:3px;margin-bottom:14px;display:none;}
+    .prog-fill{height:100%;background:var(--accent);transition:width 0.4s;width:0%;}
 
     /* STATS */
-    .stats-row { display:grid; grid-template-columns:repeat(5,1fr); gap:1px; background:var(--border); border:1px solid var(--border); margin-bottom:20px; display:none; }
-    .stat-box { background:var(--surface); padding:10px 14px; }
-    .stat-label { font-family:'DM Mono',monospace; font-size:8px; color:var(--gray); letter-spacing:2px; }
-    .stat-val { font-family:'Bebas Neue',sans-serif; font-size:24px; margin-top:2px; }
-    .stat-green { color:var(--green); } .stat-red { color:var(--red); } .stat-orange { color:var(--orange); } .stat-white { color:var(--white); }
+    .stats{display:grid;grid-template-columns:repeat(6,1fr);gap:1px;background:var(--border);border:1px solid var(--border);margin-bottom:16px;display:none;}
+    .stat{background:var(--surface);padding:9px 12px;}
+    .stat-lbl{font-family:'DM Mono',monospace;font-size:8px;color:var(--gray);letter-spacing:2px;}
+    .stat-val{font-family:'Bebas Neue',sans-serif;font-size:22px;margin-top:1px;}
+    .c-green{color:var(--green);} .c-red{color:var(--red);} .c-orange{color:var(--orange);} .c-white{color:var(--white);} .c-purple{color:var(--purple);}
 
-    /* MAIN LAYOUT */
-    .main-layout { display:grid; grid-template-columns:1fr 340px; gap:16px; margin-bottom:24px; }
-    @media(max-width:900px){ .main-layout { grid-template-columns:1fr; } }
+    /* MAIN */
+    .main{display:grid;grid-template-columns:1fr 360px;gap:14px;margin-bottom:20px;}
+    @media(max-width:900px){.main{grid-template-columns:1fr;}}
 
-    /* CHAT PANEL */
-    .chat-wrap { display:none; }
-    .chat-header { padding:10px 16px; background:var(--surface); border:1px solid var(--border); font-size:16px; display:flex; justify-content:space-between; align-items:center; }
-    .chat-status { font-family:'DM Mono',monospace; font-size:10px; color:var(--gray); }
-    .chat-body { border:1px solid var(--border); border-top:none; height:540px; overflow-y:auto; background:var(--black); padding:12px; display:flex; flex-direction:column; gap:12px; }
+    /* CHAT */
+    .chat-wrap{display:none;}
+    .panel-hdr{padding:9px 14px;background:var(--surface);border:1px solid var(--border);font-size:15px;display:flex;justify-content:space-between;align-items:center;}
+    .panel-hdr-right{font-family:'DM Mono',monospace;font-size:9px;color:var(--gray);}
+    .chat-body{border:1px solid var(--border);border-top:none;height:560px;overflow-y:auto;background:var(--black);padding:10px;display:flex;flex-direction:column;gap:10px;}
 
     /* MESSAGES */
-    .msg { display:flex; flex-direction:column; gap:4px; max-width:88%; }
-    .msg-marco { align-self:flex-end; }
-    .msg-klaar { align-self:flex-start; }
-    .msg-label { font-family:'DM Mono',monospace; font-size:9px; letter-spacing:1px; color:var(--gray); }
-    .msg-marco .msg-label { text-align:right; color:var(--accent); }
-    .msg-klaar .msg-label { color:var(--blue); }
-    .msg-bubble { padding:10px 14px; font-size:13px; line-height:1.6; border-radius:2px; }
-    .msg-marco .msg-bubble { background:rgba(232,255,71,0.08); border:1px solid rgba(232,255,71,0.2); color:var(--white); }
-    .msg-klaar .msg-bubble { background:var(--surface); border:1px solid var(--border); color:var(--white); }
-    .msg-bubble.streaming::after { content:'▍'; animation:blink 0.7s infinite; color:var(--accent); }
-    .msg-bubble.error { border-color:var(--red); color:var(--red); }
-    .msg-meta { font-family:'DM Mono',monospace; font-size:9px; color:var(--gray); display:flex; gap:8px; }
-    .msg-marco .msg-meta { justify-content:flex-end; }
-    @keyframes blink { 0%,100%{opacity:1} 50%{opacity:0} }
+    .msg{display:flex;flex-direction:column;gap:3px;max-width:90%;}
+    .msg-marco{align-self:flex-end;}
+    .msg-klaar{align-self:flex-start;}
+    .msg-lbl{font-family:'DM Mono',monospace;font-size:9px;letter-spacing:1px;}
+    .msg-marco .msg-lbl{text-align:right;color:var(--accent);}
+    .msg-klaar .msg-lbl{color:var(--blue);}
+    .msg-bub{padding:9px 13px;font-size:13px;line-height:1.6;border-radius:2px;position:relative;}
+    .msg-marco .msg-bub{background:rgba(232,255,71,0.07);border:1px solid rgba(232,255,71,0.18);color:var(--white);}
+    .msg-klaar .msg-bub{background:var(--surface);border:1px solid var(--border);color:var(--white);}
+    .msg-bub.streaming::after{content:'▍';animation:blink 0.7s infinite;color:var(--accent);}
+    .msg-bub.err{border-color:var(--red)!important;color:var(--red);}
+    .msg-meta{font-family:'DM Mono',monospace;font-size:9px;color:var(--gray);display:flex;gap:6px;}
+    .msg-marco .msg-meta{justify-content:flex-end;}
+    .obs-tag{display:inline-block;margin-top:5px;font-family:'DM Mono',monospace;font-size:9px;padding:2px 6px;border:1px solid rgba(192,132,252,0.3);color:var(--purple);letter-spacing:0.5px;}
+    @keyframes blink{0%,100%{opacity:1}50%{opacity:0}}
 
-    /* ISSUES PANEL */
-    .issues-wrap { display:none; }
-    .issues-header { padding:10px 14px; background:var(--surface); border:1px solid var(--border); font-size:16px; }
-    .issues-body { border:1px solid var(--border); border-top:none; height:540px; overflow-y:auto; background:var(--black); }
-    .issue-item { padding:10px 14px; border-bottom:1px solid var(--border); font-size:12px; display:flex; gap:10px; align-items:flex-start; }
-    .issue-item:last-child { border-bottom:none; }
-    .issue-sev { font-family:'DM Mono',monospace; font-size:9px; padding:2px 6px; border:1px solid; flex-shrink:0; margin-top:1px; }
-    .sev-crit { color:var(--red); border-color:rgba(255,79,79,0.4); }
-    .sev-high { color:var(--orange); border-color:rgba(255,165,0,0.4); }
-    .sev-med { color:var(--blue); border-color:rgba(79,175,244,0.4); }
-    .sev-low { color:var(--gray); border-color:var(--border); }
-    .issue-text { color:var(--white); line-height:1.5; }
-    .no-issues { padding:20px 14px; font-family:'DM Mono',monospace; font-size:10px; color:var(--gray); text-align:center; }
+    /* OBS + BUGS PANEL */
+    .side-wrap{display:none;display:flex;flex-direction:column;gap:0;display:none;}
+    .obs-body{border:1px solid var(--border);border-top:none;height:280px;overflow-y:auto;background:var(--black);}
+    .bugs-body{border:1px solid var(--border);border-top:none;height:268px;overflow-y:auto;background:var(--black);}
+    .obs-item{padding:8px 12px;border-bottom:1px solid var(--border);font-size:11px;display:flex;gap:8px;align-items:flex-start;}
+    .obs-item:last-child{border-bottom:none;}
+    .obs-from{font-family:'DM Mono',monospace;font-size:8px;padding:1px 5px;border:1px solid;flex-shrink:0;margin-top:1px;}
+    .obs-marco{color:var(--accent);border-color:rgba(232,255,71,0.3);}
+    .obs-klaar{color:var(--blue);border-color:rgba(79,175,244,0.3);}
+    .obs-text{color:var(--white);line-height:1.4;}
+    .bug-item{padding:8px 12px;border-bottom:1px solid var(--border);font-size:11px;display:flex;gap:8px;align-items:flex-start;}
+    .bug-item:last-child{border-bottom:none;}
+    .bug-sev{font-family:'DM Mono',monospace;font-size:8px;padding:1px 5px;border:1px solid;flex-shrink:0;margin-top:1px;}
+    .sev-c{color:var(--red);border-color:rgba(255,79,79,0.3);}
+    .sev-h{color:var(--orange);border-color:rgba(255,165,0,0.3);}
+    .sev-m{color:var(--blue);border-color:rgba(79,175,244,0.3);}
+    .empty-msg{padding:16px 12px;font-family:'DM Mono',monospace;font-size:10px;color:var(--gray);text-align:center;}
 
     /* RAPPORT */
-    .report { display:none; }
-    .report-header { padding:16px 20px; background:var(--surface); border:1px solid var(--border); margin-bottom:12px; display:flex; justify-content:space-between; align-items:center; flex-wrap:wrap; gap:8px; }
-    .report-title { font-size:28px; }
-    .report-sub { font-family:'DM Mono',monospace; font-size:10px; color:var(--gray); margin-top:4px; }
-    .report-score { font-size:40px; color:var(--accent); }
-    .report-score-label { font-family:'DM Mono',monospace; font-size:9px; color:var(--gray); }
-    .report-grid { display:grid; grid-template-columns:1fr 1fr; gap:12px; margin-bottom:12px; }
-    @media(max-width:700px){ .report-grid { grid-template-columns:1fr; } }
-    .report-block { background:var(--surface); border:1px solid var(--border); }
-    .report-block-header { padding:10px 16px; border-bottom:1px solid var(--border); font-size:18px; display:flex; justify-content:space-between; align-items:center; }
-    .issue-row { padding:8px 16px; border-bottom:1px solid var(--border); font-size:12px; display:flex; gap:10px; align-items:flex-start; }
-    .issue-row:last-child { border-bottom:none; }
-    .transcript-block { background:var(--surface); border:1px solid var(--border); margin-bottom:12px; }
-    .transcript-header { padding:10px 16px; border-bottom:1px solid var(--border); font-size:18px; display:flex; justify-content:space-between; align-items:center; }
-    .export-btn { font-family:'DM Mono',monospace; font-size:10px; padding:4px 12px; background:none; border:1px solid var(--border); color:var(--gray); cursor:pointer; }
-    .export-btn:hover { border-color:var(--accent); color:var(--accent); }
-    .transcript-turn { border-bottom:1px solid var(--border); }
-    .transcript-turn:last-child { border-bottom:none; }
-    .transcript-q { padding:8px 16px; background:rgba(232,255,71,0.03); font-size:12px; display:flex; gap:10px; }
-    .transcript-a { padding:8px 16px; font-size:12px; color:var(--gray); }
-    .t-num { font-family:'DM Mono',monospace; font-size:10px; color:var(--accent); flex-shrink:0; }
-    .t-from { font-family:'DM Mono',monospace; font-size:9px; color:var(--gray); flex-shrink:0; }
+    .report{display:none;}
+    .rpt-hdr{padding:14px 18px;background:var(--surface);border:1px solid var(--border);margin-bottom:10px;display:flex;justify-content:space-between;align-items:center;flex-wrap:wrap;gap:8px;}
+    .rpt-title{font-size:26px;}
+    .rpt-sub{font-family:'DM Mono',monospace;font-size:10px;color:var(--gray);margin-top:3px;}
+    .score-big{font-size:38px;color:var(--accent);}
+    .score-lbl{font-family:'DM Mono',monospace;font-size:9px;color:var(--gray);}
+    .rpt-grid{display:grid;grid-template-columns:1fr 1fr 1fr;gap:10px;margin-bottom:10px;}
+    @media(max-width:800px){.rpt-grid{grid-template-columns:1fr;}}
+    .rpt-block{background:var(--surface);border:1px solid var(--border);}
+    .rpt-block-hdr{padding:9px 14px;border-bottom:1px solid var(--border);font-size:16px;display:flex;justify-content:space-between;align-items:center;}
+    .rpt-row{padding:7px 14px;border-bottom:1px solid var(--border);font-size:12px;display:flex;gap:8px;align-items:flex-start;}
+    .rpt-row:last-child{border-bottom:none;}
+    .trs-block{background:var(--surface);border:1px solid var(--border);}
+    .trs-hdr{padding:9px 14px;border-bottom:1px solid var(--border);font-size:16px;display:flex;justify-content:space-between;align-items:center;}
+    .exp-btn{font-family:'DM Mono',monospace;font-size:10px;padding:3px 10px;background:none;border:1px solid var(--border);color:var(--gray);cursor:pointer;}
+    .exp-btn:hover{border-color:var(--accent);color:var(--accent);}
+    .trs-turn{border-bottom:1px solid var(--border);}
+    .trs-turn:last-child{border-bottom:none;}
+    .trs-q{padding:7px 14px;background:rgba(232,255,71,0.03);font-size:12px;display:flex;gap:8px;}
+    .trs-a{padding:7px 14px;font-size:12px;color:#aaa;}
+    .t-num{font-family:'DM Mono',monospace;font-size:10px;color:var(--accent);flex-shrink:0;}
+    .t-from{font-family:'DM Mono',monospace;font-size:9px;color:var(--gray);flex-shrink:0;min-width:50px;}
   </style>
 </head>
 <body>
 <div class="page">
 
-  <div class="header">
+  <div class="hdr">
     <div>
-      <div class="header-title">KLAAR AI SIMULATOR</div>
-      <div class="header-sub">TWEE-AI TEST · MARCO (TESTER) ↔ KLAAR ASSISTENT</div>
+      <div class="hdr-title">KLAAR AI REALITEITSTEST</div>
+      <div class="hdr-sub">TWEE AI-AGENTS · MARCO (NIEUWE KLANT) ↔ KLAAR ASSISTENT · OBSERVATIELOG</div>
     </div>
-    <div class="header-badge">INTERN · NIET VOOR KLANTEN</div>
+    <div class="hdr-badge">INTERN TESTPANEEL</div>
   </div>
 
-  <!-- CONFIG -->
-  <div class="config-bar">
-    <span class="config-label">API ENDPOINT</span>
-    <input class="config-input" id="apiUrl" value="https://www.getklaar.app/api/demo-chat" />
-    <span class="config-label">TURNS</span>
-    <select class="config-select" id="turnCount">
+  <div class="cfg">
+    <span class="cfg-lbl">API</span>
+    <input class="cfg-inp" id="apiUrl" value="https://www.getklaar.app/api/demo-chat" />
+    <span class="cfg-lbl">TURNS</span>
+    <select class="cfg-sel" id="turnCount">
       <option value="10">10 (snel)</option>
       <option value="25">25</option>
-      <option value="50">50</option>
-      <option value="100" selected>100 (volledig)</option>
+      <option value="50" selected>50 (volledig)</option>
     </select>
-    <span class="config-label">DELAY (ms)</span>
-    <input class="config-select" id="delay" type="number" value="800" min="300" max="3000" style="width:80px;">
+    <span class="cfg-lbl">DELAY (ms)</span>
+    <input class="cfg-sel" id="delay" type="number" value="600" min="300" max="3000" style="width:72px;">
   </div>
 
-  <!-- CONTROLS -->
-  <div class="controls">
-    <button class="btn btn-primary" id="btnRun" onclick="startTest()">▶ Simulatie starten</button>
-    <button class="btn btn-danger" id="btnStop" onclick="stopTest()" disabled>■ Stop</button>
-    <button class="btn btn-secondary" onclick="clearAll()">↺ Reset</button>
-    <span class="run-status" id="runStatus"></span>
+  <div class="ctrls">
+    <button class="btn btn-p" id="btnRun" onclick="startTest()">▶ Test starten</button>
+    <button class="btn btn-d" id="btnStop" onclick="stopTest()" disabled>■ Stop</button>
+    <button class="btn btn-s" onclick="clearAll()">↺ Reset</button>
+    <span class="run-st" id="runSt"></span>
   </div>
 
-  <!-- PROGRESS -->
-  <div class="progress-wrap" id="progressWrap">
-    <div class="progress-fill" id="progressFill"></div>
+  <div class="prog-wrap" id="progWrap"><div class="prog-fill" id="progFill"></div></div>
+
+  <div class="stats" id="statsRow">
+    <div class="stat"><div class="stat-lbl">TURN</div><div class="stat-val c-white" id="stTurn">0/0</div></div>
+    <div class="stat"><div class="stat-lbl">OBSERVATIES</div><div class="stat-val c-purple" id="stObs">0</div></div>
+    <div class="stat"><div class="stat-lbl">BUGS</div><div class="stat-val c-red" id="stBugs">0</div></div>
+    <div class="stat"><div class="stat-lbl">GEM. TIJD</div><div class="stat-val c-white" id="stTime">–</div></div>
+    <div class="stat"><div class="stat-lbl">GEM. WOORDEN</div><div class="stat-val c-white" id="stWords">–</div></div>
+    <div class="stat"><div class="stat-lbl">SCORE</div><div class="stat-val c-green" id="stScore">–</div></div>
   </div>
 
-  <!-- STATS -->
-  <div class="stats-row" id="statsRow">
-    <div class="stat-box"><div class="stat-label">TURN</div><div class="stat-val stat-white" id="statTurn">0/0</div></div>
-    <div class="stat-box"><div class="stat-label">ISSUES</div><div class="stat-val stat-red" id="statIssues">0</div></div>
-    <div class="stat-box"><div class="stat-label">KRITIEK</div><div class="stat-val stat-red" id="statCrit">0</div></div>
-    <div class="stat-box"><div class="stat-label">GEM. TIJD (s)</div><div class="stat-val stat-white" id="statTime">–</div></div>
-    <div class="stat-box"><div class="stat-label">KWALITEIT</div><div class="stat-val stat-green" id="statQuality">–</div></div>
-  </div>
+  <div class="main">
 
-  <!-- MAIN LAYOUT: CHAT + ISSUES -->
-  <div class="main-layout">
     <!-- CHAT -->
     <div class="chat-wrap" id="chatWrap">
-      <div class="chat-header">
-        <span>💬 Gesprek</span>
-        <span class="chat-status" id="chatStatus">–</span>
+      <div class="panel-hdr">
+        <span>💬 Live gesprek</span>
+        <span class="panel-hdr-right" id="chatSt">–</span>
       </div>
       <div class="chat-body" id="chatBody"></div>
     </div>
 
-    <!-- ISSUES -->
-    <div class="issues-wrap" id="issuesWrap">
-      <div class="issues-header">⚠ Gevonden issues</div>
-      <div class="issues-body" id="issuesBody">
-        <div class="no-issues" id="noIssuesMsg">Nog geen issues gevonden</div>
+    <!-- SIDE: OBS + BUGS -->
+    <div class="side-wrap" id="sideWrap">
+      <div class="panel-hdr">
+        <span>🔍 Signalen <span id="obsCount" style="font-family:'DM Mono',monospace;font-size:9px;color:var(--gray);">(0)</span></span>
+        <span class="panel-hdr-right"><span style="color:#4faff4">👤 klant</span> · <span style="color:#e8ff47">🛠 dev</span></span>
+      </div>
+      <div class="obs-body" id="obsBody">
+        <div class="empty-msg" id="obsEmpty">Nog geen observaties</div>
+      </div>
+      <div class="panel-hdr" style="margin-top:8px;">
+        <span>⚠ Auto-gedetecteerde bugs <span id="bugCount" style="font-family:'DM Mono',monospace;font-size:9px;color:var(--gray);">(0)</span></span>
+      </div>
+      <div class="bugs-body" id="bugsBody">
+        <div class="empty-msg" id="bugsEmpty">Nog geen bugs</div>
       </div>
     </div>
+
   </div>
 
   <!-- RAPPORT -->
   <div class="report" id="report">
-    <div class="report-header">
+    <div class="rpt-hdr">
       <div>
-        <div class="report-title">Test Rapport</div>
-        <div class="report-sub" id="reportMeta"></div>
+        <div class="rpt-title">Testrapport</div>
+        <div class="rpt-sub" id="rptMeta"></div>
       </div>
-      <div style="text-align:right">
-        <div class="report-score" id="reportScore">–</div>
-        <div class="report-score-label">KWALITEITSSCORE</div>
-      </div>
-    </div>
-    <div class="report-grid">
-      <div class="report-block" id="reportIssues">
-        <div class="report-block-header"><span>🐛 Issues</span><span id="issueCount" style="font-family:'DM Mono',monospace;font-size:10px;color:var(--gray);"></span></div>
-      </div>
-      <div class="report-block" id="reportStats">
-        <div class="report-block-header"><span>📊 Statistieken</span></div>
+      <div style="text-align:right;">
+        <div class="score-big" id="rptScore">–</div>
+        <div class="score-lbl">KWALITEITSSCORE</div>
       </div>
     </div>
-    <div class="transcript-block">
-      <div class="transcript-header">
-        <span>📝 Volledig transcript</span>
-        <button class="export-btn" onclick="exportCSV()">Export CSV</button>
-      </div>
-      <div id="transcriptBody"></div>
+    <div class="rpt-grid">
+      <div class="rpt-block" id="rptObs"><div class="rpt-block-hdr"><span>🔍 Observaties</span><span id="rptObsCount" style="font-family:'DM Mono',monospace;font-size:9px;color:var(--gray);"></span></div></div>
+      <div class="rpt-block" id="rptBugs"><div class="rpt-block-hdr"><span>⚠ Bugs</span><span id="rptBugsCount" style="font-family:'DM Mono',monospace;font-size:9px;color:var(--gray);"></span></div></div>
+      <div class="rpt-block" id="rptStats"><div class="rpt-block-hdr"><span>📊 Statistieken</span></div></div>
+    </div>
+    <div class="trs-block">
+      <div class="trs-hdr"><span>📝 Volledig transcript</span><button class="exp-btn" onclick="exportCSV()">Export CSV</button></div>
+      <div id="trsBody"></div>
     </div>
   </div>
 
 </div>
 
 <script>
-// ══════════════════════════════════════════════════════════════
+// ══════════════════════════════════════════════════════
+// ECHTE DATA — HANOS FACTUUR, HACCP, MENU
+// ══════════════════════════════════════════════════════
+
+const MARCO_DATA = `
+HANOS FACTUUR H-2026-089234 (10 juni 2026):
+• Ribeye Black Angus 4-5kg:     €28,50/kg  × 8 kg   = €228,00
+• Zalm Atlantic portie 180g:    €4,20/stuk × 40 st  = €168,00
+• Kipfilet zonder vel:          €8,90/kg   × 5 kg   = €44,50
+• Risotto rijst Carnaroli 5kg:  €22,80/pak × 2 pak  = €45,60
+• Olijfolie extra vierge 5L:    €18,50/fl  × 3 fl   = €55,50
+• Pijnboompitten 1kg:           €32,00     × 1 kg   = €32,00
+• Mozzarella di Bufala 125g:    €2,80/st   × 24 st  = €67,20
+• Cherry tomaten 500g:          €2,40/bk   × 12 bk  = €28,80
+• Basilicum vers 100g:          €1,90/pak  × 8 pak  = €15,20
+• Parmezaan geraspt 1kg:        €16,80/kg  × 2 kg   = €33,60
+TOTAAL excl. BTW: €718,40 | BTW: €57,47 | TOTAAL: €775,87
+
+MENU (verkoopprijzen incl. BTW):
+• Ribeye 300g + truffelboter: €38,50
+• Zalm op risotto: €27,50
+• Risotto ai funghi (V): €19,50
+• Caprese salade (starter): €12,50
+
+HACCP METINGEN VANOCHTEND 07:15:
+• Koelcel 1 – Vlees:       +4,2°C  → OK (norm: 0–5°C)
+• Koelcel 2 – Vis/Zuivel:  +2,1°C  → OK (norm: 0–5°C)
+• VRIEZER:                 -14,3°C → ❗AFWIJKING (norm: max -18°C)
+Actie ondernomen: vriezer gecontroleerd, motor lijkt te werken, deur zat goed dicht.
+
+HUIDIGE SOFTWARE: Horeko (HACCP) + Excel (recepten/kostprijs)
+DOEL: alles overzetten naar Klaar vóór eind volgende maand
+`;
+
+// ══════════════════════════════════════════════════════
 // SYSTEEM PROMPTS
-// ══════════════════════════════════════════════════════════════
+// ══════════════════════════════════════════════════════
 
-const TESTER_PROMPT = `Je enige taak: genereer het VOLGENDE BERICHT van Marco aan de Klaar AI-assistent.
+const TESTER_PROMPT = `Je bent Marco Visser — eigenaar/chef-kok Bistro De Gouden Lepel, Amsterdam (45 couverts, 8 FTE, mediterraans).
+Je hebt Klaar net gekocht en gebruikt het voor het eerst. Je stapt over van Horeko + Excel.
 
-MARCO'S PROFIEL:
-- Marco Visser, eigenaar & chef-kok Bistro De Gouden Lepel, Amsterdam
-- 45 couverts, 8 FTE, mediterraanse keuken (pasta, vis, vlees)
-- Bestelt bij Hanos en Bidfood, foodcost ~32%
-- Heeft 3 koelcellen (groente, vlees, zuivel) + 1 vriezer
-- Net begonnen met Klaar na betaling — EERSTE keer in de app
-- Kookt zelf 4 avonden per week, druk schema, wil alles snel
+JOUW ECHTE DATA:
+${MARCO_DATA}
 
-FASEVERDELING (100 berichten totaal):
-1-20:   ONBOARDING — hoe begin ik, eerste recept invoeren, HACCP instellen
-21-40:  HACCP — dagelijks temperaturen loggen, afwijkingen vastleggen, inspectie prep
-41-60:  RECEPTEN & KOSTPRIJS — meerdere recepten, foodcost %, impact prijsstijgingen
-61-70:  LEVERANCIERS — facturen, prijstrends, vergelijken
-71-80:  ALLERGENEN & MENU — allergenkaart, menubuilder, marge analyseren
-81-90:  EVENTS & CATERING — cateringlevent, kostprijs per persoon
-91-100: KRITISCH — edge cases, ontevredenheid bij vage antwoorden, vergelijkingen
+JOUW ROL — CRUCIAAL:
+Je bent een ECHTE, BETALENDE klant. Je denkt vanuit dat perspectief:
+"Ik betaal hier voor. Dit moet gewoon werken. Als het dat niet doet, stap ik terug naar Horeko."
+
+Je persoonlijkheid:
+- Direct, zakelijk. Druk. Typt kort.
+- Vergelijkt altijd met Horeko ("In Horeko deed ik dit met 2 klikken")
+- Vraagt door als iets vaag is ("Maar WELKE knop precies? Ik zie dat niet")
+- Probeert functies echt te gebruiken en beschrijft wat hij ziet ("OK ik zie nu een scherm met X, maar nergens staat Y")
+- Raakt gefrustreerd als iets niet werkt of te ingewikkeld is
+- Denkt aan zijn medewerkers ("Mijn kok van 52 moet dit ook kunnen — dat gaat niet lukken zo")
+- Vraagt of dingen op mobiel werken (hij heeft geen pc in de keuken)
+
+FASE STRUCTUUR (50 turns):
+Turns 1-6:   ONBOARDING — kan ik importeren vanuit Horeko? eerste indruk
+Turns 7-14:  HACCP — vriezer afwijking -14,3°C loggen, corrective action, inspectie-voorbereiding
+Turns 15-26: RECEPTEN & KOSTPRIJS — ribeye recept invoeren met echte Hanos-prijzen, foodcost berekenen
+Turns 27-33: LEVERANCIERS — factuur H-2026-089234 uploaden en verwerken
+Turns 34-40: ALLERGENEN & MENU — allergenenkaart instellen, marge per gerecht
+Turns 41-46: EVENTS — bruiloft 80 personen, kostprijs per persoon berekenen
+Turns 47-50: KRITISCH — druk opvoeren, ontevredenheid uiten, dealbreakers benoemen
+
+KLANTOBSERVATIES — JOUW BIJDRAGE AAN APP-VERBETERING:
+Jij signaleert dingen vanuit KLANTPERSPECTIEF voor de eigenaar van Klaar.
+Als je iets tegenkomt dat:
+- je als betalende klant frustreert of afschrikt
+- ontbreekt terwijl je het van Horeko/Excel gewend bent
+- te ingewikkeld is voor jou of je medewerkers
+- anders werkt dan je verwacht als horeca-ondernemer
+- je zou doen overwegen het abonnement op te zeggen
+
+Voeg dan aan het EINDE van je bericht toe:
+[OBS: klant-signaal — wat de eigenaar van Klaar moet weten]
 
 SCHRIJFREGELS:
-- Schrijf ALLEEN Marco's bericht. Niets anders. Geen uitleg.
-- Max 2-3 zinnen. Drukke chef typt kort.
-- Reageer op het laatste Klaar-antwoord EN ga verder met de aangewezen fase
-- Gebruik concrete details: "mijn vriezer op -22", "mijn ribeye voor €34", "45 couverts"
-- Soms sceptisch of ongeduldig als een antwoord te vaag is
-- Vraag concreet door ("maar HOE doe ik dat dan precies?") als instructies onduidelijk zijn`;
+- Schrijf ALLEEN Marco's bericht. Niets anders. Geen uitleg, geen meta.
+- Max 2-3 zinnen. Chef typt kort.
+- Gebruik je echte data als dat relevant is.
+- Reageer concreet op het laatste Klaar-antwoord.`;
 
-const KLAAR_PROMPT = `Je bent de Klaar AI-assistent, de ingebouwde hulp van Klaar horeca-software.
+const KLAAR_PROMPT = `Je bent de Klaar AI-assistent — ingebouwde hulp van Klaar horeca-software.
+
+GEBRUIKER: Marco Visser, Bistro De Gouden Lepel Amsterdam. Stapt over van Horeko + Excel.
+${MARCO_DATA}
 
 KLAAR MODULES:
-- Recept Studio — recepten invoeren, kostprijs per portie, foodcost % berekenen
-- Allergenenkaart — EU-14 allergenen bijhouden, NVWA-compliant
-- HACCP Logger — temperatuurlogs, afwijkingen, inspectie-ready rapporten
-- Kostprijs Calculator — foodcost %, inkoop vs. verkoopprijs, marges
-- Menubuilder — menukaart analyseren, marge per gerecht, tips
-- Leveranciers — facturen inscannen/uploaden, prijstrends, vergelijken
-- Catering & Events — kostprijs per persoon, keukensheet, inkooplijst
+- Recept Studio: recepten invoeren, kostprijs per portie berekenen, foodcost %
+- Allergenenkaart: EU-14 allergenen bijhouden, NVWA-compliant overzicht
+- HACCP Logger: koelcel/vriezer temperatuurlogs, afwijkingen vastleggen, inspectie-ready
+- Kostprijs Calculator: foodcost %, inkoop vs. verkoopprijs, marge
+- Menubuilder: menukaart marge per gerecht, aanbevelingen
+- Leveranciers: facturen uploaden (PDF/foto/scan), prijstrends bijhouden
+- Catering & Events: kostprijs per persoon, keukensheet, inkooplijst
 
 ANTWOORDREGELS:
-- Max 80 woorden. Direct beginnen, geen intro-zin.
-- Noem de module bij naam als je ernaar verwijst (bijv. "In HACCP Logger → ...")
-- Geef concrete stappen wanneer relevant
+- Max 80 woorden. Direct beginnen — geen intro.
+- Doe CONCRETE berekeningen als de gebruiker data geeft (gebruik zijn echte Hanos-prijzen)
+- Noem de module expliciet (bijv. "In HACCP Logger →")
+- Als een functie NIET in Klaar bestaat: zeg dat direct en eerlijk
 - Altijd Nederlands
-- Bij onduidelijke vragen: stel maximaal 1 korte verduidelijkingsvraag
-- Als iets buiten Klaar's scope valt: zeg dat eerlijk in 1 zin`;
+- Bij eerste contact: verwelkom Marco kort en vraag waarmee je begint
 
-// ══════════════════════════════════════════════════════════════
+OBSERVATIES — EIGENAAR/ONTWIKKELAAR PERSPECTIEF:
+Jij signaleert ook vanuit het oogpunt van de eigenaar/ontwikkelaar van klaar.app.
+Je weet wat er wél en niet in de app zit. Als je merkt dat:
+- Marco iets verwacht wat Klaar nog niet kan (ontbrekende functie/module)
+- je een antwoord moet geven dat niet klopt met hoe de app echt werkt
+- een module beter of duidelijker zou moeten zijn
+- er een AI-verbetering nodig is om de klant beter te bedienen
+- iets in de onboarding of UX confuus is voor horeca-ondernemers
+
+Voeg dan aan het EINDE van je bericht toe:
+[OBS: dev-signaal — wat gebouwd/verbeterd moet worden in Klaar]`;
+
+// ══════════════════════════════════════════════════════
 // FASE HELPER
-// ══════════════════════════════════════════════════════════════
+// ══════════════════════════════════════════════════════
 
-function getPhase(turn) {
-  if (turn <= 20) return 'Onboarding & eerste stappen';
-  if (turn <= 40) return 'HACCP & voedselveiligheid';
-  if (turn <= 60) return 'Recepten & kostprijs';
-  if (turn <= 70) return 'Leveranciers & inkoop';
-  if (turn <= 80) return 'Allergenen & menukaart';
-  if (turn <= 90) return 'Events & catering';
+function getPhase(t) {
+  if (t <= 6)  return 'Onboarding & import';
+  if (t <= 14) return 'HACCP — vriezer afwijking';
+  if (t <= 26) return 'Recepten & kostprijs';
+  if (t <= 33) return 'Leveranciers — Hanos factuur';
+  if (t <= 40) return 'Allergenen & menuanalyse';
+  if (t <= 46) return 'Events — bruiloft 80 personen';
   return 'Kritische evaluatie';
 }
 
-// ══════════════════════════════════════════════════════════════
+function getPhaseTip(t) {
+  if (t <= 6)  return 'Vraag over importeren vanuit Horeko of eerste stap in de app.';
+  if (t <= 14) return 'Log de vriezer afwijking van -14.3°C en de corrective action.';
+  if (t <= 26) return 'Voer ribeye recept in met Hanos prijzen. Bereken foodcost.';
+  if (t <= 33) return 'Upload Hanos factuur H-2026-089234. Bekijk prijstrend ribeye.';
+  if (t <= 40) return 'Stel allergenenkaart in. Analyseer welke gerechten meeste marge hebben.';
+  if (t <= 46) return 'Bereken kostprijs voor bruiloft 80 personen in september.';
+  return 'Uit op dealbreakers, vergelijking Horeko, wat werkt echt niet.';
+}
+
+// ══════════════════════════════════════════════════════
 // STATE
-// ══════════════════════════════════════════════════════════════
+// ══════════════════════════════════════════════════════
 
 let running = false, stopped = false;
-let conversation = []; // [{from:'marco'|'klaar', content, turn, elapsed, issues:[]}]
-let allIssues = [];
-let totalElapsed = 0, klaarTurns = 0;
+let conv = []; // {from, content, turn, elapsed}
+let observations = []; // {from:'marco'|'klaar', text, turn}
+let bugs = []; // {sev, text}
+let totalElapsed = 0, klaarCount = 0, totalWords = 0;
 
-// ══════════════════════════════════════════════════════════════
-// STREAM HELPER — roept /api/demo-chat aan, streamt SSE, geeft tekst terug
-// onToken(text) wordt aangeroepen per token voor live weergave
-// ══════════════════════════════════════════════════════════════
+// ══════════════════════════════════════════════════════
+// STREAM HELPER
+// ══════════════════════════════════════════════════════
 
 async function streamCall(apiUrl, payload, onToken) {
   const res = await fetch(apiUrl, {
@@ -303,26 +381,22 @@ async function streamCall(apiUrl, payload, onToken) {
     body: JSON.stringify(payload)
   });
   if (!res.ok) throw new Error(`HTTP ${res.status}`);
-
   const reader = res.body.getReader();
   const dec = new TextDecoder();
-  let full = '';
-  let buf = '';
-
+  let full = '', buf = '';
   while (true) {
     const { done, value } = await reader.read();
     if (done) break;
     buf += dec.decode(value, { stream: true });
     const lines = buf.split('\n');
-    buf = lines.pop(); // keep incomplete line
+    buf = lines.pop();
     for (const line of lines) {
       if (!line.startsWith('data: ')) continue;
       const raw = line.slice(6).trim();
       if (!raw || raw === '[DONE]') continue;
       try {
         const p = JSON.parse(raw);
-        const t = (p.type === 'content_block_delta' && p.delta?.type === 'text_delta')
-          ? p.delta.text : '';
+        const t = (p.type === 'content_block_delta' && p.delta?.type === 'text_delta') ? p.delta.text : '';
         if (t) { full += t; if (onToken) onToken(t); }
       } catch(e) {}
     }
@@ -330,333 +404,407 @@ async function streamCall(apiUrl, payload, onToken) {
   return full.trim();
 }
 
-// ══════════════════════════════════════════════════════════════
-// ISSUE DETECTIE
-// ══════════════════════════════════════════════════════════════
+// ══════════════════════════════════════════════════════
+// EXTRACT + STRIP [OBS: ...] TAGS
+// ══════════════════════════════════════════════════════
 
-function detectIssues(turn, text, elapsed) {
-  const issues = [];
-  const words = text.trim().split(/\s+/).filter(Boolean).length;
-
-  if (!text.trim()) {
-    issues.push({ sev:'crit', text:`Leeg antwoord bij turn ${turn}` });
+function extractObs(text) {
+  const obsArr = [];
+  const obsRx = /\[OBS:\s*([^\]]+)\]/gi;
+  let m;
+  while ((m = obsRx.exec(text)) !== null) {
+    obsArr.push(m[1].trim());
   }
-  if (words > 0 && /^(Hello|Hi |I |The |Yes|No |Of course|Sure|Great)/i.test(text.trim())) {
-    issues.push({ sev:'high', text:`Antwoord begint in het Engels (turn ${turn})` });
-  }
-  if (words > 150) {
-    issues.push({ sev:'med', text:`Antwoord te lang: ${words} woorden (turn ${turn}, max 80)` });
-  }
-  if (words > 0 && words < 5 && turn > 2) {
-    issues.push({ sev:'med', text:`Antwoord erg kort: ${words} woorden (turn ${turn})` });
-  }
-  if (elapsed > 15) {
-    issues.push({ sev:'med', text:`Trage respons: ${elapsed.toFixed(1)}s (turn ${turn})` });
-  }
-  const cantPhrases = ['kan ik niet', 'ben ik niet in staat', 'valt buiten', 'niet mogelijk voor mij', 'niet mijn taak'];
-  if (cantPhrases.some(p => text.toLowerCase().includes(p))) {
-    issues.push({ sev:'high', text:`Assistent geeft "kan niet" antwoord bij turn ${turn}: "${text.slice(0,60)}..."` });
-  }
-  return issues;
+  const clean = text.replace(/\[OBS:\s*[^\]]+\]/gi, '').replace(/\n{3,}/g, '\n\n').trim();
+  return { clean, obsArr };
 }
 
-// ══════════════════════════════════════════════════════════════
-// UI HELPERS
-// ══════════════════════════════════════════════════════════════
+// ══════════════════════════════════════════════════════
+// AUTO BUG DETECTIE (op Klaar-antwoorden)
+// ══════════════════════════════════════════════════════
 
-function addMessage(from, content, isStreaming) {
-  const chat = document.getElementById('chatBody');
-  const id = `msg_${Date.now()}`;
+function detectBugs(turn, text, elapsed) {
+  const result = [];
+  const words = text.trim().split(/\s+/).filter(Boolean).length;
+  if (!text.trim())
+    result.push({ sev:'c', text:`Leeg antwoord bij turn ${turn}` });
+  if (words > 0 && /^(Hello|Hi |I |The |Yes|No |Of course|Sure)/i.test(text.trim()))
+    result.push({ sev:'h', text:`Antwoord begint in het Engels (turn ${turn})` });
+  if (words > 160)
+    result.push({ sev:'m', text:`Te lang: ${words} woorden (turn ${turn}, max ~80)` });
+  if (elapsed > 14)
+    result.push({ sev:'m', text:`Trage respons: ${elapsed.toFixed(1)}s (turn ${turn})` });
+  const cantPhrases = ['kan ik niet', 'niet in staat', 'buiten mijn mogelijkheden', 'dat weet ik niet', 'geen idee'];
+  if (cantPhrases.some(p => text.toLowerCase().includes(p)))
+    result.push({ sev:'h', text:`"Kan niet" bij core-functie vraag (turn ${turn}): "${text.slice(0,70)}..."` });
+  return result;
+}
+
+// ══════════════════════════════════════════════════════
+// UI HELPERS
+// ══════════════════════════════════════════════════════
+
+function esc(s) {
+  return String(s || '').replace(/&/g,'&amp;').replace(/</g,'&lt;').replace(/>/g,'&gt;');
+}
+
+function addMsg(from, content, streaming) {
+  const id = `m${Date.now()}_${Math.random().toString(36).slice(2)}`;
   const div = document.createElement('div');
   div.className = `msg msg-${from}`;
   div.id = id;
+  const lbl = from === 'marco' ? '👤 MARCO (TESTER)' : '🤖 KLAAR ASSISTENT';
   div.innerHTML = `
-    <div class="msg-label">${from === 'marco' ? '👤 MARCO (TESTER)' : '🤖 KLAAR ASSISTENT'}</div>
-    <div class="msg-bubble${isStreaming ? ' streaming' : ''}" id="${id}_bubble">${escHtml(content)}</div>
-    <div class="msg-meta" id="${id}_meta"></div>
+    <div class="msg-lbl">${lbl}</div>
+    <div class="msg-bub${streaming ? ' streaming' : ''}" id="${id}_b" data-raw=""></div>
+    <div class="msg-meta" id="${id}_m"></div>
   `;
-  chat.appendChild(div);
-  chat.scrollTop = chat.scrollHeight;
+  document.getElementById('chatBody').appendChild(div);
+  scrollChat();
   return id;
 }
 
-function updateMessage(id, content, meta, hasError) {
-  const bubble = document.getElementById(`${id}_bubble`);
-  const metaEl = document.getElementById(`${id}_meta`);
-  if (bubble) {
-    bubble.classList.remove('streaming');
-    if (hasError) bubble.classList.add('error');
-    bubble.innerHTML = content.replace(/\*\*(.+?)\*\*/g,'<strong>$1</strong>').replace(/\n/g,'<br>');
+function appendToken(id, tok) {
+  const b = document.getElementById(`${id}_b`);
+  if (!b) return;
+  const raw = (b.getAttribute('data-raw') || '') + tok;
+  b.setAttribute('data-raw', raw);
+  b.innerHTML = renderText(raw);
+  scrollChat();
+}
+
+function finalizeMsg(id, cleanText, obsArr, meta, isErr) {
+  const b = document.getElementById(`${id}_b`);
+  const m = document.getElementById(`${id}_m`);
+  if (b) {
+    b.classList.remove('streaming');
+    if (isErr) b.classList.add('err');
+    b.innerHTML = renderText(cleanText) + (obsArr.length ? `<div><span class="obs-tag">🔍 ${obsArr.length} obs. gelogd</span></div>` : '');
+    b.setAttribute('data-raw', cleanText);
   }
-  if (metaEl && meta) metaEl.textContent = meta;
+  if (m && meta) m.innerHTML = meta;
 }
 
-function appendToken(id, token) {
-  const bubble = document.getElementById(`${id}_bubble`);
-  if (!bubble) return;
-  // Strip streaming cursor, add token
-  let cur = bubble.getAttribute('data-raw') || '';
-  cur += token;
-  bubble.setAttribute('data-raw', cur);
-  bubble.innerHTML = cur.replace(/\*\*(.+?)\*\*/g,'<strong>$1</strong>').replace(/\n/g,'<br>');
-  const chat = document.getElementById('chatBody');
-  if (chat) chat.scrollTop = chat.scrollHeight;
+function renderText(t) {
+  return esc(t).replace(/\*\*(.+?)\*\*/g,'<strong>$1</strong>').replace(/\n/g,'<br>');
 }
 
-function addIssue(issue) {
-  document.getElementById('noIssuesMsg')?.remove();
-  const body = document.getElementById('issuesBody');
-  const div = document.createElement('div');
-  div.className = 'issue-item';
-  div.innerHTML = `<span class="issue-sev sev-${issue.sev}">${issue.sev.toUpperCase()}</span><span class="issue-text">${escHtml(issue.text)}</span>`;
-  body.appendChild(div);
-  body.scrollTop = body.scrollHeight;
+function scrollChat() {
+  const c = document.getElementById('chatBody');
+  if (c) c.scrollTop = c.scrollHeight;
 }
 
-function updateStats(turn, maxTurns, elapsed) {
-  document.getElementById('statTurn').textContent = `${turn}/${maxTurns}`;
-  document.getElementById('statIssues').textContent = allIssues.length;
-  document.getElementById('statCrit').textContent = allIssues.filter(i => i.sev === 'crit').length;
-  if (klaarTurns > 0) {
-    document.getElementById('statTime').textContent = (totalElapsed / klaarTurns).toFixed(1);
+function addObs(from, text, turn) {
+  document.getElementById('obsEmpty')?.remove();
+  const ob = document.getElementById('obsBody');
+  const d = document.createElement('div');
+  d.className = 'obs-item';
+  const cls = from === 'marco' ? 'obs-marco' : 'obs-klaar';
+  const lbl = from === 'marco' ? '👤 KLANT' : '🛠 DEV';
+  d.innerHTML = `<span class="obs-from ${cls}">${lbl}</span><span class="obs-text">${esc(text)}<span style="color:var(--gray);margin-left:6px">#${turn}</span></span>`;
+  ob.appendChild(d);
+  ob.scrollTop = ob.scrollHeight;
+  observations.push({ from, text, turn });
+  document.getElementById('obsCount').textContent = `(${observations.length})`;
+  document.getElementById('stObs').textContent = observations.length;
+}
+
+function addBug(bug) {
+  document.getElementById('bugsEmpty')?.remove();
+  const bb = document.getElementById('bugsBody');
+  const d = document.createElement('div');
+  d.className = 'bug-item';
+  const smap = {c:'KRITIEK',h:'HOOG',m:'MEDIUM'};
+  d.innerHTML = `<span class="bug-sev sev-${bug.sev}">${smap[bug.sev]||bug.sev}</span><span class="obs-text">${esc(bug.text)}</span>`;
+  bb.appendChild(d);
+  bb.scrollTop = bb.scrollHeight;
+  bugs.push(bug);
+  document.getElementById('bugCount').textContent = `(${bugs.length})`;
+  document.getElementById('stBugs').textContent = bugs.length;
+}
+
+function updateStats(turn, max) {
+  document.getElementById('stTurn').textContent = `${turn}/${max}`;
+  document.getElementById('progFill').style.width = (turn / max * 100) + '%';
+  if (klaarCount > 0) {
+    document.getElementById('stTime').textContent = (totalElapsed / klaarCount).toFixed(1) + 's';
+    document.getElementById('stWords').textContent = Math.round(totalWords / klaarCount);
+    const score = Math.max(0, Math.round(100 - bugs.length / klaarCount * 60));
+    const el = document.getElementById('stScore');
+    el.textContent = score + '%';
+    el.className = 'stat-val ' + (score > 80 ? 'c-green' : score > 60 ? 'c-orange' : 'c-red');
   }
-  const quality = klaarTurns > 0
-    ? Math.max(0, Math.round(100 - (allIssues.length / klaarTurns) * 50))
-    : '–';
-  const qEl = document.getElementById('statQuality');
-  qEl.textContent = klaarTurns > 0 ? quality + '%' : '–';
-  qEl.className = 'stat-val ' + (quality > 80 ? 'stat-green' : quality > 60 ? 'stat-orange' : 'stat-red');
-  document.getElementById('progressFill').style.width = (turn / maxTurns * 100) + '%';
 }
 
-function escHtml(s) {
-  return String(s).replace(/&/g,'&amp;').replace(/</g,'&lt;').replace(/>/g,'&gt;');
-}
-
-// ══════════════════════════════════════════════════════════════
+// ══════════════════════════════════════════════════════
 // HOOFD TEST LOOP
-// ══════════════════════════════════════════════════════════════
+// ══════════════════════════════════════════════════════
 
 async function startTest() {
   if (running) return;
   const apiUrl = document.getElementById('apiUrl').value.trim();
-  const maxTurns = parseInt(document.getElementById('turnCount').value);
-  const delay = parseInt(document.getElementById('delay').value) || 800;
+  const max = parseInt(document.getElementById('turnCount').value);
+  const delay = parseInt(document.getElementById('delay').value) || 600;
 
   running = true; stopped = false;
-  conversation = []; allIssues = []; totalElapsed = 0; klaarTurns = 0;
+  conv = []; observations = []; bugs = []; totalElapsed = 0; klaarCount = 0; totalWords = 0;
 
-  // Show UI
+  // Show panels
+  ['progWrap','statsRow','chatWrap','sideWrap','report'].forEach(id => {
+    document.getElementById(id).style.display = id === 'report' ? 'none' :
+      id === 'statsRow' ? 'grid' :
+      id === 'sideWrap' ? 'flex' : 'block';
+  });
+  document.getElementById('sideWrap').style.flexDirection = 'column';
+  document.getElementById('sideWrap').style.gap = '0';
+  document.getElementById('chatBody').innerHTML = '';
+  document.getElementById('obsBody').innerHTML = '<div class="empty-msg" id="obsEmpty">Nog geen observaties</div>';
+  document.getElementById('bugsBody').innerHTML = '<div class="empty-msg" id="bugsEmpty">Nog geen bugs</div>';
   document.getElementById('btnRun').disabled = true;
   document.getElementById('btnStop').disabled = false;
-  document.getElementById('progressWrap').style.display = 'block';
-  document.getElementById('statsRow').style.display = 'grid';
-  document.getElementById('chatWrap').style.display = 'block';
-  document.getElementById('issuesWrap').style.display = 'block';
-  document.getElementById('report').style.display = 'none';
-  document.getElementById('chatBody').innerHTML = '';
-  document.getElementById('issuesBody').innerHTML = '<div class="no-issues" id="noIssuesMsg">Nog geen issues gevonden</div>';
 
-  // ── TURN 1: hardcoded eerste Marco bericht ──
-  const openingMsg = 'Hallo! Ik heb net mijn Klaar abonnement geactiveerd. Ik ben Marco, eigenaar van Bistro De Gouden Lepel in Amsterdam, 45 couverts. Dit is de eerste keer dat ik de app open. Waar moet ik beginnen?';
-  conversation.push({ from:'marco', content:openingMsg, turn:0 });
-  addMessage('marco', openingMsg, false);
+  // Turn 1 opening (hardcoded maar realistisch)
+  const opening = 'Hallo, ik ben Marco van Bistro De Gouden Lepel. Ik heb net mijn Klaar abonnement geactiveerd. Ik kom van Horeko en Excel. Mijn eerste vraag: kan ik mijn bestaande HACCP-logboek uit Horeko importeren in Klaar, of moet ik alles opnieuw invoeren?';
+  conv.push({ from:'marco', content:opening, turn:0 });
+  addMsg('marco', opening, false);
+  const openMsgId = addMsg('marco', '', false);
+  document.getElementById(`${openMsgId}_b`)?.remove();
+  // Actually just finalize the first message properly
+  // (already added above, skip duplicate)
 
-  for (let turn = 1; turn <= maxTurns; turn++) {
+  for (let turn = 1; turn <= max; turn++) {
     if (stopped) break;
 
-    document.getElementById('chatStatus').textContent = `Beurt ${turn}/${maxTurns} · ${getPhase(turn)}`;
-    document.getElementById('runStatus').textContent = `Klaar assistent antwoordt... (${getPhase(turn)})`;
+    const phase = getPhase(turn);
+    document.getElementById('chatSt').textContent = `Turn ${turn}/${max} · ${phase}`;
+    document.getElementById('runSt').textContent = `Klaar assistent antwoordt... · ${phase}`;
 
-    // ── STAP A: Klaar assistent reageert op laatste Marco bericht ──
-    const klaarHistory = conversation.slice(0, -1).map(m => ({
+    // ── A: Klaar assistent antwoordt op laatste Marco bericht ──
+    const klaarHist = conv.slice(0, -1).map(m => ({
       role: m.from === 'marco' ? 'user' : 'assistant',
       content: m.content
     }));
-    const latestMarco = conversation[conversation.length - 1].content;
+    const latestMarco = conv[conv.length - 1].content;
 
     const t0 = Date.now();
-    let klaarText = '';
-    const klaarMsgId = addMessage('klaar', '', true);
+    const klaarId = addMsg('klaar', '', true);
+    let klaarRaw = '';
 
     try {
-      klaarText = await streamCall(apiUrl, {
+      klaarRaw = await streamCall(apiUrl, {
         message: latestMarco,
-        history: klaarHistory.slice(-10),
+        history: klaarHist.slice(-12),
         systemContext: KLAAR_PROMPT,
-        maxTokens: 400
-      }, tok => appendToken(klaarMsgId, tok));
+        maxTokens: 500
+      }, tok => appendToken(klaarId, tok));
     } catch(e) {
-      klaarText = '';
-      updateMessage(klaarMsgId, `⚠ API fout: ${e.message}`, '', true);
-      allIssues.push({ sev:'crit', text:`Klaar API fout bij turn ${turn}: ${e.message}` });
-      addIssue({ sev:'crit', text:`Klaar API fout turn ${turn}: ${e.message}` });
+      klaarRaw = '';
+      finalizeMsg(klaarId, `⚠ API fout: ${e.message}`, [], '', true);
+      addBug({ sev:'c', text:`Klaar API fout turn ${turn}: ${e.message}` });
     }
 
     const elapsed = (Date.now() - t0) / 1000;
     totalElapsed += elapsed;
-    klaarTurns++;
+    klaarCount++;
 
-    const words = klaarText.trim().split(/\s+/).filter(Boolean).length;
-    updateMessage(klaarMsgId, klaarText, `${words}w · ${elapsed.toFixed(1)}s`, false);
-    conversation.push({ from:'klaar', content:klaarText, turn, elapsed });
+    const { clean: klaarClean, obsArr: klaarObs } = extractObs(klaarRaw);
+    const wc = klaarClean.trim().split(/\s+/).filter(Boolean).length;
+    totalWords += wc;
 
-    // Issue detectie
-    if (klaarText) {
-      const newIssues = detectIssues(turn, klaarText, elapsed);
-      newIssues.forEach(iss => { allIssues.push(iss); addIssue(iss); });
+    finalizeMsg(klaarId, klaarClean, klaarObs, `${wc}w · ${elapsed.toFixed(1)}s`, false);
+    conv.push({ from:'klaar', content:klaarClean, turn, elapsed });
+
+    // Log observaties van Klaar
+    klaarObs.forEach(o => addObs('klaar', o, turn));
+
+    // Auto bug detectie
+    if (klaarRaw) {
+      detectBugs(turn, klaarClean, elapsed).forEach(b => addBug(b));
     }
 
-    updateStats(turn, maxTurns, elapsed);
-    if (turn >= maxTurns) break;
+    updateStats(turn, max);
+    if (turn >= max) break;
     await sleep(delay);
     if (stopped) break;
 
-    // ── STAP B: Tester genereert Marco's volgende bericht ──
-    document.getElementById('runStatus').textContent = `Marco genereert volgende vraag... (${getPhase(turn + 1)})`;
+    // ── B: Tester (Marco) genereert volgend bericht ──
+    document.getElementById('runSt').textContent = `Marco denkt na... · ${getPhase(turn + 1)}`;
 
-    // Tester perspective: Marco = assistant, Klaar = user
-    const testerHistory = conversation.slice(0, -1).map(m => ({
+    // Tester history: Marco=assistant, Klaar=user
+    const testerHist = conv.slice(0, -1).map(m => ({
       role: m.from === 'marco' ? 'assistant' : 'user',
       content: m.content
     }));
 
-    const testerTrigger = `[BEURT ${turn + 1}/${maxTurns} | FASE: ${getPhase(turn + 1)}]\n\nKlaar antwoordde: "${klaarText || '[geen antwoord]'}"\n\nGenereer nu Marco's volgende bericht. Reageer op het bovenstaande en blijf in de fase "${getPhase(turn + 1)}".`;
+    const trigger = `[TURN ${turn + 1}/${max} | FASE: ${getPhase(turn + 1)}]
+Tip voor deze fase: ${getPhaseTip(turn + 1)}
 
-    const marcoMsgId = addMessage('marco', '', true);
-    let marcoText = '';
+Klaar assistent gaf net dit antwoord:
+"${klaarClean || '[geen antwoord]'}"
+
+Genereer NU Marco's volgende bericht. Reageer realistisch op het bovenstaande en ga verder in de fase "${getPhase(turn + 1)}". Schrijf alleen Marco's bericht.`;
+
+    const marcoId = addMsg('marco', '', true);
+    let marcoRaw = '';
     try {
-      marcoText = await streamCall(apiUrl, {
-        message: testerTrigger,
-        history: testerHistory.slice(-10),
+      marcoRaw = await streamCall(apiUrl, {
+        message: trigger,
+        history: testerHist.slice(-12),
         systemContext: TESTER_PROMPT,
-        maxTokens: 150
-      }, tok => appendToken(marcoMsgId, tok));
+        maxTokens: 200
+      }, tok => appendToken(marcoId, tok));
     } catch(e) {
-      // Fallback: genereer een simpele vraag op basis van fase
-      marcoText = getFallback(turn + 1);
+      marcoRaw = getFallback(turn + 1);
     }
 
-    updateMessage(marcoMsgId, marcoText, '', false);
-    conversation.push({ from:'marco', content:marcoText, turn: turn + 0.5 });
+    const { clean: marcoClean, obsArr: marcoObs } = extractObs(marcoRaw);
+    finalizeMsg(marcoId, marcoClean, marcoObs, '', false);
+    conv.push({ from:'marco', content:marcoClean, turn: turn + 0.5 });
+
+    // Log observaties van Marco
+    marcoObs.forEach(o => addObs('marco', o, turn + 1));
 
     await sleep(delay);
   }
 
-  // ── DONE ──
+  // KLAAR
   running = false;
   document.getElementById('btnRun').disabled = false;
   document.getElementById('btnStop').disabled = true;
-  document.getElementById('progressFill').style.width = '100%';
-  document.getElementById('chatStatus').textContent = stopped ? 'Gestopt.' : 'Klaar ✓';
-  document.getElementById('runStatus').textContent = '';
-  renderReport(maxTurns);
+  document.getElementById('progFill').style.width = '100%';
+  document.getElementById('chatSt').textContent = stopped ? 'Gestopt.' : 'Test voltooid ✓';
+  document.getElementById('runSt').textContent = '';
+  renderReport(max);
 }
 
 function stopTest() { stopped = true; running = false; }
 
 function clearAll() {
   if (running) return;
-  document.getElementById('progressWrap').style.display = 'none';
+  ['progWrap','chatWrap','sideWrap','report'].forEach(id => {
+    document.getElementById(id).style.display = 'none';
+  });
   document.getElementById('statsRow').style.display = 'none';
-  document.getElementById('chatWrap').style.display = 'none';
-  document.getElementById('issuesWrap').style.display = 'none';
-  document.getElementById('report').style.display = 'none';
   document.getElementById('chatBody').innerHTML = '';
   document.getElementById('btnRun').disabled = false;
   document.getElementById('btnStop').disabled = true;
-  document.getElementById('runStatus').textContent = '';
-  conversation = []; allIssues = [];
+  document.getElementById('runSt').textContent = '';
+  conv = []; observations = []; bugs = [];
 }
 
 function getFallback(turn) {
-  const fallbacks = {
-    1: 'Hoe begin ik met het instellen van Klaar?',
-    21: 'Hoe log ik een temperatuurmeting in de HACCP Logger?',
-    41: 'Hoe voer ik een nieuw recept in bij Recept Studio?',
-    61: 'Hoe upload ik een factuur van Hanos bij Leveranciers?',
-    71: 'Hoe stel ik de allergenenkaart in voor mijn menu?',
-    81: 'Hoe maak ik een catering event aan voor 80 personen?',
-    91: 'Wat doe ik als een functie niet werkt zoals verwacht?'
+  const ph = getPhase(turn);
+  const fb = {
+    'Onboarding & import': 'OK, maar hoe importeer ik dan mijn oude data vanuit Horeko?',
+    'HACCP — vriezer afwijking': 'Mijn vriezer stond vanochtend op -14,3°C. Hoe leg ik dit vast als afwijking?',
+    'Recepten & kostprijs': 'Ik wil mijn ribeye gerecht invoeren. Ribeye kost me €28,50/kg en een portie is 300g.',
+    'Leveranciers — Hanos factuur': 'Ik heb mijn Hanos factuur H-2026-089234 hier, totaal €775,87. Hoe upload ik die?',
+    'Allergenen & menuanalyse': 'Welke van mijn vier gerechten heeft de hoogste marge?',
+    'Events — bruiloft 80 personen': 'Ik heb een bruiloft in september voor 80 personen. Hoe begin ik daarmee in Klaar?',
+    'Kritische evaluatie': 'Eerlijk gezegd mis ik nog een aantal dingen vergeleken met Horeko. Waar kan ik die melden?'
   };
-  const phase = Math.ceil(turn / 10) * 10;
-  return fallbacks[Object.keys(fallbacks).reverse().find(k => parseInt(k) <= turn)] || 'Kun je dat verder uitleggen?';
+  return fb[ph] || 'Kun je dat concreter uitleggen?';
 }
 
 function sleep(ms) { return new Promise(r => setTimeout(r, ms)); }
 
-// ══════════════════════════════════════════════════════════════
+// ══════════════════════════════════════════════════════
 // RAPPORT
-// ══════════════════════════════════════════════════════════════
+// ══════════════════════════════════════════════════════
 
-function renderReport(maxTurns) {
-  const klaarConv = conversation.filter(m => m.from === 'klaar');
-  const quality = klaarConv.length > 0
-    ? Math.max(0, Math.round(100 - (allIssues.length / klaarConv.length) * 50)) : 0;
-  const avgTime = klaarTurns > 0 ? (totalElapsed / klaarTurns).toFixed(2) : '–';
-  const critCount = allIssues.filter(i => i.sev === 'crit').length;
-  const highCount = allIssues.filter(i => i.sev === 'high').length;
-  const medCount = allIssues.filter(i => i.sev === 'med').length;
-
+function renderReport(max) {
   document.getElementById('report').style.display = 'block';
-  document.getElementById('reportMeta').textContent =
-    `${klaarConv.length} assistent-antwoorden · ${allIssues.length} issues · Avg ${avgTime}s responstijd`;
-  document.getElementById('reportScore').textContent = quality + '%';
-  document.getElementById('reportScore').className = 'report-score ' + (quality > 80 ? 'stat-green' : quality > 60 ? 'stat-orange' : 'stat-red');
 
-  // Issues blok
-  const issBlock = document.getElementById('reportIssues');
-  document.getElementById('issueCount').textContent = `${allIssues.length} totaal`;
-  if (allIssues.length === 0) {
-    issBlock.innerHTML += '<div class="issue-row" style="color:var(--green)">✓ Geen issues gevonden</div>';
+  const klaarTurns = conv.filter(m => m.from === 'klaar');
+  const score = klaarTurns.length > 0 ? Math.max(0, Math.round(100 - bugs.length / klaarTurns.length * 60)) : 0;
+  const avgT = klaarCount > 0 ? (totalElapsed / klaarCount).toFixed(2) : '–';
+  const avgW = klaarCount > 0 ? Math.round(totalWords / klaarCount) : '–';
+
+  document.getElementById('rptMeta').textContent =
+    `${klaarTurns.length} Klaar-antwoorden · ${observations.length} observaties · ${bugs.length} bugs · Avg ${avgT}s`;
+  document.getElementById('rptScore').textContent = score + '%';
+  document.getElementById('rptScore').className = 'score-big ' + (score > 80 ? 'c-green' : score > 60 ? 'c-orange' : 'c-red');
+  document.getElementById('rptObsCount').textContent = `${observations.length} totaal`;
+  document.getElementById('rptBugsCount').textContent = `${bugs.length} totaal`;
+
+  // Observaties
+  const obsBlock = document.getElementById('rptObs');
+  if (observations.length === 0) {
+    obsBlock.innerHTML += '<div class="rpt-row" style="color:var(--green)">✓ Geen observaties</div>';
   } else {
-    allIssues.forEach(iss => {
+    observations.forEach(o => {
       const d = document.createElement('div');
-      d.className = 'issue-row';
-      d.innerHTML = `<span class="issue-sev sev-${iss.sev}">${iss.sev.toUpperCase()}</span><span class="issue-text">${escHtml(iss.text)}</span>`;
-      issBlock.appendChild(d);
+      d.className = 'rpt-row';
+      const cls = o.from === 'marco' ? 'obs-marco' : 'obs-klaar';
+      const lbl = o.from === 'marco' ? '👤 KLANT' : '🛠 DEV';
+      d.innerHTML = `<span class="obs-from ${cls}">${lbl}</span><span class="obs-text">${esc(o.text)} <span style="color:var(--gray)">#${o.turn}</span></span>`;
+      obsBlock.appendChild(d);
     });
   }
 
-  // Stats blok
-  const statsBlock = document.getElementById('reportStats');
-  const statsHtml = [
-    ['Klaar-antwoorden', klaarConv.length],
-    ['Gem. responstijd', avgTime + 's'],
-    ['Kritieke issues', critCount],
-    ['Hoge issues', highCount],
-    ['Medium issues', medCount],
-    ['Kwaliteitsscore', quality + '%'],
-  ].map(([k,v]) => `<div class="issue-row"><span style="color:var(--gray);font-family:'DM Mono',monospace;font-size:10px;min-width:160px">${k}</span><span style="font-weight:600">${v}</span></div>`).join('');
-  statsBlock.innerHTML = statsBlock.innerHTML + statsHtml;
+  // Bugs
+  const bugsBlock = document.getElementById('rptBugs');
+  const smap = {c:'KRITIEK',h:'HOOG',m:'MEDIUM'};
+  if (bugs.length === 0) {
+    bugsBlock.innerHTML += '<div class="rpt-row" style="color:var(--green)">✓ Geen bugs</div>';
+  } else {
+    bugs.forEach(b => {
+      const d = document.createElement('div');
+      d.className = 'rpt-row';
+      d.innerHTML = `<span class="bug-sev sev-${b.sev}">${smap[b.sev]||b.sev}</span><span class="obs-text">${esc(b.text)}</span>`;
+      bugsBlock.appendChild(d);
+    });
+  }
+
+  // Stats
+  const statsBlock = document.getElementById('rptStats');
+  [
+    ['Klaar antwoorden', klaarTurns.length],
+    ['Gem. responstijd', avgT + 's'],
+    ['Gem. woorden', avgW],
+    ['Observaties (beide agents)', observations.length],
+    ['Marco obs.', observations.filter(o => o.from === 'marco').length],
+    ['Klaar obs.', observations.filter(o => o.from === 'klaar').length],
+    ['Kritieke bugs', bugs.filter(b => b.sev === 'c').length],
+    ['Hoge bugs', bugs.filter(b => b.sev === 'h').length],
+    ['Medium bugs', bugs.filter(b => b.sev === 'm').length],
+    ['Kwaliteitsscore', score + '%'],
+  ].forEach(([k, v]) => {
+    const d = document.createElement('div');
+    d.className = 'rpt-row';
+    d.innerHTML = `<span style="color:var(--gray);font-family:'DM Mono',monospace;font-size:10px;min-width:180px">${k}</span><span style="font-weight:600">${v}</span>`;
+    statsBlock.appendChild(d);
+  });
 
   // Transcript
-  const tbody = document.getElementById('transcriptBody');
-  const klaarTurnsArr = conversation.filter(m => m.from === 'klaar');
-  klaarTurnsArr.forEach((klaarMsg, i) => {
-    const marcoMsg = conversation.filter(m => m.from === 'marco')[i];
-    const div = document.createElement('div');
-    div.className = 'transcript-turn';
-    div.innerHTML = `
-      <div class="transcript-q"><span class="t-num">${String(i+1).padStart(3,'0')}</span><span class="t-from">MARCO</span><span>${escHtml(marcoMsg?.content || '')}</span></div>
-      <div class="transcript-a"><span class="t-from" style="margin-right:10px">KLAAR</span>${escHtml(klaarMsg.content || '–')}</div>
+  const tbody = document.getElementById('trsBody');
+  const marcoMsgs = conv.filter(m => m.from === 'marco');
+  const klaarMsgs = conv.filter(m => m.from === 'klaar');
+  const turnCount = Math.min(marcoMsgs.length, klaarMsgs.length);
+  for (let i = 0; i < turnCount; i++) {
+    const d = document.createElement('div');
+    d.className = 'trs-turn';
+    d.innerHTML = `
+      <div class="trs-q"><span class="t-num">${String(i+1).padStart(3,'0')}</span><span class="t-from">MARCO</span><span>${esc(marcoMsgs[i]?.content || '')}</span></div>
+      <div class="trs-a"><span class="t-from">KLAAR</span>${esc(klaarMsgs[i]?.content || '–')}</div>
     `;
-    tbody.appendChild(div);
-  });
+    tbody.appendChild(d);
+  }
 }
 
-// ══════════════════════════════════════════════════════════════
+// ══════════════════════════════════════════════════════
 // CSV EXPORT
-// ══════════════════════════════════════════════════════════════
+// ══════════════════════════════════════════════════════
 
 function exportCSV() {
-  const rows = [['Turn','Van','Inhoud','Issues']];
-  conversation.forEach((m, i) => {
-    rows.push([i+1, m.from, `"${(m.content||'').replace(/"/g,'""')}"`, '']);
-  });
-  allIssues.forEach(iss => {
-    rows.push(['', 'ISSUE', `"${(iss.text||'').replace(/"/g,'""')}"`, iss.sev]);
-  });
+  const rows = [['Turn','Van','Inhoud']];
+  conv.forEach((m, i) => rows.push([i + 1, m.from, `"${(m.content || '').replace(/"/g, '""')}"`]));
+  rows.push(['','','']);
+  rows.push(['OBSERVATIES','Van','Tekst']);
+  observations.forEach(o => rows.push([o.turn, o.from, `"${(o.text || '').replace(/"/g, '""')}"`]));
+  rows.push(['','','']);
+  rows.push(['BUGS','Ernst','Tekst']);
+  bugs.forEach(b => rows.push(['', b.sev, `"${(b.text || '').replace(/"/g, '""')}"`]));
   const csv = rows.map(r => r.join(',')).join('\n');
   const a = document.createElement('a');
   a.href = URL.createObjectURL(new Blob([csv], { type:'text/csv' }));
