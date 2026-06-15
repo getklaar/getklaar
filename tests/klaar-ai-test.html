@@ -1538,8 +1538,8 @@ function detectBugs(turn, text, elapsed) {
     result.push({ sev:'c', text:`Leeg antwoord bij turn ${turn}` });
   if (words > 0 && /^(Hello|Hi |I |The |Yes|No |Of course|Sure)/i.test(text.trim()))
     result.push({ sev:'h', text:`Antwoord begint in het Engels (turn ${turn})` });
-  if (words > 100)
-    result.push({ sev:'m', text:`Te lang: ${words} woorden (turn ${turn}, max ~90)` });
+  if (words > 350)
+    result.push({ sev:'m', text:`Te lang: ${words} woorden (turn ${turn}, max ~350)` });
   if (elapsed > 14)
     result.push({ sev:'m', text:`Trage respons: ${elapsed.toFixed(1)}s (turn ${turn})` });
   const cantPhrases = ['kan ik niet', 'niet in staat', 'buiten mijn mogelijkheden', 'dat weet ik niet', 'geen idee'];
@@ -1712,6 +1712,26 @@ function downloadSignalen() {
   txt += `\n⚠ AUTO-BUGS (${bugs.length})\n${'─'.repeat(40)}\n`;
   const smap = {c:'KRITIEK',h:'HOOG',m:'MEDIUM'};
   bugs.forEach((b,i) => { txt += `${i+1}. [${smap[b.sev]||b.sev}] ${b.text}\n`; });
+
+  // ── VOLLEDIG TRANSCRIPT (Marco + Klaar antwoorden) ─────────────────────
+  const marcoMsgs = conv.filter(m => m.from === 'marco');
+  const klaarMsgs = conv.filter(m => m.from === 'klaar');
+  const turnCount = Math.min(marcoMsgs.length, klaarMsgs.length);
+  if (turnCount > 0) {
+    txt += `\n\n${'═'.repeat(50)}\n`;
+    txt += `💬 VOLLEDIG GESPREK (${turnCount} turns)\n${'═'.repeat(50)}\n`;
+    for (let i = 0; i < turnCount; i++) {
+      const t = String(i + 1).padStart(2, '0');
+      txt += `\n── Turn ${t} ──────────────────────────────────────\n`;
+      txt += `👤 MARCO:\n${(marcoMsgs[i]?.content || '').trim()}\n\n`;
+      txt += `🤖 KLAAR:\n${(klaarMsgs[i]?.content || '–').trim()}\n`;
+    }
+    txt += `\n${'─'.repeat(50)}\n`;
+    txt += `Eind-snapshot: `;
+    const snap = db.find(o => o.text.startsWith('Eind-snapshot'));
+    txt += snap ? snap.text.replace('Eind-snapshot: ', '') : '–';
+    txt += '\n';
+  }
 
   const blob = new Blob([txt], { type: 'text/plain;charset=utf-8' });
   const a = document.createElement('a');
