@@ -2033,10 +2033,13 @@ function calculateFoodCost() {
     if (!m) return;
     const { val, base } = toBase(m[1], m[2] || 'stuk');
 
-    const entry = lib.find(e => {
-      const en = (e.naam||'').toLowerCase();
-      return en === ingName || ingName.includes(en) || en.includes(ingName);
-    });
+    const entry = (ing.libId ? lib.find(e => e.id === ing.libId) : null)
+      || lib.find(e => {
+        const en = (e.naam||'').toLowerCase();
+        const al = (e.ingredient_match||'').toLowerCase();
+        return en === ingName || ingName.includes(en) || en.includes(ingName)
+          || (al && (al === ingName || ingName.includes(al) || al.includes(ingName)));
+      });
     if (!entry || !entry.inkoopprijs) return;
 
     const price    = parseFloat(String(entry.inkoopprijs).replace(',','.')) || 0;
@@ -2462,9 +2465,9 @@ function updateSugs(recipe) {
       <button class="chat-sug" onclick="chatSuggest('Schrijf een NVWA-conforme allergenendeclaratie voor mijn menukaart')">📋 NVWA-verklaring</button>`;
   } else {
     el.innerHTML = `
-      <button class="chat-sug" onclick="chatSuggest('Schrijf een seizoensrecept vanuit mijn ingrediëntenbibliotheek — denk als een chef de partie')">📚 Seizoensrecept</button>
+      <button class="chat-sug" onclick="chatSuggest('Maak een volledig restaurant-recept puur op basis van mijn ingrediëntenbibliotheek. Gebruik zo veel mogelijk ingrediënten die ik al heb en gebruik de exacte namen uit de bibliotheek.')">📚 Recept uit bibliotheek</button>
       <button class="chat-sug" onclick="chatSuggest('Welke recepten kunnen worden voorbereid (mis en place) voor service zonder kwaliteitsverlies?')">⏱️ Prep-analyse</button>
-      <button class="chat-sug" onclick="chatSuggest('Welke recepten missen nog allergeendetectie? Loop alle recepten na.')">🔍 Allergeencheck</button>`;
+      <button class="chat-sug" onclick="chatSuggest('Welke ingrediënten in mijn bibliotheek worden nog niet gebruikt in recepten? Geef suggesties voor wat ik ermee kan maken.')">🔍 Ongebruikte inkoop</button>`;
   }
 }
 
@@ -2493,7 +2496,10 @@ Allergenen: ${al || 'nog niet gedetecteerd'}`;
   }).join('\n');
 
   const ingLijst = ingredienten.length > 0
-    ? ingredienten.slice(0,30).map(i => `  ${i.naam}: €${i.inkoopprijs||'?'}/${i.eenheid||'kg'} (${i.leverancier||'onbekend'})`).join('\n')
+    ? ingredienten.map(i => {
+        const alias = i.ingredient_match ? ` [alias: ${i.ingredient_match}]` : '';
+        return `  ${i.naam}: €${i.inkoopprijs||'?'}/${i.eenheid||'kg'} (${i.leverancier||'onbekend'})${alias}`;
+      }).join('\n')
     : '  (leeg)';
 
   const eu14str = EU14.map(a => `${a.code}=${a.name}`).join(', ');
@@ -2536,11 +2542,14 @@ ${recLijst || '  (nog geen recepten)'}
 INGREDIËNTENBIBLIOTHEEK:
 ${ingLijst}
 
-WERKREGELS:
-- "Recept uit bibliotheek" = gebruik UITSLUITEND de ingrediënten uit de bibliotheek hierboven
-- Bij UPDATE_RECIPE: gebruik het exacte id van het open recept, geef altijd volledige ingredient- en stap-arrays terug
-- Schrijf stappen als een professioneel recept: MISE EN PLACE → BEREIDING → AFWERKING → SERVICE
-- Vermeld kerntemperaturen, pan-temperaturen en rusttijden waar relevant
+WERKREGELS INGREDIËNTEN — CRUCIAAL:
+- De INGREDIËNTENBIBLIOTHEEK hierboven is de inkoopkoppeling. Als je een ingrediënt gebruikt dat erin staat, gebruik dan de EXACTE naam uit de bibliotheek (inclusief hoofdletters/spaties) — dit zorgt voor automatische kostprijsberekening.
+- Als een alias [alias: ...] vermeld staat, mag je ook die naam gebruiken.
+- Als een ingrediënt NIET in de bibliotheek staat maar wél nodig is, gebruik dan een beschrijvende naam en zet er een asterisk voor: "*Truffelpuree" — zo weet de gebruiker dat dit nog ingekocht/aangemaakt moet worden.
+- Geef ALTIJD grammen/ml/stuks als amount — nooit vage maten zoals "een scheut" of "naar smaak" (schrijf "3g" of "5ml" ipv "naar smaak").
+- Bij UPDATE_RECIPE: gebruik het exacte id van het open recept, geef altijd volledige ingredient- en stap-arrays terug.
+- Schrijf stappen als een professioneel recept: MISE EN PLACE → BEREIDING → AFWERKING → SERVICE.
+- Vermeld kerntemperaturen, pan-temperaturen en rusttijden waar relevant.
 - EU-14 allergenen: ${eu14str}
 
 RESPONSLENGTE EN STIJL:
@@ -2713,11 +2722,34 @@ function executeKlaarAction(type, p) {
     if (newR.recipe.ingredients?.length) {
       newR.recipe.ingredients = newR.recipe.ingredients.map(normalizeIngredient);
     }
+    // Koppel ingrediënten aan de bibliotheek
+    const _ingLib = JSON.parse(localStorage.getItem('klaar_ingredienten') || '[]');
+    let _gekoppeld = 0, _nieuw = [];
+    if (newR.recipe.ingredients?.length && _ingLib.length) {
+      newR.recipe.ingredients = newR.recipe.ingredients.map(ing => {
+        const naam = (ing.name || '').replace(/^\*/, '').trim();
+        const match = _ingLib.find(lib => {
+          const p = naam.toLowerCase();
+          const i = (lib.naam || '').toLowerCase();
+          const a = (lib.ingredient_match || '').toLowerCase();
+          if (p === i || (a && p === a)) return true;
+          if (p.includes(i) && i.length > 3) return true;
+          if (a && (a.includes(p) || p.includes(a))) return true;
+          return false;
+        });
+        if (match) { _gekoppeld++; return { ...ing, libId: match.id }; }
+        if (!ing.name?.startsWith('*')) _nieuw.push(ing.name || '');
+        return ing;
+      });
+    }
     recipes.unshift(newR);
     saveRecipes();
     renderSidebar();
     openRecipe(id);
-    showToast(`✓ "${newR.title}" aangemaakt`);
+    const _toastMsg = _nieuw.length
+      ? `✓ "${newR.title}" — ${_gekoppeld} gekoppeld, ${_nieuw.length} nieuw (${_nieuw.slice(0,2).join(', ')}${_nieuw.length>2?'…':''})`
+      : `✓ "${newR.title}" aangemaakt${_gekoppeld ? ` — alle ${_gekoppeld} ingrediënten gekoppeld` : ''}`;
+    showToast(_toastMsg, 4000);
   }
   else if (type === 'UPDATE_RECIPE') {
     const targetId = p.id || activeId;
@@ -2732,6 +2764,20 @@ function executeKlaarAction(type, p) {
       r.recipe = { ...(r.recipe || {}), ...p.recipe };
       if (r.recipe.ingredients?.length) {
         r.recipe.ingredients = r.recipe.ingredients.map(normalizeIngredient);
+        // Koppel aan bibliotheek
+        const _lib = JSON.parse(localStorage.getItem('klaar_ingredienten') || '[]');
+        if (_lib.length) {
+          r.recipe.ingredients = r.recipe.ingredients.map(ing => {
+            if (ing.libId) return ing; // al gekoppeld
+            const nm = (ing.name || '').replace(/^\*/, '').toLowerCase().trim();
+            const match = _lib.find(l => {
+              const i = (l.naam||'').toLowerCase();
+              const a = (l.ingredient_match||'').toLowerCase();
+              return nm===i || (a&&nm===a) || (nm.includes(i)&&i.length>3) || (a&&(a.includes(nm)||nm.includes(a)));
+            });
+            return match ? { ...ing, libId: match.id } : ing;
+          });
+        }
       }
     }
     r.updatedAt = new Date().toISOString();

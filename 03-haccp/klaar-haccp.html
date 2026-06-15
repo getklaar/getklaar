@@ -895,7 +895,10 @@
 
     <div class="grid-2">
       <div class="card">
-        <div class="card-title">Open afwijkingen</div>
+        <div class="card-title" style="display:flex;align-items:center;justify-content:space-between;">
+          Open afwijkingen
+          <button class="btn btn-sm btn-ghost no-print" onclick="goTab('afwijkingen');setTimeout(()=>openModal('modal-afwijking'),100)" style="font-size:11px;padding:4px 10px;">+ Snel melden</button>
+        </div>
         <div id="dash-afw-list">
           <div class="empty">
             <div class="empty-icon">✅</div>
@@ -1164,6 +1167,10 @@
       <label class="form-label" style="opacity:.7;">Ingevoerd door <span style="font-weight:400;font-size:10px;color:var(--muted)">(optioneel — alleen invullen als dit iemand anders is)</span></label>
       <input type="text" id="meting-medewerker" class="form-input" placeholder="Naam medewerker die invoert (laat leeg als gelijk aan gemeten door)">
     </div>
+    <div class="form-group">
+      <label class="form-label" style="opacity:.7;">Opmerkingen <span style="font-weight:400;font-size:10px;color:var(--muted)">(optioneel — bijv. "geen foto beschikbaar", "apparaat defect")</span></label>
+      <input type="text" id="meting-opmerkingen" class="form-input" placeholder="Bijzonderheden vastleggen...">
+    </div>
     <div class="modal-footer">
       <button class="btn btn-ghost" onclick="closeModal('modal-meting')">Annuleren</button>
       <button class="btn btn-primary" onclick="saveMeting()">Opslaan</button>
@@ -1411,10 +1418,24 @@ function initDashboard() {
   if (eenheden.length === 0) {
     setDashStat('temp', '—', 'gray', 'Geen eenheden');
   } else {
-    const gedaan = koeling.length;
+    const gedaan = eenheden.filter(e => koeling.some(m => m.eenheidId === e.id)).length;
     const afwijkingen = koeling.filter(m => m.afwijking).length;
     setDashStat('temp', `${gedaan}/${eenheden.length}`, afwijkingen > 0 ? 'red' : gedaan === eenheden.length ? 'green' : 'orange',
       afwijkingen > 0 ? `${afwijkingen} afwijking(en)` : gedaan === eenheden.length ? 'Compleet' : 'Open');
+
+    // Gemiste meting waarschuwing — welke eenheden zijn nog niet gemeten?
+    const gemist = eenheden.filter(e => !koeling.some(m => m.eenheidId === e.id));
+    const alertEl = document.getElementById('dash-afwijkingen-alert');
+    const uur = new Date().getHours();
+    if (gemist.length > 0 && uur >= 7) {
+      alertEl.innerHTML = `<div class="alert alert-warn" style="margin-bottom:16px">
+        ⚠️ <strong>${gemist.length} eenheid${gemist.length > 1 ? 'en' : ''} nog niet gemeten vandaag:</strong>
+        ${gemist.map(e => `<span style="font-weight:600">${escH(e.naam)}</span>`).join(', ')}
+        — <button class="btn btn-sm btn-ghost no-print" style="margin-left:8px;padding:3px 10px;" onclick="openModal('modal-meting')">+ Meting invoeren</button>
+      </div>`;
+    } else {
+      alertEl.innerHTML = '';
+    }
   }
 
   // Leveranciers
@@ -1588,6 +1609,7 @@ function saveMeting() {
     norm,
     afwijking,
     maatregel,
+    opmerkingen: document.getElementById('meting-opmerkingen').value.trim(),
     gemeten_door: gemetenDoor,
     medewerker  // ingevoerd door (defaults to gemeten_door if not filled)
   };
@@ -1615,6 +1637,7 @@ function saveMeting() {
   document.getElementById('meting-maatregel').value = '';
   document.getElementById('meting-gemeten-door').value = '';
   document.getElementById('meting-medewerker').value = '';
+  document.getElementById('meting-opmerkingen').value = '';
   document.getElementById('meting-afwijking-section').style.display = 'none';
   document.getElementById('meting-temp').classList.remove('ok','warn','err');
   closeModal('modal-meting');
@@ -1632,7 +1655,7 @@ function renderTempVandaag() {
     el.innerHTML = '<div class="empty"><div class="empty-icon">🌡️</div><div class="empty-title">Nog geen metingen vandaag</div><div class="empty-text">Klik op "+ Nieuwe meting" om te beginnen.</div></div>';
     return;
   }
-  el.innerHTML = '<div class="table-wrap"><table><thead><tr><th>Tijd</th><th>Koeleenheid</th><th>Temp (°C)</th><th>Norm</th><th>Status</th><th>Gemeten door</th><th>Ingevoerd door</th><th>Maatregel</th></tr></thead><tbody>' +
+  el.innerHTML = '<div class="table-wrap"><table><thead><tr><th>Tijd</th><th>Koeleenheid</th><th>Temp (°C)</th><th>Norm</th><th>Status</th><th>Gemeten door</th><th>Maatregel</th><th>Opmerkingen</th></tr></thead><tbody>' +
     koeling.map(m => `<tr>
       <td class="td-mono">${m.tijd}</td>
       <td>${m.eenheidNaam}</td>
@@ -1640,8 +1663,8 @@ function renderTempVandaag() {
       <td class="td-mono">max ${m.norm}°C</td>
       <td>${m.afwijking ? '<span class="chip chip-red">Afwijking</span>' : '<span class="chip chip-green">OK</span>'}</td>
       <td>${escH(m.gemeten_door || m.medewerker || '—')}</td>
-      <td style="color:var(--muted)">${escH(m.medewerker !== (m.gemeten_door || m.medewerker) ? m.medewerker : '—')}</td>
-      <td style="font-size:12px;color:var(--muted)">${m.maatregel || '—'}</td>
+      <td style="font-size:12px;color:var(--muted)">${escH(m.maatregel || '—')}</td>
+      <td style="font-size:12px;color:var(--muted);font-style:${m.opmerkingen ? 'normal' : 'italic'}">${escH(m.opmerkingen || '—')}</td>
     </tr>`).join('') +
     '</tbody></table></div>';
 }

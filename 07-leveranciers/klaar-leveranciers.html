@@ -1814,6 +1814,9 @@ function renderReview() {
       </div>
     </div>`;
 
+  const _ingsLib = JSON.parse(localStorage.getItem('klaar_ingredienten') || '[]');
+  const _findIng = naam => _ingsLib.find(ing => ingredientMatch(naam, ing.naam, ing.ingredient_match)) || null;
+
   let blockCount = 0, warnCount = 0, newCount = 0;
 
   const rows = reviewState.regels.map((r, i) => {
@@ -1837,14 +1840,21 @@ function renderReview() {
         </label>
       </div>` : '';
 
+    const _matchedIng = r._include ? _findIng(r.product) : null;
+    const koppelingCell = r._include
+      ? (_matchedIng
+          ? `<div style="color:#6fcf97;font-size:11px;font-weight:600;white-space:nowrap;">✓ ${esc(_matchedIng.naam)}</div>`
+          : `<div><span style="background:rgba(232,255,71,.12);color:#e8ff47;border:1px solid rgba(232,255,71,.4);border-radius:4px;padding:1px 7px;font-size:10px;font-weight:700;white-space:nowrap;">+ NIEUW</span></div>`)
+      : `<div style="color:var(--muted);font-size:10px;">—</div>`;
+
     return `<tr class="${rowClass}">
       <td class="review-include-cell">
         <input type="checkbox" ${r._include ? 'checked' : ''}
-          onchange="reviewState.regels[${i}]._include = this.checked; updateReviewSummary()">
+          onchange="reviewState.regels[${i}]._include = this.checked; renderReview()">
       </td>
       <td style="min-width:160px;">
         <input value="${esc(r.product)}" placeholder="Productnaam"
-          oninput="reviewState.regels[${i}].product = this.value">
+          oninput="reviewState.regels[${i}].product = this.value; renderReview()">
         ${r._matched_product_naam ? `<div style="font-size:10px;color:var(--muted);margin-top:3px;">→ ${esc(r._matched_product_naam)}</div>` : ''}
       </td>
       <td style="width:80px;">
@@ -1866,6 +1876,7 @@ function renderReview() {
         <input type="number" id="rv-totaal-${i}" value="${parseFloat(r.totaal).toFixed(2)}" min="0" step="0.01"
           oninput="reviewState.regels[${i}].totaal = parseFloat(this.value)||0">
       </td>
+      <td style="width:110px;">${koppelingCell}</td>
       <td style="min-width:180px;">
         ${anomalyBadges}
         ${confirmCell}
@@ -1883,6 +1894,7 @@ function renderReview() {
           <th>Eenheid</th>
           <th>Prijs/eenheid</th>
           <th>Totaal</th>
+          <th style="width:110px;">Koppeling</th>
           <th>Controle</th>
         </tr></thead>
         <tbody>${rows}</tbody>
@@ -2036,6 +2048,35 @@ function saveReview() {
     regels: inkoopRegels
   });
 
+  // ── Koppelanalyse VOOR saveData (prijzen nog ongewijzigd) ────────────
+  // Analyseer welke producten al gekoppeld zijn aan ingrediënten.
+  // Na saveData zijn de nieuwe prijzen opgeslagen en roept saveData
+  // syncIngredienten() intern aan; hier bewaren we alleen de analyse.
+  const _koppelAnalyse = syncIngredienten(data); // lees-only preview
+
+  // ── Prijsstijgingsalert ───────────────────────────────────────────────
+  // Vergelijk nieuwe prijzen met de vorige bekende prijs per product.
+  // Verzameld VOOR saveData zodat data.prijzen nog de oude lijst bevat.
+  const prijsAlerts = [];
+  reviewState.regels
+    .filter(r => r._include && parseFloat(r.prijs_per_eenheid) > 0 && r._matched_product_id)
+    .forEach(r => {
+      const nieuweP = parseFloat(r.prijs_per_eenheid);
+      const oudeP   = getHuidigePrijs(r._matched_product_id, data.prijzen, reviewState.datum);
+      if (oudeP && oudeP > 0) {
+        const stijgingPct = ((nieuweP - oudeP) / oudeP) * 100;
+        if (stijgingPct >= 10) {
+          prijsAlerts.push({
+            naam: r.product,
+            oud: oudeP,
+            nieuw: nieuweP,
+            pct: Math.round(stijgingPct),
+            ernst: stijgingPct >= 20 ? 'rood' : 'oranje'
+          });
+        }
+      }
+    });
+
   saveData(data);
 
   // HACCP-koppeling: genereer ontvangst-controletaken voor Module 03
@@ -2057,6 +2098,51 @@ function saveReview() {
       if (btn) switchTab('voorraad', btn);
     }
   );
+
+  // Koppelstatus modal — na een korte delay zodat de toast eerst zichtbaar is
+  setTimeout(() => toonKoppelModal(_koppelAnalyse.bijgewerkt, _koppelAnalyse.ongepaarde), 800);
+
+  // Prijsstijgingsalert modal
+  if (prijsAlerts.length > 0) {
+    const rows = prijsAlerts.map(a => {
+      const kleur = a.ernst === 'rood' ? '#dc2626' : '#f97316';
+      return `<div style="display:flex;justify-content:space-between;align-items:center;
+               padding:10px 0;border-bottom:1px solid #f0f0f0">
+        <div>
+          <div style="font-weight:600;font-size:14px">${esc(a.naam)}</div>
+          <div style="font-size:12px;color:#888;font-family:'DM Mono',monospace">
+            €${a.oud.toFixed(2)} → €${a.nieuw.toFixed(2)}
+          </div>
+        </div>
+        <span style="background:${a.ernst === 'rood' ? '#fee2e2' : '#fff7ed'};
+          color:${kleur};font-family:'DM Mono',monospace;font-size:13px;
+          font-weight:700;padding:4px 10px;border-radius:6px">
+          +${a.pct}%
+        </span>
+      </div>`;
+    }).join('');
+
+    const overlay = document.createElement('div');
+    overlay.style.cssText = 'position:fixed;inset:0;background:rgba(0,0,0,.5);z-index:500;display:flex;align-items:center;justify-content:center;padding:20px';
+    overlay.innerHTML = `
+      <div style="background:#fff;border-radius:10px;padding:28px;max-width:440px;width:100%;max-height:80vh;overflow-y:auto">
+        <div style="font-family:'Bebas Neue',sans-serif;font-size:22px;letter-spacing:.04em;margin-bottom:6px">⚠️ Prijsstijgingen gedetecteerd</div>
+        <div style="font-size:13px;color:#888;margin-bottom:20px">De volgende producten zijn significant duurder dan de vorige inkoop. Controleer je receptmarges in Module 04.</div>
+        ${rows}
+        <div style="display:flex;justify-content:flex-end;gap:8px;margin-top:20px">
+          <button onclick="this.closest('div[style*=fixed]').remove()"
+            style="font-family:'DM Mono',monospace;font-size:12px;padding:8px 16px;border-radius:6px;border:1px solid #e5e5e5;background:#fff;cursor:pointer">
+            Sluiten
+          </button>
+          <button onclick="this.closest('div[style*=fixed]').remove(); window.open('../04-kostprijs/klaar-kostprijs.html','_blank')"
+            style="font-family:'DM Mono',monospace;font-size:12px;padding:8px 16px;border-radius:6px;border:none;background:#111;color:#fff;cursor:pointer">
+            → Kostprijs checken
+          </button>
+        </div>
+      </div>`;
+    document.body.appendChild(overlay);
+    overlay.addEventListener('click', e => { if (e.target === overlay) overlay.remove(); });
+  }
 }
 
 function showToastActie(msg, btnLabel, btnAction) {
@@ -3662,31 +3748,76 @@ function syncGedeeldeProducten(data) {
    automatisch herberekenen na een factuurimport.
    ════════════════════════════════════════════════ */
 
+/* ════════════════════════════════════════════════
+   INGREDIENT MATCHING — slimme woordmatch
+   Vergelijkt productnaam met ingredientnaam op
+   meerdere niveaus: exact → alias → woordoverlap
+   ════════════════════════════════════════════════ */
+
+function ingredientMatch(productNaam, ingNaam, alias) {
+  const p = (productNaam || '').toLowerCase().trim();
+  const i = (ingNaam || '').toLowerCase().trim();
+  const a = (alias || '').toLowerCase().trim();
+
+  // 1. Exact
+  if (p === i) return true;
+  if (a && p === a) return true;
+
+  // 2. Alias bevat productnaam of omgekeerd
+  if (a && (a.includes(p) || p.includes(a))) return true;
+
+  // 3. Ingredientnaam zit volledig in productnaam
+  if (p.includes(i) && i.length > 3) return true;
+
+  // 4. Woordniveau: splits op spaties/leestekens, negeer stopwoorden
+  const STOPWOORDEN = new Set(['de','het','een','van','en','in','op','met','voor','per',
+    'vers','verse','gekoeld','bio','naturel','half','heel','gesneden','filet','steak',
+    'whole','fresh','extra','eerste','klasse','klasse1','kl1','1kg','500g','1l']);
+  const split = s => s.split(/[\s\-,()\/\\&+]+/)
+    .map(w => w.replace(/[^a-z0-9]/g,''))
+    .filter(w => w.length > 2 && !STOPWOORDEN.has(w));
+
+  const pWords = split(p);
+  const iWords = split(i);
+
+  // Alle woorden van ingredientnaam komen voor in productnaam
+  if (iWords.length > 0 && iWords.every(w => pWords.includes(w) || p.includes(w))) return true;
+
+  // Minstens één betekenisvol woorddeel (>4 tekens) matcht
+  if (iWords.some(w => w.length > 4 && p.includes(w))) return true;
+  if (pWords.some(w => w.length > 4 && i.includes(w))) return true;
+
+  return false;
+}
+
+/* ════════════════════════════════════════════════
+   PRIJSCASCADE → klaar_ingredienten
+   Kopieert actuele inkoopprijzen naar de gedeelde
+   ingrediëntenbibliotheek zodat Module 01 en 04
+   automatisch herberekenen na een factuurimport.
+   Geeft terug: { bijgewerkt, ongepaarde }
+   ════════════════════════════════════════════════ */
+
 function syncIngredienten(data) {
   try {
     const vandaag = new Date().toISOString().split('T')[0];
     const ings = JSON.parse(localStorage.getItem('klaar_ingredienten') || '[]');
     let gewijzigd = false;
+    const bijgewerkt = [];
+    const ongepaarde = [];
 
     (data.producten || []).forEach(p => {
       const prijs = getHuidigePrijs(p.id, data.prijzen || [], vandaag);
       if (!prijs) return;
 
-      const normNaam = p.naam.toLowerCase().trim();
-      // Zoek op exacte naam of ingredient_match alias
-      const idx = ings.findIndex(i => {
-        const n = (i.naam || '').toLowerCase().trim();
-        const alias = (i.ingredient_match || i.leverancierNaam || '').toLowerCase().trim();
-        return n === normNaam || alias === normNaam ||
-               normNaam.includes(n) || (n.length > 4 && normNaam.startsWith(n.slice(0, 5)));
-      });
+      const idx = ings.findIndex(i =>
+        ingredientMatch(p.naam, i.naam, i.ingredient_match || i.leverancierNaam)
+      );
 
       if (idx >= 0) {
         const oud = ings[idx].inkoopprijs || 0;
         if (Math.abs(oud - prijs) > 0.001) {
-          // Bewaar prijshistorie als array
           if (!ings[idx].historischePrijzen) ings[idx].historischePrijzen = [];
-          // Voeg vorige prijs toe aan historie als nog niet aanwezig
           if (oud > 0 && !ings[idx].historischePrijzen.some(h => Math.abs(h.prijs - oud) < 0.001)) {
             ings[idx].historischePrijzen.push({ prijs: oud, datum: ings[idx].lastUpdated || vandaag });
           }
@@ -3696,15 +3827,267 @@ function syncIngredienten(data) {
           ings[idx].source      = 'm07-auto';
           gewijzigd = true;
         }
+        bijgewerkt.push({ productNaam: p.naam, ingNaam: ings[idx].naam, prijs, eenheid: p.eenheid });
+      } else {
+        const lev = (data.leveranciers || []).find(l => (p.leverancier_ids || [])[0] === l.id);
+        ongepaarde.push({
+          productId:   p.id,
+          naam:        p.naam,
+          prijs,
+          eenheid:     p.eenheid || 'kg',
+          categorie:   p.categorie || 'overig',
+          leverancier: lev?.naam || ''
+        });
       }
     });
 
     if (gewijzigd) {
       localStorage.setItem('klaar_ingredienten', JSON.stringify(ings));
     }
+    return { bijgewerkt, ongepaarde };
   } catch (e) {
     console.warn('syncIngredienten mislukt:', e);
+    return { bijgewerkt: [], ongepaarde: [] };
   }
+}
+
+/* ════════════════════════════════════════════════
+   INGREDIENT AANMAKEN VANUIT PRODUCT
+   Maakt een nieuw ingrediënt in klaar_ingredienten
+   op basis van een product uit Module 07.
+   ════════════════════════════════════════════════ */
+
+function maakIngredientVanProduct({ productId, naam, prijs, eenheid, categorie, leverancier }, ingNaam) {
+  try {
+    const vandaag = new Date().toISOString().split('T')[0];
+    const ings = JSON.parse(localStorage.getItem('klaar_ingredienten') || '[]');
+    const finalNaam = (ingNaam || naam).trim();
+
+    // Niet aanmaken als al bestaat
+    if (ings.some(i => i.naam.toLowerCase().trim() === finalNaam.toLowerCase())) return false;
+
+    ings.push({
+      id:                'ing_m07_' + uid(),
+      naam:              finalNaam,
+      inkoopprijs:       prijs,
+      eenheid:           eenheid,
+      leverancier:       leverancier,
+      categorie:         categorie,
+      ingredient_match:  naam.toLowerCase().trim(), // zodat toekomstige facturen automatisch matchen
+      lastUpdated:       vandaag,
+      source:            'm07-auto',
+      historischePrijzen: []
+    });
+
+    localStorage.setItem('klaar_ingredienten', JSON.stringify(ings));
+    window.dispatchEvent(new CustomEvent('klaarDataUpdate', {
+      detail: { keys: ['klaar_ingredienten'] }
+    }));
+    return true;
+  } catch(e) {
+    console.warn('maakIngredient mislukt:', e);
+    return false;
+  }
+}
+
+/* ════════════════════════════════════════════════
+   KOPPELEN AAN BESTAAND INGREDIËNT
+   Slaat ingredient_match op zodat toekomstige
+   facturen automatisch de koppeling herkennen.
+   ════════════════════════════════════════════════ */
+
+function koppelenAanBestaand(productNaam, prijs, eenheid, ingId) {
+  try {
+    const vandaag = new Date().toISOString().split('T')[0];
+    const ings = JSON.parse(localStorage.getItem('klaar_ingredienten') || '[]');
+    const idx = ings.findIndex(i => i.id === ingId);
+    if (idx < 0) return false;
+
+    // Sla alias op zodat volgende factuur automatisch matcht
+    ings[idx].ingredient_match = productNaam.toLowerCase().trim();
+
+    // Prijs bijwerken
+    const oud = ings[idx].inkoopprijs || 0;
+    if (Math.abs(oud - prijs) > 0.001) {
+      if (!ings[idx].historischePrijzen) ings[idx].historischePrijzen = [];
+      if (oud > 0) ings[idx].historischePrijzen.push({ prijs: oud, datum: ings[idx].lastUpdated || vandaag });
+      ings[idx].inkoopprijs = prijs;
+      ings[idx].eenheid     = eenheid || ings[idx].eenheid;
+      ings[idx].lastUpdated = vandaag;
+      ings[idx].source      = 'm07-manual';
+    }
+
+    localStorage.setItem('klaar_ingredienten', JSON.stringify(ings));
+    window.dispatchEvent(new CustomEvent('klaarDataUpdate', { detail: { keys: ['klaar_ingredienten'] } }));
+    return true;
+  } catch(e) {
+    console.warn('koppelenAanBestaand mislukt:', e);
+    return false;
+  }
+}
+
+/* ════════════════════════════════════════════════
+   KOPPELSTATUS MODAL
+   Toont na factuur-opslag welke producten wel/niet
+   zijn gekoppeld aan ingrediënten, met acties.
+   ════════════════════════════════════════════════ */
+
+function toonKoppelModal(bijgewerkt, ongepaarde) {
+  // Geen modal nodig als alles gekoppeld is
+  if (ongepaarde.length === 0 && bijgewerkt.length === 0) return;
+
+  const existingIngs = JSON.parse(localStorage.getItem('klaar_ingredienten') || '[]');
+
+  const ingSelectOpties = existingIngs
+    .sort((a,b) => (a.naam||'').localeCompare(b.naam||''))
+    .map(i => `<option value="${i.id}">${esc(i.naam)} (€${(i.inkoopprijs||0).toFixed(2)}/${i.eenheid||'kg'})</option>`)
+    .join('');
+
+  const bijgewerktHtml = bijgewerkt.length > 0 ? `
+    <div style="margin-bottom:16px">
+      <div style="display:flex;align-items:center;gap:8px;margin-bottom:8px;cursor:pointer"
+           onclick="this.nextElementSibling.style.display=this.nextElementSibling.style.display==='none'?'block':'none'">
+        <span style="color:#16a34a;font-size:14px">✓</span>
+        <span style="font-weight:600;font-size:13px;color:#16a34a">${bijgewerkt.length} prijs${bijgewerkt.length!==1?'en':''} bijgewerkt</span>
+        <span style="font-size:11px;color:#888;margin-left:auto">▾ toon</span>
+      </div>
+      <div style="display:none;background:#f0fdf4;border-radius:6px;padding:10px 12px">
+        ${bijgewerkt.map(b => `
+          <div style="display:flex;justify-content:space-between;padding:4px 0;font-size:12px;border-bottom:1px solid #d1fae5">
+            <span style="color:#333">${esc(b.productNaam)} <span style="color:#888">→ ${esc(b.ingNaam)}</span></span>
+            <span style="font-family:'DM Mono',monospace;color:#16a34a">€${b.prijs.toFixed(2)}/${b.eenheid}</span>
+          </div>`).join('')}
+      </div>
+    </div>` : '';
+
+  const ongepaardeHtml = ongepaarde.length > 0 ? `
+    <div style="margin-bottom:8px">
+      <div style="font-weight:600;font-size:13px;color:#c2410c;margin-bottom:10px">
+        ⚠ ${ongepaarde.length} product${ongepaarde.length!==1?'en':''} nog niet gekoppeld aan een ingrediënt
+      </div>
+      <div style="font-size:12px;color:#888;margin-bottom:12px">
+        Zonder koppeling worden deze prijzen niet meegenomen in je kostprijsberekeningen.
+      </div>
+      <div id="koppel-items">
+        ${ongepaarde.map((p, idx) => `
+          <div id="koppel-item-${idx}" style="background:#fff7ed;border:1px solid #fed7aa;border-radius:8px;padding:14px;margin-bottom:10px">
+            <div style="display:flex;justify-content:space-between;align-items:flex-start;margin-bottom:10px">
+              <div>
+                <div style="font-weight:600;font-size:14px">${esc(p.naam)}</div>
+                <div style="font-family:'DM Mono',monospace;font-size:11px;color:#888">
+                  €${p.prijs.toFixed(2)}/${p.eenheid} · ${p.leverancier||'onbekend'} · ${p.categorie}
+                </div>
+              </div>
+            </div>
+            <div style="display:flex;gap:8px;flex-wrap:wrap">
+              <input type="text" id="koppel-naam-${idx}" value="${esc(p.naam)}"
+                style="flex:1;min-width:160px;font-family:'DM Sans',sans-serif;font-size:13px;
+                  padding:7px 10px;border:1px solid #e5e5e5;border-radius:6px;background:#fff"
+                placeholder="Naam in ingrediëntenlijst">
+              <button onclick="doMaakIngredient(${idx})"
+                style="font-family:'DM Mono',monospace;font-size:11px;letter-spacing:.05em;
+                  padding:7px 14px;border-radius:6px;border:none;background:#111;color:#fff;
+                  cursor:pointer;white-space:nowrap">
+                + Aanmaken
+              </button>
+            </div>
+            <div style="margin-top:8px;display:flex;gap:8px;align-items:center">
+              <span style="font-size:11px;color:#888">of koppel aan bestaand:</span>
+              <select id="koppel-sel-${idx}"
+                style="flex:1;font-family:'DM Sans',sans-serif;font-size:12px;
+                  padding:6px 8px;border:1px solid #e5e5e5;border-radius:6px;background:#fff">
+                <option value="">— kies ingrediënt —</option>
+                ${ingSelectOpties}
+              </select>
+              <button onclick="doKoppelenAanBestaand(${idx})"
+                style="font-family:'DM Mono',monospace;font-size:11px;letter-spacing:.05em;
+                  padding:7px 14px;border-radius:6px;border:1px solid #e5e5e5;
+                  background:#fff;cursor:pointer;white-space:nowrap">
+                Koppelen
+              </button>
+            </div>
+          </div>`).join('')}
+      </div>
+    </div>` : '';
+
+  const overlay = document.createElement('div');
+  overlay.id = 'koppel-overlay';
+  overlay.style.cssText = 'position:fixed;inset:0;background:rgba(0,0,0,.55);z-index:600;display:flex;align-items:flex-start;justify-content:center;padding:40px 20px;overflow-y:auto';
+
+  overlay.innerHTML = `
+    <div style="background:#fff;border-radius:12px;width:100%;max-width:520px;padding:28px;box-shadow:0 24px 64px rgba(0,0,0,.25)">
+      <div style="font-family:'Bebas Neue',sans-serif;font-size:24px;letter-spacing:.04em;margin-bottom:4px">
+        Ingrediënten koppelen
+      </div>
+      <div style="font-size:13px;color:#888;margin-bottom:20px">
+        ${bijgewerkt.length + ongepaarde.length} producten verwerkt — check de koppelingen zodat je kostprijzen kloppen
+      </div>
+      ${bijgewerktHtml}
+      ${ongepaardeHtml}
+      <div style="display:flex;justify-content:space-between;align-items:center;margin-top:16px;padding-top:16px;border-top:1px solid #f0f0f0">
+        ${ongepaarde.length > 1 ? `
+          <button onclick="doAllesAanmaken()"
+            style="font-family:'DM Mono',monospace;font-size:11px;padding:8px 16px;border-radius:6px;
+              border:none;background:#e8ff47;color:#111;cursor:pointer;font-weight:600">
+            ✓ Alles aanmaken (${ongepaarde.length})
+          </button>` : '<span></span>'}
+        <button onclick="document.getElementById('koppel-overlay').remove()"
+          style="font-family:'DM Mono',monospace;font-size:11px;padding:8px 16px;border-radius:6px;
+            border:1px solid #e5e5e5;background:#fff;cursor:pointer">
+          Sluiten
+        </button>
+      </div>
+    </div>`;
+
+  // Sla ongepaarde op als closure zodat de knoppen er bij kunnen
+  overlay._ongepaarde = ongepaarde;
+  document.body.appendChild(overlay);
+}
+
+// Knoppen inside modal roepen deze globals aan:
+function doMaakIngredient(idx) {
+  const overlay = document.getElementById('koppel-overlay');
+  if (!overlay) return;
+  const prod = overlay._ongepaarde[idx];
+  const naamInput = document.getElementById(`koppel-naam-${idx}`);
+  const ingNaam = naamInput ? naamInput.value.trim() : prod.naam;
+  const ok = maakIngredientVanProduct(prod, ingNaam);
+  if (ok) {
+    const el = document.getElementById(`koppel-item-${idx}`);
+    if (el) el.innerHTML = `<div style="color:#16a34a;font-size:13px">✓ "${esc(ingNaam)}" aangemaakt als ingrediënt — beschikbaar in Recept Studio en Kostprijs</div>`;
+  } else {
+    alert(`Ingrediënt "${ingNaam}" bestaat al of aanmaken mislukt.`);
+  }
+}
+
+function doKoppelenAanBestaand(idx) {
+  const overlay = document.getElementById('koppel-overlay');
+  if (!overlay) return;
+  const prod = overlay._ongepaarde[idx];
+  const sel = document.getElementById(`koppel-sel-${idx}`);
+  if (!sel || !sel.value) { alert('Selecteer eerst een ingrediënt'); return; }
+  const ok = koppelenAanBestaand(prod.naam, prod.prijs, prod.eenheid, sel.value);
+  if (ok) {
+    const selTxt = sel.options[sel.selectedIndex].text;
+    const el = document.getElementById(`koppel-item-${idx}`);
+    if (el) el.innerHTML = `<div style="color:#16a34a;font-size:13px">✓ Gekoppeld aan "${esc(selTxt)}" — prijs bijgewerkt</div>`;
+  }
+}
+
+function doAllesAanmaken() {
+  const overlay = document.getElementById('koppel-overlay');
+  if (!overlay) return;
+  overlay._ongepaarde.forEach((prod, idx) => {
+    const naamInput = document.getElementById(`koppel-naam-${idx}`);
+    const ingNaam = (naamInput ? naamInput.value.trim() : '') || prod.naam;
+    const ok = maakIngredientVanProduct(prod, ingNaam);
+    const el = document.getElementById(`koppel-item-${idx}`);
+    if (el) {
+      el.innerHTML = ok
+        ? `<div style="color:#16a34a;font-size:13px">✓ "${esc(ingNaam)}" aangemaakt</div>`
+        : `<div style="color:#888;font-size:13px">⚠ "${esc(ingNaam)}" bestaat al of overgeslagen</div>`;
+    }
+  });
 }
 
 /* ════════════════════════════════════════════════

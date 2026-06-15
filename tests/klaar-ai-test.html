@@ -1020,11 +1020,13 @@ MODULE 02 — Allergenenkaart
 
 MODULE 03 — HACCP Logger
   Koelcellen en vriezers configureren met naam, min- en maxnorm.
-  Dagelijks loggen: temperatuur, tijdstip, gemeten door (verplicht), ingevoerd door (optioneel).
+  Dagelijks loggen: temperatuur, tijdstip, gemeten door (verplicht), opmerkingen (optioneel veld voor bijv. "geen foto beschikbaar"), ingevoerd door (optioneel).
   Afwijkingen worden automatisch gemarkeerd bij overschrijding norm.
   Maatregel/actie vastleggen bij afwijking — verplicht voor NVWA-compliance.
+  Dashboard toont WELKE eenheden vandaag nog niet gemeten zijn (gemiste meting waarschuwing na 07:00).
+  "Snel melden" knop op dashboard — afwijking rapporteren in 1 klik.
   Daily reminder via browser Notifications API instellen (bijv. 07:00).
-  Inspectie-klaar: alle logs met corrigerende maatregelen zichtbaar per datum.
+  Inspectie-klaar: alle logs met corrigerende maatregelen en opmerkingen zichtbaar per datum.
   localStorage keys: klaar_haccp_koeling, klaar_haccp_afwijkingen, klaar_haccp_eenheden
 
 MODULE 04 — Kostprijs Calculator
@@ -1041,8 +1043,18 @@ MODULE 05 — Menubuilder
 MODULE 07 — Leveranciers
   Facturen uploaden (foto, scan, PDF) → OCR via Claude Vision AI.
   Verwerkt producten en prijzen in ingrediëntenbibliotheek.
-  Prijstrend per ingredient over tijd bijhouden.
-  Prijsalerts instellen per ingrediënt.
+  AUTO-SYNC: na elke factuur-opslag worden klaar_ingredienten automatisch bijgewerkt met de nieuwste inkoopprijs. Module 01 (Recept Studio) en Module 04 (Kostprijs) herberekenen onmiddellijk via klaarDataUpdate event — dit werkt al.
+  KOPPELSTATUS MODAL: na elke factuur-opslag verschijnt een scherm "Ingrediënten koppelen" met:
+    - Groen: welke producten zijn automatisch gekoppeld aan een bestaand ingrediënt (prijs bijgewerkt)
+    - Oranje: welke producten NIET zijn gekoppeld — de gebruiker kan ze direct aanmaken als ingrediënt (naam aanpassen + knop "Aanmaken") of koppelen aan een bestaand ingrediënt via dropdown
+    - "Alles aanmaken" knop maakt alle ongekoppelde producten in één klik aan als ingrediënt
+    - Eenmaal aangemaakt/gekoppeld: beschikbaar in Recept Studio en Kostprijs
+  Ingredient-matching werkt op woordniveau: "Zalm filet 1kg" matcht automatisch op "zalm filet" of "zalm".
+  Als een koppeling eenmaal handmatig is gemaakt, herkent Klaar bij volgende facturen hetzelfde product automatisch.
+  Prijstrend per ingredient over tijd bijhouden — al beschikbaar in het systeem.
+  PRIJSSTIJGINGSALERT: bij opslaan factuur → als een product >10% duurder is dan vorige inkoop, verschijnt een alert met welke producten gestegen zijn en hoe veel %, met directe link naar Module 04.
+  Deduplicatie: als factuurNr al in systeem zit, vraagt Klaar bevestiging vóór opslaan.
+  Factuur-import via Smart Scanner (Module 08) of direct in Module 07.
   localStorage keys: klaar_inkopen, klaar_ingredienten, klaar_producten
 
 MODULE 08 — Smart Scanner (NIEUW)
@@ -1072,8 +1084,11 @@ MARCO'S VOLLEDIGE DATASET (in localStorage aanwezig, verwijs ernaar):
 14 producten met voorraad: burrata bijna op (4 stuks, THW gisteren!), pijnboompitten border.
 2 events: bruiloft 80 pers. (28 sep), borrel 40 pers. (4 okt).
 
+MOBIEL GEBRUIK:
+Klaar draait als responsive webapplicatie — geen native iOS/Android app nodig. Alle modules werken in de mobiele browser (Chrome, Safari). Sommige functies zoals foto-upload werken zelfs beter op mobiel (direct camera-toegang). Als Marco vraagt of iets op mobiel werkt: antwoord is ja, tenzij het specifiek over een native app-feature gaat (push notifications = beperkt, offline = beperkt).
+
 ANTWOORDREGELS:
-- Max 90 woorden. Direct beginnen — geen intro zoals "Hoi Marco!" of "Goed om te horen!"
+- Max 120 woorden. Direct beginnen — geen intro zoals "Hoi Marco!" of "Goed om te horen!"
 - Concrete berekeningen met Marco's echte prijzen uit het systeem. Geen afgeronde/fictieve getallen.
 - Vernoem de exacte module: "In Recept Studio →", "In HACCP Logger →"
 - Als een functie niet bestaat: zeg dat EERLIJK. Geen spin. Stel werkbaar alternatief voor.
@@ -1081,6 +1096,13 @@ ANTWOORDREGELS:
 - Bij berekeningen: toon tussenresultaten (kostprijs per portie → foodcost% → brutomarge in €).
 - Als Marco een verkeerde aanname maakt: corrigeer vriendelijk maar direct.
 - Verwijs naar data die in het systeem staat: "In jouw systeem zie ik dat ribeye op €28,50/kg staat"
+- Zeg NOOIT "waarschijnlijk" of "ik weet niet zeker" over features die in dit systeem beschreven staan. Je kent het systeem.
+- Stuur gebruikers NIET door naar support voor vragen die jij kunt beantwoorden.
+
+BIJ FRUSTRATIE OF PROBLEMEN — LOG VERPLICHT:
+Als Marco gefrustreerd is, een feature mist, een bug rapporteert of een UX-klacht heeft: log dit direct met:
+[KLAAR:LOG_ISSUE:{"type":"bug|ux|feature_mis|frustratie","module":"03-haccp","beschrijving":"Korte omschrijving","ernst":"laag|midden|hoog"}]
+Doe dit ZONDER extra uitleg of excuses. Gewoon loggen en antwoord geven. Geen "het spijt me", geen "dat begrijp ik". Direct to the point.
 
 [OBS: dev-signaal] — voeg toe aan EINDE van je bericht als je ontbrekende functies, UX-problemen, verkeerde aannames van Marco, of verbeterpunten signaleert. Wees specifiek: "functie X ontbreekt" of "koppeling Y mist".`;
 
@@ -1479,6 +1501,7 @@ let running = false, stopped = false;
 let conv = [];
 let observations = [];
 let bugs = [];
+let loggedIssues = [];   // [KLAAR:LOG_ISSUE:{...}] acties van de assistent
 let dbChecks = 0;
 let totalElapsed = 0, klaarCount = 0, totalWords = 0;
 
@@ -1529,6 +1552,24 @@ function extractObs(text) {
   }
   const clean = text.replace(/\[OBS:\s*[^\]]+\]/gi, '').replace(/\n{3,}/g, '\n\n').trim();
   return { clean, obsArr };
+}
+
+function extractLogIssues(text, turn) {
+  // Pik [KLAAR:LOG_ISSUE:{...}] acties op uit de assistent-respons
+  const issueRx = /\[KLAAR:LOG_ISSUE:(\{[^}]+\})\]/g;
+  let m;
+  const found = [];
+  while ((m = issueRx.exec(text)) !== null) {
+    try {
+      const obj = JSON.parse(m[1]);
+      found.push({ turn, ...obj, raw: m[0] });
+    } catch(e) {
+      found.push({ turn, type:'parse-fout', beschrijving: m[1], ernst:'laag', raw: m[0] });
+    }
+  }
+  // Verwijder LOG_ISSUE tags uit de clean tekst (worden apart getoond)
+  const clean = text.replace(/\[KLAAR:LOG_ISSUE:[^\]]+\]/g, '').replace(/\n{3,}/g, '\n\n').trim();
+  return { clean, issues: found };
 }
 
 function detectBugs(turn, text, elapsed) {
@@ -1713,6 +1754,18 @@ function downloadSignalen() {
   const smap = {c:'KRITIEK',h:'HOOG',m:'MEDIUM'};
   bugs.forEach((b,i) => { txt += `${i+1}. [${smap[b.sev]||b.sev}] ${b.text}\n`; });
 
+  txt += `\n🔴 GELOGDE ISSUES DOOR ASSISTENT (${loggedIssues.length})\n${'─'.repeat(40)}\n`;
+  if (loggedIssues.length === 0) {
+    txt += 'Geen issues gelogd.\n';
+  } else {
+    const ernstVolgorde = { hoog:0, midden:1, laag:2 };
+    [...loggedIssues].sort((a,b) => (ernstVolgorde[a.ernst]??9) - (ernstVolgorde[b.ernst]??9))
+      .forEach((issue, i) => {
+        txt += `${i+1}. [${(issue.ernst || '?').toUpperCase()}] [turn ${issue.turn}] ${issue.type || '?'} — ${issue.module || '?'}\n`;
+        txt += `   ${issue.beschrijving || '(geen beschrijving)'}\n`;
+      });
+  }
+
   // ── VOLLEDIG TRANSCRIPT (Marco + Klaar antwoorden) ─────────────────────
   const marcoMsgs = conv.filter(m => m.from === 'marco');
   const klaarMsgs = conv.filter(m => m.from === 'klaar');
@@ -1759,7 +1812,7 @@ async function startTest() {
   testPlan = buildTestPlan(max);
 
   running = true; stopped = false;
-  conv = []; observations = []; bugs = []; dbChecks = 0; totalElapsed = 0; klaarCount = 0; totalWords = 0;
+  conv = []; observations = []; bugs = []; loggedIssues = []; dbChecks = 0; totalElapsed = 0; klaarCount = 0; totalWords = 0;
 
   // UI show
   ['progWrap','statsRow','chatWrap'].forEach(id => {
@@ -1834,7 +1887,14 @@ async function startTest() {
     totalElapsed += elapsed;
     klaarCount++;
 
-    const { clean: klaarClean, obsArr: klaarObs } = extractObs(klaarRaw);
+    // Extraheer LOG_ISSUE acties VOOR extractObs zodat ze niet als OBS worden gezien
+    const { clean: klaarAfterIssues, issues: newIssues } = extractLogIssues(klaarRaw, turn);
+    newIssues.forEach(issue => {
+      loggedIssues.push(issue);
+      addObs('klaar', `🔴 LOG_ISSUE [${issue.ernst?.toUpperCase() || '?'}] ${issue.module || ''}: ${issue.beschrijving || ''}`, turn);
+    });
+
+    const { clean: klaarClean, obsArr: klaarObs } = extractObs(klaarAfterIssues);
     const wc = klaarClean.trim().split(/\s+/).filter(Boolean).length;
     totalWords += wc;
 
