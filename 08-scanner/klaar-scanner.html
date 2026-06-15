@@ -1,0 +1,1213 @@
+<!DOCTYPE html>
+<html lang="nl">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Smart Scanner — Klaar</title>
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link href="https://fonts.googleapis.com/css2?family=Bebas+Neue&family=DM+Sans:wght@400;500;600&family=DM+Mono:wght@400;500&display=swap" rel="stylesheet">
+  <style>
+    :root {
+      --lime:    #e8ff47;
+      --black:   #0a0a0a;
+      --white:   #ffffff;
+      --surface: #111111;
+      --border:  #222222;
+      --muted:   #666666;
+      --text:    #1a1a1a;
+      --bg:      #f5f5f2;
+      --card:    #ffffff;
+      --lborder: #e5e5e5;
+      --red:     #dc2626;
+      --green:   #16a34a;
+    }
+
+    * { box-sizing: border-box; margin: 0; padding: 0; }
+    body { font-family: 'DM Sans', sans-serif; background: var(--bg); color: var(--text); min-height: 100vh; }
+
+    /* ── HEADER ── */
+    .header {
+      background: var(--black); color: var(--white);
+      display: flex; align-items: center; gap: 14px;
+      padding: 0 20px; height: 52px; position: sticky; top: 0; z-index: 100;
+    }
+    .header-back { color: var(--muted); font-family: 'DM Mono', monospace; font-size: 11px; text-decoration: none; letter-spacing: .06em; }
+    .header-back:hover { color: var(--white); }
+    .header-div { width: 1px; height: 20px; background: #333; }
+    .header-logo { font-family: 'Bebas Neue', sans-serif; font-size: 22px; letter-spacing: .08em; color: var(--lime); }
+    .header-module { font-family: 'DM Mono', monospace; font-size: 11px; color: var(--muted); letter-spacing: .06em; }
+    .header-badge { margin-left: auto; font-family: 'DM Mono', monospace; font-size: 10px; color: var(--lime); letter-spacing: .06em; }
+
+    /* ── MAIN ── */
+    .main { max-width: 780px; margin: 0 auto; padding: 32px 20px 60px; }
+
+    .page-title {
+      font-family: 'Bebas Neue', sans-serif; font-size: 36px; letter-spacing: .04em;
+      color: var(--black); margin-bottom: 4px;
+    }
+    .page-sub { font-size: 14px; color: var(--muted); margin-bottom: 28px; }
+
+    /* ── STAP INDICATORS ── */
+    .steps {
+      display: flex; align-items: center; gap: 0; margin-bottom: 28px;
+    }
+    .step { display: flex; align-items: center; gap: 8px; font-family: 'DM Mono', monospace; font-size: 11px; letter-spacing: .06em; color: var(--muted); }
+    .step.active { color: var(--text); }
+    .step.done { color: var(--green); }
+    .step-dot {
+      width: 24px; height: 24px; border-radius: 50%; border: 2px solid #ddd;
+      display: flex; align-items: center; justify-content: center; font-size: 11px; flex-shrink: 0;
+    }
+    .step.active .step-dot { border-color: var(--text); background: var(--text); color: #fff; }
+    .step.done .step-dot { border-color: var(--green); background: var(--green); color: #fff; }
+    .step-line { flex: 1; height: 1px; background: #ddd; margin: 0 8px; min-width: 24px; }
+
+    /* ── CARD ── */
+    .card {
+      background: var(--card); border: 1px solid var(--lborder);
+      border-radius: 10px; padding: 28px;
+    }
+    .card-title { font-family: 'Bebas Neue', sans-serif; font-size: 20px; letter-spacing: .04em; margin-bottom: 6px; }
+    .card-sub { font-size: 13px; color: var(--muted); margin-bottom: 20px; }
+
+    /* ── UPLOAD ZONE ── */
+    .upload-zone {
+      border: 2px dashed #d0d0cc; border-radius: 10px;
+      padding: 48px 24px; text-align: center; cursor: pointer;
+      transition: all .2s; background: #fafaf8; position: relative;
+    }
+    .upload-zone:hover, .upload-zone.drag-over {
+      border-color: var(--text); background: #f0f0ee;
+    }
+    .upload-zone input[type=file] {
+      position: absolute; inset: 0; opacity: 0; cursor: pointer; width: 100%; height: 100%;
+    }
+    .upload-icon { font-size: 40px; margin-bottom: 12px; }
+    .upload-title { font-size: 16px; font-weight: 600; margin-bottom: 6px; }
+    .upload-sub { font-size: 13px; color: var(--muted); }
+    .upload-types {
+      display: flex; justify-content: center; gap: 8px; margin-top: 16px; flex-wrap: wrap;
+    }
+    .upload-type-chip {
+      font-family: 'DM Mono', monospace; font-size: 10px; letter-spacing: .06em;
+      padding: 3px 10px; border-radius: 20px; background: #ededea; color: var(--muted);
+    }
+
+    /* ── PREVIEW ── */
+    .preview-wrap { display: flex; gap: 16px; align-items: flex-start; margin-bottom: 20px; }
+    .preview-img { width: 120px; height: 120px; object-fit: cover; border-radius: 6px; border: 1px solid var(--lborder); flex-shrink: 0; }
+    .preview-info { flex: 1; }
+    .preview-name { font-weight: 600; font-size: 14px; margin-bottom: 4px; }
+    .preview-size { font-size: 12px; color: var(--muted); margin-bottom: 12px; }
+    .btn-change { font-size: 12px; color: var(--muted); text-decoration: underline; cursor: pointer; background: none; border: none; padding: 0; }
+    .btn-change:hover { color: var(--text); }
+
+    /* ── SPINNER ── */
+    .scan-state { text-align: center; padding: 40px 20px; }
+    .scan-ring {
+      width: 52px; height: 52px; border: 3px solid #e5e5e5;
+      border-top-color: var(--text); border-radius: 50%;
+      animation: spin .8s linear infinite; margin: 0 auto 16px;
+    }
+    @keyframes spin { to { transform: rotate(360deg); } }
+    .scan-label { font-family: 'Bebas Neue', sans-serif; font-size: 20px; letter-spacing: .04em; margin-bottom: 6px; }
+    .scan-sub { font-size: 13px; color: var(--muted); }
+    .scan-phases { margin-top: 16px; display: flex; flex-direction: column; gap: 6px; align-items: center; }
+    .scan-phase {
+      font-family: 'DM Mono', monospace; font-size: 11px; color: var(--muted);
+      display: flex; align-items: center; gap: 8px; opacity: .4; transition: opacity .3s;
+    }
+    .scan-phase.active { opacity: 1; color: var(--text); }
+    .scan-phase.done { opacity: 1; color: var(--green); }
+
+    /* ── DETECTED TYPE BADGE ── */
+    .detected-badge {
+      display: inline-flex; align-items: center; gap: 10px;
+      background: var(--black); color: var(--lime);
+      font-family: 'DM Mono', monospace; font-size: 12px; letter-spacing: .06em;
+      padding: 8px 16px; border-radius: 6px; margin-bottom: 20px;
+    }
+    .detected-conf { font-size: 10px; color: #888; }
+
+    /* ── REVIEW TABLE ── */
+    .review-section { margin-bottom: 24px; }
+    .review-sec-title {
+      font-family: 'DM Mono', monospace; font-size: 10px; letter-spacing: .12em;
+      text-transform: uppercase; color: var(--muted);
+      padding-bottom: 7px; border-bottom: 1px solid var(--lborder); margin-bottom: 12px;
+    }
+    .review-table { width: 100%; border-collapse: collapse; font-size: 13px; }
+    .review-table th {
+      font-family: 'DM Mono', monospace; font-size: 10px; letter-spacing: .06em;
+      text-transform: uppercase; color: var(--muted); font-weight: 500;
+      padding: 6px 8px; border-bottom: 1px solid var(--lborder); text-align: left;
+    }
+    .review-table td { padding: 7px 8px; border-bottom: 1px solid #f0f0ee; vertical-align: middle; }
+    .review-table tr:last-child td { border-bottom: none; }
+    .review-table input, .review-table select {
+      font-family: 'DM Sans', sans-serif; font-size: 13px; color: var(--text);
+      background: #fafaf8; border: 1px solid #e5e5e5; border-radius: 4px;
+      padding: 5px 8px; width: 100%; outline: none;
+    }
+    .review-table input:focus, .review-table select:focus { border-color: var(--text); background: #fff; }
+    .review-table .del-btn {
+      width: 26px; height: 26px; border: none; background: none; color: #ccc; cursor: pointer; font-size: 15px; border-radius: 4px;
+    }
+    .review-table .del-btn:hover { background: #fee2e2; color: var(--red); }
+    .add-row-btn {
+      font-size: 12px; font-family: 'DM Mono', monospace; color: var(--muted);
+      background: none; border: 1px dashed #d0d0cc; border-radius: 4px;
+      padding: 5px 14px; cursor: pointer; margin-top: 8px; letter-spacing: .04em;
+    }
+    .add-row-btn:hover { border-color: var(--text); color: var(--text); }
+    .meta-grid { display: grid; grid-template-columns: 1fr 1fr; gap: 12px; }
+    .meta-group label { font-family: 'DM Mono', monospace; font-size: 10px; letter-spacing: .08em; text-transform: uppercase; color: var(--muted); display: block; margin-bottom: 5px; }
+    .meta-group input, .meta-group select {
+      width: 100%; font-size: 13px; font-family: 'DM Sans', sans-serif; color: var(--text);
+      background: #fafaf8; border: 1px solid #e5e5e5; border-radius: 5px;
+      padding: 7px 10px; outline: none;
+    }
+    .meta-group input:focus, .meta-group select:focus { border-color: var(--text); background: #fff; }
+
+    .chip {
+      display: inline-flex; align-items: center; gap: 4px;
+      font-family: 'DM Mono', monospace; font-size: 10px; padding: 3px 9px; border-radius: 20px;
+    }
+    .chip-black { background: var(--black); color: var(--lime); }
+    .chip-warn  { background: #fef3c7; color: #92400e; }
+    .chip-green { background: #dcfce7; color: #166534; }
+    .chip-red   { background: #fee2e2; color: #dc2626; }
+
+    /* ── DESTINATION BANNER ── */
+    .dest-banner {
+      display: flex; align-items: center; gap: 12px;
+      border: 1.5px solid var(--lime); border-radius: 8px; padding: 14px 18px;
+      background: #f7ffe0; margin-bottom: 20px;
+    }
+    .dest-icon { font-size: 22px; }
+    .dest-info { flex: 1; }
+    .dest-label { font-family: 'DM Mono', monospace; font-size: 10px; letter-spacing: .08em; text-transform: uppercase; color: var(--muted); margin-bottom: 2px; }
+    .dest-name { font-weight: 600; font-size: 15px; }
+    .dest-count { font-size: 12px; color: var(--muted); }
+
+    /* ── BUTTONS ── */
+    .btn-row { display: flex; gap: 10px; flex-wrap: wrap; margin-top: 24px; }
+    .btn { font-family: 'DM Sans', sans-serif; font-size: 14px; font-weight: 500; padding: 10px 20px; border-radius: 6px; cursor: pointer; border: 1px solid transparent; transition: all .15s; }
+    .btn-primary { background: var(--black); color: var(--lime); border-color: var(--black); }
+    .btn-primary:hover { background: #222; }
+    .btn-ghost { background: none; color: var(--text); border-color: #d0d0cc; }
+    .btn-ghost:hover { border-color: var(--text); }
+    .btn-lime { background: var(--lime); color: var(--black); border-color: var(--lime); font-weight: 700; }
+    .btn-lime:hover { opacity: .88; }
+    .btn:disabled { opacity: .4; cursor: not-allowed; }
+
+    /* ── SUCCESS ── */
+    .success-wrap { text-align: center; padding: 40px 20px; }
+    .success-icon { font-size: 52px; margin-bottom: 16px; }
+    .success-title { font-family: 'Bebas Neue', sans-serif; font-size: 28px; letter-spacing: .04em; margin-bottom: 8px; }
+    .success-sub { font-size: 14px; color: var(--muted); margin-bottom: 24px; }
+    .success-links { display: flex; gap: 10px; justify-content: center; flex-wrap: wrap; }
+    .link-btn { padding: 9px 18px; border-radius: 6px; text-decoration: none; font-size: 14px; font-weight: 500; border: 1px solid var(--lborder); color: var(--text); background: var(--card); transition: all .15s; }
+    .link-btn:hover { border-color: var(--text); }
+    .link-btn.primary { background: var(--black); color: var(--lime); border-color: var(--black); }
+
+    /* ── ERROR ── */
+    .error-msg { background: #fef2f2; border: 1px solid #fecaca; border-radius: 6px; padding: 12px 16px; font-size: 13px; color: #dc2626; margin-bottom: 16px; }
+
+    /* ── ALLERGEN TAGS ── */
+    .atag-grid { display: flex; flex-wrap: wrap; gap: 6px; }
+    .atag {
+      display: inline-flex; align-items: center; gap: 5px;
+      padding: 4px 10px; border-radius: 5px; cursor: pointer; border: 1.5px solid #e5e5e5;
+      font-size: 12px; transition: all .15s; user-select: none;
+    }
+    .atag.present { background: #1a1a1a; color: #fff; border-color: #1a1a1a; }
+    .atag.maybe { background: #fef3c7; color: #92400e; border-color: #fde68a; }
+
+    .toast { position: fixed; bottom: 20px; right: 20px; background: #1a1a1a; color: var(--lime); padding: 10px 18px; border-radius: 6px; font-size: 13px; font-family: 'DM Mono', monospace; z-index: 999; display: none; }
+
+    @media (max-width: 600px) {
+      .meta-grid { grid-template-columns: 1fr; }
+      .preview-wrap { flex-direction: column; }
+    }
+  </style>
+</head>
+<body>
+
+<header class="header">
+  <a href="../index.html" class="header-back">← TERUG</a>
+  <div class="header-div"></div>
+  <div class="header-logo">KLAAR</div>
+  <div class="header-div"></div>
+  <div class="header-module">08 — SMART SCANNER</div>
+  <div class="header-badge">✦ AI</div>
+</header>
+
+<div class="main">
+  <div class="page-title">Smart Scanner</div>
+  <p class="page-sub">Foto of scan uploaden — AI herkent het documenttype en plaatst alles op de juiste plek.</p>
+
+  <!-- STAP INDICATOR -->
+  <div class="steps" id="steps-bar">
+    <div class="step active" id="step1"><div class="step-dot">1</div>Uploaden</div>
+    <div class="step-line"></div>
+    <div class="step" id="step2"><div class="step-dot">2</div>Scannen</div>
+    <div class="step-line"></div>
+    <div class="step" id="step3"><div class="step-dot">3</div>Controleren</div>
+    <div class="step-line"></div>
+    <div class="step" id="step4"><div class="step-dot">4</div>Opslaan</div>
+  </div>
+
+  <div class="card" id="main-card">
+
+    <!-- ═══ STAP 1: UPLOAD ═══ -->
+    <div id="view-upload">
+      <div class="card-title">Document uploaden</div>
+      <p class="card-sub">Foto, screenshot of scan van een document. De AI bepaalt automatisch wat het is.</p>
+
+      <div class="upload-zone" id="upload-zone">
+        <input type="file" id="file-input" accept="image/*,.pdf" onchange="handleFile(event)">
+        <div class="upload-icon">📄</div>
+        <div class="upload-title">Sleep hier je document</div>
+        <div class="upload-sub">of klik om een bestand te kiezen</div>
+        <div class="upload-types">
+          <span class="upload-type-chip">📦 Factuur / pakbon</span>
+          <span class="upload-type-chip">🍳 Receptenkaart</span>
+          <span class="upload-type-chip">⚠️ Allergenenlijst</span>
+          <span class="upload-type-chip">🌡️ HACCP logboek</span>
+          <span class="upload-type-chip">🛒 Supermarktbon</span>
+        </div>
+      </div>
+    </div>
+
+    <!-- ═══ STAP 2: SCANNEN ═══ -->
+    <div id="view-scan" style="display:none;">
+      <div class="preview-wrap" id="preview-wrap">
+        <img class="preview-img" id="preview-img" src="" alt="">
+        <div class="preview-info">
+          <div class="preview-name" id="preview-name"></div>
+          <div class="preview-size" id="preview-size"></div>
+          <button class="btn-change" onclick="resetToUpload()">← Ander bestand</button>
+        </div>
+      </div>
+      <div class="scan-state" id="scan-state">
+        <div class="scan-ring" id="scan-ring"></div>
+        <div class="scan-label" id="scan-label">Scannen…</div>
+        <div class="scan-sub" id="scan-sub">Even geduld, dit duurt 5-15 seconden</div>
+        <div class="scan-phases" id="scan-phases">
+          <div class="scan-phase" id="phase-upload">⬆ Afbeelding uploaden</div>
+          <div class="scan-phase" id="phase-detect">🔍 Documenttype herkennen</div>
+          <div class="scan-phase" id="phase-extract">📋 Data extraheren</div>
+          <div class="scan-phase" id="phase-prepare">✓ Review voorbereiden</div>
+        </div>
+      </div>
+      <div class="error-msg" id="scan-error" style="display:none;"></div>
+      <div class="btn-row" id="scan-error-btns" style="display:none;">
+        <button class="btn btn-ghost" onclick="retryLaatste()">↺ Opnieuw proberen</button>
+        <button class="btn btn-ghost" onclick="resetToUpload()">← Ander bestand</button>
+      </div>
+    </div>
+
+    <!-- ═══ STAP 3: REVIEW ═══ -->
+    <div id="view-review" style="display:none;">
+      <div id="detected-badge-wrap"></div>
+
+      <!-- Destination banner -->
+      <div class="dest-banner" id="dest-banner">
+        <div class="dest-icon" id="dest-icon">📦</div>
+        <div class="dest-info">
+          <div class="dest-label">Opslaan in</div>
+          <div class="dest-name" id="dest-name">—</div>
+          <div class="dest-count" id="dest-count"></div>
+        </div>
+      </div>
+
+      <!-- Dynamic review content per type -->
+      <div id="review-content"></div>
+
+      <div class="btn-row">
+        <button class="btn btn-lime" id="btn-save" onclick="saveToModule()">✓ Bevestigen &amp; opslaan</button>
+        <button class="btn btn-ghost" onclick="resetToUpload()">Annuleren</button>
+      </div>
+    </div>
+
+    <!-- ═══ STAP 4: SUCCESS ═══ -->
+    <div id="view-success" style="display:none;">
+      <div class="success-wrap">
+        <div class="success-icon">✅</div>
+        <div class="success-title" id="success-title">Opgeslagen!</div>
+        <div class="success-sub" id="success-sub"></div>
+        <div class="success-links" id="success-links"></div>
+        <div class="btn-row" style="justify-content:center;margin-top:20px;">
+          <button class="btn btn-ghost" onclick="resetToUpload()">Nog een document scannen</button>
+        </div>
+      </div>
+    </div>
+
+  </div>
+</div>
+
+<div class="toast" id="toast"></div>
+
+<script src="../klaar-client.js"></script>
+<script>
+// ═══════════════════════════════════════════════════════
+//  KLAAR SMART SCANNER — Module 08
+//  Detecteert documenttype via Claude Vision + review
+// ═══════════════════════════════════════════════════════
+
+const EU14 = [
+  { code:'G',  name:'Gluten'        },{ code:'K',  name:'Kustaceeën'    },
+  { code:'E',  name:'Eieren'        },{ code:'V',  name:'Vis'           },
+  { code:'P',  name:'Pinda\'s'      },{ code:'S',  name:'Soja'          },
+  { code:'M',  name:'Melk/Lactose'  },{ code:'N',  name:'Noten'         },
+  { code:'SE', name:'Selderij'      },{ code:'MO', name:'Mosterd'       },
+  { code:'SA', name:'Sesamzaad'     },{ code:'SO', name:'Sulfiet'       },
+  { code:'L',  name:'Lupine'        },{ code:'WE', name:'Weekdieren'    },
+];
+
+let _lastBase64   = null;
+let _lastMediaType = null;
+let _scanResult   = null;   // { type, betrouwbaarheid, data }
+
+// ── Drag & drop ──
+const zone = document.getElementById('upload-zone');
+zone.addEventListener('dragover',  e => { e.preventDefault(); zone.classList.add('drag-over'); });
+zone.addEventListener('dragleave', ()=> zone.classList.remove('drag-over'));
+zone.addEventListener('drop', e => {
+  e.preventDefault(); zone.classList.remove('drag-over');
+  const f = e.dataTransfer.files[0];
+  if (f) processFile(f);
+});
+
+function handleFile(e) {
+  const f = e.target.files[0];
+  if (f) processFile(f);
+}
+
+async function processFile(file) {
+  const allowedImg  = ['image/jpeg','image/png','image/gif','image/webp','image/heic','image/heif'];
+  const mediaType   = file.type || 'image/jpeg';
+
+  if (!allowedImg.includes(mediaType)) {
+    showToast('Gebruik een afbeelding (JPG, PNG, WEBP). PDF-support komt binnenkort.');
+    return;
+  }
+
+  // Preview
+  document.getElementById('preview-name').textContent = file.name;
+  document.getElementById('preview-size').textContent = formatBytes(file.size);
+  const b64 = await fileToBase64(file);
+  _lastBase64    = b64;
+  _lastMediaType = mediaType;
+
+  const dataUrl = 'data:' + mediaType + ';base64,' + b64;
+  document.getElementById('preview-img').src = dataUrl;
+
+  showView('scan');
+  setStep(2);
+  await runScan(b64, mediaType);
+}
+
+function fileToBase64(file) {
+  return new Promise((res, rej) => {
+    const r = new FileReader();
+    r.onload = () => res(r.result.split(',')[1]);
+    r.onerror = rej;
+    r.readAsDataURL(file);
+  });
+}
+
+function formatBytes(b) {
+  if (b < 1024) return b + ' B';
+  if (b < 1048576) return (b/1024).toFixed(1) + ' KB';
+  return (b/1048576).toFixed(1) + ' MB';
+}
+
+// ── SCAN ──
+async function runScan(base64, mediaType) {
+  setScanPhase('upload', true);
+  resetScanError();
+
+  const prompt = buildScanPrompt();
+
+  const timeout = new Promise((_, rej) =>
+    setTimeout(() => rej(new Error('Scan time-out na 30 seconden. Probeer een duidelijkere foto.')), 30000)
+  );
+
+  try {
+    setScanPhase('detect', true);
+
+    const raw = await Promise.race([
+      callVision(base64, mediaType, prompt),
+      timeout
+    ]);
+
+    setScanPhase('extract', true);
+
+    const parsed = extractJSON(raw);
+    if (!parsed || !parsed.type) throw new Error('AI kon het document niet herkennen. Probeer een scherpere foto.');
+
+    _scanResult = parsed;
+    setScanPhase('prepare', true);
+
+    await sleep(400);
+    showReview(parsed);
+  } catch(e) {
+    showScanError(e.message);
+  }
+}
+
+function buildScanPrompt() {
+  return `Je bent een intelligente scanner voor Klaar horeca-software.
+
+Analyseer dit document/foto en doe het volgende in EXACT deze volgorde:
+1. Detecteer het documenttype
+2. Extraheer alle relevante data
+3. Geef ALLEEN geldig JSON terug — geen tekst ervoor of erna
+
+DOCUMENTTYPEN:
+- "leverancier" → leveranciersfactuur, pakbon (Hanos, Sligro, Bidfood, etc.)
+- "recept"      → receptenkaart, handgeschreven recept, gedrukt recept, menu
+- "allergenen"  → allergenenlijst, allergeentabel, NVWA-overzicht
+- "haccp"       → HACCP temperatuurlogboek, meetstaten, temperatuurlijst
+- "supermarkt"  → kassabon, supermarktbonnetje (AH, Jumbo, Lidl, etc.)
+
+JSON FORMAAT — kies het juiste type:
+
+LEVERANCIER:
+{"type":"leverancier","betrouwbaarheid":0.95,"data":{"leverancier":"HANOS","datum":"2026-06-15","regels":[{"product":"Ribeye","hoeveelheid":5,"eenheid":"kg","prijs_per_eenheid":28.50,"totaal":142.50,"skip":false}]}}
+
+RECEPT:
+{"type":"recept","betrouwbaarheid":0.9,"data":{"titel":"Naam gerecht","porties":4,"prep":"15 min","kook":"20 min","type":"savoury","ingredienten":[{"hoeveelheid":"200g","naam":"ribeye"}],"stappen":["Verhit pan..."],"notities":""}}
+
+ALLERGENEN:
+{"type":"allergenen","betrouwbaarheid":0.85,"data":{"gerechten":[{"naam":"Gerecht A","aanwezig":["G","M"],"misschien":["S"]},{"naam":"Gerecht B","aanwezig":["E"],"misschien":[]}]}}
+
+HACCP:
+{"type":"haccp","betrouwbaarheid":0.9,"data":{"datum":"2026-06-15","metingen":[{"koeleenheid":"Koelkast 1","temperatuur":4.2,"tijd":"08:00","gemeten_door":"Jan","afwijking":false,"maatregel":""}]}}
+
+SUPERMARKT:
+{"type":"supermarkt","betrouwbaarheid":0.88,"data":{"winkel":"Albert Heijn","datum":"2026-06-15","producten":[{"naam":"Kipfilet","hoeveelheid":1,"eenheid":"kg","prijs":8.99}]}}
+
+Gebruik EU-14 allergeencodes: G=Gluten, K=Kustaceeën, E=Eieren, V=Vis, P=Pinda's, S=Soja, M=Melk, N=Noten, SE=Selderij, MO=Mosterd, SA=Sesamzaad, SO=Sulfiet, L=Lupine, WE=Weekdieren
+
+REGELS:
+- skip:true voor statiegeld, emballage, btw-regels, administratiekosten
+- Datum altijd YYYY-MM-DD
+- betrouwbaarheid: 0.0-1.0 (hoe zeker ben je van het type en de data)
+- Als je het type echt niet kunt bepalen: {"type":"onbekend","betrouwbaarheid":0,"data":{}}`;
+}
+
+async function callVision(base64, mediaType, prompt) {
+  // Gebruik klaarAI als ingelogd, anders /api/demo-chat
+  const apiKey = (localStorage.getItem('klaar_api_key') || '').trim();
+  if (!apiKey) throw new Error('Geen API-sleutel ingesteld. Ga naar Module 01 → Instellingen om je Klaar API-sleutel in te vullen.');
+
+  const resp = await fetch('/api/demo-chat', {
+    method: 'POST',
+    headers: { 'Content-Type': 'application/json' },
+    body: JSON.stringify({
+      systemContext: 'Je bent een nauwkeurige document-scanner. Geef ALLEEN geldig JSON terug, niks anders.',
+      maxTokens: 2048,
+      message: prompt,
+      history: [{
+        role: 'user',
+        content: [
+          { type: 'image', source: { type: 'base64', media_type: mediaType, data: base64 } },
+          { type: 'text', text: prompt }
+        ]
+      }]
+    })
+  });
+
+  if (!resp.ok) throw new Error(`API fout: ${resp.status}`);
+
+  // SSE stream lezen
+  const reader = resp.body.getReader();
+  const decoder = new TextDecoder();
+  let text = '';
+  while (true) {
+    const { done, value } = await reader.read();
+    if (done) break;
+    const chunk = decoder.decode(value, { stream: true });
+    for (const line of chunk.split('\n')) {
+      if (!line.startsWith('data: ')) continue;
+      const data = line.slice(6).trim();
+      if (data === '[DONE]') continue;
+      try {
+        const p = JSON.parse(data);
+        if (p.type === 'content_block_delta' && p.delta?.type === 'text_delta') {
+          text += p.delta.text;
+        }
+      } catch (_) {}
+    }
+  }
+  return text;
+}
+
+// ── DIRECT CALL (bypass SSE for vision) ──
+async function callVisionDirect(base64, mediaType, prompt) {
+  const apiKey = (localStorage.getItem('klaar_api_key') || '').trim();
+
+  // Voor vision calls moeten we direct naar de Anthropic API
+  // Dit gaat via onze eigen proxy
+  const resp = await fetch('/api/demo-chat', {
+    method: 'POST',
+    headers: { 'Content-Type': 'application/json' },
+    body: JSON.stringify({
+      systemContext: '__scanner_vision__',
+      maxTokens: 2048,
+      visionBase64: base64,
+      visionMediaType: mediaType,
+      message: prompt
+    })
+  });
+  if (!resp.ok) {
+    const err = await resp.json().catch(() => ({}));
+    throw new Error(err.error || `API fout ${resp.status}`);
+  }
+  const data = await resp.json().catch(() => null);
+  return data?.content?.[0]?.text || '';
+}
+
+function extractJSON(text) {
+  const s = text.replace(/^```(?:json)?\s*/im,'').replace(/\s*```\s*$/m,'').trim();
+  try { return JSON.parse(s); } catch(_) {}
+  const start = text.indexOf('{'), end = text.lastIndexOf('}');
+  if (start !== -1 && end > start) {
+    try { return JSON.parse(text.slice(start, end+1)); } catch(_) {}
+  }
+  return null;
+}
+
+// ── REVIEW ──
+const TYPE_META = {
+  leverancier: { icon: '📦', label: 'Leveranciersfactuur / Pakbon', module: 'Leveranciers', url: '../07-leveranciers/klaar-leveranciers.html' },
+  recept:      { icon: '🍳', label: 'Receptenkaart',                module: 'Recept Studio', url: '../01-recept-studio/klaar-recept-studio.html' },
+  allergenen:  { icon: '⚠️', label: 'Allergenenlijst',              module: 'Allergenenkaart', url: '../02-allergenenkaart/klaar-allergenenkaart.html' },
+  haccp:       { icon: '🌡️', label: 'HACCP Temperatuurlogboek',     module: 'HACCP Logger', url: '../03-haccp/klaar-haccp.html' },
+  supermarkt:  { icon: '🛒', label: 'Supermarktbon',                module: 'Ingrediënten (via Leveranciers)', url: '../07-leveranciers/klaar-leveranciers.html' },
+  onbekend:    { icon: '❓', label: 'Onbekend documenttype',         module: '—', url: '' },
+};
+
+function showReview(result) {
+  const meta = TYPE_META[result.type] || TYPE_META.onbekend;
+  const conf = Math.round((result.betrouwbaarheid || 0) * 100);
+  const confLabel = conf >= 85 ? 'Hoog vertrouwen' : conf >= 60 ? 'Gemiddeld vertrouwen' : 'Laag vertrouwen';
+  const confClass = conf >= 85 ? 'chip-green' : conf >= 60 ? 'chip-warn' : 'chip-red';
+
+  // Detected badge
+  document.getElementById('detected-badge-wrap').innerHTML =
+    `<div class="detected-badge">
+      <span>${meta.icon}</span>
+      <span>${meta.label}</span>
+      <span class="detected-conf">· <span class="chip ${confClass}" style="padding:2px 8px;">${confLabel} (${conf}%)</span></span>
+    </div>`;
+
+  // Destination
+  document.getElementById('dest-icon').textContent = meta.icon;
+  document.getElementById('dest-name').textContent = meta.module;
+
+  // Review content
+  const content = document.getElementById('review-content');
+  if (result.type === 'leverancier')  renderReviewLeverancier(content, result.data);
+  else if (result.type === 'recept')  renderReviewRecept(content, result.data);
+  else if (result.type === 'allergenen') renderReviewAllergenen(content, result.data);
+  else if (result.type === 'haccp')   renderReviewHACCP(content, result.data);
+  else if (result.type === 'supermarkt') renderReviewSupermarkt(content, result.data);
+  else {
+    content.innerHTML = '<div class="error-msg">Dit documenttype kan ik niet automatisch verwerken. Probeer een duidelijkere foto.</div>';
+    document.getElementById('btn-save').disabled = true;
+  }
+
+  showView('review');
+  setStep(3);
+}
+
+// ── LEVERANCIER REVIEW ──
+function renderReviewLeverancier(el, data) {
+  data = data || {};
+  const regels = data.regels || [];
+  document.getElementById('dest-count').textContent = `${regels.filter(r=>!r.skip).length} producten`;
+
+  el.innerHTML = `
+    <div class="review-section">
+      <div class="review-sec-title">Factuurgegevens</div>
+      <div class="meta-grid">
+        <div class="meta-group"><label>Leverancier</label><input id="rv-lev" value="${esc(data.leverancier||'')}"></div>
+        <div class="meta-group"><label>Datum</label><input type="date" id="rv-datum" value="${esc(data.datum||today())}"></div>
+      </div>
+    </div>
+    <div class="review-section">
+      <div class="review-sec-title">Productregels <span style="font-weight:400;opacity:.5">(vink uit wat je niet wilt importeren)</span></div>
+      <table class="review-table" id="rv-regels-table">
+        <thead><tr><th style="width:28px"></th><th>Product</th><th style="width:90px">Hoev.</th><th style="width:70px">Eenheid</th><th style="width:90px">Prijs/eenh</th><th style="width:28px"></th></tr></thead>
+        <tbody id="rv-regels-body"></tbody>
+      </table>
+      <button class="add-row-btn" onclick="addLevRegel()">+ Regel toevoegen</button>
+    </div>`;
+
+  const tbody = document.getElementById('rv-regels-body');
+  regels.forEach((r, i) => addLevRegelRow(tbody, r, i));
+  if (!regels.length) addLevRegelRow(tbody, {}, 0);
+}
+
+function addLevRegelRow(tbody, r, i) {
+  const tr = document.createElement('tr');
+  const skip = r.skip || false;
+  tr.innerHTML = `
+    <td><input type="checkbox" ${skip?'':'checked'} title="Importeren" style="width:16px;height:16px;accent-color:#1a1a1a;cursor:pointer;"></td>
+    <td><input value="${esc(r.product||'')}" placeholder="Productnaam"></td>
+    <td><input type="number" value="${r.hoeveelheid||''}" placeholder="1" min="0" step="0.01"></td>
+    <td><input value="${esc(r.eenheid||'stuk')}" placeholder="kg"></td>
+    <td><input type="number" value="${r.prijs_per_eenheid||''}" placeholder="0.00" min="0" step="0.01"></td>
+    <td><button class="del-btn" onclick="this.closest('tr').remove()">×</button></td>`;
+  tbody.appendChild(tr);
+}
+
+function addLevRegel() {
+  const tbody = document.getElementById('rv-regels-body');
+  addLevRegelRow(tbody, {}, tbody.rows.length);
+}
+
+function getLevData() {
+  const leverancier = document.getElementById('rv-lev').value.trim();
+  const datum = document.getElementById('rv-datum').value || today();
+  const rows = [];
+  document.querySelectorAll('#rv-regels-body tr').forEach(tr => {
+    const cells = tr.querySelectorAll('input');
+    const include = cells[0].checked;
+    if (!include) return;
+    const naam = cells[1].value.trim();
+    if (!naam) return;
+    rows.push({
+      naam, hoeveelheid: parseFloat(cells[2].value)||1,
+      eenheid: cells[3].value.trim()||'stuk',
+      inkoopprijs: parseFloat(cells[4].value)||0
+    });
+  });
+  return { leverancier, datum, rows };
+}
+
+// ── RECEPT REVIEW ──
+function renderReviewRecept(el, data) {
+  data = data || {};
+  const ings = data.ingredienten || [];
+  const stappen = data.stappen || [];
+  document.getElementById('dest-count').textContent = `${ings.length} ingrediënten · ${stappen.length} stappen`;
+
+  el.innerHTML = `
+    <div class="review-section">
+      <div class="review-sec-title">Receptgegevens</div>
+      <div class="meta-grid" style="grid-template-columns:1fr 1fr 1fr 1fr;">
+        <div class="meta-group" style="grid-column:1/3"><label>Naam</label><input id="rv-titel" value="${esc(data.titel||'')}"></div>
+        <div class="meta-group"><label>Porties</label><input type="number" id="rv-porties" value="${data.porties||4}" min="1"></div>
+        <div class="meta-group"><label>Type</label>
+          <select id="rv-type">
+            <option value="savoury" ${data.type==='savoury'?'selected':''}>Hartig</option>
+            <option value="sweet"   ${data.type==='sweet'?'selected':''}>Zoet</option>
+            <option value="drink"   ${data.type==='drink'?'selected':''}>Drank</option>
+            <option value="snack"   ${data.type==='snack'?'selected':''}>Snack</option>
+          </select>
+        </div>
+        <div class="meta-group"><label>Voorbereid</label><input id="rv-prep" value="${esc(data.prep||'')}"></div>
+        <div class="meta-group"><label>Kooktijd</label><input id="rv-kook" value="${esc(data.kook||'')}"></div>
+      </div>
+    </div>
+    <div class="review-section">
+      <div class="review-sec-title">Ingrediënten</div>
+      <table class="review-table">
+        <thead><tr><th style="width:120px">Hoeveelheid</th><th>Ingrediënt</th><th style="width:28px"></th></tr></thead>
+        <tbody id="rv-ings-body"></tbody>
+      </table>
+      <button class="add-row-btn" onclick="addIngRegel()">+ Ingrediënt toevoegen</button>
+    </div>
+    <div class="review-section">
+      <div class="review-sec-title">Bereidingsstappen</div>
+      <div id="rv-stappen"></div>
+      <button class="add-row-btn" onclick="addStapRegel()">+ Stap toevoegen</button>
+    </div>
+    <div class="review-section">
+      <div class="review-sec-title">Notities</div>
+      <textarea id="rv-notities" style="width:100%;font-family:'DM Sans',sans-serif;font-size:13px;padding:8px;border:1px solid #e5e5e5;border-radius:5px;resize:vertical;min-height:60px;">${esc(data.notities||'')}</textarea>
+    </div>`;
+
+  const ingBody = document.getElementById('rv-ings-body');
+  ings.forEach(i => addIngRij(ingBody, i));
+  if (!ings.length) addIngRij(ingBody, {});
+
+  const stapDiv = document.getElementById('rv-stappen');
+  stappen.forEach((s,i) => addStapRij(stapDiv, s, i+1));
+  if (!stappen.length) addStapRij(stapDiv, '', 1);
+}
+
+function addIngRij(tbody, i) {
+  const tr = document.createElement('tr');
+  tr.innerHTML = `
+    <td><input value="${esc(i.hoeveelheid||'')}" placeholder="200g"></td>
+    <td><input value="${esc(i.naam||'')}" placeholder="Ingrediëntnaam"></td>
+    <td><button class="del-btn" onclick="this.closest('tr').remove()">×</button></td>`;
+  tbody.appendChild(tr);
+}
+function addIngRegel() { addIngRij(document.getElementById('rv-ings-body'), {}); }
+
+function addStapRij(div, tekst, num) {
+  const d = document.createElement('div');
+  d.style.cssText = 'display:flex;gap:8px;margin-bottom:6px;align-items:flex-start;';
+  d.innerHTML = `<div style="width:22px;height:22px;background:#1a1a1a;color:#e8ff47;border-radius:50%;display:flex;align-items:center;justify-content:center;font-size:11px;flex-shrink:0;margin-top:2px;">${num}</div>
+    <textarea rows="2" style="flex:1;font-family:'DM Sans',sans-serif;font-size:13px;padding:6px 9px;border:1px solid #e5e5e5;border-radius:5px;resize:vertical;">${esc(tekst)}</textarea>
+    <button style="border:none;background:none;color:#ccc;cursor:pointer;font-size:15px;margin-top:4px;" onclick="this.parentElement.remove()">×</button>`;
+  div.appendChild(d);
+}
+function addStapRegel() {
+  const div = document.getElementById('rv-stappen');
+  addStapRij(div, '', div.children.length+1);
+}
+
+function getReceptData() {
+  const ings = [], stappen = [];
+  document.querySelectorAll('#rv-ings-body tr').forEach(tr => {
+    const cells = tr.querySelectorAll('input');
+    const naam = cells[1]?.value?.trim();
+    if (naam) ings.push({ hoeveelheid: cells[0]?.value?.trim()||'', naam });
+  });
+  document.querySelectorAll('#rv-stappen textarea').forEach(ta => {
+    const s = ta.value.trim();
+    if (s) stappen.push(s);
+  });
+  return {
+    titel: document.getElementById('rv-titel').value.trim() || 'Gescand recept',
+    porties: parseInt(document.getElementById('rv-porties').value)||4,
+    type: document.getElementById('rv-type').value,
+    prep: document.getElementById('rv-prep').value.trim(),
+    kook: document.getElementById('rv-kook').value.trim(),
+    ingredienten: ings, stappen,
+    notities: document.getElementById('rv-notities').value.trim()
+  };
+}
+
+// ── ALLERGENEN REVIEW ──
+function renderReviewAllergenen(el, data) {
+  data = data || {};
+  const gerechten = data.gerechten || [];
+  document.getElementById('dest-count').textContent = `${gerechten.length} gerechten`;
+
+  let gerechtenHTML = '';
+  gerechten.forEach((g, gi) => {
+    const tagHTML = EU14.map(a => {
+      const isPres = (g.aanwezig||[]).includes(a.code);
+      const isMaybe= (g.misschien||[]).includes(a.code);
+      const cls = isPres ? 'present' : isMaybe ? 'maybe' : '';
+      return `<div class="atag ${cls}" onclick="toggleAtag(this,'${gi}')" data-code="${a.code}" title="${a.name}">${a.code}</div>`;
+    }).join('');
+
+    gerechtenHTML += `<div class="review-section" style="border:1px solid #e5e5e5;border-radius:8px;padding:14px;margin-bottom:12px;" data-gi="${gi}">
+      <div style="display:flex;align-items:center;gap:10px;margin-bottom:10px;">
+        <input value="${esc(g.naam||'')}" style="flex:1;font-size:14px;font-weight:600;padding:5px 9px;border:1px solid #e5e5e5;border-radius:5px;" placeholder="Gerechtnaam">
+        <button style="border:none;background:none;color:#ccc;cursor:pointer;font-size:15px;" onclick="this.closest('.review-section').remove()">×</button>
+      </div>
+      <div class="review-sec-title" style="margin-bottom:8px;">Allergenen — klik om aan/af te zetten</div>
+      <div class="atag-grid" style="margin-bottom:6px;">${tagHTML}</div>
+      <div style="font-size:11px;color:var(--muted);margin-top:4px;">
+        <span style="display:inline-block;width:12px;height:12px;background:#1a1a1a;border-radius:2px;vertical-align:middle;margin-right:4px;"></span>Aanwezig
+        <span style="display:inline-block;width:12px;height:12px;background:#fef3c7;border:1px solid #fde68a;border-radius:2px;vertical-align:middle;margin-left:8px;margin-right:4px;"></span>Mogelijk
+        <span style="display:inline-block;width:12px;height:12px;background:#f5f5f2;border:1px solid #e5e5e5;border-radius:2px;vertical-align:middle;margin-left:8px;margin-right:4px;"></span>Afwezig
+      </div>
+    </div>`;
+  });
+
+  el.innerHTML = `<div id="rv-allergenen-list">${gerechtenHTML}</div>
+    <button class="add-row-btn" onclick="addAllergeenGerecht()">+ Gerecht toevoegen</button>`;
+}
+
+function toggleAtag(el, gi) {
+  if (el.classList.contains('present')) { el.classList.remove('present'); el.classList.add('maybe'); }
+  else if (el.classList.contains('maybe')) { el.classList.remove('maybe'); }
+  else { el.classList.add('present'); }
+}
+
+function addAllergeenGerecht() {
+  const list = document.getElementById('rv-allergenen-list');
+  const gi = list.children.length;
+  const div = document.createElement('div');
+  div.className = 'review-section';
+  div.style.cssText = 'border:1px solid #e5e5e5;border-radius:8px;padding:14px;margin-bottom:12px;';
+  div.dataset.gi = gi;
+  const tagHTML = EU14.map(a =>
+    `<div class="atag" onclick="toggleAtag(this,'${gi}')" data-code="${a.code}" title="${a.name}">${a.code}</div>`).join('');
+  div.innerHTML = `<div style="display:flex;align-items:center;gap:10px;margin-bottom:10px;">
+    <input style="flex:1;font-size:14px;font-weight:600;padding:5px 9px;border:1px solid #e5e5e5;border-radius:5px;" placeholder="Gerechtnaam">
+    <button style="border:none;background:none;color:#ccc;cursor:pointer;font-size:15px;" onclick="this.closest('.review-section').remove()">×</button>
+  </div>
+  <div class="atag-grid">${tagHTML}</div>`;
+  list.appendChild(div);
+}
+
+function getAllergeenData() {
+  const result = [];
+  document.querySelectorAll('#rv-allergenen-list .review-section').forEach(sec => {
+    const naam = sec.querySelector('input')?.value?.trim();
+    if (!naam) return;
+    const aanwezig=[], misschien=[];
+    sec.querySelectorAll('.atag').forEach(t => {
+      if (t.classList.contains('present')) aanwezig.push(t.dataset.code);
+      else if (t.classList.contains('maybe')) misschien.push(t.dataset.code);
+    });
+    result.push({ naam, aanwezig, misschien });
+  });
+  return result;
+}
+
+// ── HACCP REVIEW ──
+function renderReviewHACCP(el, data) {
+  data = data || {};
+  const metingen = data.metingen || [];
+  document.getElementById('dest-count').textContent = `${metingen.length} metingen op ${data.datum||'?'}`;
+
+  el.innerHTML = `
+    <div class="review-section">
+      <div class="review-sec-title">Logboekdatum</div>
+      <div class="meta-grid" style="max-width:300px;">
+        <div class="meta-group"><label>Datum</label><input type="date" id="rv-haccp-datum" value="${esc(data.datum||today())}"></div>
+      </div>
+    </div>
+    <div class="review-section">
+      <div class="review-sec-title">Temperatuurmetingen</div>
+      <table class="review-table">
+        <thead><tr><th>Koeleenheid</th><th style="width:90px">Temp (°C)</th><th style="width:80px">Tijdstip</th><th>Gemeten door</th><th style="width:28px"></th></tr></thead>
+        <tbody id="rv-haccp-body"></tbody>
+      </table>
+      <button class="add-row-btn" onclick="addHaccpRegel()">+ Meting toevoegen</button>
+    </div>`;
+
+  const tbody = document.getElementById('rv-haccp-body');
+  metingen.forEach(m => addHaccpRij(tbody, m));
+  if (!metingen.length) addHaccpRij(tbody, {});
+}
+
+function addHaccpRij(tbody, m) {
+  const afwijking = m.afwijking ? 'style="color:#dc2626;font-weight:600;"' : '';
+  const tr = document.createElement('tr');
+  if (m.afwijking) tr.style.background = '#fef2f2';
+  tr.innerHTML = `
+    <td><input value="${esc(m.koeleenheid||'')}" placeholder="Koelkast 1"></td>
+    <td><input type="number" value="${m.temperatuur||''}" placeholder="4.0" step="0.1" ${afwijking}></td>
+    <td><input type="time" value="${esc(m.tijd||'')}"></td>
+    <td><input value="${esc(m.gemeten_door||m.medewerker||'')}" placeholder="Naam"></td>
+    <td><button class="del-btn" onclick="this.closest('tr').remove()">×</button></td>`;
+  tbody.appendChild(tr);
+}
+
+function addHaccpRegel() { addHaccpRij(document.getElementById('rv-haccp-body'), {}); }
+
+function getHaccpData() {
+  const datum = document.getElementById('rv-haccp-datum').value || today();
+  const metingen = [];
+  document.querySelectorAll('#rv-haccp-body tr').forEach(tr => {
+    const cells = tr.querySelectorAll('input');
+    const koeleenheid = cells[0]?.value?.trim();
+    if (!koeleenheid) return;
+    metingen.push({
+      koeleenheid,
+      temperatuur: parseFloat(cells[1]?.value) || 0,
+      tijd: cells[2]?.value || '00:00',
+      gemeten_door: cells[3]?.value?.trim() || '—',
+      medewerker: cells[3]?.value?.trim() || '—',
+      afwijking: false // herberekend bij opslaan
+    });
+  });
+  return { datum, metingen };
+}
+
+// ── SUPERMARKT REVIEW ──
+function renderReviewSupermarkt(el, data) {
+  data = data || {};
+  const producten = data.producten || [];
+  document.getElementById('dest-count').textContent = `${producten.length} producten → Ingrediëntenbibliotheek`;
+
+  el.innerHTML = `
+    <div class="review-section">
+      <div class="review-sec-title">Bongegevens</div>
+      <div class="meta-grid">
+        <div class="meta-group"><label>Winkel</label><input id="rv-winkel" value="${esc(data.winkel||'')}"></div>
+        <div class="meta-group"><label>Datum</label><input type="date" id="rv-sm-datum" value="${esc(data.datum||today())}"></div>
+      </div>
+    </div>
+    <div class="review-section">
+      <div class="review-sec-title">Producten <span style="opacity:.5;font-weight:400">(worden toegevoegd aan ingrediëntenbibliotheek)</span></div>
+      <table class="review-table">
+        <thead><tr><th style="width:28px"></th><th>Product</th><th style="width:90px">Hoeveelheid</th><th style="width:70px">Eenheid</th><th style="width:90px">Prijs (€)</th><th style="width:28px"></th></tr></thead>
+        <tbody id="rv-sm-body"></tbody>
+      </table>
+      <button class="add-row-btn" onclick="addSmRegel()">+ Product toevoegen</button>
+    </div>`;
+
+  const tbody = document.getElementById('rv-sm-body');
+  producten.forEach(p => addSmRij(tbody, p));
+  if (!producten.length) addSmRij(tbody, {});
+}
+
+function addSmRij(tbody, p) {
+  const tr = document.createElement('tr');
+  tr.innerHTML = `
+    <td><input type="checkbox" checked title="Importeren" style="width:16px;height:16px;accent-color:#1a1a1a;cursor:pointer;"></td>
+    <td><input value="${esc(p.naam||'')}" placeholder="Productnaam"></td>
+    <td><input type="number" value="${p.hoeveelheid||1}" placeholder="1" min="0" step="0.01"></td>
+    <td><input value="${esc(p.eenheid||'stuk')}" placeholder="kg"></td>
+    <td><input type="number" value="${p.prijs||''}" placeholder="0.00" min="0" step="0.01"></td>
+    <td><button class="del-btn" onclick="this.closest('tr').remove()">×</button></td>`;
+  tbody.appendChild(tr);
+}
+
+function addSmRegel() { addSmRij(document.getElementById('rv-sm-body'), {}); }
+
+function getSmData() {
+  const winkel = document.getElementById('rv-winkel').value.trim();
+  const datum  = document.getElementById('rv-sm-datum').value || today();
+  const producten = [];
+  document.querySelectorAll('#rv-sm-body tr').forEach(tr => {
+    const cells = tr.querySelectorAll('input');
+    if (!cells[0].checked) return;
+    const naam = cells[1].value.trim();
+    if (!naam) return;
+    producten.push({
+      naam, hoeveelheid: parseFloat(cells[2].value)||1,
+      eenheid: cells[3].value.trim()||'stuk',
+      inkoopprijs: parseFloat(cells[4].value)||0
+    });
+  });
+  return { winkel, datum, producten };
+}
+
+// ── OPSLAAN ──
+async function saveToModule() {
+  const btn = document.getElementById('btn-save');
+  btn.disabled = true;
+  btn.textContent = 'Opslaan…';
+
+  try {
+    const type = _scanResult?.type;
+    let successMsg = '', links = [];
+
+    if (type === 'leverancier') {
+      const { leverancier, datum, rows } = getLevData();
+      if (!rows.length) throw new Error('Geen producten om op te slaan');
+      const ings = safeGet('klaar_ingredienten', []);
+      rows.forEach(r => {
+        const bestaand = ings.find(i => i.naam?.toLowerCase() === r.naam.toLowerCase());
+        if (bestaand) { bestaand.inkoopprijs = r.inkoopprijs; bestaand.eenheid = r.eenheid; }
+        else ings.push({ id: genId(), naam: r.naam, eenheid: r.eenheid, inkoopprijs: r.inkoopprijs, leverancier, datum });
+      });
+      localStorage.setItem('klaar_ingredienten', JSON.stringify(ings));
+      successMsg = `${rows.length} producten van ${leverancier||'leverancier'} opgeslagen in de ingrediëntenbibliotheek.`;
+      links = [{ label: '→ Naar Leveranciers', url: '../07-leveranciers/klaar-leveranciers.html', primary: true },
+               { label: '→ Naar Recept Studio', url: '../01-recept-studio/klaar-recept-studio.html' }];
+    }
+
+    else if (type === 'recept') {
+      const d = getReceptData();
+      if (!d.titel) throw new Error('Receptnaam is verplicht');
+      const recipes = safeGet('klaar_recipes', []);
+      const id = 'rec_' + Date.now() + '_' + Math.random().toString(36).slice(2,6);
+      recipes.unshift({
+        id, title: d.titel, folder: 'keuken', status: 'draft',
+        type: d.type, allergens: [],
+        recipe: { prep: d.prep, cook: d.kook, servings: d.porties, ingredients: d.ingredienten, steps: d.stappen, notes: d.notities },
+        createdAt: new Date().toISOString()
+      });
+      localStorage.setItem('klaar_recipes', JSON.stringify(recipes));
+      successMsg = `Recept "${d.titel}" opgeslagen in Recept Studio.`;
+      links = [{ label: '→ Naar Recept Studio', url: '../01-recept-studio/klaar-recept-studio.html', primary: true }];
+    }
+
+    else if (type === 'allergenen') {
+      const gerechten = getAllergeenData();
+      if (!gerechten.length) throw new Error('Geen gerechten om op te slaan');
+      const recipes = safeGet('klaar_recipes', []);
+      let updated = 0;
+      gerechten.forEach(g => {
+        const match = recipes.find(r => r.title?.toLowerCase() === g.naam.toLowerCase());
+        if (match) {
+          match.allergens = [
+            ...g.aanwezig.map(c => { const a = EU14.find(x=>x.code===c); return { code: c, name: a?.name||c, maybe: false }; }),
+            ...g.misschien.map(c => { const a = EU14.find(x=>x.code===c); return { code: c, name: a?.name||c, maybe: true }; }),
+          ];
+          updated++;
+        } else {
+          // Nieuw recept aanmaken met alleen allergenen
+          recipes.unshift({
+            id: genId(), title: g.naam, folder: 'keuken', status: 'draft', type: 'savoury',
+            allergens: [
+              ...g.aanwezig.map(c => { const a = EU14.find(x=>x.code===c); return { code: c, name: a?.name||c, maybe: false }; }),
+              ...g.misschien.map(c => { const a = EU14.find(x=>x.code===c); return { code: c, name: a?.name||c, maybe: true }; }),
+            ],
+            recipe: { prep:'', cook:'', servings:4, ingredients:[], steps:[], notes:'' },
+            createdAt: new Date().toISOString()
+          });
+          updated++;
+        }
+      });
+      localStorage.setItem('klaar_recipes', JSON.stringify(recipes));
+      successMsg = `${updated} gerechten bijgewerkt in de Allergenenkaart.`;
+      links = [{ label: '→ Naar Allergenenkaart', url: '../02-allergenenkaart/klaar-allergenenkaart.html', primary: true }];
+    }
+
+    else if (type === 'haccp') {
+      const { datum, metingen } = getHaccpData();
+      if (!metingen.length) throw new Error('Geen metingen om op te slaan');
+      const eenheden = safeGet('klaar_haccp_eenheden', []);
+      const koeling  = safeGet('klaar_haccp_koeling', []);
+      const afwijkingen = safeGet('klaar_haccp_afwijkingen', []);
+
+      metingen.forEach(m => {
+        // Zoek norm voor deze eenheid
+        const eenheid = eenheden.find(e => e.naam?.toLowerCase() === m.koeleenheid.toLowerCase());
+        const norm = eenheid?.maxNorm ?? 7;
+        const afwijking = m.temperatuur > norm;
+        const entry = {
+          id: genId(), datum, tijd: m.tijd,
+          eenheidId: eenheid?.id || genId(),
+          eenheidNaam: m.koeleenheid,
+          temperatuur: m.temperatuur, norm, afwijking,
+          maatregel: '', gemeten_door: m.gemeten_door, medewerker: m.gemeten_door
+        };
+        koeling.push(entry);
+        if (afwijking) {
+          afwijkingen.push({ id: genId(), datum, type: `Temperatuurafwijking: ${m.koeleenheid}`, waarde: `${m.temperatuur}°C (norm: max ${norm}°C)`, maatregel: '', medewerker: m.gemeten_door, status: 'open', bron: 'scanner' });
+        }
+      });
+      localStorage.setItem('klaar_haccp_koeling', JSON.stringify(koeling));
+      localStorage.setItem('klaar_haccp_afwijkingen', JSON.stringify(afwijkingen));
+      successMsg = `${metingen.length} temperatuurmetingen van ${datum} opgeslagen in HACCP Logger.`;
+      links = [{ label: '→ Naar HACCP Logger', url: '../03-haccp/klaar-haccp.html', primary: true }];
+    }
+
+    else if (type === 'supermarkt') {
+      const { winkel, datum, producten } = getSmData();
+      if (!producten.length) throw new Error('Geen producten om op te slaan');
+      const ings = safeGet('klaar_ingredienten', []);
+      producten.forEach(p => {
+        const bestaand = ings.find(i => i.naam?.toLowerCase() === p.naam.toLowerCase());
+        if (bestaand) { bestaand.inkoopprijs = p.inkoopprijs; bestaand.eenheid = p.eenheid; }
+        else ings.push({ id: genId(), naam: p.naam, eenheid: p.eenheid, inkoopprijs: p.inkoopprijs, leverancier: winkel, datum });
+      });
+      localStorage.setItem('klaar_ingredienten', JSON.stringify(ings));
+      successMsg = `${producten.length} producten van ${winkel} toegevoegd aan de ingrediëntenbibliotheek.`;
+      links = [{ label: '→ Naar Recept Studio', url: '../01-recept-studio/klaar-recept-studio.html', primary: true },
+               { label: '→ Naar Kostprijs Calculator', url: '../04-kostprijs/klaar-kostprijs.html' }];
+    }
+
+    showSuccess(successMsg, links);
+
+  } catch(e) {
+    btn.disabled = false;
+    btn.textContent = '✓ Bevestigen & opslaan';
+    showToast('⚠ ' + e.message);
+  }
+}
+
+// ── SUCCESS ──
+function showSuccess(msg, links) {
+  document.getElementById('success-title').textContent = 'Opgeslagen!';
+  document.getElementById('success-sub').textContent = msg;
+  const linksEl = document.getElementById('success-links');
+  linksEl.innerHTML = links.map(l =>
+    `<a href="${l.url}" class="link-btn ${l.primary?'primary':''}">${l.label}</a>`
+  ).join('');
+  showView('success');
+  setStep(4);
+}
+
+// ── UTILITIES ──
+function showView(name) {
+  ['upload','scan','review','success'].forEach(v => {
+    document.getElementById('view-'+v).style.display = v === name ? '' : 'none';
+  });
+}
+
+function setStep(n) {
+  [1,2,3,4].forEach(i => {
+    const el = document.getElementById('step'+i);
+    if (i < n) { el.className = 'step done'; el.querySelector('.step-dot').textContent = '✓'; }
+    else if (i === n) { el.className = 'step active'; el.querySelector('.step-dot').textContent = i; }
+    else { el.className = 'step'; el.querySelector('.step-dot').textContent = i; }
+  });
+}
+
+function setScanPhase(phase, done) {
+  const el = document.getElementById('phase-'+phase);
+  if (!el) return;
+  // Mark previous as done
+  const order = ['upload','detect','extract','prepare'];
+  const idx = order.indexOf(phase);
+  order.slice(0, idx).forEach(p => {
+    const pe = document.getElementById('phase-'+p);
+    if (pe) { pe.classList.remove('active'); pe.classList.add('done'); }
+  });
+  el.classList.remove('done');
+  if (done) {
+    el.classList.add('done'); el.classList.remove('active');
+    // Next phase active
+    const next = order[idx+1];
+    if (next) {
+      const ne = document.getElementById('phase-'+next);
+      if (ne) { ne.classList.add('active'); ne.classList.remove('done'); }
+    }
+    // Update label
+    const labels = { upload:'Afbeelding geladen ✓', detect:'Documenttype herkend ✓', extract:'Data geëxtraheerd ✓', prepare:'Review klaar ✓' };
+    el.textContent = labels[phase] || el.textContent;
+  } else {
+    el.classList.add('active');
+  }
+}
+
+function resetScanError() {
+  document.getElementById('scan-error').style.display = 'none';
+  document.getElementById('scan-error-btns').style.display = 'none';
+  document.getElementById('scan-ring').style.display = 'block';
+  document.getElementById('scan-state').style.display = 'block';
+  document.getElementById('scan-label').textContent = 'Scannen…';
+}
+
+function showScanError(msg) {
+  document.getElementById('scan-ring').style.display = 'none';
+  document.getElementById('scan-label').textContent = 'Scan mislukt';
+  document.getElementById('scan-error').style.display = 'block';
+  document.getElementById('scan-error').textContent = msg;
+  document.getElementById('scan-error-btns').style.display = 'flex';
+}
+
+function retryLaatste() {
+  if (_lastBase64 && _lastMediaType) {
+    resetScanError();
+    document.getElementById('scan-phases').querySelectorAll('.scan-phase').forEach(p => { p.classList.remove('active','done'); });
+    runScan(_lastBase64, _lastMediaType);
+  }
+}
+
+function resetToUpload() {
+  _lastBase64 = null; _lastMediaType = null; _scanResult = null;
+  document.getElementById('file-input').value = '';
+  document.getElementById('scan-phases').querySelectorAll('.scan-phase').forEach(p => p.classList.remove('active','done'));
+  showView('upload');
+  setStep(1);
+}
+
+function safeGet(key, def) {
+  try { return JSON.parse(localStorage.getItem(key) || JSON.stringify(def)); } catch { return def; }
+}
+
+function genId() { return 'sc_' + Date.now() + '_' + Math.random().toString(36).slice(2,6); }
+function today() { return new Date().toISOString().split('T')[0]; }
+function esc(s) { return String(s||'').replace(/&/g,'&amp;').replace(/</g,'&lt;').replace(/>/g,'&gt;').replace(/"/g,'&quot;'); }
+function sleep(ms) { return new Promise(r => setTimeout(r, ms)); }
+
+function showToast(msg) {
+  const t = document.getElementById('toast');
+  t.textContent = msg; t.style.display = 'block';
+  setTimeout(() => t.style.display = 'none', 4000);
+}
+</script>
+</body>
+</html>

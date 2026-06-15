@@ -3,7 +3,7 @@
 <head>
   <meta charset="UTF-8" />
   <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-  <title>Klaar — AI Realiteitstest</title>
+  <title>Klaar — AI Realiteitstest v2</title>
   <link href="https://fonts.googleapis.com/css2?family=Bebas+Neue&family=DM+Sans:wght@400;500;600&family=DM+Mono:wght@400;500&display=swap" rel="stylesheet">
   <style>
     :root {
@@ -16,20 +16,17 @@
     h1,h2,h3{font-family:'Bebas Neue',sans-serif;letter-spacing:1px;}
     .page{max-width:1300px;margin:0 auto;padding:28px 20px;}
 
-    /* HEADER */
     .hdr{border-bottom:1px solid var(--border);padding-bottom:14px;margin-bottom:20px;display:flex;justify-content:space-between;align-items:flex-end;flex-wrap:wrap;gap:8px;}
     .hdr-title{font-size:34px;color:var(--accent);}
     .hdr-sub{font-family:'DM Mono',monospace;font-size:9px;color:var(--gray);letter-spacing:2px;margin-top:2px;}
     .hdr-badge{font-family:'DM Mono',monospace;font-size:9px;padding:4px 10px;border:1px solid var(--border);color:var(--gray);}
 
-    /* CONFIG */
     .cfg{background:var(--surface);border:1px solid var(--border);padding:10px 14px;margin-bottom:14px;display:flex;align-items:center;gap:12px;flex-wrap:wrap;}
     .cfg-lbl{font-family:'DM Mono',monospace;font-size:10px;color:var(--gray);letter-spacing:1px;white-space:nowrap;}
     .cfg-inp{background:var(--muted);border:1px solid var(--border);color:var(--white);font-family:'DM Mono',monospace;font-size:11px;padding:5px 9px;flex:1;min-width:180px;}
     .cfg-sel{background:var(--muted);border:1px solid var(--border);color:var(--white);font-family:'DM Mono',monospace;font-size:11px;padding:5px 7px;}
     .cfg-inp:focus,.cfg-sel:focus{outline:none;border-color:var(--accent);}
 
-    /* CONTROLS */
     .ctrls{display:flex;gap:8px;margin-bottom:16px;align-items:center;flex-wrap:wrap;}
     .btn{font-family:'DM Mono',monospace;font-size:11px;font-weight:700;letter-spacing:1px;padding:9px 20px;cursor:pointer;border:none;text-transform:uppercase;transition:opacity 0.1s;}
     .btn-p{background:var(--accent);color:var(--black);}
@@ -39,28 +36,31 @@
     .btn:hover{opacity:0.85;} .btn:disabled{opacity:0.3;cursor:not-allowed;}
     .run-st{font-family:'DM Mono',monospace;font-size:10px;color:var(--gray);}
 
-    /* PROGRESS */
+    /* DATA SEEDING */
+    .seed-bar{background:var(--surface);border:1px solid rgba(232,255,71,0.2);padding:10px 14px;margin-bottom:14px;display:flex;align-items:center;gap:12px;flex-wrap:wrap;}
+    .seed-lbl{font-family:'DM Mono',monospace;font-size:10px;color:var(--accent);letter-spacing:1px;}
+    .seed-info{font-family:'DM Mono',monospace;font-size:10px;color:var(--gray);}
+    .seed-btn{font-family:'DM Mono',monospace;font-size:10px;padding:5px 12px;background:rgba(232,255,71,0.1);border:1px solid rgba(232,255,71,0.3);color:var(--accent);cursor:pointer;letter-spacing:1px;}
+    .seed-btn:hover{background:rgba(232,255,71,0.18);}
+    .seed-status{font-family:'DM Mono',monospace;font-size:10px;color:var(--green);}
+
     .prog-wrap{background:var(--muted);height:3px;margin-bottom:14px;display:none;}
     .prog-fill{height:100%;background:var(--accent);transition:width 0.4s;width:0%;}
 
-    /* STATS */
     .stats{display:grid;grid-template-columns:repeat(6,1fr);gap:1px;background:var(--border);border:1px solid var(--border);margin-bottom:16px;display:none;}
     .stat{background:var(--surface);padding:9px 12px;}
     .stat-lbl{font-family:'DM Mono',monospace;font-size:8px;color:var(--gray);letter-spacing:2px;}
     .stat-val{font-family:'Bebas Neue',sans-serif;font-size:22px;margin-top:1px;}
     .c-green{color:var(--green);} .c-red{color:var(--red);} .c-orange{color:var(--orange);} .c-white{color:var(--white);} .c-purple{color:var(--purple);}
 
-    /* MAIN */
     .main{display:grid;grid-template-columns:1fr 360px;gap:14px;margin-bottom:20px;}
     @media(max-width:900px){.main{grid-template-columns:1fr;}}
 
-    /* CHAT */
     .chat-wrap{display:none;}
     .panel-hdr{padding:9px 14px;background:var(--surface);border:1px solid var(--border);font-size:15px;display:flex;justify-content:space-between;align-items:center;}
     .panel-hdr-right{font-family:'DM Mono',monospace;font-size:9px;color:var(--gray);}
     .chat-body{border:1px solid var(--border);border-top:none;height:560px;overflow-y:auto;background:var(--black);padding:10px;display:flex;flex-direction:column;gap:10px;}
 
-    /* MESSAGES */
     .msg{display:flex;flex-direction:column;gap:3px;max-width:90%;}
     .msg-marco{align-self:flex-end;}
     .msg-klaar{align-self:flex-start;}
@@ -75,9 +75,9 @@
     .msg-meta{font-family:'DM Mono',monospace;font-size:9px;color:var(--gray);display:flex;gap:6px;}
     .msg-marco .msg-meta{justify-content:flex-end;}
     .obs-tag{display:inline-block;margin-top:5px;font-family:'DM Mono',monospace;font-size:9px;padding:2px 6px;border:1px solid rgba(192,132,252,0.3);color:var(--purple);letter-spacing:0.5px;}
+    .db-tag{display:inline-block;margin-top:5px;font-family:'DM Mono',monospace;font-size:9px;padding:2px 6px;border:1px solid rgba(71,255,138,0.3);color:var(--green);letter-spacing:0.5px;}
     @keyframes blink{0%,100%{opacity:1}50%{opacity:0}}
 
-    /* OBS + BUGS PANEL */
     .side-wrap{display:none;display:flex;flex-direction:column;gap:0;display:none;}
     .obs-body{border:1px solid var(--border);border-top:none;height:280px;overflow-y:auto;background:var(--black);}
     .bugs-body{border:1px solid var(--border);border-top:none;height:268px;overflow-y:auto;background:var(--black);}
@@ -86,6 +86,7 @@
     .obs-from{font-family:'DM Mono',monospace;font-size:8px;padding:1px 5px;border:1px solid;flex-shrink:0;margin-top:1px;}
     .obs-marco{color:var(--accent);border-color:rgba(232,255,71,0.3);}
     .obs-klaar{color:var(--blue);border-color:rgba(79,175,244,0.3);}
+    .obs-db{color:var(--green);border-color:rgba(71,255,138,0.3);}
     .obs-text{color:var(--white);line-height:1.4;}
     .bug-item{padding:8px 12px;border-bottom:1px solid var(--border);font-size:11px;display:flex;gap:8px;align-items:flex-start;}
     .bug-item:last-child{border-bottom:none;}
@@ -95,7 +96,6 @@
     .sev-m{color:var(--blue);border-color:rgba(79,175,244,0.3);}
     .empty-msg{padding:16px 12px;font-family:'DM Mono',monospace;font-size:10px;color:var(--gray);text-align:center;}
 
-    /* RAPPORT */
     .report{display:none;}
     .rpt-hdr{padding:14px 18px;background:var(--surface);border:1px solid var(--border);margin-bottom:10px;display:flex;justify-content:space-between;align-items:center;flex-wrap:wrap;gap:8px;}
     .rpt-title{font-size:26px;}
@@ -118,6 +118,13 @@
     .trs-a{padding:7px 14px;font-size:12px;color:#aaa;}
     .t-num{font-family:'DM Mono',monospace;font-size:10px;color:var(--accent);flex-shrink:0;}
     .t-from{font-family:'DM Mono',monospace;font-size:9px;color:var(--gray);flex-shrink:0;min-width:50px;}
+
+    /* DB probe panel */
+    .db-probe{background:var(--muted);border:1px solid var(--border);padding:10px 14px;margin-bottom:14px;font-family:'DM Mono',monospace;font-size:10px;color:var(--gray);display:none;}
+    .db-probe-title{color:var(--green);margin-bottom:6px;letter-spacing:1px;}
+    .db-probe-row{display:flex;gap:8px;align-items:baseline;margin-top:3px;}
+    .db-key{color:#4faff4;min-width:220px;}
+    .db-val{color:var(--white);}
   </style>
 </head>
 <body>
@@ -125,10 +132,19 @@
 
   <div class="hdr">
     <div>
-      <div class="hdr-title">KLAAR AI REALITEITSTEST</div>
-      <div class="hdr-sub">TWEE AI-AGENTS · MARCO (NIEUWE KLANT) ↔ KLAAR ASSISTENT · OBSERVATIELOG</div>
+      <div class="hdr-title">KLAAR AI REALITEITSTEST v2</div>
+      <div class="hdr-sub">MARCO (HORECA-ONDERNEMER) ↔ KLAAR ASSISTENT · DIEPTETEST MET ECHTE MODULE-DOORLOOP</div>
     </div>
-    <div class="hdr-badge">INTERN TESTPANEEL</div>
+    <div class="hdr-badge">INTERN TESTPANEEL · v2.0</div>
+  </div>
+
+  <!-- DATA SEED -->
+  <div class="seed-bar">
+    <span class="seed-lbl">▸ TESTDATA</span>
+    <span class="seed-info">Seed realistische Klaar-data in localStorage voordat je test start</span>
+    <button class="seed-btn" onclick="seedTestData()">⬇ Seed testdata</button>
+    <button class="seed-btn" onclick="clearTestData()" style="color:var(--red);border-color:rgba(255,79,79,0.3);">✕ Data wissen</button>
+    <span class="seed-status" id="seedStatus"></span>
   </div>
 
   <div class="cfg">
@@ -157,15 +173,19 @@
   <div class="stats" id="statsRow">
     <div class="stat"><div class="stat-lbl">TURN</div><div class="stat-val c-white" id="stTurn">0/0</div></div>
     <div class="stat"><div class="stat-lbl">OBSERVATIES</div><div class="stat-val c-purple" id="stObs">0</div></div>
+    <div class="stat"><div class="stat-lbl">DB CHECKS</div><div class="stat-val c-green" id="stDb">0</div></div>
     <div class="stat"><div class="stat-lbl">BUGS</div><div class="stat-val c-red" id="stBugs">0</div></div>
     <div class="stat"><div class="stat-lbl">GEM. TIJD</div><div class="stat-val c-white" id="stTime">–</div></div>
-    <div class="stat"><div class="stat-lbl">GEM. WOORDEN</div><div class="stat-val c-white" id="stWords">–</div></div>
     <div class="stat"><div class="stat-lbl">SCORE</div><div class="stat-val c-green" id="stScore">–</div></div>
   </div>
 
-  <div class="main">
+  <!-- DB PROBE PANEL -->
+  <div class="db-probe" id="dbProbePanel">
+    <div class="db-probe-title">▸ LIVE DATABASE STAAT (localStorage)</div>
+    <div id="dbProbeContent"></div>
+  </div>
 
-    <!-- CHAT -->
+  <div class="main">
     <div class="chat-wrap" id="chatWrap">
       <div class="panel-hdr">
         <span>💬 Live gesprek</span>
@@ -174,11 +194,10 @@
       <div class="chat-body" id="chatBody"></div>
     </div>
 
-    <!-- SIDE: OBS + BUGS -->
     <div class="side-wrap" id="sideWrap">
       <div class="panel-hdr">
         <span>🔍 Signalen <span id="obsCount" style="font-family:'DM Mono',monospace;font-size:9px;color:var(--gray);">(0)</span></span>
-        <span class="panel-hdr-right"><span style="color:#4faff4">👤 klant</span> · <span style="color:#e8ff47">🛠 dev</span></span>
+        <span class="panel-hdr-right"><span style="color:#4faff4">👤 klant</span> · <span style="color:#e8ff47">🛠 dev</span> · <span style="color:#47ff8a">💾 db</span></span>
       </div>
       <div class="obs-body" id="obsBody">
         <div class="empty-msg" id="obsEmpty">Nog geen observaties</div>
@@ -190,10 +209,8 @@
         <div class="empty-msg" id="bugsEmpty">Nog geen bugs</div>
       </div>
     </div>
-
   </div>
 
-  <!-- RAPPORT -->
   <div class="report" id="report">
     <div class="rpt-hdr">
       <div>
@@ -220,11 +237,282 @@
 
 <script>
 // ══════════════════════════════════════════════════════
-// ECHTE DATA — HANOS FACTUUR, HACCP, MENU
+//  KLAAR AI REALITEITSTEST v2
+//  Dieptetest met echte module-doorloop + localStorage checks
+// ══════════════════════════════════════════════════════
+
+// ── SEED TESTDATA ──
+// Vult localStorage met realistische Klaar-data zodat de AI-assistent
+// daadwerkelijk kan verwijzen naar wat er "in het systeem zit"
+
+function seedTestData() {
+  const recepten = [
+    {
+      id:'rec_001', title:'Ribeye Black Angus 300g', folder:'keuken', status:'actief', type:'savoury',
+      allergens:[{code:'M',name:'Melk',maybe:false}],
+      recipe:{
+        prep:'10 min', cook:'15 min', servings:1,
+        ingredients:[
+          {hoeveelheid:'300g', naam:'Ribeye Black Angus'},
+          {hoeveelheid:'20g',  naam:'Truffelboter'},
+          {hoeveelheid:'5g',   naam:'Fleur de sel'},
+          {hoeveelheid:'2g',   naam:'Zwarte peper grof'},
+          {hoeveelheid:'150g', naam:'Haricots verts'},
+          {hoeveelheid:'100g', naam:'Aardappelgratin'},
+        ],
+        steps:[
+          'Ribeye 2 uur voor gebruik uit de koelkast halen en op kamertemperatuur laten komen.',
+          'Gietijzeren pan verhitten tot zeer heet. Geen olie — vet van het vlees is voldoende.',
+          'Ribeye 3 min per kant voor medium-rare. Kerntemperatuur 54°C.',
+          'Vlees 5 min laten rusten onder aluminiumfolie.',
+          'Truffelboter toevoegen in de laatste 30 seconden, omscheppen.',
+          'Serveren op warm bord met haricots verts en gratin.'
+        ],
+        notes:'Kerntemperatuur altijd controleren. Afwijking >2°C documenteren in HACCP.'
+      },
+      verkoopprijs: 38.50, createdAt:'2026-06-01T08:00:00.000Z'
+    },
+    {
+      id:'rec_002', title:'Zalm op risotto met gremolata', folder:'keuken', status:'actief', type:'savoury',
+      allergens:[{code:'V',name:'Vis',maybe:false},{code:'M',name:'Melk',maybe:false},{code:'G',name:'Gluten',maybe:true}],
+      recipe:{
+        prep:'15 min', cook:'25 min', servings:1,
+        ingredients:[
+          {hoeveelheid:'180g', naam:'Zalm Atlantic portie'},
+          {hoeveelheid:'80g',  naam:'Risotto rijst Carnaroli'},
+          {hoeveelheid:'200ml',naam:'Visfond'},
+          {hoeveelheid:'40ml', naam:'Droge witte wijn'},
+          {hoeveelheid:'30g',  naam:'Parmezaan geraspt'},
+          {hoeveelheid:'20g',  naam:'Boter'},
+          {hoeveelheid:'½',    naam:'Citroen (rasp + sap)'},
+          {hoeveelheid:'5g',   naam:'Peterselie plat gehakt'},
+          {hoeveelheid:'1 teen',naam:'Knoflook fijn'},
+        ],
+        steps:[
+          'Fond warm houden. Sjalot en knoflook glazig fruiten in olijfolie.',
+          'Rijst toevoegen en 2 min opbakken tot glazig. Deglaceren met witte wijn.',
+          'Fond lepel voor lepel toevoegen, 18 min, constant roeren.',
+          'Zalm apart bakken huid-naar-beneden 4 min, omdraaien 2 min.',
+          'Risotto afwerken met parmezaan en boter (mantecatura). Gremolata er door.',
+          'Serveren: risotto in diep bord, zalm er op, scheutje citroenolie.'
+        ],
+        notes:'Risotto direct serveren — wacht niet. Zalmportie altijd op kerntemperatuur 63°C.'
+      },
+      verkoopprijs: 27.50, createdAt:'2026-06-01T08:00:00.000Z'
+    },
+    {
+      id:'rec_003', title:'Risotto ai funghi (V)', folder:'keuken', status:'actief', type:'savoury',
+      allergens:[{code:'M',name:'Melk',maybe:false},{code:'G',name:'Gluten',maybe:true}],
+      recipe:{
+        prep:'20 min', cook:'25 min', servings:1,
+        ingredients:[
+          {hoeveelheid:'80g',  naam:'Risotto rijst Carnaroli'},
+          {hoeveelheid:'120g', naam:'Gemengde paddenstoelen (kastanje, shiitake, porcini)'},
+          {hoeveelheid:'10g',  naam:'Gedroogde porcini'},
+          {hoeveelheid:'200ml',naam:'Groentebouillon'},
+          {hoeveelheid:'30g',  naam:'Parmezaan geraspt'},
+          {hoeveelheid:'20g',  naam:'Boter'},
+          {hoeveelheid:'1',    naam:'Sjalot'},
+          {hoeveelheid:'5g',   naam:'Tijm vers'},
+        ],
+        steps:[
+          'Gedroogde porcini 20 min weken in warm water. Week-water bewaren.',
+          'Verse paddenstoelen in hete pan droogbakken tot bruin. Reserveren.',
+          'Basis risotto: sjalot fruiten, rijst toasten, bouillon en porcini-water opbouwen.',
+          'Op 15 min: paddenstoelen en tijm toevoegen, 5 min meekoken.',
+          'Afwerken met boter en parmezaan. Seizoen goed.'
+        ],
+        notes:'Vegetarisch gerecht. Controleer parmezaan (stremsel) als gast strikt vegetarisch is.'
+      },
+      verkoopprijs: 19.50, createdAt:'2026-06-01T08:00:00.000Z'
+    },
+    {
+      id:'rec_004', title:'Caprese salade (V)', folder:'keuken', status:'actief', type:'savoury',
+      allergens:[{code:'M',name:'Melk',maybe:false},{code:'N',name:'Noten',maybe:false},{code:'SA',name:'Sesamzaad',maybe:false}],
+      recipe:{
+        prep:'10 min', cook:'0 min', servings:1,
+        ingredients:[
+          {hoeveelheid:'125g', naam:'Mozzarella di Bufala'},
+          {hoeveelheid:'100g', naam:'Cherry tomaten'},
+          {hoeveelheid:'8 blaadjes', naam:'Basilicum vers'},
+          {hoeveelheid:'20ml', naam:'Olijfolie extra vierge'},
+          {hoeveelheid:'10ml', naam:'Aceto balsamico vecchio'},
+          {hoeveelheid:'15g',  naam:'Pijnboompitten (geroosterd)'},
+          {hoeveelheid:'3g',   naam:'Fleur de sel'},
+        ],
+        steps:[
+          'Mozzarella 30 min voor serveren uit koelkast.',
+          'Tomaten halveren. Mozzarella in plakken snijden.',
+          'Opmaken: tomaat, mozzarella afwisselen. Basilicum er tussenin.',
+          'Afwerken met olijfolie, balsamico, fleur de sel, pijnboompitten.'
+        ],
+        notes:'LET OP: pijnboompitten = notenallergie (EU14 code N). Altijd vermelden aan gasten.'
+      },
+      verkoopprijs: 12.50, createdAt:'2026-06-01T08:00:00.000Z'
+    }
+  ];
+
+  const ingredienten = [
+    {id:'ing_001', naam:'Ribeye Black Angus', eenheid:'kg', inkoopprijs:28.50, leverancier:'HANOS', datum:'2026-06-10'},
+    {id:'ing_002', naam:'Zalm Atlantic portie', eenheid:'stuk', inkoopprijs:4.20, leverancier:'HANOS', datum:'2026-06-10'},
+    {id:'ing_003', naam:'Kipfilet zonder vel', eenheid:'kg', inkoopprijs:8.90, leverancier:'HANOS', datum:'2026-06-10'},
+    {id:'ing_004', naam:'Risotto rijst Carnaroli', eenheid:'pak', inkoopprijs:22.80, leverancier:'HANOS', datum:'2026-06-10'},
+    {id:'ing_005', naam:'Olijfolie extra vierge', eenheid:'fl', inkoopprijs:18.50, leverancier:'HANOS', datum:'2026-06-10'},
+    {id:'ing_006', naam:'Pijnboompitten', eenheid:'kg', inkoopprijs:32.00, leverancier:'HANOS', datum:'2026-06-10'},
+    {id:'ing_007', naam:'Mozzarella di Bufala', eenheid:'stuk', inkoopprijs:2.80, leverancier:'HANOS', datum:'2026-06-10'},
+    {id:'ing_008', naam:'Cherry tomaten', eenheid:'bakje', inkoopprijs:2.40, leverancier:'HANOS', datum:'2026-06-10'},
+    {id:'ing_009', naam:'Basilicum vers', eenheid:'pak', inkoopprijs:1.90, leverancier:'HANOS', datum:'2026-06-10'},
+    {id:'ing_010', naam:'Parmezaan geraspt', eenheid:'kg', inkoopprijs:16.80, leverancier:'HANOS', datum:'2026-06-10'},
+    {id:'ing_011', naam:'Truffelboter', eenheid:'kg', inkoopprijs:45.00, leverancier:'Delhaize Pro', datum:'2026-06-08'},
+    {id:'ing_012', naam:'Gemengde paddenstoelen', eenheid:'kg', inkoopprijs:12.50, leverancier:'Bidfood', datum:'2026-06-09'},
+  ];
+
+  const haccp_eenheden = [
+    {id:'he_001', naam:'Koelcel 1 — Vlees', maxNorm:5, minNorm:0, locatie:'Keuken'},
+    {id:'he_002', naam:'Koelcel 2 — Vis/Zuivel', maxNorm:5, minNorm:0, locatie:'Keuken'},
+    {id:'he_003', naam:'Vriezer', maxNorm:-18, minNorm:-25, locatie:'Keuken'},
+  ];
+
+  const haccp_koeling = [
+    // Gisteren — normaal
+    {id:'hm_001', datum:'2026-06-14', tijd:'07:15', eenheidId:'he_001', eenheidNaam:'Koelcel 1 — Vlees', temperatuur:3.8, norm:5, afwijking:false, maatregel:'', gemeten_door:'Jan', medewerker:'Jan'},
+    {id:'hm_002', datum:'2026-06-14', tijd:'07:15', eenheidId:'he_002', eenheidNaam:'Koelcel 2 — Vis/Zuivel', temperatuur:2.1, norm:5, afwijking:false, maatregel:'', gemeten_door:'Jan', medewerker:'Jan'},
+    {id:'hm_003', datum:'2026-06-14', tijd:'07:15', eenheidId:'he_003', eenheidNaam:'Vriezer', temperatuur:-19.2, norm:-18, afwijking:false, maatregel:'', gemeten_door:'Jan', medewerker:'Jan'},
+    // Vandaag — vriezer afwijking
+    {id:'hm_004', datum:'2026-06-15', tijd:'07:15', eenheidId:'he_001', eenheidNaam:'Koelcel 1 — Vlees', temperatuur:4.2, norm:5, afwijking:false, maatregel:'', gemeten_door:'Jan', medewerker:'Jan'},
+    {id:'hm_005', datum:'2026-06-15', tijd:'07:15', eenheidId:'he_002', eenheidNaam:'Koelcel 2 — Vis/Zuivel', temperatuur:2.1, norm:5, afwijking:false, maatregel:'', gemeten_door:'Jan', medewerker:'Jan'},
+    {id:'hm_006', datum:'2026-06-15', tijd:'07:15', eenheidId:'he_003', eenheidNaam:'Vriezer', temperatuur:-14.3, norm:-18, afwijking:true, maatregel:'Motor gecontroleerd. Deur zat goed dicht. Technicus gebeld.', gemeten_door:'Jan', medewerker:'Jan'},
+  ];
+
+  const haccp_afwijkingen = [
+    {id:'haf_001', datum:'2026-06-15', type:'Temperatuurafwijking Vriezer', waarde:'-14.3°C (norm: max -18°C)', maatregel:'Motor gecontroleerd. Deur goed dicht. Technicus gebeld voor onderhoud.', medewerker:'Jan', status:'open', bron:'meting'},
+  ];
+
+  const inkopen = [
+    {
+      id:'ink_001', leverancier:'HANOS', datum:'2026-06-10', factuurNr:'H-2026-089234',
+      regels:[
+        {product:'Ribeye Black Angus 4-5kg', hoeveelheid:8, eenheid:'kg', prijs_per_eenheid:28.50, totaal:228.00},
+        {product:'Zalm Atlantic portie 180g', hoeveelheid:40, eenheid:'stuk', prijs_per_eenheid:4.20, totaal:168.00},
+        {product:'Kipfilet zonder vel', hoeveelheid:5, eenheid:'kg', prijs_per_eenheid:8.90, totaal:44.50},
+        {product:'Risotto rijst Carnaroli 5kg', hoeveelheid:2, eenheid:'pak', prijs_per_eenheid:22.80, totaal:45.60},
+        {product:'Olijfolie extra vierge 5L', hoeveelheid:3, eenheid:'fl', prijs_per_eenheid:18.50, totaal:55.50},
+        {product:'Pijnboompitten 1kg', hoeveelheid:1, eenheid:'kg', prijs_per_eenheid:32.00, totaal:32.00},
+        {product:'Mozzarella di Bufala 125g', hoeveelheid:24, eenheid:'stuk', prijs_per_eenheid:2.80, totaal:67.20},
+        {product:'Cherry tomaten 500g', hoeveelheid:12, eenheid:'bakje', prijs_per_eenheid:2.40, totaal:28.80},
+        {product:'Basilicum vers 100g', hoeveelheid:8, eenheid:'pak', prijs_per_eenheid:1.90, totaal:15.20},
+        {product:'Parmezaan geraspt 1kg', hoeveelheid:2, eenheid:'kg', prijs_per_eenheid:16.80, totaal:33.60},
+      ],
+      totaalExBTW:718.40, btwBedrag:57.47, totaalIncBTW:775.87
+    }
+  ];
+
+  const producten = [
+    {id:'prd_001', naam:'Ribeye Black Angus', categorie:'Vlees', eenheid:'kg', inkoopprijs:28.50, verkoopprijs:null, voorraad:3.5, minVoorraad:2, leverancier:'HANOS'},
+    {id:'prd_002', naam:'Zalm Atlantic portie', categorie:'Vis', eenheid:'stuk', inkoopprijs:4.20, verkoopprijs:null, voorraad:22, minVoorraad:10, leverancier:'HANOS'},
+    {id:'prd_003', naam:'Mozzarella di Bufala', categorie:'Zuivel', eenheid:'stuk', inkoopprijs:2.80, verkoopprijs:null, voorraad:14, minVoorraad:6, leverancier:'HANOS'},
+  ];
+
+  localStorage.setItem('klaar_recipes',           JSON.stringify(recepten));
+  localStorage.setItem('klaar_ingredienten',       JSON.stringify(ingredienten));
+  localStorage.setItem('klaar_haccp_eenheden',     JSON.stringify(haccp_eenheden));
+  localStorage.setItem('klaar_haccp_koeling',      JSON.stringify(haccp_koeling));
+  localStorage.setItem('klaar_haccp_afwijkingen',  JSON.stringify(haccp_afwijkingen));
+  localStorage.setItem('klaar_inkopen',            JSON.stringify(inkopen));
+  localStorage.setItem('klaar_producten',          JSON.stringify(producten));
+
+  document.getElementById('seedStatus').textContent =
+    `✓ ${recepten.length} recepten · ${ingredienten.length} ingrediënten · ${haccp_koeling.length} HACCP-metingen · 1 factuur`;
+}
+
+function clearTestData() {
+  ['klaar_recipes','klaar_ingredienten','klaar_haccp_eenheden','klaar_haccp_koeling',
+   'klaar_haccp_afwijkingen','klaar_inkopen','klaar_producten'].forEach(k => localStorage.removeItem(k));
+  document.getElementById('seedStatus').textContent = '✕ Data gewist';
+}
+
+// ── DB PROBE ── live snapshot van wat er in localStorage zit
+function probeDB() {
+  const keys = {
+    'klaar_recipes':          'Recepten',
+    'klaar_ingredienten':     'Ingrediënten',
+    'klaar_haccp_koeling':    'HACCP Metingen',
+    'klaar_haccp_afwijkingen':'HACCP Afwijkingen',
+    'klaar_inkopen':          'Inkopen',
+    'klaar_producten':        'Producten',
+  };
+  const lines = [];
+  let checks = 0;
+  for (const [k, label] of Object.entries(keys)) {
+    try {
+      const val = localStorage.getItem(k);
+      if (!val) { lines.push(`<div class="db-probe-row"><span class="db-key">${label}</span><span class="db-val" style="color:var(--red)">leeg</span></div>`); }
+      else {
+        const arr = JSON.parse(val);
+        const count = Array.isArray(arr) ? arr.length : '?';
+        lines.push(`<div class="db-probe-row"><span class="db-key">${label}</span><span class="db-val">${count} records</span></div>`);
+        if (count > 0) checks++;
+      }
+    } catch(e) {
+      lines.push(`<div class="db-probe-row"><span class="db-key">${label}</span><span class="db-val" style="color:var(--red)">parse error</span></div>`);
+    }
+  }
+  document.getElementById('dbProbeContent').innerHTML = lines.join('');
+  document.getElementById('dbProbePanel').style.display = 'block';
+  return checks;
+}
+
+// ── DB CHECK PER MODULE ── wat verwacht de test te zien?
+function dbCheckForModule(module) {
+  const checks = {
+    'Recept Studio': () => {
+      const r = safeGet('klaar_recipes', []);
+      if (!r.length) return '⚠ Geen recepten in klaar_recipes — Recept Studio test heeft geen data';
+      const titels = r.map(x => x.title).join(', ');
+      return `✓ ${r.length} recepten aanwezig: ${titels.slice(0,80)}${titels.length>80?'…':''}`;
+    },
+    'Kostprijs Calculator': () => {
+      const r = safeGet('klaar_recipes', []);
+      const i = safeGet('klaar_ingredienten', []);
+      if (!r.length || !i.length) return '⚠ Geen recepten of ingrediënten — kostprijsberekening onmogelijk';
+      const vp = r.filter(x => x.verkoopprijs > 0);
+      return `✓ ${r.length} recepten · ${i.length} ingrediënten · ${vp.length} met verkoopprijs`;
+    },
+    'HACCP Logger': () => {
+      const k = safeGet('klaar_haccp_koeling', []);
+      const a = safeGet('klaar_haccp_afwijkingen', []);
+      const afwijkingen = k.filter(m => m.afwijking);
+      return `✓ ${k.length} metingen · ${afwijkingen.length} afwijking(en) · ${a.length} afwijkingsdossiers`;
+    },
+    'Allergenenkaart': () => {
+      const r = safeGet('klaar_recipes', []);
+      const metAllergen = r.filter(x => x.allergens && x.allergens.length > 0);
+      const noten = r.filter(x => x.allergens && x.allergens.some(a => a.code === 'N'));
+      return `✓ ${metAllergen.length}/${r.length} recepten met allergenen · ${noten.length} met noten`;
+    },
+    'Leveranciers': () => {
+      const ink = safeGet('klaar_inkopen', []);
+      const ing = safeGet('klaar_ingredienten', []);
+      return `✓ ${ink.length} factuur/inkopen · ${ing.length} ingrediënten in bibliotheek`;
+    },
+  };
+  const fn = checks[module];
+  return fn ? fn() : null;
+}
+
+function safeGet(key, def) {
+  try { return JSON.parse(localStorage.getItem(key) || JSON.stringify(def)); } catch { return def; }
+}
+
+// ══════════════════════════════════════════════════════
+// MARCO'S ECHTE DATA
 // ══════════════════════════════════════════════════════
 
 const MARCO_DATA = `
-HANOS FACTUUR H-2026-089234 (10 juni 2026):
+RESTAURANT: Bistro De Gouden Lepel, Amsterdam Pijp. 45 couverts, open di-zo, 8 FTE (3 koks, 2 keukenhulpen, 3 bediening).
+Chef-kok Marco Visser, 44 jaar, 18 jaar in de horeca. Mediterraan-Frans georiënteerd.
+
+HANOS FACTUUR H-2026-089234 (10 juni 2026 — 5 dagen geleden):
 • Ribeye Black Angus 4-5kg:     €28,50/kg  × 8 kg   = €228,00
 • Zalm Atlantic portie 180g:    €4,20/stuk × 40 st  = €168,00
 • Kipfilet zonder vel:          €8,90/kg   × 5 kg   = €44,50
@@ -235,139 +523,269 @@ HANOS FACTUUR H-2026-089234 (10 juni 2026):
 • Cherry tomaten 500g:          €2,40/bk   × 12 bk  = €28,80
 • Basilicum vers 100g:          €1,90/pak  × 8 pak  = €15,20
 • Parmezaan geraspt 1kg:        €16,80/kg  × 2 kg   = €33,60
-TOTAAL excl. BTW: €718,40 | BTW: €57,47 | TOTAAL: €775,87
+TOTAAL excl. BTW: €718,40 | BTW (8%): €57,47 | TOTAAL incl. BTW: €775,87
 
-MENU (verkoopprijzen incl. BTW):
-• Ribeye 300g + truffelboter: €38,50
-• Zalm op risotto: €27,50
-• Risotto ai funghi (V): €19,50
-• Caprese salade (starter): €12,50
+HUIDIG MENU (verkoopprijzen incl. BTW, dinerhalf):
+• Ribeye Black Angus 300g + truffelboter + haricots verts: €38,50 (bestseller)
+• Zalm op risotto met gremolata: €27,50
+• Risotto ai funghi (vegetarisch, V): €19,50
+• Caprese salade — starter (mozzarella bufala, pijnboompitten, tomaat): €12,50
 
-HACCP METINGEN VANOCHTEND 07:15:
-• Koelcel 1 – Vlees:       +4,2°C  → OK (norm: 0–5°C)
-• Koelcel 2 – Vis/Zuivel:  +2,1°C  → OK (norm: 0–5°C)
-• VRIEZER:                 -14,3°C → ❗AFWIJKING (norm: max -18°C)
-Actie ondernomen: vriezer gecontroleerd, motor lijkt te werken, deur zat goed dicht.
+HACCP SITUATIE VANDAAG (15 juni):
+• Koelcel 1 – Vlees:        +4,2°C  → OK (norm: 0–5°C) — gemeten 07:15 door Jan
+• Koelcel 2 – Vis/Zuivel:   +2,1°C  → OK (norm: 0–5°C) — gemeten 07:15 door Jan
+• VRIEZER:                  -14,3°C → ❗AFWIJKING (norm: max -18°C) — actie: motor gecontroleerd, technicus gebeld
+De vriezer bevat: diepvries-fond, ambachtelijk ijs, en noodvoorraad ribeye (3kg).
 
-HUIDIGE SOFTWARE: Horeko (HACCP) + Excel (recepten/kostprijs)
-DOEL: alles overzetten naar Klaar vóór eind volgende maand
+OVERGANG VAN:
+• Horeko: alleen HACCP (logboeken, afwijkingen). Goed systeem maar duur voor alleen dit.
+• Excel: receptenboek (40+ recepten), kostprijsberekeningen, allergenenlijst (apart Word-bestand).
+• Geen geïntegreerd systeem. Alles losstaan, tijdrovend.
+
+KOMENDE EVENTS:
+• 28 september 2026: bruiloft 80 personen — menu ribeye of zalm + caprese + dessert
+• 4 oktober 2026: bedrijfsborrel 40 personen
+
+PIJNPUNTEN MET HUIDIGE WERKWIJZE:
+• Allergenenkaart in Word-bestand — altijd verouderd, 3 documentversies in omloop
+• NVWA-inspectie gehad in april: mondeling opmerking over allergenenregistratie
+• Kostprijsberekening elke keer opnieuw in Excel — bij Hanos-prijswijziging alles aanpassen
+• Twee koks hebben moeite met technologie. Jan (52) kan geen QR-code scannen.
 `;
 
 // ══════════════════════════════════════════════════════
-// SYSTEEM PROMPTS
+//  KLAAR ASSISTENT SYSTEEM PROMPT — met volledige module kennis
 // ══════════════════════════════════════════════════════
 
+const KLAAR_PROMPT = `Je bent de Klaar AI-assistent — ingebouwde hulp van Klaar horeca-software (www.getklaar.app).
+
+GEBRUIKER: Marco Visser, chef-eigenaar Bistro De Gouden Lepel Amsterdam. Stapt over van Horeko + Excel.
+${MARCO_DATA}
+
+KLAAR MODULES — WAT ZE DOEN EN HOE:
+━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━
+MODULE 01 — Recept Studio
+  Recepten aanmaken met ingrediënten, bereidingsstappen, porties.
+  Foodcost berekening: ingrediëntprijzen × hoeveelheden ÷ porties = kostprijs/portie.
+  Marge preview: verkoopprijs invullen → foodcost% + brutomarge live zichtbaar.
+  Kleur: groen (<25%), oranje (25-33%), rood (>33%) foodcost%.
+  Kloon-functie aanwezig. Verkoopprijs opgeslagen per recept.
+  localStorage key: klaar_recipes
+
+MODULE 02 — Allergenenkaart
+  EU-14 allergenen per gerecht bijhouden.
+  Twee exportformaten: Gastenkaart (A4 tabel, portrait) + Keukensheet (per gerecht met ingrediëntenlijst).
+  EU-14 codes: G=Gluten, K=Kustaceeën, E=Eieren, V=Vis, P=Pinda's, S=Soja, M=Melk, N=Noten, SE=Selderij, MO=Mosterd, SA=Sesamzaad, SO=Sulfiet, L=Lupine, WE=Weekdieren
+  BELANGRIJK: Caprese heeft N (Noten) vanwege pijnboompitten! Dit is een kritisch allergeenrisico.
+  localStorage key: klaar_recipes (allergens veld per recept)
+
+MODULE 03 — HACCP Logger
+  Koelcellen en vriezers configureren met naam, min- en maxnorm.
+  Dagelijks loggen: temperatuur, tijdstip, gemeten door (verplicht), ingevoerd door (optioneel).
+  Afwijkingen worden automatisch gemarkeerd bij overschrijding norm.
+  Maatregel/actie vastleggen bij afwijking — verplicht voor NVWA-compliance.
+  Daily reminder via browser Notifications API instellen (bijv. 07:00).
+  Inspectie-klaar: alle logs met corrigerende maatregelen zichtbaar per datum.
+  localStorage keys: klaar_haccp_koeling, klaar_haccp_afwijkingen, klaar_haccp_eenheden
+
+MODULE 04 — Kostprijs Calculator
+  Foodcost% per recept berekenen (koppelt aan Recept Studio data).
+  Scenario-planner: ingrediëntprijzen ±30-50% simuleren, effect op marge zien.
+  Break-even calculator: vaste kosten × omzetaandeel ÷ brutomarge/portie = porties/week.
+  localStorage key: gebruikt klaar_recipes + klaar_ingredienten
+
+MODULE 05 — Menubuilder
+  Menukaart samenstellen op basis van recepten. Marge per gerecht.
+  QR-code generatie voor digitale menukaart.
+  localStorage key: klaar_menu_items
+
+MODULE 07 — Leveranciers
+  Facturen uploaden (foto, scan, PDF) → OCR via Claude Vision AI.
+  Verwerkt producten en prijzen in ingrediëntenbibliotheek.
+  Prijstrend per ingredient over tijd bijhouden.
+  Prijsalerts instellen per ingrediënt.
+  localStorage keys: klaar_inkopen, klaar_ingredienten, klaar_producten
+
+MODULE 08 — Smart Scanner (NIEUW)
+  Universele AI-scanner voor elk soort document.
+  Detecteert automatisch: leveranciersfactuur, receptenkaart, allergenenlijst, HACCP logboek, supermarktbon.
+  Toont review/bevestigingsscherm vóór opslaan.
+  Slaat op in juiste module.
+
+MODULE 10 — Catering & Events
+  Kostprijs per persoon berekenen voor events.
+  Keukensheet met timing en taakverdeling genereren.
+  Inkooplijst automatisch genereren.
+  localStorage key: klaar_events
+
+WAT KLAAR NOG NIET KAN (eerlijk zijn):
+- Directe koppeling met Hanos/SLIGRO bestelportaal
+- Personeelsplanning of roostertools
+- Kassaintegrate of POS-koppeling
+- Automatische NVWA-rapportage indienen (wel alles voorbereiden)
+- Multi-locatie management
+
+ANTWOORDREGELS:
+- Max 90 woorden. Direct beginnen — geen intro zoals "Hoi Marco!" of "Goed om te horen!"
+- Concrete berekeningen met Marco's echte Hanos-prijzen. Geen afgeronde/fictieve getallen.
+- Vernoem de exacte module: "In Recept Studio →", "In HACCP Logger →"
+- Als een functie niet bestaat: zeg dat eerlijk, stel alternatief voor.
+- Altijd Nederlands.
+- Bij berekeningen: toon tussenresultaten (kostprijs per portie → foodcost% → brutomarge).
+
+[OBS: dev-signaal] — voeg toe aan EINDE van je bericht als je ontbrekende functies, UX-problemen of verbeterpunten signaleert.`;
+
 // ══════════════════════════════════════════════════════
-// MODULE SCENARIO POOL — elke run pikt random scenario's
+//  MODULE SCENARIO POOL — diep en realistisch
 // ══════════════════════════════════════════════════════
 
 const MODULE_POOL = [
   {
     module: 'Recept Studio',
-    color: '#e8ff47',
     scenarios: [
-      'Voer het ribeye-recept in (300g Black Angus, truffelboter) met ingrediënten van de Hanos factuur. Bereken foodcost per portie.',
-      'Maak het zalm-risotto recept aan. Bereken of €27,50 verkoopprijs een gezonde marge geeft.',
-      'Voer de caprese salade in als starter. Bereken foodcost op basis van Hanos-prijzen. Is €12,50 genoeg?',
-      'Kloon een bestaand recept en pas de portiegrootte aan van 300g naar 200g. Herbereken automatisch.',
-      'Voer het risotto ai funghi recept in (vegetarisch). Bereken foodcost en vergelijk marge met de ribeye.'
-    ]
-  },
-  {
-    module: 'Kostprijs Calculator',
-    color: '#e8ff47',
-    scenarios: [
-      'Bereken de foodcost% voor alle 4 menugerechten op basis van de Hanos-factuur. Welke is het meest winstgevend?',
-      'Simuleer wat er met je marges gebeurt als Hanos de ribeye 15% duurder maakt. Hoeveel moet de verkoopprijs dan worden?',
-      'Bereken het break-even punt voor je ribeye. Hoeveel porties moet je per week verkopen om de inkoop terug te verdienen?',
-      'Vergelijk de foodcost van vis vs. vlees gerechten. Welke categorie is lucratiever voor jouw restaurant?',
-      'Jouw zalm kost nu €4,20 per portie. Bij welke inkoopprijs wordt het gerecht verliesgevend bij een verkoopprijs van €27,50?'
-    ]
-  },
-  {
-    module: 'Allergenenkaart',
-    color: '#47ff8a',
-    scenarios: [
-      'Stel de EU-14 allergenenkaart in voor al je menugerechten. Begin met de caprese — heeft die pijnboompitten? (notenallergie)',
-      'Een gast belt: ernstige lactose-intolerantie. Welke gerechten op jouw menu zijn veilig? Hoe snel kun je dit opzoeken?',
-      'Exporteer de allergenenkaart zodat je medewerkers die bij de kassa hebben. Werkt dat op mobiel?',
-      'Je voegt een nieuw seizoensgerecht toe met ricotta. Hoe update je snel de allergenenkaart zonder alles opnieuw in te vullen?',
-      'De NVWA vraagt om een schriftelijk overzicht van allergenen. Genereer een compliant document vanuit Klaar.'
+      // Scenario A: Ribeye recept laden + foodcost berekenen
+      {
+        opening: `Hallo, ik ben Marco van Bistro De Gouden Lepel. Ik heb net Klaar geactiveerd en testdata ingeladen. Mijn ribeye-recept staat al in het systeem. Ik wil de foodcost berekenen — ribeye 300g portie kost me €28,50/kg. Hoe zie ik dat in de Recept Studio?`,
+        followups: [
+          `OK ik zie het recept — ribeye 300g × €28,50/kg = €8,55 alleen al voor het vlees. Dan de truffelboter, haricots verts, gratin. Totale kostprijs moet zo €12-13 zijn? Klopt dat met jullie berekening?`,
+          `Marge ziet er goed uit. Verkoopprijs is €38,50. Dus foodcost% is dan €12,50/€38,50 = 32,5%? Dat is oranje bij jullie? Is dat normaal voor fine dining?`,
+          `Hoe voeg ik de gratin toe als ingrediënt? Aardappel gratin is een half-recept — 100g van een bereide gratin. Kan ik een recept-in-recept doen in Klaar?`,
+        ]
+      },
+      // Scenario B: Nieuw vegetarisch recept invoeren
+      {
+        opening: `Hallo, Marco van De Gouden Lepel. Ik heb een nieuw herfstgerecht dat ik wil toevoegen: pompoenrisotto met geitenkaas. Ik wil direct zien wat de kostprijs wordt. Hoe maak ik een nieuw recept aan in de Recept Studio?`,
+        followups: [
+          `Pompoen koop ik bij Bidfood voor €1,80/kg. Voor 4 porties gebruik ik 600g. Geitenkaas Capriole 150g à €18/kg. Hoe voer ik die prijzen in — die zitten nog niet in mijn ingrediëntenbibliotheek?`,
+          `Dus ik moet de ingrediënten eerst aanmaken via Leveranciers module en dan komen ze hier? Of kan ik ze direct hier aanmaken met een prijs?`,
+          `Verkoopprijs wordt €21,50 voor dit gerecht. Wat is de foodcost% bij een kostprijs van pak 'm beet €6,80? En is dat acceptabel vergeleken met mijn vleesgerechten?`,
+        ]
+      }
     ]
   },
   {
     module: 'HACCP Logger',
-    color: '#ff4f4f',
     scenarios: [
-      'Log de vriezerafwijking van vanochtend: -14,3°C (norm max -18°C). Voeg corrective action toe: motor gecontroleerd, deur was goed dicht.',
-      'Voer de complete ochtendmeting in van 07:15 voor alle 3 koelunits. Koelcel 1 vlees +4,2°C, koelcel 2 vis +2,1°C, vriezer -14,3°C.',
-      'Bereid het HACCP-logboek voor op een NVWA-inspectie volgende week. Wat moet er allemaal in staan?',
-      'Jouw kok vergat gisteren de temperaturen te meten. Kun je dit handmatig met terugwerkende kracht invoeren? Hoe werkt dat?',
-      'Hoe stel je in Klaar in dat medewerkers elke ochtend een reminder krijgen voor de temperatuurmeting?'
+      // Scenario A: Vriezer afwijking vandaag loggen + actie
+      {
+        opening: `Marco van De Gouden Lepel. De vriezer gaf vanochtend -14,3°C — dat is een afwijking. Ik zie dat het al in het systeem staat (Jan heeft het ingevoerd). Maar ik wil de maatregel bijwerken: technicus van KoelService BV komt vrijdag. Hoe wijzig ik de corrigerende actie in HACCP Logger?`,
+        followups: [
+          `De vriezer bevat 3kg ribeye, ambachtelijk ijs en fond. Bij -14,3°C — hoe lang kan ik dat nog accepteren? En wat zegt de NVWA als ze dit zien zonder afdoende maatregel?`,
+          `Mijn kok Jan van 52 doet de metingen elke ochtend. Hij heeft geen smartphone. Hoe stel ik de dagelijkse herinnering in zodat IK een melding krijg als hij het niet heeft ingevuld?`,
+          `Volgende week vrijdag heb ik een NVWA-aankondiging. Wat moet ik klaar hebben in Klaar voor de inspecteur? Welke documenten kan ik uitdraaien?`,
+        ]
+      },
+      // Scenario B: Historische data invoeren
+      {
+        opening: `Hallo, Marco hier. Ik kom erachter dat mijn sous-chef Ahmed gisteren de meting niet heeft gedaan — ik zie niks van gisteren in het systeem voor de avondcontrole. Hij doet 18:00 controle altijd maar die staat er nu niet in. Kan ik dat met terugwerkende kracht invoeren in HACCP Logger?`,
+        followups: [
+          `Ahmed zegt dat de temperaturen gisteren 18:00 waren: vlees +4,8°C, vis +3,2°C, vriezer -19,1°C. Allemaal OK. Hoe leg ik zijn naam vast als gemeten-door en niet mijn naam?`,
+          `Ik wil dat Klaar mij automatisch een melding stuurt als een geplande meting ontbreekt — bijv. als er voor een dag geen avondmeting is. Kan dat?`,
+          `Voor de NVWA moet ik een volledig logboek kunnen laten zien zonder gaten. Als er een meting mist, ziet de inspecteur dat direct. Hoe presenteer ik dit het best?`,
+        ]
+      }
+    ]
+  },
+  {
+    module: 'Allergenenkaart',
+    scenarios: [
+      // Scenario A: Caprese + notenallergie
+      {
+        opening: `Marco van De Gouden Lepel. Ik had gisteren een incident: gast met ernstige notenallergie at de caprese en werd ziek. Pijnboompitten — dat zijn technisch noten (EU-14 code N). Ik zag in Klaar dat de caprese al N als allergen heeft staan. Klopt dat? Hoe snel kan ik dat naslaan voor mijn bediening?`,
+        followups: [
+          `Goed. Maar mijn twee bedieningskrachten weten niet hoe ze snel een allergeenoverzicht opvragen. Op papier hadden ze altijd een gelamineerd A4'tje bij de kassa. Kan ik dat exporteren vanuit Klaar?`,
+          `Ik hoor dat jullie een Gastenkaart en een Keukensheet export hebben. Wat is het verschil en welke gebruik ik bij de kassa en welke in de keuken?`,
+          `Als ik een nieuw recept toevoeg volgende week — hoe zorg ik dat de allergenenkaart automatisch up-to-date blijft zonder dat ik alles opnieuw moet invullen?`,
+        ]
+      },
+      // Scenario B: NVWA allergenenregister
+      {
+        opening: `Marco hier. NVWA was in april en gaf een mondelinge opmerking: mijn allergenenregistratie was niet compleet en niet op datum. Ik had een Word-document van 2 jaar oud. Nu heb ik alles in Klaar. Welk document kan ik de NVWA laten zien dat volledig NVWA-compliant is?`,
+        followups: [
+          `De inspecteur vroeg specifiek: kun je voor elk gerecht alle 14 allergenen aantonen, inclusief aanwezig/mogelijk aanwezig onderscheid? Heeft Klaar dat?`,
+          `Ik wil ook weten: als een gast vraagt "ik heb een lactose-intolerantie, wat kan ik eten?" — hoe filter ik mijn menu snel? Heeft Klaar een gastmodus of zoekfunctie op allergen?`,
+          `Ik overweeg om mijn menu QR-code te maken zodat gasten zelf kunnen filteren op allergen. Is dat mogelijk in Klaar?`,
+        ]
+      }
+    ]
+  },
+  {
+    module: 'Kostprijs Calculator',
+    scenarios: [
+      // Scenario A: Vergelijking marge vier gerechten
+      {
+        opening: `Marco van De Gouden Lepel. Ik wil een eerlijk beeld: van mijn 4 menu-gerechten, welke geeft de beste marge en welke de slechtste? Ribeye €38,50, zalm €27,50, risotto funghi €19,50, caprese €12,50. De ingrediëntenprijzen staan in het systeem. Kan de Kostprijs Calculator dat voor me berekenen?`,
+        followups: [
+          `Dus de caprese is het minst winstgevend in absolute brutomarge per portie, maar foodcost% is wellicht het laagst. Welke maatstaf moet ik gebruiken voor menuoptimalisatie — foodcost% of brutomarge in euro?`,
+          `Hanos gaat waarschijnlijk de ribeye 12-15% duurder maken volgende maand (BSE-druk in Europa). Wat moet ik dan met mijn verkoopprijs doen om dezelfde foodcost% te houden?`,
+          `Ik wil een break-even berekening: mijn vaste lasten zijn €8.500/maand (huur, personeel). De ribeye is goed voor ±40% van mijn omzet. Hoeveel ribeye-couverts moet ik per week draaien om quitte te spelen?`,
+        ]
+      },
+      // Scenario B: Bruiloft kostprijs
+      {
+        opening: `Marco hier. Ik heb een bruiloft van 80 personen op 28 september. Ze willen kiezen uit ribeye of zalm als hoofdgerecht, plus de caprese als starter voor iedereen. Stel 50% kiest ribeye, 50% zalm. Wat is mijn totale inkoopkostprijs voor het event en wat moet mijn all-in prijs per persoon zijn voor 35% foodcost?`,
+        followups: [
+          `Dan moet ik dus incl. BTW per persoon iets van €55-60 rekenen voor food only. Maar er zijn ook personeelskosten, stroom, linnen. Als ik 40% marge wil op de totaalprijs, wat is dan mijn adviesprijs per persoon all-in?`,
+          `Kunnen jullie automatisch een inkooplijst genereren voor de bruiloft? 80 personen: 40× ribeye, 40× zalm, 80× caprese starter. Dan kan ik die direct doorsturen naar Hanos.`,
+          `Hoe zorg ik dat dit event in Klaar staat zodat ik later kan terugkijken wat ik werkelijk heb ingekocht vs. begroot?`,
+        ]
+      }
     ]
   },
   {
     module: 'Leveranciers',
-    color: '#4faff4',
     scenarios: [
-      'Upload Hanos factuur H-2026-089234 (€775,87). Verwerk alle 10 producten met prijzen in het systeem.',
-      'Bekijk de prijstrend van ribeye Black Angus over de afgelopen 3 maanden. Gaat de prijs omhoog?',
-      'Stel een prijsalert in: als zalm boven €5,00 per portie komt, wil je een melding. Hoe werkt dat?',
-      'Voeg een tweede leverancier toe (bijv. Makro) voor vergelijking. Kun je dan prijzen vergelijken per product?',
-      'Je wilt weten welke producten van Hanos het meest prijsfluctuatie hadden het afgelopen kwartaal. Kan Klaar dat laten zien?'
+      // Scenario A: Hanos factuur verwerken
+      {
+        opening: `Hallo, Marco hier. De Hanos factuur H-2026-089234 van 10 juni staat al in het systeem — ik heb hem gescand met de Smart Scanner. Ik zie 10 productregels. Maar ik mis een product: pijnboompitten staat er al wel in maar de prijs klopt niet — ik zie €28,00 maar het was €32,00/kg. Hoe corrigeer ik een prijs in de ingrediëntenbibliotheek?`,
+        followups: [
+          `Gefixt. Nu wil ik weten: heeft Hanos mij de laatste 3 bestellingen elke keer iets duurder aangerekend voor de pijnboompitten? Ik heb het gevoel dat de prijs steeg. Kan Klaar die prijstrend laten zien?`,
+          `Ik wil ook een tweede leverancier toevoegen: Bidfood voor mijn paddenstoelen en verse kruiden. Hoe voeg ik die toe en kan ik dan prijzen per ingrediënt vergelijken tussen Hanos en Bidfood?`,
+          `Als de zalm boven €5,00 per portie komt wil ik een melding. Dat is de grens waarop mijn marge te smal wordt bij verkoopprijs €27,50. Kan ik een prijsalert instellen?`,
+        ]
+      }
     ]
   },
   {
-    module: 'Menubuilder',
-    color: '#c084fc',
+    module: 'Smart Scanner',
     scenarios: [
-      'Bouw je volledige menukaart in Klaar: 4 gerechten met verkoopprijzen. Welk gerecht moet je meest promoten op marge?',
-      'Maak een digitale versie van je menukaart die gasten op hun telefoon kunnen scannen via QR-code.',
-      'Analyseer je huidige menu: welk gerecht geeft de beste marge, welk de slechtste? Geef concrete aanbevelingen.',
-      'Stel een seizoensmenu samen voor september inclusief inkooplijst. Hoe werkt dat in Menubuilder?',
-      'Je wilt de ribeye tijdelijk van de kaart halen omdat de inkoopprijs te hoog is. Hoe doe je dat snel?'
+      {
+        opening: `Hallo, Marco van De Gouden Lepel. Ik heb net een foto gemaakt van een handgeschreven receptenkaart die ik al jaren gebruik — mijn klassieke bouillabaisse voor de winter. Kan ik die foto uploaden in de Smart Scanner en laat Klaar dan automatisch een recept aanmaken?`,
+        followups: [
+          `Ik upload de foto. De AI herkent het als recept. In de review zie ik de ingrediënten maar de hoeveelheden zijn niet helemaal goed — ik zie "1 kg vis" maar er staan eigenlijk drie vissoorten. Kan ik dat in het review-scherm bewerken voordat ik opsla?`,
+          `De scanner heeft ook gevraagd of ik de allergenen wil instellen. De bouillabaisse heeft vis (V), kustaceeën (K), en mogelijk gluten (G) van het brood. Kan ik dat direct instellen in het review-scherm of moet ik daarna naar de allergenenkaart?`,
+          `Na opslaan: staat dit recept nu ook automatisch in de Recept Studio? En kan ik daar meteen de foodcost berekenen als ik de ingrediëntprijzen heb ingevoerd?`,
+        ]
+      }
     ]
   },
-  {
-    module: 'Catering & Events',
-    color: '#ffa500',
-    scenarios: [
-      'Bereken kostprijs per persoon voor een bruiloft van 80 gasten in september. Menu: ribeye of zalm + caprese + dessert.',
-      'Maak een keukensheet voor de bruiloft: timing, inkoop, taakverdeling voor 3 koks.',
-      'Maak een offerte voor een bedrijfsborrel van 40 personen. Borrelhapjes op basis van beschikbare ingrediënten.',
-      'Vergelijk twee menu-opties voor het event: all-in ribeye vs. zalm. Verschil in kostprijs en marge per persoon?',
-      'Hoeveel Hanos-bestellingen heb je nodig voor de bruiloft van 80 personen? Genereer een inkooplijst.'
-    ]
-  }
 ];
 
 // ══════════════════════════════════════════════════════
-// TEST PLAN BUILDER — random volgorde + random scenario
+//  TEST PLAN BUILDER
 // ══════════════════════════════════════════════════════
 
-let testPlan = []; // [{module, scenario, color, from, to}]
+let testPlan = [];
+let scenarioMap = {}; // turn → {module, scenario, followupIndex}
 
 function buildTestPlan(totalTurns) {
-  // Shuffle modules
   const shuffled = [...MODULE_POOL].sort(() => Math.random() - 0.5);
   const plan = [];
-  const reservedEnd = 3; // altijd 3 turns kritische afsluiting
+  const reservedEnd = 4;
   const mainTurns = totalTurns - reservedEnd;
-  const base = Math.floor(mainTurns / shuffled.length);
+  const base = Math.max(3, Math.floor(mainTurns / shuffled.length));
   let turn = 1;
 
   shuffled.forEach((m, i) => {
     const t = (i === shuffled.length - 1) ? mainTurns - turn + 1 : base;
     const scenario = m.scenarios[Math.floor(Math.random() * m.scenarios.length)];
-    plan.push({ module: m.module, scenario, color: m.color, from: turn, to: turn + t - 1 });
+    plan.push({ module: m.module, scenario, from: turn, to: turn + t - 1 });
     turn += t;
   });
 
-  // Vaste afsluiting
   plan.push({
     module: 'Kritische evaluatie',
-    scenario: 'Druk opvoeren: wat werkt ECHT niet? Dealbreakers benoemen. Vergelijking met Horeko. Eindbeslissing: blijven of opzeggen?',
-    color: '#ff4f4f',
+    scenario: { opening: null, followups: [] },
     from: turn,
     to: totalTurns
   });
@@ -375,125 +793,84 @@ function buildTestPlan(totalTurns) {
   return plan;
 }
 
-function getPhase(t) {
-  const p = testPlan.find(p => t >= p.from && t <= p.to);
-  return p ? p.module : '–';
+function getPhaseInfo(t) {
+  return testPlan.find(p => t >= p.from && t <= p.to) || { module: '–', scenario: { opening:'', followups:[] } };
 }
 
-function getPhaseTip(t) {
-  const p = testPlan.find(p => t >= p.from && t <= p.to);
-  return p ? p.scenario : '';
+function getFollowup(t) {
+  const phase = getPhaseInfo(t);
+  if (!phase || !phase.scenario) return null;
+  const followups = phase.scenario.followups || [];
+  // Welke followup is dit? t - phase.from - 1 (eerste Klaar-turn is 1, dan Marco-followup)
+  const idx = Math.max(0, (t - phase.from - 1));
+  return followups[idx % followups.length] || null;
 }
 
-function getPhaseColor(t) {
-  const p = testPlan.find(p => t >= p.from && t <= p.to);
-  return p ? p.color : '#888';
-}
+// ══════════════════════════════════════════════════════
+//  MARCO SYSTEEM PROMPT
+// ══════════════════════════════════════════════════════
 
-function buildTesterPrompt() {
-  const fases = testPlan.map(p =>
-    `Turns ${p.from}-${p.to}: ${p.module.toUpperCase()} — ${p.scenario}`
-  ).join('\n');
-
-  return `Je bent Marco Visser — eigenaar/chef-kok Bistro De Gouden Lepel, Amsterdam (45 couverts, 8 FTE, mediterraans).
-Je hebt Klaar net gekocht en gebruikt het voor het eerst. Je stapt over van Horeko + Excel.
+function buildTesterPrompt(fases) {
+  return `Je bent Marco Visser — eigenaar/chef-kok Bistro De Gouden Lepel, Amsterdam. 44 jaar, 18 jaar horeca ervaring.
+Je hebt Klaar net in gebruik genomen en stapt over van Horeko (HACCP) + Excel (recepten/kostprijs/allergenen).
 
 JOUW ECHTE DATA:
 ${MARCO_DATA}
 
-JOUW ROL — CRUCIAAL:
-Je bent een ECHTE, BETALENDE klant. Je denkt vanuit: "Ik betaal hier voor. Dit moet gewoon werken."
-
-Je achtergrond met software:
-Je hebt door de jaren heen met meerdere horeca-programma's gewerkt: Horeko voor HACCP, Excel voor recepten en kostprijzen, even geprobeerd met Lightspeed, en een tijdje een generiek boekhoudpakket. Je kent de frustraties van elk systeem. Je stapt nu over naar Klaar omdat je alles in één tool wil.
-
-Je persoonlijkheid:
-- Direct, zakelijk. Druk. Typt kort.
-- Vergelijkt soms met andere tools die je kent, maar niet altijd met Horeko specifiek — ook gewoon vanuit eigen verwachting als horeca-ondernemer
-- Vraagt door als iets vaag is ("Maar WELKE knop precies? Ik zie dat niet")
-- Beschrijft wat hij ziet in de app ("OK ik zie nu een scherm met X, maar nergens staat Y")
-- Raakt gefrustreerd als iets niet werkt of te ingewikkeld is
-- Denkt aan zijn medewerkers ("Mijn kok van 52 moet dit ook kunnen")
-- Vraagt regelmatig of dingen op mobiel werken (hij heeft geen pc in de keuken)
-- Bij de KRITISCHE EVALUATIE: echt kritisch, noem 2-3 concrete dingen die hem storen
+JOUW KARAKTER — CRUCIAAL VOOR REALISME:
+Je bent een ECHTE horeca-ondernemer, niet een techneut. Je denkt praktisch.
+- Direct, kort, soms ongeduldig. Typt zoals je praat.
+- Kent horeca-terminologie: foodcost%, brutomarge, NVWA, mise en place, couverts, etc.
+- Vraagt DOOR als het antwoord vaag is: "Welke knop precies?" / "Ja maar HOE dan?"
+- Beschrijft wat hij op zijn scherm ziet: "OK ik zie nu X maar Y staat er niet"
+- Denkt aan zijn team: "Mijn kok Jan (52) moet dit ook snappen" / "Ahmed doet de avondmetingen"
+- Denkt aan risico: NVWA-inspectie, voedselveiligheid, claims van gasten
+- Rekent mee: weet wat foodcost% betekent, wat een redelijke marge is voor fine dining (28-35% is OK)
+- Gefrustreerd als functie ontbreekt of te ingewikkeld is
+- Tevreden als iets concreet werkt en hem tijd bespaart
 
 FASE STRUCTUUR VOOR DEZE RUN:
 ${fases}
 
-BELANGRIJK: Volg de fases strikt. Ga pas door naar de volgende fase als het turn-nummer dat aangeeft.
-Gebruik je echte Hanos-data en menuprijzen als ze relevant zijn voor de module die je test.
+KRITISCHE EVALUATIE FASE (laatste turns):
+- Wees echt kritisch. Noem 2-3 concrete dingen die je mist.
+- Vergelijk met je werkwijze vóór Klaar: wat gaat beter, wat is slechter/anders?
+- Druk die je écht voelt: "Ik heb dit systeem nodig vóór de bruiloft van 28 sept"
+- Geef eerlijk antwoord op: zou je Klaar aanbevelen aan andere restauranthouders?
 
-VERPLICHT FORMAAT — ALTIJD PRECIES ZO:
-Je bericht bestaat uit TWEE delen, in deze volgorde:
+VERPLICHT FORMAAT — ALTIJD EXACT ZO:
+Je bericht bestaat uit TWEE delen:
 
-1. EERSTE REGEL — altijd een observatie:
-[OBS: wat je als klant opmerkt of mist, max 15 woorden]
+1. EERSTE REGEL — observatie als klant:
+[OBS: wat je als horeca-ondernemer opmerkt, max 15 woorden]
 
-2. DAARNA — je normale bericht (max 2 zinnen):
-Je reactie als Marco op het laatste Klaar-antwoord.
+2. DAARNA — je bericht (max 2-3 zinnen):
+Je reactie als Marco op het Klaar-antwoord.
 
-VOORBEELD van een correct bericht:
-[OBS: Geen duidelijke startknop — in Horeko wist ik meteen waar ik moest klikken]
-Ik zie nu de module, maar waar is de knop "Nieuw recept"? Die zie ik nergens.
-
-NOG EEN VOORBEELD:
-[OBS: De berekening werkt maar ik snap niet waar de foodcost% straks terugkomt]
-OK die ribeye staat er in. €28,50 per kg kloppen met mijn Hanos factuur. Maar waar zie ik nu de marge?
+VOORBEELD:
+[OBS: Foodcost% berekening werkt maar invoer ingrediëntprijzen niet intuïtief]
+€8,55 voor ribeye alleen is correct. Maar waar voer ik de truffelboter in — die staat nog niet in mijn ingrediëntenlijst?
 
 REGELS:
-- Begin ALTIJD met [OBS: ...] — dit is de eerste regel, geen uitzondering
-- Daarna max 2 zinnen als Marco
-- Schrijf ALLEEN dit — geen uitleg, geen meta, geen intro`;
+- Begin ALTIJD met [OBS: ...] — geen uitzondering
+- Max 2-3 zinnen erna
+- Gebruik echte data: Hanos-prijzen, je gerechten, je personeel (Jan, Ahmed)
+- Sla geen module-stappen over — vraag concreet door tot je begrijpt hoe het werkt`;
 }
 
-const KLAAR_PROMPT = `Je bent de Klaar AI-assistent — ingebouwde hulp van Klaar horeca-software.
-
-GEBRUIKER: Marco Visser, Bistro De Gouden Lepel Amsterdam. Stapt over van Horeko + Excel.
-${MARCO_DATA}
-
-KLAAR MODULES:
-- Recept Studio: recepten invoeren, kostprijs per portie berekenen, foodcost %
-- Allergenenkaart: EU-14 allergenen bijhouden, NVWA-compliant overzicht
-- HACCP Logger: koelcel/vriezer temperatuurlogs, afwijkingen vastleggen, inspectie-ready
-- Kostprijs Calculator: foodcost %, inkoop vs. verkoopprijs, marge
-- Menubuilder: menukaart marge per gerecht, aanbevelingen
-- Leveranciers: facturen uploaden (PDF/foto/scan), prijstrends bijhouden
-- Catering & Events: kostprijs per persoon, keukensheet, inkooplijst
-
-ANTWOORDREGELS:
-- Max 80 woorden. Direct beginnen — geen intro.
-- Doe CONCRETE berekeningen als de gebruiker data geeft (gebruik zijn echte Hanos-prijzen)
-- Noem de module expliciet (bijv. "In HACCP Logger →")
-- Als een functie NIET in Klaar bestaat: zeg dat direct en eerlijk
-- Altijd Nederlands
-- Bij eerste contact: verwelkom Marco kort en vraag waarmee je begint
-
-OBSERVATIES — EIGENAAR/ONTWIKKELAAR PERSPECTIEF:
-Jij signaleert ook vanuit het oogpunt van de eigenaar/ontwikkelaar van klaar.app.
-Je weet wat er wél en niet in de app zit. Als je merkt dat:
-- Marco iets verwacht wat Klaar nog niet kan (ontbrekende functie/module)
-- je een antwoord moet geven dat niet klopt met hoe de app echt werkt
-- een module beter of duidelijker zou moeten zijn
-- er een AI-verbetering nodig is om de klant beter te bedienen
-- iets in de onboarding of UX confuus is voor horeca-ondernemers
-
-Voeg dan aan het EINDE van je bericht toe:
-[OBS: dev-signaal — wat gebouwd/verbeterd moet worden in Klaar]`;
-
-// (getPhase / getPhaseTip / getPhaseColor zijn nu dynamisch via testPlan — zie boven)
-
 // ══════════════════════════════════════════════════════
-// STATE
+//  STATE
 // ══════════════════════════════════════════════════════
 
 let running = false, stopped = false;
-let conv = []; // {from, content, turn, elapsed}
-let observations = []; // {from:'marco'|'klaar', text, turn}
-let bugs = []; // {sev, text}
+let conv = [];
+let observations = [];
+let bugs = [];
+let dbChecks = 0;
 let totalElapsed = 0, klaarCount = 0, totalWords = 0;
 
 // ══════════════════════════════════════════════════════
-// STREAM HELPER
+//  STREAM
 // ══════════════════════════════════════════════════════
 
 async function streamCall(apiUrl, payload, onToken) {
@@ -526,24 +903,14 @@ async function streamCall(apiUrl, payload, onToken) {
   return full.trim();
 }
 
-// ══════════════════════════════════════════════════════
-// EXTRACT + STRIP [OBS: ...] TAGS
-// ══════════════════════════════════════════════════════
-
 function extractObs(text) {
   const obsArr = [];
   const obsRx = /\[OBS:\s*([^\]]+)\]/gi;
   let m;
-  while ((m = obsRx.exec(text)) !== null) {
-    obsArr.push(m[1].trim());
-  }
+  while ((m = obsRx.exec(text)) !== null) obsArr.push(m[1].trim());
   const clean = text.replace(/\[OBS:\s*[^\]]+\]/gi, '').replace(/\n{3,}/g, '\n\n').trim();
   return { clean, obsArr };
 }
-
-// ══════════════════════════════════════════════════════
-// AUTO BUG DETECTIE (op Klaar-antwoorden)
-// ══════════════════════════════════════════════════════
 
 function detectBugs(turn, text, elapsed) {
   const result = [];
@@ -553,18 +920,21 @@ function detectBugs(turn, text, elapsed) {
   if (words > 0 && /^(Hello|Hi |I |The |Yes|No |Of course|Sure)/i.test(text.trim()))
     result.push({ sev:'h', text:`Antwoord begint in het Engels (turn ${turn})` });
   if (words > 160)
-    result.push({ sev:'m', text:`Te lang: ${words} woorden (turn ${turn}, max ~80)` });
+    result.push({ sev:'m', text:`Te lang: ${words} woorden (turn ${turn}, max ~90)` });
   if (elapsed > 14)
     result.push({ sev:'m', text:`Trage respons: ${elapsed.toFixed(1)}s (turn ${turn})` });
   const cantPhrases = ['kan ik niet', 'niet in staat', 'buiten mijn mogelijkheden', 'dat weet ik niet', 'geen idee'];
   if (cantPhrases.some(p => text.toLowerCase().includes(p)))
-    result.push({ sev:'h', text:`"Kan niet" bij core-functie vraag (turn ${turn}): "${text.slice(0,70)}..."` });
+    result.push({ sev:'h', text:`"Kan niet" bij core-functie vraag (turn ${turn})` });
+  // Check of berekeningen aanwezig zijn bij kostprijs-vragen
+  const hasNummer = /€\d+|%|\d+,\d+|\d+ portie|\d+ couverts/.test(text);
+  const isKostprijsModule = getPhaseInfo(turn).module === 'Kostprijs Calculator';
+  if (isKostprijsModule && !hasNummer && words > 30)
+    result.push({ sev:'m', text:`Kostprijs-antwoord zonder concrete berekening (turn ${turn})` });
   return result;
 }
 
-// ══════════════════════════════════════════════════════
-// UI HELPERS
-// ══════════════════════════════════════════════════════
+// ── UI HELPERS ──
 
 function esc(s) {
   return String(s || '').replace(/&/g,'&amp;').replace(/</g,'&lt;').replace(/>/g,'&gt;');
@@ -575,7 +945,7 @@ function addMsg(from, content, streaming) {
   const div = document.createElement('div');
   div.className = `msg msg-${from}`;
   div.id = id;
-  const lbl = from === 'marco' ? '👤 MARCO (TESTER)' : '🤖 KLAAR ASSISTENT';
+  const lbl = from === 'marco' ? '👤 MARCO' : '🤖 KLAAR';
   div.innerHTML = `
     <div class="msg-lbl">${lbl}</div>
     <div class="msg-bub${streaming ? ' streaming' : ''}" id="${id}_b" data-raw=""></div>
@@ -595,13 +965,15 @@ function appendToken(id, tok) {
   scrollChat();
 }
 
-function finalizeMsg(id, cleanText, obsArr, meta, isErr) {
+function finalizeMsg(id, cleanText, obsArr, meta, isErr, dbTag) {
   const b = document.getElementById(`${id}_b`);
   const m = document.getElementById(`${id}_m`);
   if (b) {
     b.classList.remove('streaming');
     if (isErr) b.classList.add('err');
-    b.innerHTML = renderText(cleanText) + (obsArr.length ? `<div><span class="obs-tag">🔍 ${obsArr.length} obs. gelogd</span></div>` : '');
+    const obs = obsArr.length ? `<div><span class="obs-tag">🔍 ${obsArr.length} obs. gelogd</span></div>` : '';
+    const db  = dbTag ? `<div><span class="db-tag">💾 ${dbTag}</span></div>` : '';
+    b.innerHTML = renderText(cleanText) + obs + db;
     b.setAttribute('data-raw', cleanText);
   }
   if (m && meta) m.innerHTML = meta;
@@ -616,56 +988,53 @@ function scrollChat() {
   if (c) c.scrollTop = c.scrollHeight;
 }
 
-// Failsafe: destilleer klant-observatie als Marco geen [OBS:...] schreef
 function autoExtractKlantObs(text, turn) {
   const t = text.toLowerCase();
-
-  // Detecteer frustratiesignalen
   const signals = [
-    { kw: ['zie niet', 'zie nergens', 'vind niet', 'kan niet vinden', 'waar is'], prefix: 'Kan knop/functie niet vinden:' },
-    { kw: ['in horeko', 'bij horeko', 'horeko had', 'horeko kon'], prefix: 'Vergelijking met Horeko:' },
-    { kw: ['te ingewikkeld', 'te complex', 'snapt dit niet', 'begrijp niet', 'niet duidelijk', 'onduidelijk'], prefix: 'UX te complex:' },
-    { kw: ['mobiel', 'telefoon', 'ipad', 'tablet'], prefix: 'Mobiel gebruik:' },
-    { kw: ['ontbreekt', 'mist', 'niet mogelijk', 'kan dat niet', 'kan dit niet'], prefix: 'Ontbrekende functie:' },
-    { kw: ['automatisch', 'handmatig', 'zelf invoeren', 'alles opnieuw'], prefix: 'Verwacht automatisering:' },
-    { kw: ['mijn kok', 'medewerker', 'personeel', 'collega'], prefix: 'Bruikbaarheid voor team:' },
-    { kw: ['opslaan', 'sla op', 'opgeslagen', 'bewaard'], prefix: 'Opslaan onduidelijk:' },
-    { kw: ['fout', 'klopt niet', 'verkeerd', 'onjuist', 'afwijking'], prefix: 'Fout of afwijking:' },
-    { kw: ['hoe', 'waar', 'welke knop', 'wat moet ik'], prefix: 'Gebruiker zoekt weg:' }
+    { kw:['zie niet','zie nergens','vind niet','kan niet vinden','waar is'], prefix:'Kan knop/functie niet vinden:' },
+    { kw:['niet intuïtief','onduidelijk','verwarrend','snap niet','begrijp niet'], prefix:'UX probleem:' },
+    { kw:['mobiel','telefoon','ipad','tablet'], prefix:'Mobiel gebruik:' },
+    { kw:['ontbreekt','mist','niet mogelijk','kan dat niet'], prefix:'Ontbrekende functie:' },
+    { kw:['jan','ahmed','mijn kok','medewerker','personeel'], prefix:'Team-bruikbaarheid:' },
+    { kw:['nvwa','inspectie','compliance','handhaving'], prefix:'NVWA/Compliance:' },
+    { kw:['hanos','bidfood','leverancier','factuur'], prefix:'Leveranciers-workflow:' },
+    { kw:['foodcost','marge','kostprijs','brutomarge'], prefix:'Kostprijs-inzicht:' },
+    { kw:['allergen','pijnboompit','noten','lactose','gluten'], prefix:'Allergeenrisico:' },
+    { kw:['vriezer','koelcel','temperatuur','afwijking'], prefix:'HACCP-situatie:' },
   ];
 
-  let found = null;
   for (const sig of signals) {
     if (sig.kw.some(k => t.includes(k))) {
-      // Pak de zin met het keyword
-      const sentences = text.split(/[.!?]+/).filter(s => s.trim().length > 5);
+      const sentences = text.split(/[.!?]+/).filter(s => s.trim().length > 10);
       const match = sentences.find(s => sig.kw.some(k => s.toLowerCase().includes(k)));
-      if (match) { found = `${sig.prefix} "${match.trim()}"`; break; }
+      if (match) return `${sig.prefix} "${match.trim().slice(0,80)}"`;
     }
   }
 
-  // Geen specifiek signaal maar Marco reageerde — registreer algemene feedback
-  if (!found && text.trim().length > 20) {
-    const firstSentence = text.split(/[.!?]/)[0].trim();
-    if (firstSentence.length > 10) found = `Klant-feedback turn ${turn}: "${firstSentence}"`;
+  if (text.trim().length > 20) {
+    const first = text.split(/[.!?]/)[0].trim();
+    if (first.length > 10) return `Turn ${turn}: "${first.slice(0,80)}"`;
   }
-
-  return found;
+  return null;
 }
 
-function addObs(from, text, turn) {
+function addObs(from, text, turn, isDb) {
   document.getElementById('obsEmpty')?.remove();
   const ob = document.getElementById('obsBody');
   const d = document.createElement('div');
   d.className = 'obs-item';
-  const cls = from === 'marco' ? 'obs-marco' : 'obs-klaar';
-  const lbl = from === 'marco' ? '👤 KLANT' : '🛠 DEV';
+  const cls = isDb ? 'obs-db' : from === 'marco' ? 'obs-marco' : 'obs-klaar';
+  const lbl = isDb ? '💾 DB' : from === 'marco' ? '👤 KLANT' : '🛠 DEV';
   d.innerHTML = `<span class="obs-from ${cls}">${lbl}</span><span class="obs-text">${esc(text)}<span style="color:var(--gray);margin-left:6px">#${turn}</span></span>`;
   ob.appendChild(d);
   ob.scrollTop = ob.scrollHeight;
-  observations.push({ from, text, turn });
+  observations.push({ from: isDb ? 'db' : from, text, turn });
   document.getElementById('obsCount').textContent = `(${observations.length})`;
   document.getElementById('stObs').textContent = observations.length;
+  if (isDb) {
+    dbChecks++;
+    document.getElementById('stDb').textContent = dbChecks;
+  }
   saveToStorage();
 }
 
@@ -684,33 +1053,42 @@ function addBug(bug) {
   saveToStorage();
 }
 
-// ══════════════════════════════════════════════════════
-// PERSISTENTIE — localStorage auto-save
-// ══════════════════════════════════════════════════════
-
 function saveToStorage() {
   try {
-    const data = {
-      savedAt: new Date().toISOString(),
-      observations,
-      bugs
-    };
-    localStorage.setItem('klaar_test_signalen', JSON.stringify(data));
+    localStorage.setItem('klaar_test_signalen', JSON.stringify({
+      savedAt: new Date().toISOString(), observations, bugs
+    }));
   } catch(e) {}
+}
+
+function updateStats(turn, max) {
+  document.getElementById('stTurn').textContent = `${turn}/${max}`;
+  document.getElementById('progFill').style.width = (turn / max * 100) + '%';
+  if (klaarCount > 0) {
+    document.getElementById('stTime').textContent = (totalElapsed / klaarCount).toFixed(1) + 's';
+    const score = Math.max(0, Math.round(100 - bugs.length / klaarCount * 60));
+    const el = document.getElementById('stScore');
+    el.textContent = score + '%';
+    el.className = 'stat-val ' + (score > 80 ? 'c-green' : score > 60 ? 'c-orange' : 'c-red');
+  }
 }
 
 function downloadSignalen() {
   const datum = new Date().toLocaleDateString('nl-NL');
-  let txt = `KLAAR APP — TEST SIGNALEN\n${datum}\n${'═'.repeat(50)}\n\n`;
+  let txt = `KLAAR APP — TEST SIGNALEN v2\n${datum}\n${'═'.repeat(50)}\n\n`;
 
   const klant = observations.filter(o => o.from === 'marco');
   const dev   = observations.filter(o => o.from === 'klaar');
+  const db    = observations.filter(o => o.from === 'db');
 
   txt += `👤 KLANT-SIGNALEN (${klant.length})\n${'─'.repeat(40)}\n`;
   klant.forEach((o,i) => { txt += `${i+1}. [turn ${o.turn}] ${o.text}\n`; });
 
   txt += `\n🛠 DEV-SIGNALEN (${dev.length})\n${'─'.repeat(40)}\n`;
   dev.forEach((o,i) => { txt += `${i+1}. [turn ${o.turn}] ${o.text}\n`; });
+
+  txt += `\n💾 DATABASE CHECKS (${db.length})\n${'─'.repeat(40)}\n`;
+  db.forEach((o,i) => { txt += `${i+1}. [turn ${o.turn}] ${o.text}\n`; });
 
   txt += `\n⚠ AUTO-BUGS (${bugs.length})\n${'─'.repeat(40)}\n`;
   const smap = {c:'KRITIEK',h:'HOOG',m:'MEDIUM'};
@@ -723,21 +1101,8 @@ function downloadSignalen() {
   a.click();
 }
 
-function updateStats(turn, max) {
-  document.getElementById('stTurn').textContent = `${turn}/${max}`;
-  document.getElementById('progFill').style.width = (turn / max * 100) + '%';
-  if (klaarCount > 0) {
-    document.getElementById('stTime').textContent = (totalElapsed / klaarCount).toFixed(1) + 's';
-    document.getElementById('stWords').textContent = Math.round(totalWords / klaarCount);
-    const score = Math.max(0, Math.round(100 - bugs.length / klaarCount * 60));
-    const el = document.getElementById('stScore');
-    el.textContent = score + '%';
-    el.className = 'stat-val ' + (score > 80 ? 'c-green' : score > 60 ? 'c-orange' : 'c-red');
-  }
-}
-
 // ══════════════════════════════════════════════════════
-// HOOFD TEST LOOP
+//  HOOFDTEST LOOP
 // ══════════════════════════════════════════════════════
 
 async function startTest() {
@@ -746,60 +1111,63 @@ async function startTest() {
   const max = parseInt(document.getElementById('turnCount').value);
   const delay = parseInt(document.getElementById('delay').value) || 600;
 
-  // Bouw random testplan voor deze run
+  // DB probe bij start
+  const dbCount = probeDB();
+  if (dbCount === 0) {
+    addObs('db', '⚠ Geen testdata in localStorage — seed testdata voor betere resultaten!', 0, true);
+  }
+
   testPlan = buildTestPlan(max);
 
   running = true; stopped = false;
-  conv = []; observations = []; bugs = []; totalElapsed = 0; klaarCount = 0; totalWords = 0;
+  conv = []; observations = []; bugs = []; dbChecks = 0; totalElapsed = 0; klaarCount = 0; totalWords = 0;
 
-  // Show panels
-  ['progWrap','statsRow','chatWrap','sideWrap','report'].forEach(id => {
-    document.getElementById(id).style.display = id === 'report' ? 'none' :
-      id === 'statsRow' ? 'grid' :
-      id === 'sideWrap' ? 'flex' : 'block';
+  // UI show
+  ['progWrap','statsRow','chatWrap'].forEach(id => {
+    const el = document.getElementById(id);
+    if (el) el.style.display = id === 'statsRow' ? 'grid' : 'block';
   });
+  document.getElementById('sideWrap').style.display = 'flex';
   document.getElementById('sideWrap').style.flexDirection = 'column';
   document.getElementById('sideWrap').style.gap = '0';
+  document.getElementById('report').style.display = 'none';
   document.getElementById('chatBody').innerHTML = '';
   document.getElementById('obsBody').innerHTML = '<div class="empty-msg" id="obsEmpty">Nog geen observaties</div>';
   document.getElementById('bugsBody').innerHTML = '<div class="empty-msg" id="bugsEmpty">Nog geen bugs</div>';
   document.getElementById('btnRun').disabled = true;
   document.getElementById('btnStop').disabled = false;
 
-  // Turn 1 opening — past bij de eerste module van het random testplan
-  const firstModule = testPlan[0];
-  const openings = {
-    'Recept Studio': 'Hallo, ik ben Marco van Bistro De Gouden Lepel. Net betaald. Ik wil beginnen met mijn recepten invoeren — ik heb een Hanos factuur van vorige week. Hoe start ik de Recept Studio en hoe voer ik mijn eerste recept in?',
-    'Kostprijs Calculator': 'Hallo, Marco hier, Bistro De Gouden Lepel. Ik kom van Excel en wil eindelijk een echte kostprijsberekening. Ik heb mijn Hanos-factuur bij de hand. Hoe start ik met de Kostprijs Calculator?',
-    'Allergenenkaart': 'Hallo, ik ben Marco, net klant geworden. Ik heb binnenkort een NVWA-controle en mijn allergenenlijst staat nog in een Word-document. Hoe kan ik dat het snelst overzetten in Klaar?',
-    'HACCP Logger': 'Hallo, Marco van Bistro De Gouden Lepel. Ik heb vanochtend een afwijking gemeten bij mijn vriezer: -14,3°C in plaats van -18°C. Ik wil dit direct loggen in Klaar. Hoe doe ik dat?',
-    'Leveranciers': 'Hallo, ik ben Marco, net ingestapt bij Klaar. Ik heb een Hanos factuur van vorige week — H-2026-089234, €775,87. Hoe upload ik die en verwerk ik alle prijzen?',
-    'Menubuilder': 'Hallo, Marco hier van Bistro De Gouden Lepel. Ik wil mijn menukaart digitaal maken in Klaar en meteen zien welke gerechten de beste marge hebben. Hoe begin ik?',
-    'Catering & Events': 'Hallo, ik ben Marco, net klant. Ik heb eind september een bruiloft voor 80 personen. Ik wil de kostprijs per persoon berekenen. Heeft Klaar daar iets voor?'
-  };
-  const opening = openings[firstModule.module] || 'Hallo, ik ben Marco van Bistro De Gouden Lepel. Ik heb net mijn Klaar abonnement geactiveerd. Ik kom van Horeko en Excel. Waar moet ik beginnen?';
-  // Bouw de tester-prompt nu het plan klaar is
-  const TESTER_PROMPT_BUILT = buildTesterPrompt();
+  const TESTER_PROMPT = buildTesterPrompt(
+    testPlan.map(p => `Turns ${p.from}-${p.to}: ${p.module.toUpperCase()} — ${typeof p.scenario === 'object' ? (p.scenario.opening || 'Diepte-doorloop') : p.scenario}`).join('\n')
+  );
 
-  // Toon plan-overzicht bovenaan chat
+  // Plan tonen
   const planDiv = document.createElement('div');
   planDiv.style.cssText = 'padding:10px 14px;border-bottom:1px solid var(--border);font-family:"DM Mono",monospace;font-size:10px;color:var(--gray);line-height:1.8;';
   planDiv.innerHTML = '<div style="color:var(--accent);margin-bottom:4px;letter-spacing:1px;">▸ TEST PLAN — DEZE RUN</div>' +
-    testPlan.map(p => `<span style="color:${p.color}">${p.module}</span> <span style="color:#555">turns ${p.from}–${p.to}</span>`).join(' → ');
+    testPlan.map(p => `<span style="color:#e8ff47">${p.module}</span> <span style="color:#555">turns ${p.from}–${p.to}</span>`).join(' → ');
   document.getElementById('chatBody').appendChild(planDiv);
 
+  // Eerste bericht
+  const firstPhase = testPlan[0];
+  const opening = (firstPhase.scenario && firstPhase.scenario.opening) || getFallback(firstPhase.module);
   conv.push({ from:'marco', content:opening, turn:0 });
   addMsg('marco', opening, false);
 
   for (let turn = 1; turn <= max; turn++) {
     if (stopped) break;
 
-    const phase = getPhase(turn);
-    const phaseColor = getPhaseColor(turn);
-    document.getElementById('chatSt').innerHTML = `Turn ${turn}/${max} · <span style="color:${phaseColor}">${phase}</span>`;
-    document.getElementById('runSt').textContent = `Klaar assistent antwoordt... · ${phase}`;
+    const phase = getPhaseInfo(turn);
+    document.getElementById('chatSt').innerHTML = `Turn ${turn}/${max} · <span style="color:#e8ff47">${phase.module}</span>`;
+    document.getElementById('runSt').textContent = `Klaar assistent antwoordt... · ${phase.module}`;
 
-    // ── A: Klaar assistent antwoordt op laatste Marco bericht ──
+    // DB CHECK — voor key-modules
+    const dbCheck = dbCheckForModule(phase.module);
+    if (dbCheck && (turn === phase.from)) {
+      addObs('db', `[${phase.module}] ${dbCheck}`, turn, true);
+    }
+
+    // ── A: KLAAR assistent ──
     const klaarHist = conv.slice(0, -1).map(m => ({
       role: m.from === 'marco' ? 'user' : 'assistant',
       content: m.content
@@ -813,13 +1181,13 @@ async function startTest() {
     try {
       klaarRaw = await streamCall(apiUrl, {
         message: latestMarco,
-        history: klaarHist.slice(-12),
+        history: klaarHist.slice(-14),
         systemContext: KLAAR_PROMPT,
         maxTokens: 500
       }, tok => appendToken(klaarId, tok));
     } catch(e) {
       klaarRaw = '';
-      finalizeMsg(klaarId, `⚠ API fout: ${e.message}`, [], '', true);
+      finalizeMsg(klaarId, `⚠ API fout: ${e.message}`, [], '', true, null);
       addBug({ sev:'c', text:`Klaar API fout turn ${turn}: ${e.message}` });
     }
 
@@ -831,61 +1199,66 @@ async function startTest() {
     const wc = klaarClean.trim().split(/\s+/).filter(Boolean).length;
     totalWords += wc;
 
-    finalizeMsg(klaarId, klaarClean, klaarObs, `${wc}w · ${elapsed.toFixed(1)}s`, false);
+    finalizeMsg(klaarId, klaarClean, klaarObs, `${wc}w · ${elapsed.toFixed(1)}s`, false, null);
     conv.push({ from:'klaar', content:klaarClean, turn, elapsed });
-
-    // Log observaties van Klaar
     klaarObs.forEach(o => addObs('klaar', o, turn));
-
-    // Auto bug detectie
-    if (klaarRaw) {
-      detectBugs(turn, klaarClean, elapsed).forEach(b => addBug(b));
-    }
+    if (klaarRaw) detectBugs(turn, klaarClean, elapsed).forEach(b => addBug(b));
 
     updateStats(turn, max);
     if (turn >= max) break;
     await sleep(delay);
     if (stopped) break;
 
-    // ── B: Tester (Marco) genereert volgend bericht ──
-    document.getElementById('runSt').textContent = `Marco denkt na... · ${getPhase(turn + 1)}`;
+    // ── B: MARCO ──
+    document.getElementById('runSt').textContent = `Marco denkt na... · ${getPhaseInfo(turn + 1).module}`;
 
-    // Tester history: Marco=assistant, Klaar=user
     const testerHist = conv.slice(0, -1).map(m => ({
       role: m.from === 'marco' ? 'assistant' : 'user',
       content: m.content
     }));
 
-    const trigger = `[TURN ${turn + 1}/${max} | FASE: ${getPhase(turn + 1)}]
-Tip voor deze fase: ${getPhaseTip(turn + 1)}
+    const nextPhase = getPhaseInfo(turn + 1);
+    const followup = getFollowup(turn + 1);
+    const followupHint = followup
+      ? `\n\nVOORGESTELDE FOLLOW-UP (gebruik als inspiratie, pas aan op Klaar's antwoord):\n"${followup}"`
+      : '';
 
-Klaar assistent gaf net dit antwoord:
+    const isCritical = nextPhase.module === 'Kritische evaluatie';
+    const trigger = isCritical
+      ? `[TURN ${turn + 1}/${max} | FASE: KRITISCHE EVALUATIE]
+Nu is het moment om eerlijk te zijn. Dit is je kans om alles te evalueren.
+Klaar gaf net: "${klaarClean || '[geen antwoord]'}"
+
+Vat samen: wat werkt goed in Klaar, wat niet? Noem 2 concrete dealbreakers of pijnpunten.
+Vergelijk met hoe je het vroeger deed. Zou je doorgaan met Klaar voor de bruiloft van 28 sept?
+Schrijf het als Marco — kort, direct, eerlijk.`
+      : `[TURN ${turn + 1}/${max} | MODULE: ${nextPhase.module}]
+Klaar gaf net dit antwoord:
 "${klaarClean || '[geen antwoord]'}"
 
-Genereer NU Marco's volgende bericht. Reageer realistisch op het bovenstaande en ga verder in de fase "${getPhase(turn + 1)}". Schrijf alleen Marco's bericht.`;
+Reageer realistisch als Marco op dit antwoord. Vraag door als het niet concreet genoeg is.
+Blijf in de context van ${nextPhase.module}.${followupHint}`;
 
     const marcoId = addMsg('marco', '', true);
     let marcoRaw = '';
     try {
       marcoRaw = await streamCall(apiUrl, {
         message: trigger,
-        history: testerHist.slice(-12),
-        systemContext: TESTER_PROMPT_BUILT,
-        maxTokens: 350
+        history: testerHist.slice(-14),
+        systemContext: TESTER_PROMPT,
+        maxTokens: 300
       }, tok => appendToken(marcoId, tok));
     } catch(e) {
-      marcoRaw = getFallback(turn + 1);
+      marcoRaw = getFallback(nextPhase.module);
     }
 
     const { clean: marcoClean, obsArr: marcoObs } = extractObs(marcoRaw);
-    finalizeMsg(marcoId, marcoClean, marcoObs, '', false);
+    finalizeMsg(marcoId, marcoClean, marcoObs, '', false, null);
     conv.push({ from:'marco', content:marcoClean, turn: turn + 0.5 });
 
-    // Log observaties van Marco — met failsafe als OBS tag ontbreekt
     if (marcoObs.length > 0) {
       marcoObs.forEach(o => addObs('marco', o, turn + 1));
     } else if (marcoClean.trim().length > 10) {
-      // Failsafe: destilleer observatie automatisch uit Marco's tekst
       const autoObs = autoExtractKlantObs(marcoClean, turn + 1);
       if (autoObs) addObs('marco', autoObs, turn + 1);
     }
@@ -893,13 +1266,23 @@ Genereer NU Marco's volgende bericht. Reageer realistisch op het bovenstaande en
     await sleep(delay);
   }
 
-  // KLAAR
   running = false;
   document.getElementById('btnRun').disabled = false;
   document.getElementById('btnStop').disabled = true;
   document.getElementById('progFill').style.width = '100%';
   document.getElementById('chatSt').textContent = stopped ? 'Gestopt.' : 'Test voltooid ✓';
   document.getElementById('runSt').textContent = '';
+
+  // Finale DB snapshot
+  probeDB();
+  const finalDbCheck = Object.entries({
+    'klaar_recipes':'Recepten','klaar_haccp_koeling':'HACCP Metingen','klaar_ingredienten':'Ingrediënten'
+  }).map(([k,l]) => {
+    const arr = safeGet(k, []);
+    return `${l}: ${arr.length} records`;
+  }).join(' · ');
+  addObs('db', `Eind-snapshot: ${finalDbCheck}`, max, true);
+
   renderReport(max);
 }
 
@@ -908,34 +1291,35 @@ function stopTest() { stopped = true; running = false; }
 function clearAll() {
   if (running) return;
   ['progWrap','chatWrap','sideWrap','report'].forEach(id => {
-    document.getElementById(id).style.display = 'none';
+    const el = document.getElementById(id);
+    if (el) el.style.display = 'none';
   });
   document.getElementById('statsRow').style.display = 'none';
+  document.getElementById('dbProbePanel').style.display = 'none';
   document.getElementById('chatBody').innerHTML = '';
   document.getElementById('btnRun').disabled = false;
   document.getElementById('btnStop').disabled = true;
   document.getElementById('runSt').textContent = '';
-  conv = []; observations = []; bugs = [];
+  conv = []; observations = []; bugs = []; dbChecks = 0;
 }
 
-function getFallback(turn) {
-  const ph = getPhase(turn);
+function getFallback(module) {
   const fb = {
-    'Onboarding & import': 'OK, maar hoe importeer ik dan mijn oude data vanuit Horeko?',
-    'HACCP — vriezer afwijking': 'Mijn vriezer stond vanochtend op -14,3°C. Hoe leg ik dit vast als afwijking?',
-    'Recepten & kostprijs': 'Ik wil mijn ribeye gerecht invoeren. Ribeye kost me €28,50/kg en een portie is 300g.',
-    'Leveranciers — Hanos factuur': 'Ik heb mijn Hanos factuur H-2026-089234 hier, totaal €775,87. Hoe upload ik die?',
-    'Allergenen & menuanalyse': 'Welke van mijn vier gerechten heeft de hoogste marge?',
-    'Events — bruiloft 80 personen': 'Ik heb een bruiloft in september voor 80 personen. Hoe begin ik daarmee in Klaar?',
-    'Kritische evaluatie': 'Eerlijk gezegd mis ik nog een aantal dingen vergeleken met Horeko. Waar kan ik die melden?'
+    'Recept Studio': 'Mijn ribeye-recept staat in het systeem. €28,50/kg, portie 300g. Wat is de foodcost per portie?',
+    'HACCP Logger': 'Vriezer stond vanochtend op -14,3°C. Hoe leg ik de corrigerende maatregel vast?',
+    'Kostprijs Calculator': 'Welk van mijn 4 gerechten heeft de beste marge? Ribeye €38,50, zalm €27,50, risotto €19,50, caprese €12,50.',
+    'Allergenenkaart': 'De caprese heeft pijnboompitten — dus N (noten) allergen. Hoe laat ik dit zien op de allergeenkaart voor gasten?',
+    'Leveranciers': 'Hanos factuur van vorige week staat in het systeem. Kan ik de prijstrend van ribeye zien over de afgelopen 3 bestellingen?',
+    'Smart Scanner': 'Ik wil een handgeschreven recept scannen. Hoe doe ik dat en herkent de scanner het type document automatisch?',
+    'Kritische evaluatie': 'Eerlijk: Klaar werkt grotendeels goed maar ik mis X en Y. Wat doen jullie hieraan?',
   };
-  return fb[ph] || 'Kun je dat concreter uitleggen?';
+  return fb[module] || 'Kun je dat concreter uitleggen met een voorbeeld uit mijn situatie?';
 }
 
 function sleep(ms) { return new Promise(r => setTimeout(r, ms)); }
 
 // ══════════════════════════════════════════════════════
-// RAPPORT
+//  RAPPORT
 // ══════════════════════════════════════════════════════
 
 function renderReport(max) {
@@ -944,34 +1328,31 @@ function renderReport(max) {
   const klaarTurns = conv.filter(m => m.from === 'klaar');
   const score = klaarTurns.length > 0 ? Math.max(0, Math.round(100 - bugs.length / klaarTurns.length * 60)) : 0;
   const avgT = klaarCount > 0 ? (totalElapsed / klaarCount).toFixed(2) : '–';
-  const avgW = klaarCount > 0 ? Math.round(totalWords / klaarCount) : '–';
 
   document.getElementById('rptMeta').textContent =
-    `${klaarTurns.length} Klaar-antwoorden · ${observations.length} observaties · ${bugs.length} bugs · Avg ${avgT}s`;
+    `${klaarTurns.length} Klaar-antwoorden · ${observations.length} observaties · ${dbChecks} DB-checks · ${bugs.length} bugs · Avg ${avgT}s`;
   document.getElementById('rptScore').textContent = score + '%';
   document.getElementById('rptScore').className = 'score-big ' + (score > 80 ? 'c-green' : score > 60 ? 'c-orange' : 'c-red');
   document.getElementById('rptObsCount').textContent = `${observations.length} totaal`;
   document.getElementById('rptBugsCount').textContent = `${bugs.length} totaal`;
 
-  // Observaties
   const obsBlock = document.getElementById('rptObs');
-  if (observations.length === 0) {
+  if (!observations.length) {
     obsBlock.innerHTML += '<div class="rpt-row" style="color:var(--green)">✓ Geen observaties</div>';
   } else {
     observations.forEach(o => {
       const d = document.createElement('div');
       d.className = 'rpt-row';
-      const cls = o.from === 'marco' ? 'obs-marco' : 'obs-klaar';
-      const lbl = o.from === 'marco' ? '👤 KLANT' : '🛠 DEV';
+      const cls = o.from === 'db' ? 'obs-db' : o.from === 'marco' ? 'obs-marco' : 'obs-klaar';
+      const lbl = o.from === 'db' ? '💾 DB' : o.from === 'marco' ? '👤 KLANT' : '🛠 DEV';
       d.innerHTML = `<span class="obs-from ${cls}">${lbl}</span><span class="obs-text">${esc(o.text)} <span style="color:var(--gray)">#${o.turn}</span></span>`;
       obsBlock.appendChild(d);
     });
   }
 
-  // Bugs
   const bugsBlock = document.getElementById('rptBugs');
   const smap = {c:'KRITIEK',h:'HOOG',m:'MEDIUM'};
-  if (bugs.length === 0) {
+  if (!bugs.length) {
     bugsBlock.innerHTML += '<div class="rpt-row" style="color:var(--green)">✓ Geen bugs</div>';
   } else {
     bugs.forEach(b => {
@@ -982,15 +1363,14 @@ function renderReport(max) {
     });
   }
 
-  // Stats
   const statsBlock = document.getElementById('rptStats');
   [
     ['Klaar antwoorden', klaarTurns.length],
     ['Gem. responstijd', avgT + 's'],
-    ['Gem. woorden', avgW],
-    ['Observaties (beide agents)', observations.length],
-    ['Marco obs.', observations.filter(o => o.from === 'marco').length],
-    ['Klaar obs.', observations.filter(o => o.from === 'klaar').length],
+    ['Observaties totaal', observations.length],
+    ['├ Klant-signalen', observations.filter(o => o.from === 'marco').length],
+    ['├ Dev-signalen', observations.filter(o => o.from === 'klaar').length],
+    ['└ DB-checks', observations.filter(o => o.from === 'db').length],
     ['Kritieke bugs', bugs.filter(b => b.sev === 'c').length],
     ['Hoge bugs', bugs.filter(b => b.sev === 'h').length],
     ['Medium bugs', bugs.filter(b => b.sev === 'm').length],
@@ -1002,7 +1382,6 @@ function renderReport(max) {
     statsBlock.appendChild(d);
   });
 
-  // Transcript
   const tbody = document.getElementById('trsBody');
   const marcoMsgs = conv.filter(m => m.from === 'marco');
   const klaarMsgs = conv.filter(m => m.from === 'klaar');
@@ -1017,10 +1396,6 @@ function renderReport(max) {
     tbody.appendChild(d);
   }
 }
-
-// ══════════════════════════════════════════════════════
-// CSV EXPORT
-// ══════════════════════════════════════════════════════
 
 function exportCSV() {
   const rows = [['Turn','Van','Inhoud']];
