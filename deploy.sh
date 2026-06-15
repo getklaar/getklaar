@@ -9,10 +9,11 @@ git add \
   04-kostprijs/klaar-kostprijs.html \
   07-leveranciers/klaar-leveranciers.html \
   08-scanner/klaar-scanner.html \
+  10-catering-events/klaar-catering.html \
   tests/klaar-ai-test.html \
   index.html klaar-client.js vercel.json package.json \
   deploy.sh
-git commit -m "feat: allergeenmatrix export + live bediening tab + pre-service checklist + woordlimiet fix — Module 02: A4 kruistabel export (14 allergenen × gerechten, printklaar), live bediening-tab met zoekfunctie op naam/allergen/vrij-van (mobilevriendelijk); Module 10: pre-service checklist met verplichte checks, notities meeprinten op keukensheet; Test: KLAAR_PROMPT max 75 woorden (was 120), maxTokens 350 (was 500), AI mag nooit 'kan niet' zonder alternatief"
+git commit -m "fix: batch-scaler recepten + prijsalert banner + empty states + pre-service checklist + allergeenmatrix — Module 01: ×½/×2/×3/×5 scaler voor ingrediënthoeveelheden; Module 07: persistente prijsstijgingsbanner (oranje, dismissable), modal na koppelmodal; Module 04: empty state met directe links naar Recept Studio + Leveranciers; Module 02: A4 kruistabel export + live bediening-tab; Module 10: pre-service checklist + notities op keukensheet; Test: max 75 woorden"
 git push
 echo ""
 echo "Klaar! Vercel bouwt nu automatisch (1-2 min)."

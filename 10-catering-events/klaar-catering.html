@@ -1624,6 +1624,11 @@ function renderSheets() {
       <div class="sheet-preview" id="preview-bediening">${buildBedieningPreview(e)}</div>
     </div>
   `;
+  // Render checklist below sheets (full width)
+  const checklistWrapper = document.createElement('div');
+  checklistWrapper.style.cssText = 'grid-column:1/-1;';
+  checklistWrapper.innerHTML = buildChecklistHtml(e);
+  grid.appendChild(checklistWrapper);
 }
 
 function buildKeukenPreview(e) {
@@ -1657,6 +1662,8 @@ function buildKeukenPreview(e) {
   }
   // Bijzonderheden
   if (e.bijzonderheden) html += `<h3>BIJZONDERHEDEN</h3><p>${e.bijzonderheden}</p>`;
+  // Notities (intern)
+  if (e.notities) html += `<h3>📝 NOTITIES</h3><p style="background:#fffdf0;border-left:3px solid #f59e0b;padding:8px 10px;font-size:12px;border-radius:2px;">${e.notities}</p>`;
   return html;
 }
 
@@ -2220,6 +2227,7 @@ function printSheet(type, id) {
       <div class="print-section-title">⚠️ DIEETWENSEN & ALLERGENEN GASTEN</div>
       <table class="print-table print-dieet-table"><thead><tr><th>Naam gast</th><th>Dieetwens</th><th>Allergie</th></tr></thead><tbody>${dieetRows}</tbody></table>
       ${e.bijzonderheden ? `<div class="print-section-title">BIJZONDERHEDEN</div><div class="print-note-box">${e.bijzonderheden}</div>` : ''}
+      ${e.notities ? `<div class="print-section-title">📝 INTERNE NOTITIES</div><div class="print-note-box" style="border-color:#f59e0b;background:#fffdf0;">${e.notities}</div>` : ''}
       <div class="print-footer"><span>KLAAR Catering & Events</span><span>${companyName} · ${today}</span></div>
     `;
     openPrintWindow(content, `🍳 Keukensheet — ${e.klant?.naam||'?'} · ${fmtDate(e.datum)}`);
@@ -2276,6 +2284,88 @@ function printSheet(type, id) {
     `;
     openPrintWindow(content, `🤵 Bedieningssheet — ${e.klant?.naam||'?'} · ${fmtDate(e.datum)}`);
   }
+}
+
+
+// ══════════════════════════════════════════
+// PRE-SERVICE CHECKLIST
+// ══════════════════════════════════════════
+const CHECKLIST_DEFAULT = [
+  { id: 'allergen_brief',     text: 'Allergenenlijst doorgenomen met keukenteam',         required: true },
+  { id: 'allergen_gasten',    text: 'Gasten met dieetwensen geïdentificeerd en tafel bekerd', required: true },
+  { id: 'cross_contam',       text: 'Kruisbesmettingszones ingericht (aparte snijplanken, utensielen, oppervlakken)', required: true },
+  { id: 'koeltemps',          text: 'Koeltemperaturen gecontroleerd (≤7°C) en gelogd',    required: true },
+  { id: 'eerste_gang_klaar',  text: 'Eerste gang bereid en klaar om uit te serveren',     required: false },
+  { id: 'personeel_brief',    text: 'Bedieningsteam gebrieft over tijdlijn en bijzonderheden', required: false },
+  { id: 'noodoplossing',      text: 'Noodoplossing gerechten beschikbaar voor bekende allergieën', required: true },
+  { id: 'zaal_klaar',         text: 'Zaal/tafelopstelling gecontroleerd en goedgekeurd',  required: false },
+  { id: 'drankstation',       text: 'Drankstation ingericht en gevuld',                    required: false },
+  { id: 'contact_klant',      text: 'Klantcontact bevestigd, aanspreekpunt aanwezig',     required: false },
+];
+
+function loadChecklist(eventId) {
+  try { return JSON.parse(localStorage.getItem('klaar_checklist_' + eventId) || '{}'); } catch(e) { return {}; }
+}
+function saveChecklist(eventId, state) {
+  localStorage.setItem('klaar_checklist_' + eventId, JSON.stringify(state));
+}
+
+function buildChecklistHtml(e) {
+  const state = loadChecklist(e.id);
+  const done  = CHECKLIST_DEFAULT.filter(c => state[c.id]).length;
+  const total = CHECKLIST_DEFAULT.length;
+  const allReqDone = CHECKLIST_DEFAULT.filter(c => c.required && !state[c.id]).length === 0;
+  const pct = Math.round((done / total) * 100);
+
+  const items = CHECKLIST_DEFAULT.map(c => {
+    const checked = !!state[c.id];
+    return `<label style="display:flex;align-items:flex-start;gap:12px;padding:10px 14px;border-radius:8px;cursor:pointer;background:${checked?'#f0fdf4':'white'};border:1px solid ${checked?'#bbf7d0':'#e5e5e5'};transition:all .15s;" onclick="toggleCheck('${e.id}','${c.id}',this)">
+      <span style="width:22px;height:22px;border-radius:5px;border:2px solid ${checked?'#16a34a':'#d1d5db'};background:${checked?'#16a34a':'white'};flex-shrink:0;margin-top:1px;display:flex;align-items:center;justify-content:center;font-size:13px;transition:all .15s;">${checked?'✓':''}</span>
+      <span style="flex:1;font-size:13px;line-height:1.4;color:${checked?'#166534':'#111'};${checked?'text-decoration:line-through;text-decoration-color:#86efac;':''}">${c.text}</span>
+      ${c.required ? `<span style="font-family:'DM Mono',monospace;font-size:9px;color:#ef4444;letter-spacing:0.06em;align-self:center;flex-shrink:0;">VEREIST</span>` : ''}
+    </label>`;
+  }).join('');
+
+  return `<div style="background:white;border:1px solid #e5e5e5;border-radius:10px;overflow:hidden;">
+    <div style="background:#0a0a0a;padding:14px 20px;display:flex;align-items:center;justify-content:space-between;gap:12px;">
+      <div>
+        <div style="font-family:'Bebas Neue',sans-serif;font-size:18px;color:#e8ff47;letter-spacing:0.05em;">✅ PRE-SERVICE CHECKLIST</div>
+        <div style="font-family:'DM Mono',monospace;font-size:10px;color:#666;margin-top:2px;">Afvinken vóór service — ${e.klant?.naam||'?'}</div>
+      </div>
+      <div style="text-align:right;">
+        <div style="font-family:'Bebas Neue',sans-serif;font-size:28px;color:${pct===100?'#22c55e':'#e8ff47'};line-height:1;">${done}/${total}</div>
+        <div style="font-size:10px;color:#666;font-family:'DM Mono',monospace;">${allReqDone ? '✓ alle vereiste checks ok' : '⚠ verplichte checks open'}</div>
+      </div>
+    </div>
+    <div style="padding:6px 16px 16px;">
+      <div style="margin:10px 0 14px;height:6px;background:#f0f0ee;border-radius:3px;overflow:hidden;">
+        <div style="height:100%;width:${pct}%;background:${pct===100?'#22c55e':'#e8ff47'};border-radius:3px;transition:width .3s;"></div>
+      </div>
+      <div style="display:flex;flex-direction:column;gap:6px;">${items}</div>
+      <div style="margin-top:12px;display:flex;gap:8px;justify-content:flex-end;">
+        <button class="btn btn-secondary btn-sm" onclick="resetChecklist('${e.id}')">↩ Reset checklist</button>
+        ${allReqDone ? `<div style="display:flex;align-items:center;gap:6px;padding:6px 14px;background:#f0fdf4;border:1px solid #bbf7d0;border-radius:6px;font-size:12px;font-weight:700;color:#16a34a;">✓ Klaar voor service</div>` : ''}
+      </div>
+    </div>
+  </div>`;
+}
+
+function toggleCheck(eventId, checkId, labelEl) {
+  const state = loadChecklist(eventId);
+  state[checkId] = !state[checkId];
+  saveChecklist(eventId, state);
+  // Re-render checklist
+  const id = document.getElementById('sheet-event-select').value;
+  const e = loadEvents().find(x => x.id === id);
+  if (!e) return;
+  const wrapper = labelEl.closest('[style*="grid-column"]');
+  if (wrapper) wrapper.innerHTML = buildChecklistHtml(e);
+}
+
+function resetChecklist(eventId) {
+  if (!confirm('Checklist resetten? Alle vinkjes worden gewist.')) return;
+  localStorage.removeItem('klaar_checklist_' + eventId);
+  renderSheets();
 }
 
 // ══════════════════════════════════════════

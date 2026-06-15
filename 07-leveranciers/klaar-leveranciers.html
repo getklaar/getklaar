@@ -1290,6 +1290,23 @@
 </div>
 
 
+<!-- ── PRIJSALERT BANNER ── -->
+<div id="prijsalert-banner" style="display:none;position:sticky;top:0;z-index:200;
+  background:#fff3e0;border-bottom:2px solid #f97316;padding:10px 24px;
+  display:flex;align-items:center;gap:12px">
+  <span style="font-size:16px">⚠️</span>
+  <div style="flex:1;font-size:13px;color:#9a3412;font-family:'DM Mono',monospace" id="prijsalert-tekst"></div>
+  <button onclick="wistPrijsAlerts()" style="font-family:'DM Mono',monospace;font-size:11px;
+    background:#f97316;color:#fff;border:none;border-radius:5px;padding:4px 10px;cursor:pointer">
+    Begrepen
+  </button>
+  <button onclick="wistPrijsAlerts();window.open('../04-kostprijs/klaar-kostprijs.html','_blank')"
+    style="font-family:'DM Mono',monospace;font-size:11px;
+    background:#111;color:#fff;border:none;border-radius:5px;padding:4px 10px;cursor:pointer">
+    → Check marges
+  </button>
+</div>
+
 <!-- ── TOAST ── -->
 <div class="toast" id="toast"></div>
 
@@ -1353,6 +1370,28 @@ function switchTab(name, btn) {
 
 function toggleCollapsible(id) {
   document.getElementById(id).classList.toggle('open');
+}
+
+// ── Prijsalert banner ──────────────────────────────────────────────────────
+function renderPrijsAlertBanner() {
+  const banner = document.getElementById('prijsalert-banner');
+  const tekst  = document.getElementById('prijsalert-tekst');
+  if (!banner || !tekst) return;
+  const alerts = JSON.parse(localStorage.getItem('klaar_prijsalerts') || '[]')
+    .filter(a => !a.gelezen);
+  if (alerts.length === 0) { banner.style.display = 'none'; return; }
+  const recent = alerts.slice(0, 3);
+  const extra  = alerts.length - recent.length;
+  const namen  = recent.map(a => `${a.naam} <b>+${a.pct}%</b>`).join(' &nbsp;·&nbsp; ');
+  tekst.innerHTML = `Prijsstijging${alerts.length!==1?'en':''} na laatste inkoop: ${namen}${extra>0?` &nbsp;+${extra} meer`:''}. Controleer je marges.`;
+  banner.style.display = 'flex';
+}
+
+function wistPrijsAlerts() {
+  const alerts = JSON.parse(localStorage.getItem('klaar_prijsalerts') || '[]')
+    .map(a => ({ ...a, gelezen: true }));
+  localStorage.setItem('klaar_prijsalerts', JSON.stringify(alerts));
+  renderPrijsAlertBanner();
 }
 
 let toastTimer = null;

@@ -810,7 +810,16 @@
 
           <!-- Ingredients -->
           <div class="editor-sec">
-            <div class="sec-hdr">Ingrediënten <button onclick="addIngredient()">+ Toevoegen</button></div>
+            <div class="sec-hdr" style="display:flex;align-items:center;flex-wrap:wrap;gap:6px;">
+              <span>Ingrediënten</span>
+              <button onclick="addIngredient()" style="margin-left:0">+ Toevoegen</button>
+              <span style="flex:1"></span>
+              <span style="font-size:10px;color:#aaa;font-family:'DM Mono',monospace;letter-spacing:.04em;">SCHALEN:</span>
+              <button onclick="scaleIngredients(0.5)"  title="Halveer alle hoeveelheden" style="font-size:11px;padding:2px 8px;font-family:'DM Mono',monospace">×½</button>
+              <button onclick="scaleIngredients(2)"    title="Verdubbel alle hoeveelheden" style="font-size:11px;padding:2px 8px;font-family:'DM Mono',monospace">×2</button>
+              <button onclick="scaleIngredients(3)"    title="Drievoud" style="font-size:11px;padding:2px 8px;font-family:'DM Mono',monospace">×3</button>
+              <button onclick="scaleIngredients(5)"    title="Vijfvoud" style="font-size:11px;padding:2px 8px;font-family:'DM Mono',monospace">×5</button>
+            </div>
             <div id="ingList"></div>
           </div>
 
@@ -1982,6 +1991,42 @@ function addIngRow(amount, name) {
       onkeydown="if(event.key==='Enter'){event.preventDefault();addIngredient();}">
     <button class="btn-del-row" onclick="this.parentElement.remove();markDirty();">×</button>`;
   el.appendChild(d);
+}
+
+function scaleIngredients(factor) {
+  const rows = document.getElementById('ingList').querySelectorAll('.ing-amt');
+  if (rows.length === 0) { showToast('Geen ingrediënten om te schalen'); return; }
+  let changed = 0;
+  rows.forEach(inp => {
+    const raw = inp.value.trim();
+    if (!raw) return;
+    // Ondersteun: "200", "0.5", "1/2", "1.5 kg" → schaal het numerieke deel
+    const match = raw.match(/^(\d+(?:[.,]\d+)?(?:\/\d+)?)(.*)$/);
+    if (!match) return;
+    let num = match[1];
+    const rest = match[2];
+    // Breuk → decimaal
+    if (num.includes('/')) {
+      const parts = num.split('/');
+      num = parseFloat(parts[0]) / parseFloat(parts[1]);
+    } else {
+      num = parseFloat(num.replace(',', '.'));
+    }
+    if (isNaN(num)) return;
+    const result = num * factor;
+    // Formatteer: vermijd te veel decimalen
+    const formatted = (result % 1 === 0) ? result.toFixed(0)
+      : result < 10 ? parseFloat(result.toFixed(2)).toString()
+      : parseFloat(result.toFixed(1)).toString();
+    inp.value = formatted + rest;
+    changed++;
+  });
+  if (changed > 0) {
+    markDirty();
+    showToast(`×${factor === 0.5 ? '½' : factor} — ${changed} hoeveelheden geschaald`);
+  } else {
+    showToast('Geen numerieke hoeveelheden gevonden om te schalen');
+  }
 }
 
 function addIngredient() {
