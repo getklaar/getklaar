@@ -1322,7 +1322,13 @@ function loadData() {
 function saveData(data) {
   try {
     localStorage.setItem(STORAGE_KEY, JSON.stringify(data));
-    syncGedeeldeProducten(data); // Sync naar klaar_producten voor andere modules
+    syncGedeeldeProducten(data);  // → klaar_producten
+    syncIngredienten(data);        // → klaar_ingredienten (A1: prijscascade)
+    syncInkopen(data);             // → klaar_inkopen (gedeeld formaat)
+    // Vuurt op dezelfde tab — native 'storage' event is cross-tab only
+    window.dispatchEvent(new CustomEvent('klaarDataUpdate', {
+      detail: { keys: ['klaar_ingredienten', 'klaar_producten', 'klaar_inkopen'] }
+    }));
   } catch (e) {
     showToast('Opslaan mislukt — localStorage vol?', 'error');
   }
@@ -1767,6 +1773,7 @@ function openReview(parsed, bron) {
   reviewState = {
     leverancier: parsed.leverancier || '',
     datum: parsed.datum || new Date().toISOString().split('T')[0],
+    factuurNr: parsed.factuurNr || parsed.factuur_nr || '',
     bron,
     regels
   };
@@ -1925,6 +1932,26 @@ function saveReview() {
   reviewState.leverancier = document.getElementById('rv-leverancier').value.trim();
   reviewState.datum = document.getElementById('rv-datum').value;
 
+  // ── B4: Deduplicatie — check of factuurNr al bestaat ──────────────────
+  const factuurNr = reviewState.factuurNr || '';
+  if (factuurNr) {
+    const bestaandeInkopen = JSON.parse(localStorage.getItem('klaar_inkopen') || '[]');
+    const dupIdx = bestaandeInkopen.findIndex(i =>
+      (i.factuurNr || '').toLowerCase() === factuurNr.toLowerCase()
+    );
+    if (dupIdx >= 0) {
+      const dup = bestaandeInkopen[dupIdx];
+      const keuze = confirm(
+        `Factuur ${factuurNr} staat al in het systeem\n` +
+        `(${dup.datum || ''}, leverancier: ${dup.leverancier || '?'})\n\n` +
+        `OK = prijzen updaten en doorgaan\nAnnuleren = als nieuwe inkoop opslaan`
+      );
+      if (!keuze) {
+        reviewState.factuurNr = factuurNr + '-dup-' + Date.now().toString(36);
+      }
+    }
+  }
+
   const data = loadData();
 
   // Find or create leverancier
@@ -2004,6 +2031,7 @@ function saveReview() {
     id: uid(),
     datum: reviewState.datum,
     leverancier_id: levId,
+    factuurNr: reviewState.factuurNr || '',
     bron: reviewState.bron,
     regels: inkoopRegels
   });
@@ -3624,6 +3652,96 @@ function syncGedeeldeProducten(data) {
     localStorage.setItem('klaar_producten', JSON.stringify(gedeeld));
   } catch (e) {
     console.warn('Sync klaar_producten mislukt:', e);
+  }
+}
+
+/* ════════════════════════════════════════════════
+   PRIJSCASCADE → klaar_ingredienten
+   Kopieert actuele inkoopprijzen naar de gedeelde
+   ingrediëntenbibliotheek zodat Module 01 en 04
+   automatisch herberekenen na een factuurimport.
+   ════════════════════════════════════════════════ */
+
+function syncIngredienten(data) {
+  try {
+    const vandaag = new Date().toISOString().split('T')[0];
+    const ings = JSON.parse(localStorage.getItem('klaar_ingredienten') || '[]');
+    let gewijzigd = false;
+
+    (data.producten || []).forEach(p => {
+      const prijs = getHuidigePrijs(p.id, data.prijzen || [], vandaag);
+      if (!prijs) return;
+
+      const normNaam = p.naam.toLowerCase().trim();
+      // Zoek op exacte naam of ingredient_match alias
+      const idx = ings.findIndex(i => {
+        const n = (i.naam || '').toLowerCase().trim();
+        const alias = (i.ingredient_match || i.leverancierNaam || '').toLowerCase().trim();
+        return n === normNaam || alias === normNaam ||
+               normNaam.includes(n) || (n.length > 4 && normNaam.startsWith(n.slice(0, 5)));
+      });
+
+      if (idx >= 0) {
+        const oud = ings[idx].inkoopprijs || 0;
+        if (Math.abs(oud - prijs) > 0.001) {
+          // Bewaar prijshistorie als array
+          if (!ings[idx].historischePrijzen) ings[idx].historischePrijzen = [];
+          // Voeg vorige prijs toe aan historie als nog niet aanwezig
+          if (oud > 0 && !ings[idx].historischePrijzen.some(h => Math.abs(h.prijs - oud) < 0.001)) {
+            ings[idx].historischePrijzen.push({ prijs: oud, datum: ings[idx].lastUpdated || vandaag });
+          }
+          ings[idx].inkoopprijs = prijs;
+          ings[idx].eenheid     = p.eenheid || ings[idx].eenheid;
+          ings[idx].lastUpdated = vandaag;
+          ings[idx].source      = 'm07-auto';
+          gewijzigd = true;
+        }
+      }
+    });
+
+    if (gewijzigd) {
+      localStorage.setItem('klaar_ingredienten', JSON.stringify(ings));
+    }
+  } catch (e) {
+    console.warn('syncIngredienten mislukt:', e);
+  }
+}
+
+/* ════════════════════════════════════════════════
+   GEDEELD INKOPEN FORMAAT → klaar_inkopen
+   Schrijft een genormaliseerde snapshot zodat
+   Module 04, 08 en de test-AI factuurdata kunnen
+   lezen zonder toegang tot klaar_voorraad.
+   ════════════════════════════════════════════════ */
+
+function syncInkopen(data) {
+  try {
+    const inkopen = (data.inkopen || []).map(ink => {
+      const lev = (data.leveranciers || []).find(l => l.id === ink.leverancier_id);
+      const regels = (ink.regels || []).map(r => {
+        const prod = (data.producten || []).find(p => p.id === r.product_id);
+        return {
+          product:          prod ? prod.naam : (r.product || ''),
+          hoeveelheid:      r.hoeveelheid || 0,
+          eenheid:          r.eenheid || prod?.eenheid || 'stuk',
+          prijs_per_eenheid: r.prijs_per_eenheid || 0,
+          totaal:           (r.hoeveelheid || 0) * (r.prijs_per_eenheid || 0)
+        };
+      });
+      const totaalExBTW = regels.reduce((s, r) => s + r.totaal, 0);
+      return {
+        id:           ink.id,
+        leverancier:  lev ? lev.naam : 'Onbekend',
+        datum:        ink.datum,
+        factuurNr:    ink.factuurNr || ink.id,
+        bron:         ink.bron || 'handmatig',
+        regels,
+        totaalExBTW:  Math.round(totaalExBTW * 100) / 100
+      };
+    });
+    localStorage.setItem('klaar_inkopen', JSON.stringify(inkopen));
+  } catch (e) {
+    console.warn('syncInkopen mislukt:', e);
   }
 }
 

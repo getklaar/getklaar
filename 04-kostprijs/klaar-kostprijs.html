@@ -4860,6 +4860,20 @@ function renderHelp(tab) {
       showSyncToast('📈 Factuurdata bijgewerkt vanuit Module 07');
     }
   });
+
+  // A2 — klaarDataUpdate: vuurt ook als Module 07 in DEZELFDE tab schrijft
+  window.addEventListener('klaarDataUpdate', e => {
+    const keys = (e.detail && e.detail.keys) || [];
+    if (keys.includes('klaar_ingredienten')) {
+      autoSyncM07Stil();
+      if (_berekenReceptId) debouncedBereken();
+      showSyncToast('💰 Leveranciersprijs bijgewerkt — kostprijzen herberekend');
+    }
+    if (keys.includes('klaar_producten') || keys.includes('klaar_inkopen')) {
+      renderPrijsTrend();
+      showSyncToast('📈 Factuurdata bijgewerkt vanuit Leveranciers');
+    }
+  });
 })();
 
 let _syncToastTimer = null;

@@ -1633,6 +1633,20 @@ let _chatStreaming = false;
   // Verberg noKeyBanner — API key is niet meer nodig
   const banner = document.getElementById('noKeyBanner');
   if (banner) banner.style.display = 'none';
+
+  // A2 — klaarDataUpdate: herbereken kostprijs als Module 07 prijzen heeft bijgewerkt
+  window.addEventListener('klaarDataUpdate', e => {
+    const keys = (e.detail && e.detail.keys) || [];
+    if (keys.includes('klaar_ingredienten') || keys.includes('klaar_producten')) {
+      if (activeId) calculateFoodCost();
+    }
+  });
+  // Native storage event (cross-tab) — zelfde logica
+  window.addEventListener('storage', e => {
+    if ((e.key === 'klaar_ingredienten' || e.key === 'klaar_producten') && activeId) {
+      calculateFoodCost();
+    }
+  });
 })();
 
 // ═══════════════════════════════════════════════════
@@ -1997,14 +2011,18 @@ function calculateFoodCost() {
 
   // Unit → grams / liters multiplier
   const toBase = (qty, unit) => {
-    const u = unit.toLowerCase().replace(/\./g,'');
+    const u = unit.toLowerCase().replace(/\./g,'').trim();
     const q = parseFloat(String(qty).replace(',','.')) || 0;
-    if (['g','gram','gr'].includes(u))  return { val: q/1000, base:'kg' };
-    if (['kg'].includes(u))             return { val: q,      base:'kg' };
-    if (['ml','mL'].includes(u))        return { val: q/1000, base:'l'  };
-    if (['cl'].includes(u))             return { val: q/100,  base:'l'  };
-    if (['l','liter','litre'].includes(u)) return { val: q,  base:'l'  };
-    return { val: q, base:'stuk' }; // stuk, teentje, etc.
+    if (['g','gram','gr'].includes(u))               return { val: q/1000,   base:'kg'  };
+    if (['kg'].includes(u))                          return { val: q,        base:'kg'  };
+    if (['ml','ml'].includes(u))                     return { val: q/1000,   base:'l'   };
+    if (['cl'].includes(u))                          return { val: q/100,    base:'l'   };
+    if (['dl','deciliter'].includes(u))              return { val: q/10,     base:'l'   };
+    if (['l','liter','litre'].includes(u))           return { val: q,        base:'l'   };
+    if (['el','eetlepel','tbsp','tb'].includes(u))   return { val: q*0.015,  base:'l'   }; // 1el ≈ 15ml
+    if (['tl','theelepel','tsp'].includes(u))        return { val: q*0.005,  base:'l'   }; // 1tl ≈ 5ml
+    if (['stuks'].includes(u))                       return { val: q,        base:'stuk' };
+    return { val: q, base:'stuk' }; // stuk, teentje, snufje, etc.
   };
 
   let total = 0, matched = 0;
@@ -2033,7 +2051,20 @@ function calculateFoodCost() {
     matched++;
   });
 
-  if (matched === 0) { bar.style.display='none'; return; }
+  if (matched === 0) {
+    // Toon bar met uitleg i.p.v. stil verbergen
+    if (ings.length > 0) {
+      bar.style.display = 'flex';
+      document.getElementById('costTotal').textContent = '€ —';
+      document.getElementById('costPer').textContent   = '€ —';
+      document.getElementById('costMatch').innerHTML =
+        `<span class="cost-warn" style="cursor:pointer" title="Ga naar Kostprijs module om ingrediënten te koppelen">` +
+        `⚠ Ingrediënten nog niet in bibliotheek — sla op in Kostprijs (Module 04) om kostprijs te zien</span>`;
+    } else {
+      bar.style.display = 'none';
+    }
+    return;
+  }
 
   const costPer = total / servings;
   bar.style.display = 'flex';

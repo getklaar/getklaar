@@ -1520,7 +1520,13 @@ function extractObs(text) {
   const obsArr = [];
   const obsRx = /\[OBS:\s*([^\]]+)\]/gi;
   let m;
-  while ((m = obsRx.exec(text)) !== null) obsArr.push(m[1].trim());
+  while ((m = obsRx.exec(text)) !== null) {
+    const content = m[1].trim();
+    // Filter bare placeholders — alleen echte observaties opslaan
+    if (content && content.toLowerCase() !== 'dev-signaal' && content.length > 5) {
+      obsArr.push(content);
+    }
+  }
   const clean = text.replace(/\[OBS:\s*[^\]]+\]/gi, '').replace(/\n{3,}/g, '\n\n').trim();
   return { clean, obsArr };
 }
@@ -1532,7 +1538,7 @@ function detectBugs(turn, text, elapsed) {
     result.push({ sev:'c', text:`Leeg antwoord bij turn ${turn}` });
   if (words > 0 && /^(Hello|Hi |I |The |Yes|No |Of course|Sure)/i.test(text.trim()))
     result.push({ sev:'h', text:`Antwoord begint in het Engels (turn ${turn})` });
-  if (words > 160)
+  if (words > 100)
     result.push({ sev:'m', text:`Te lang: ${words} woorden (turn ${turn}, max ~90)` });
   if (elapsed > 14)
     result.push({ sev:'m', text:`Trage respons: ${elapsed.toFixed(1)}s (turn ${turn})` });

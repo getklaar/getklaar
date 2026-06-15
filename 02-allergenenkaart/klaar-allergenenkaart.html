@@ -429,6 +429,24 @@
       border-radius: 1px;
     }
 
+    /* ◐ Misschien aanwezig (sporen / kruisbesmetting) */
+    .allergen-maybe {
+      display: inline-flex;
+      align-items: center;
+      justify-content: center;
+      width: 26px;
+      height: 26px;
+      border-radius: 50%;
+      border: 2px dashed var(--present, #ccc);
+      color: var(--present, #999);
+      font-family: 'DM Mono', monospace;
+      font-size: 9px;
+      font-weight: 500;
+      line-height: 1;
+      background: transparent;
+      opacity: 0.75;
+    }
+
     /* ─── SUMMARY FOOTER ───────────────────────────────────────────── */
     .matrix-footer {
       padding: 12px 20px;
@@ -1373,6 +1391,7 @@
   let customFolders = [];
   let pakketten = [];
   let activeFilter = 'all';
+  let activeAllergenCodes = new Set(); // multi-allergen filter (AND-logica)
 
   function getAllFolders() { return [...DEFAULT_FOLDERS, ...customFolders]; }
   function getFolderLabel(id) {
@@ -1423,13 +1442,12 @@
     return 'keuken';
   }
 
+  // Definitief aanwezig (maybe: false/undefined)
   function hasAllergen(r, code) {
     return getAllergens(r).some(a => {
-      // Object format: {code, name}
       if (typeof a === 'object' && a.code) {
-        return a.code.toUpperCase() === code.toUpperCase();
+        return a.code.toUpperCase() === code.toUpperCase() && !a.maybe;
       }
-      // String format (very old): plain string like "Gluten" or "G"
       if (typeof a === 'string') {
         const allergenDef = ALLERGENS.find(def => def.name.toLowerCase() === a.toLowerCase());
         if (allergenDef) return allergenDef.code.toUpperCase() === code.toUpperCase();
@@ -1437,6 +1455,14 @@
       }
       return false;
     });
+  }
+
+  // Mogelijk aanwezig (maybe: true — sporen/kruisbesmetting)
+  function hasMaybeAllergen(r, code) {
+    return getAllergens(r).some(a =>
+      typeof a === 'object' && a.code &&
+      a.code.toUpperCase() === code.toUpperCase() && a.maybe === true
+    );
   }
 
   function getAllergenByCode(code) {
@@ -1460,14 +1486,26 @@
   }
 
   function getFilteredRecipes() {
-    if (activeFilter === 'all') return recipes;
-    if (activeFilter.startsWith('pak:')) {
+    let result;
+    if (activeFilter === 'all') {
+      result = recipes;
+    } else if (activeFilter.startsWith('pak:')) {
       const pak = getActivePakket();
       if (!pak) return [];
       const ids = new Set(pak.gerechten.map(g => g.receptId));
-      return recipes.filter(r => ids.has(r.id));
+      result = recipes.filter(r => ids.has(r.id));
+    } else {
+      result = recipes.filter(r => getFolder(r) === activeFilter);
     }
-    return recipes.filter(r => getFolder(r) === activeFilter);
+    // AND-filter op actieve allergencodes (multi-select)
+    if (activeAllergenCodes.size > 0) {
+      result = result.filter(r =>
+        [...activeAllergenCodes].every(code =>
+          hasAllergen(r, code) || hasMaybeAllergen(r, code)
+        )
+      );
+    }
+    return result;
   }
 
   // ──────────────────────────────────────────────────────────────────
@@ -1500,11 +1538,48 @@
       });
     }
 
+    // ── Multi-allergen filter — AND logica (B2 fix) ────────────────────
+    if (recipes.length > 0) {
+      html += `<div class="filter-divider"></div><span class="filter-group-label" style="font-size:9px;letter-spacing:.1em;text-transform:uppercase;color:#aaa;padding:0 6px;align-self:center">Filter op allergen</span>`;
+      const allergenBtns = [...ALLERGENS, ...EXTRA_ALLERGENS].map(a => {
+        const isActive = activeAllergenCodes.has(a.code);
+        const count = recipes.filter(r => hasAllergen(r, a.code) || hasMaybeAllergen(r, a.code)).length;
+        if (count === 0) return '';
+        return `<button class="filter-btn ${isActive ? 'active' : ''}"
+          style="${isActive ? `background:${a.color};color:#fff;border-color:${a.color}` : ''}"
+          onclick="toggleAllergenFilter('${a.code}')"
+          title="${a.name} — ${count} gerecht${count !== 1 ? 'en' : ''}">${a.code}</button>`;
+      }).join('');
+      html += allergenBtns;
+      if (activeAllergenCodes.size > 0) {
+        const filtered = getFilteredRecipes();
+        html += `<button class="filter-btn" onclick="clearAllergenFilter()" style="border-color:#ef4444;color:#ef4444" title="Wis allergeenfilter">✕ ${filtered.length} gerecht${filtered.length !== 1 ? 'en' : ''}</button>`;
+      }
+    }
+
     bar.innerHTML = html;
   }
 
   function setFilter(filter) {
     activeFilter = filter;
+    buildFilterBar();
+    renderMatrix();
+    updateSubtitle();
+  }
+
+  function toggleAllergenFilter(code) {
+    if (activeAllergenCodes.has(code)) {
+      activeAllergenCodes.delete(code);
+    } else {
+      activeAllergenCodes.add(code);
+    }
+    buildFilterBar();
+    renderMatrix();
+    updateSubtitle();
+  }
+
+  function clearAllergenFilter() {
+    activeAllergenCodes.clear();
     buildFilterBar();
     renderMatrix();
     updateSubtitle();
@@ -1636,10 +1711,13 @@
 
         const cells = ALLERGENS.map(a => {
           const present = hasAllergen(recipe, a.code);
+          const maybe   = !present && hasMaybeAllergen(recipe, a.code);
           return `<td class="td-allergen">
             ${present
-              ? `<span class="allergen-present" style="background:${a.color}" data-name="${a.name}">${a.code}</span>`
-              : `<span class="allergen-absent"></span>`
+              ? `<span class="allergen-present" style="background:${a.color}" data-name="${a.name}" title="${a.name} — aanwezig">${a.code}</span>`
+              : maybe
+                ? `<span class="allergen-maybe" style="--present:${a.color};border-color:${a.color};color:${a.color}" data-name="${a.name}" title="${a.name} — mogelijk aanwezig (sporen)">?</span>`
+                : `<span class="allergen-absent" title="${a.name} — afwezig"></span>`
             }
           </td>`;
         }).join('');
@@ -1647,10 +1725,13 @@
         // NM kolom — apart van EU-14
         const extraCells = EXTRA_ALLERGENS.map(a => {
           const present = hasAllergen(recipe, a.code);
+          const maybe   = !present && hasMaybeAllergen(recipe, a.code);
           return `<td class="td-allergen td-extra">
             ${present
-              ? `<span class="allergen-present" style="background:${a.color};opacity:.85" data-name="${a.name}">${a.code}</span>`
-              : `<span class="allergen-absent"></span>`
+              ? `<span class="allergen-present" style="background:${a.color};opacity:.85" data-name="${a.name}" title="${a.name} — aanwezig">${a.code}</span>`
+              : maybe
+                ? `<span class="allergen-maybe" style="--present:${a.color};border-color:${a.color};color:${a.color};opacity:.7" data-name="${a.name}" title="${a.name} — mogelijk aanwezig">?</span>`
+                : `<span class="allergen-absent"></span>`
             }
           </td>`;
         }).join('');
