@@ -213,6 +213,17 @@
     .cost-bar .cmatch{color:var(--lmuted);font-size:10px;margin-left:auto;}
     .cost-bar .clabel{font-size:10px;letter-spacing:.06em;text-transform:uppercase;}
     .cost-warn{color:#c47d00;}
+    .cost-vp-inp{
+      width:60px;padding:2px 5px;font-size:12px;font-family:'DM Mono',monospace;
+      background:var(--lsurface);border:1px solid var(--lborder2);border-radius:3px;
+      color:var(--ltext);outline:none;text-align:right;
+    }
+    .cost-vp-inp:focus{border-color:var(--lborder);background:#fff;}
+    .marge-fc.fc-goed{color:#16a34a;}
+    .marge-fc.fc-ok{color:#c47d00;}
+    .marge-fc.fc-hoog{color:#dc2626;}
+    .marge-bm.bm-pos{color:#16a34a;}
+    .marge-bm.bm-neg{color:#dc2626;}
 
     /* Module-link label */
     .mod-link{display:inline-flex;align-items:center;gap:5px;
@@ -772,13 +783,28 @@
             </div>
           </div>
 
-          <!-- Kostprijs (gevoed door ingrediëntenbibliotheek) -->
+          <!-- Kostprijs + Marge preview (gevoed door ingrediëntenbibliotheek) -->
           <div class="cost-bar" id="costBar" style="display:none;">
-            <span class="clabel">Kostprijs recept</span>
+            <span class="clabel">Kostprijs</span>
             <span class="cv" id="costTotal">€ —</span>
             <span class="csep">·</span>
             <span class="clabel">per portie</span>
             <span class="cv" id="costPer">€ —</span>
+            <span class="csep" id="margeSep" style="display:none;">·</span>
+            <label class="clabel" id="verkoopprijsLabel" style="display:none;" title="Verkoopprijs per portie (incl. BTW)">Verkoopprijs</label>
+            <span id="verkoopprijsWrap" style="display:none;align-items:center;gap:3px;">
+              <span class="cv" style="opacity:.5;">€</span>
+              <input type="number" id="verkoopprijsInp" class="cost-vp-inp"
+                min="0" step="0.10" placeholder="—"
+                title="Verkoopprijs per portie invoeren"
+                oninput="onVerkoopprijsChange()" onchange="onVerkoopprijsChange()">
+            </span>
+            <span class="csep" id="foodcostSep" style="display:none;">·</span>
+            <span class="clabel" id="foodcostLabel" style="display:none;">Foodcost</span>
+            <span class="cv marge-fc" id="foodcostPct" style="display:none;">—%</span>
+            <span class="csep" id="margeSep2" style="display:none;">·</span>
+            <span class="clabel" id="margeLabel" style="display:none;">Brutomarge</span>
+            <span class="cv marge-bm" id="brutomarge" style="display:none;">€ —</span>
             <span class="cmatch" id="costMatch"></span>
           </div>
 
@@ -1850,6 +1876,10 @@ function openRecipe(id) {
   renderAllergens(r.allergens || []);
   updateStatusBtn(r.status);
 
+  // Verkoopprijs laden
+  const vpInp = document.getElementById('verkoopprijsInp');
+  if (vpInp) vpInp.value = r.verkoopprijs ? String(r.verkoopprijs) : '';
+
   isDirty = false;
   document.getElementById('unsavedDot').style.display = 'none';
   renderSidebar();
@@ -1872,6 +1902,8 @@ function saveRecipe() {
   r.recipe.notes   = document.getElementById('recNotes').value.trim();
   r.recipe.ingredients = getIngsFromDOM();
   r.recipe.steps       = getStepsFromDOM();
+  const vp = parseFloat(document.getElementById('verkoopprijsInp')?.value) || 0;
+  if (vp > 0) r.verkoopprijs = vp; else delete r.verkoopprijs;
   r.updatedAt = new Date().toISOString();
   saveRecipes();
   isDirty = false;
@@ -2003,13 +2035,62 @@ function calculateFoodCost() {
 
   if (matched === 0) { bar.style.display='none'; return; }
 
+  const costPer = total / servings;
   bar.style.display = 'flex';
   document.getElementById('costTotal').textContent = `€ ${total.toFixed(2)}`;
-  document.getElementById('costPer').textContent   = `€ ${(total/servings).toFixed(2)}`;
+  document.getElementById('costPer').textContent   = `€ ${costPer.toFixed(2)}`;
   const miss = ings.length - matched;
   document.getElementById('costMatch').innerHTML   = miss > 0
     ? `<span class="cost-warn">${matched}/${ings.length} gekoppeld — ${miss} niet gevonden in bibliotheek</span>`
     : `${matched}/${ings.length} gekoppeld`;
+
+  // Toon verkoopprijs-invoer altijd als kostprijs berekend is
+  ['margeSep','verkoopprijsLabel','verkoopprijsWrap'].forEach(id => {
+    const el = document.getElementById(id);
+    if (el) el.style.display = id === 'verkoopprijsWrap' ? 'flex' : 'inline';
+  });
+
+  // Marge preview berekenen als verkoopprijs ingevuld is
+  const vp = parseFloat(document.getElementById('verkoopprijsInp')?.value) || 0;
+  updateMargePreview(costPer, vp);
+}
+
+function updateMargePreview(costPer, vp) {
+  const fcPctEl  = document.getElementById('foodcostPct');
+  const bmEl     = document.getElementById('brutomarge');
+  const show     = vp > 0 && costPer > 0;
+
+  ['foodcostSep','foodcostLabel','margeSep2','margeLabel'].forEach(id => {
+    const el = document.getElementById(id);
+    if (el) el.style.display = show ? 'inline' : 'none';
+  });
+  if (fcPctEl) fcPctEl.style.display = show ? 'inline' : 'none';
+  if (bmEl)    bmEl.style.display    = show ? 'inline' : 'none';
+
+  if (!show) return;
+
+  const fc = (costPer / vp) * 100;
+  const bm = vp - costPer;
+
+  // Foodcost kleurcodering
+  fcPctEl.textContent = fc.toFixed(1) + '%';
+  fcPctEl.className = 'cv marge-fc ' + (fc < 25 ? 'fc-goed' : fc < 33 ? 'fc-ok' : 'fc-hoog');
+
+  // Brutomarge
+  bmEl.textContent = (bm >= 0 ? '+' : '') + '€ ' + bm.toFixed(2);
+  bmEl.className = 'cv marge-bm ' + (bm >= 0 ? 'bm-pos' : 'bm-neg');
+}
+
+function onVerkoopprijsChange() {
+  const bar = document.getElementById('costBar');
+  if (!bar || bar.style.display === 'none') return;
+  const vp = parseFloat(document.getElementById('verkoopprijsInp')?.value) || 0;
+  const costPerEl = document.getElementById('costPer');
+  const costPer = costPerEl
+    ? parseFloat(costPerEl.textContent.replace('€','').replace(',','.').trim()) || 0
+    : 0;
+  updateMargePreview(costPer, vp);
+  markDirty();
 }
 
 // ═══════════════════════════════════════════════════

@@ -631,6 +631,13 @@
     cursor: pointer;
   }
 
+  /* ── SCENARIO-PLANNER KPI BLOKKEN ── */
+  .sc-kpi { text-align: center; }
+  .sc-kpi-label { font-family: 'DM Mono', monospace; font-size: 10px; letter-spacing: .08em; text-transform: uppercase; color: var(--muted); margin-bottom: 4px; }
+  .sc-kpi-val { font-size: 20px; font-weight: 600; color: var(--text); }
+  .sc-kpi-val.danger { color: #dc2626; }
+  .sc-kpi-val.ok { color: #16a34a; }
+
   /* ── LOSSE BEREKENING ── */
   .mode-toggle {
     display: flex; border: 1px solid #e5e5e5;
@@ -1181,6 +1188,7 @@
   <button class="tab-btn active" onclick="switchTab('bereken')">🧮 Bereken</button>
   <button class="tab-btn" onclick="switchTab('dashboard')">Overzicht</button>
   <button class="tab-btn" onclick="switchTab('ingredienten')">Ingrediënten</button>
+  <button class="tab-btn" onclick="switchTab('scenario')">📊 Scenario-planner</button>
   <button class="tab-btn" onclick="switchTab('los')">Losse Berekening</button>
   <button class="tab-btn" onclick="switchTab('instellingen')">Instellingen</button>
 </div>
@@ -1655,6 +1663,102 @@
     </div>
 
   </div><!-- /tab-los -->
+
+  <!-- ═══════════════════════ TAB: SCENARIO-PLANNER ═══════════════════════ -->
+  <div id="tab-scenario" class="tab-panel">
+    <div class="toolbar">
+      <div class="toolbar-title">📊 Scenario-planner</div>
+      <div class="toolbar-sub">Simuleer prijswijzigingen en bereken break-even per gerecht</div>
+    </div>
+
+    <div style="max-width:820px;margin:0 auto;padding:0 16px 40px;">
+
+      <!-- GERECHT SELECTIE -->
+      <div class="settings-card" style="margin-bottom:20px;">
+        <div class="settings-card-title">Gerecht kiezen</div>
+        <select id="sc-recept-select" class="form-select" onchange="scenarioLoadRecept()" style="max-width:360px;">
+          <option value="">— Selecteer een gerecht —</option>
+        </select>
+        <div id="sc-basis-info" style="display:none;margin-top:12px;font-size:13px;color:var(--muted);display:flex;gap:20px;flex-wrap:wrap;">
+          <span>Kostprijs: <strong id="sc-basis-kp">—</strong></span>
+          <span>Verkoopprijs: <strong id="sc-basis-vp">—</strong></span>
+          <span>Foodcost: <strong id="sc-basis-fc">—</strong></span>
+          <span>Brutomarge: <strong id="sc-basis-bm">—</strong></span>
+        </div>
+      </div>
+
+      <!-- SCENARIO SLIDERS -->
+      <div class="settings-card" style="margin-bottom:20px;" id="sc-sliders" style="display:none;">
+        <div class="settings-card-title">Wat als ingrediënten duurder worden?</div>
+        <p style="font-size:12px;color:var(--muted);margin-bottom:16px;">
+          Schuif de slider om te zien wat een prijsstijging doet met je marge.
+        </p>
+
+        <div class="wat-als-slider-wrap">
+          <div class="slider-label">
+            <span>Ingrediënten +/−%</span>
+            <strong id="sc-slider-pct">0%</strong>
+          </div>
+          <input type="range" id="sc-slider" min="-30" max="50" value="0" step="1" oninput="scenarioUpdate()">
+        </div>
+
+        <div class="wat-als-slider-wrap">
+          <div class="slider-label">
+            <span>Verkoopprijs aanpassen</span>
+            <strong id="sc-vp-display">€ —</strong>
+          </div>
+          <input type="range" id="sc-vp-slider" min="0" max="100" value="0" step="0.5" oninput="scenarioVPUpdate()">
+        </div>
+
+        <!-- RESULTAAT -->
+        <div id="sc-resultaat" style="margin-top:20px;padding:16px;background:var(--bg2,#fafafa);border-radius:8px;border:1px solid #e5e5e5;">
+          <div style="display:grid;grid-template-columns:repeat(auto-fit,minmax(140px,1fr));gap:12px;">
+            <div class="sc-kpi">
+              <div class="sc-kpi-label">Nieuwe kostprijs</div>
+              <div class="sc-kpi-val" id="sc-res-kp">—</div>
+            </div>
+            <div class="sc-kpi">
+              <div class="sc-kpi-label">Foodcost %</div>
+              <div class="sc-kpi-val" id="sc-res-fc">—</div>
+            </div>
+            <div class="sc-kpi">
+              <div class="sc-kpi-label">Brutomarge</div>
+              <div class="sc-kpi-val" id="sc-res-bm">—</div>
+            </div>
+            <div class="sc-kpi">
+              <div class="sc-kpi-label">Advies verkoopprijs</div>
+              <div class="sc-kpi-val" id="sc-res-adv">—</div>
+            </div>
+          </div>
+          <div id="sc-advies-tekst" style="margin-top:12px;font-size:12px;color:var(--muted);"></div>
+        </div>
+      </div>
+
+      <!-- BREAK-EVEN CALCULATOR -->
+      <div class="settings-card" id="sc-breakeven-card" style="display:none;">
+        <div class="settings-card-title">Break-even calculator</div>
+        <p style="font-size:12px;color:var(--muted);margin-bottom:16px;">
+          Hoeveel porties moet je per week verkopen om winstgevend te zijn?
+        </p>
+        <div class="form-row" style="max-width:480px;">
+          <div class="form-group">
+            <label class="form-label">Vaste kosten per week (€)</label>
+            <input type="number" id="sc-vaste-kosten" class="form-input" placeholder="500" min="0" step="10" oninput="scenarioBreakeven()">
+          </div>
+          <div class="form-group">
+            <label class="form-label">Omzet%-aandeel dit gerecht</label>
+            <input type="number" id="sc-aandeel" class="form-input" placeholder="20" min="1" max="100" step="1" value="20" oninput="scenarioBreakeven()">
+            <div style="font-size:10px;color:var(--muted);margin-top:3px;">% van je weekomzet uit dit gerecht</div>
+          </div>
+        </div>
+        <div id="sc-breakeven-resultaat" style="margin-top:16px;padding:12px 16px;background:#f0fdf4;border-radius:6px;border:1px solid #bbf7d0;display:none;">
+          <div style="font-size:13px;">Break-even: minimaal <strong id="sc-be-porties">—</strong> porties per week</div>
+          <div style="font-size:11px;color:#16a34a;margin-top:4px;" id="sc-be-sub"></div>
+        </div>
+      </div>
+
+    </div>
+  </div><!-- /tab-scenario -->
 
   <!-- ═══════════════════════ TAB 5: INSTELLINGEN ═══════════════════════ -->
   <div id="tab-instellingen" class="tab-panel">
@@ -2263,7 +2367,7 @@ function psychoPrice(prijs) {
 // ══════════════════════════════════════════════
 
 function switchTab(name) {
-  const tabNames = ['bereken','dashboard','ingredienten','los','instellingen'];
+  const tabNames = ['bereken','dashboard','ingredienten','scenario','los','instellingen'];
   document.querySelectorAll('.tab-btn').forEach((b, i) => {
     b.classList.toggle('active', tabNames[i] === name);
   });
@@ -2273,6 +2377,7 @@ function switchTab(name) {
   if (name === 'bereken')      renderReceptPicker();
   if (name === 'dashboard')    renderDashboard();
   if (name === 'ingredienten') { renderIngredients(); renderM07Banner(); }
+  if (name === 'scenario')     scenarioInit();
   if (name === 'recepten')     renderRecepten(); // legacy support
   if (name === 'los')          { renderSaved(); renderLosRows(); renderLosRowsB(); }
   if (name === 'instellingen') loadSettings();
@@ -5212,6 +5317,172 @@ function chatFormat(text) {
 function chatScroll() { const el = document.getElementById('chatMessages'); el.scrollTop = el.scrollHeight; }
 function chatKeyDown(e) { if (e.key === 'Enter' && !e.shiftKey) { e.preventDefault(); chatSend(); } }
 function chatAutoResize(el) { el.style.height = 'auto'; el.style.height = Math.min(el.scrollHeight, 110) + 'px'; }
+
+// ════════════════════════════════════════════════════════
+// SCENARIO-PLANNER & BREAK-EVEN CALCULATOR
+// ════════════════════════════════════════════════════════
+let _scBasisBp = 0;   // basis kostprijs per portie
+let _scBasisVp = 0;   // huidige verkoopprijs per portie
+
+function scenarioInit() {
+  const safe = (k, d) => { try { return JSON.parse(localStorage.getItem(k) || JSON.stringify(d)); } catch { return d; } };
+  const recipes = safe('klaar_recipes', []);
+  const sel = document.getElementById('sc-recept-select');
+  if (!sel) return;
+  const prev = sel.value;
+  sel.innerHTML = '<option value="">— Selecteer een gerecht —</option>';
+  recipes.forEach(r => {
+    const opt = document.createElement('option');
+    opt.value = r.id;
+    opt.textContent = r.title || 'Naamloos';
+    sel.appendChild(opt);
+  });
+  if (prev) sel.value = prev;
+  scenarioLoadRecept();
+}
+
+function scenarioLoadRecept() {
+  const safe = (k, d) => { try { return JSON.parse(localStorage.getItem(k) || JSON.stringify(d)); } catch { return d; } };
+  const sel = document.getElementById('sc-recept-select');
+  if (!sel || !sel.value) {
+    document.getElementById('sc-basis-info').style.display = 'none';
+    document.getElementById('sc-sliders').style.display = 'none';
+    document.getElementById('sc-breakeven-card').style.display = 'none';
+    return;
+  }
+  const recipes = safe('klaar_recipes', []);
+  const ings    = safe('klaar_ingredienten', []);
+  const r = recipes.find(x => x.id === sel.value);
+  if (!r) return;
+
+  // Bereken kostprijs via zelfde logica als bereken-tab
+  const servings = Math.max(1, parseInt(r.recipe?.servings) || 1);
+  let total = 0, matched = 0;
+  (r.recipe?.ingredients || []).forEach(ing => {
+    const name = (ing.name || '').toLowerCase().trim();
+    const m = (ing.amount || '').match(/^([\d,.]+)\s*([a-zA-Z]*)/);
+    if (!m) return;
+    const qty = parseFloat(String(m[1]).replace(',','.')) || 0;
+    const unit = (m[2] || '').toLowerCase();
+    const toKg = (q, u) => {
+      if (['g','gram','gr'].includes(u)) return q/1000;
+      if (['kg'].includes(u)) return q;
+      if (['ml'].includes(u)) return q/1000;
+      if (['cl'].includes(u)) return q/100;
+      if (['l','liter'].includes(u)) return q;
+      return q;
+    };
+    const entry = ings.find(e => {
+      const en = (e.naam||'').toLowerCase();
+      return en === name || name.includes(en) || en.includes(name);
+    });
+    if (!entry || !entry.inkoopprijs) return;
+    total += parseFloat(String(entry.inkoopprijs).replace(',','.')) * toKg(qty, unit);
+    matched++;
+  });
+
+  _scBasisBp = matched > 0 ? total / servings : 0;
+  _scBasisVp = parseFloat(r.verkoopprijs) || 0;
+
+  // Basis info tonen
+  const bpFmt = _scBasisBp > 0 ? `€ ${_scBasisBp.toFixed(2)}` : '—';
+  const vpFmt = _scBasisVp > 0 ? `€ ${_scBasisVp.toFixed(2)}` : '—';
+  const fcFmt = (_scBasisBp > 0 && _scBasisVp > 0) ? ((_scBasisBp/_scBasisVp)*100).toFixed(1)+'%' : '—';
+  const bmFmt = (_scBasisVp > 0 && _scBasisBp > 0) ? `€ ${(_scBasisVp - _scBasisBp).toFixed(2)}` : '—';
+
+  document.getElementById('sc-basis-kp').textContent = bpFmt;
+  document.getElementById('sc-basis-vp').textContent = vpFmt;
+  document.getElementById('sc-basis-fc').textContent = fcFmt;
+  document.getElementById('sc-basis-bm').textContent = bmFmt;
+  document.getElementById('sc-basis-info').style.display = 'flex';
+
+  // Reset sliders
+  document.getElementById('sc-slider').value = 0;
+  document.getElementById('sc-slider-pct').textContent = '0%';
+
+  // Verkoopprijs slider range instellen op basis van basisprijs
+  const vpSlider = document.getElementById('sc-vp-slider');
+  const minVp = Math.max(0, _scBasisVp * 0.5);
+  const maxVp = Math.max(_scBasisVp * 2, _scBasisBp * 5, 50);
+  vpSlider.min = minVp.toFixed(2);
+  vpSlider.max = maxVp.toFixed(2);
+  vpSlider.step = 0.50;
+  vpSlider.value = _scBasisVp > 0 ? _scBasisVp : (_scBasisBp * 3.5);
+  document.getElementById('sc-vp-display').textContent = `€ ${parseFloat(vpSlider.value).toFixed(2)}`;
+
+  document.getElementById('sc-sliders').style.display = 'block';
+  document.getElementById('sc-breakeven-card').style.display = 'block';
+  scenarioUpdate();
+  scenarioBreakeven();
+}
+
+function scenarioUpdate() {
+  const pct  = parseInt(document.getElementById('sc-slider').value) || 0;
+  document.getElementById('sc-slider-pct').textContent = (pct >= 0 ? '+' : '') + pct + '%';
+
+  const newKp = _scBasisBp * (1 + pct / 100);
+  const vp    = parseFloat(document.getElementById('sc-vp-slider').value) || _scBasisVp;
+
+  const fc  = vp > 0 ? (newKp / vp) * 100 : null;
+  const bm  = vp > 0 ? vp - newKp : null;
+  // Target foodcost 30% → advies verkoopprijs
+  const advVp = newKp > 0 ? newKp / 0.30 : null;
+
+  document.getElementById('sc-res-kp').textContent = `€ ${newKp.toFixed(2)}`;
+  document.getElementById('sc-res-kp').className = 'sc-kpi-val' + (newKp > _scBasisBp * 1.1 ? ' danger' : '');
+
+  if (fc !== null) {
+    document.getElementById('sc-res-fc').textContent = fc.toFixed(1) + '%';
+    document.getElementById('sc-res-fc').className = 'sc-kpi-val ' + (fc < 25 ? 'ok' : fc < 33 ? '' : 'danger');
+  } else {
+    document.getElementById('sc-res-fc').textContent = '—';
+  }
+
+  if (bm !== null) {
+    document.getElementById('sc-res-bm').textContent = (bm >= 0 ? '+' : '') + `€ ${bm.toFixed(2)}`;
+    document.getElementById('sc-res-bm').className = 'sc-kpi-val ' + (bm >= 0 ? 'ok' : 'danger');
+  } else {
+    document.getElementById('sc-res-bm').textContent = '—';
+  }
+
+  if (advVp !== null) {
+    document.getElementById('sc-res-adv').textContent = `€ ${advVp.toFixed(2)}`;
+    const diff = _scBasisVp > 0 ? advVp - _scBasisVp : 0;
+    document.getElementById('sc-advies-tekst').textContent = diff > 0.05
+      ? `Bij deze kostprijs zou je de prijs met € ${diff.toFixed(2)} moeten verhogen om 30% foodcost te halen.`
+      : diff < -0.05
+        ? `Bij deze kostprijs kun je zelfs € ${Math.abs(diff).toFixed(2)} lager zitten en toch 30% foodcost halen.`
+        : 'Huidige verkoopprijs klopt bij 30% foodcost-target.';
+  }
+}
+
+function scenarioVPUpdate() {
+  const vp = parseFloat(document.getElementById('sc-vp-slider').value) || 0;
+  document.getElementById('sc-vp-display').textContent = `€ ${vp.toFixed(2)}`;
+  scenarioUpdate();
+  scenarioBreakeven();
+}
+
+function scenarioBreakeven() {
+  const vaste = parseFloat(document.getElementById('sc-vaste-kosten')?.value) || 0;
+  const aandeel = (parseFloat(document.getElementById('sc-aandeel')?.value) || 20) / 100;
+  const vp = parseFloat(document.getElementById('sc-vp-slider')?.value) || _scBasisVp;
+  const pct = parseInt(document.getElementById('sc-slider')?.value) || 0;
+  const newKp = _scBasisBp * (1 + pct / 100);
+  const bm = vp - newKp;
+  const res = document.getElementById('sc-breakeven-resultaat');
+
+  if (!res) return;
+  if (vaste <= 0 || bm <= 0) { res.style.display = 'none'; return; }
+
+  // Break-even: vaste kosten × aandeel / brutomarge per portie
+  const bePorties = Math.ceil((vaste * aandeel) / bm);
+  const bePerDag  = Math.ceil(bePorties / 7);
+
+  document.getElementById('sc-be-porties').textContent = `${bePorties} porties/week`;
+  document.getElementById('sc-be-sub').textContent = `≈ ${bePerDag} per dag · bij brutomarge € ${bm.toFixed(2)}/portie`;
+  res.style.display = 'block';
+}
 </script>
 </script>
 <div id="sync-toast"></div>

@@ -662,6 +662,10 @@
     font-family: 'DM Mono', monospace; font-size: 12px;
     letter-spacing: 0.06em; color: var(--muted);
   }
+  .spinner-sublabel {
+    font-size: 11px; color: var(--muted); margin-top: 4px;
+    opacity: 0.7; min-height: 16px;
+  }
 
   /* ══════════════════════════════════════
      REVIEW SCREEN (inside modal)
@@ -806,8 +810,17 @@
 
       <!-- Spinner -->
       <div class="scan-spinner" id="scan-spinner">
-        <div class="spinner-ring"></div>
+        <div class="spinner-ring" id="spinner-ring"></div>
         <div class="spinner-label" id="spinner-label">Pakbon scannen…</div>
+        <div class="spinner-sublabel" id="spinner-sublabel"></div>
+        <!-- Fout-staat: verborgen totdat scan mislukt -->
+        <div id="spinner-error" style="display:none;margin-top:12px;">
+          <div id="spinner-error-msg" style="font-size:13px;color:#dc2626;margin-bottom:10px;"></div>
+          <div style="display:flex;gap:10px;justify-content:center;flex-wrap:wrap;">
+            <button class="btn btn-ghost btn-sm" onclick="retryOCR()">↺ Opnieuw proberen</button>
+            <button class="btn btn-ghost btn-sm" onclick="hideSpinner();openHandmatig()">✏️ Handmatig invoeren</button>
+          </div>
+        </div>
       </div>
 
       <!-- Handmatig invoer formulier -->
@@ -1352,12 +1365,41 @@ function esc(str) {
     .replace(/>/g, '&gt;').replace(/"/g, '&quot;');
 }
 
-function showSpinner(label = 'Bezig…') {
+function showSpinner(label = 'Bezig…', sublabel = '') {
   document.getElementById('spinner-label').textContent = label;
+  document.getElementById('spinner-sublabel').textContent = sublabel;
+  document.getElementById('spinner-error').style.display = 'none';
+  document.getElementById('spinner-ring').style.display = 'block';
   document.getElementById('scan-spinner').classList.add('show');
 }
 function hideSpinner() {
   document.getElementById('scan-spinner').classList.remove('show');
+  document.getElementById('spinner-error').style.display = 'none';
+}
+function showOCRError(msg) {
+  document.getElementById('spinner-ring').style.display = 'none';
+  document.getElementById('spinner-label').textContent = 'Scan mislukt';
+  document.getElementById('spinner-sublabel').textContent = '';
+  document.getElementById('spinner-error-msg').textContent = msg;
+  document.getElementById('spinner-error').style.display = 'block';
+  document.getElementById('scan-spinner').classList.add('show');
+}
+function openHandmatig() {
+  const form = document.getElementById('handmatig-form');
+  if (form && !form.classList.contains('open')) toggleCollapsible('handmatig-form');
+}
+
+// Sla laatste gescande bestand op voor retry
+let _lastOCRBase64 = null;
+let _lastOCRMediaType = null;
+
+function retryOCR() {
+  if (_lastOCRBase64 && _lastOCRMediaType) {
+    _doOCRScan(_lastOCRBase64, _lastOCRMediaType, 'foto');
+  } else {
+    hideSpinner();
+    document.getElementById('foto-input').click();
+  }
 }
 
 
@@ -1402,16 +1444,39 @@ async function handleFotoInput(event) {
     return;
   }
 
-  showSpinner('Pakbon scannen met AI…');
+  showSpinner('Factuur uploaden…', 'Even geduld, dit duurt 5-15 seconden');
 
   try {
     const base64 = await fileToBase64(file);
-    const result = await callClaudeVision(base64, mediaType);
-    hideSpinner();
-    openReview(result, 'foto');
+    _lastOCRBase64 = base64;
+    _lastOCRMediaType = mediaType;
+    await _doOCRScan(base64, mediaType, 'foto');
   } catch (e) {
+    showOCRError('Kan afbeelding niet lezen: ' + e.message);
+    console.error(e);
+  }
+}
+
+async function _doOCRScan(base64, mediaType, bron) {
+  showSpinner('AI analyseert factuur…', 'Producten en prijzen herkennen…');
+
+  // Timeout: 20 seconden
+  const timeout = new Promise((_, reject) =>
+    setTimeout(() => reject(new Error('De scan duurt te lang (timeout na 20 sec). Controleer je internetverbinding of probeer een scherpere foto.')), 20000)
+  );
+
+  try {
+    const result = await Promise.race([
+      callClaudeVision(base64, mediaType),
+      timeout
+    ]);
     hideSpinner();
-    showToast('Fout bij scannen: ' + e.message, 'error');
+    openReview(result, bron);
+  } catch (e) {
+    const msg = e.message.includes('timeout')
+      ? e.message
+      : 'Scan mislukt: ' + e.message + '. Probeer een scherpere foto of voer handmatig in.';
+    showOCRError(msg);
     console.error(e);
   }
 }
@@ -1546,15 +1611,17 @@ async function processBestand(file) {
 }
 
 async function processCSV(file) {
-  showSpinner('CSV verwerken…');
+  showSpinner('CSV verwerken…', 'Even geduld…');
+  const timeout = new Promise((_, reject) =>
+    setTimeout(() => reject(new Error('Verwerking duurt te lang (timeout na 20 sec).')), 20000)
+  );
   try {
     const text = await file.text();
-    const result = await callClaudeText(text, 'csv');
+    const result = await Promise.race([callClaudeText(text, 'csv'), timeout]);
     hideSpinner();
     openReview(result, 'bestand');
   } catch (e) {
-    hideSpinner();
-    showToast('Fout bij CSV: ' + e.message, 'error');
+    showOCRError(e.message);
   }
 }
 

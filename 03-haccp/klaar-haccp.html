@@ -741,9 +741,34 @@
   <div class="header-logo">KLAAR</div>
   <div class="header-module">03 — HACCP & VOEDSELVEILIGHEID</div>
   <div class="header-spacer"></div>
+  <button class="btn-help" onclick="openReminderModal()" title="Dagelijkse herinnering instellen" id="reminder-btn" style="margin-right:6px;">🔔</button>
   <button class="btn-help" onclick="document.getElementById('helpOverlay').classList.add('open')" title="Uitleg & handleiding">?</button>
   <div class="header-badge">● LIVE</div>
 </header>
+
+<!-- Modal: Dagelijkse herinnering -->
+<div class="modal-overlay" id="modal-reminder" onclick="if(event.target===this)closeModal('modal-reminder')">
+  <div class="modal" style="max-width:400px;">
+    <div class="modal-title">🔔 Dagelijkse Herinnering</div>
+    <p style="font-size:13px;color:var(--muted);margin-bottom:16px;">
+      Stel een dagelijks tijdstip in waarop Klaar je herinnert aan de temperatuurregistratie. De herinnering verschijnt als browser-melding wanneer de pagina open is.
+    </p>
+    <div class="form-group">
+      <label class="form-label">Herinnering om</label>
+      <input type="time" id="reminder-time" class="form-input" value="07:00">
+    </div>
+    <div class="form-group">
+      <label class="form-label">Bericht</label>
+      <input type="text" id="reminder-msg" class="form-input" value="⏰ Vergeet de HACCP-temperatuurmeting niet!">
+    </div>
+    <div id="reminder-status" style="font-size:12px;margin:8px 0;color:var(--muted);"></div>
+    <div class="modal-footer">
+      <button class="btn btn-ghost" onclick="disableReminder()">Uitschakelen</button>
+      <button class="btn btn-ghost" onclick="closeModal('modal-reminder')">Sluiten</button>
+      <button class="btn btn-primary" onclick="saveReminder()">Herinnering instellen</button>
+    </div>
+  </div>
+</div>
 
 <!-- ── HELP MODAL ── -->
 <div class="help-overlay" id="helpOverlay" onclick="if(event.target===this)this.classList.remove('open')">
@@ -1127,13 +1152,17 @@
     </div>
     <div class="form-row">
       <div class="form-group">
-        <label class="form-label">Medewerker</label>
-        <input type="text" id="meting-medewerker" class="form-input" placeholder="Naam">
+        <label class="form-label">Gemeten door <span style="color:var(--red)">*</span></label>
+        <input type="text" id="meting-gemeten-door" class="form-input" placeholder="Naam medewerker die mat">
       </div>
       <div class="form-group">
         <label class="form-label">Tijdstip</label>
         <input type="time" id="meting-tijd" class="form-input">
       </div>
+    </div>
+    <div class="form-group">
+      <label class="form-label" style="opacity:.7;">Ingevoerd door <span style="font-weight:400;font-size:10px;color:var(--muted)">(optioneel — alleen invullen als dit iemand anders is)</span></label>
+      <input type="text" id="meting-medewerker" class="form-input" placeholder="Naam medewerker die invoert (laat leeg als gelijk aan gemeten door)">
     </div>
     <div class="modal-footer">
       <button class="btn btn-ghost" onclick="closeModal('modal-meting')">Annuleren</button>
@@ -1545,8 +1574,9 @@ function saveMeting() {
   const afwijking = temp > norm;
   const maatregel = document.getElementById('meting-maatregel').value.trim();
   if (afwijking && !maatregel) { alert('Vul een corrigerende maatregel in'); return; }
-  const medewerker = document.getElementById('meting-medewerker').value.trim();
-  if (!medewerker) { alert('Vul een medewerker in'); return; }
+  const gemetenDoor = document.getElementById('meting-gemeten-door').value.trim();
+  if (!gemetenDoor) { alert('Vul in wie de temperatuur heeft gemeten'); return; }
+  const medewerker = document.getElementById('meting-medewerker').value.trim() || gemetenDoor;
 
   const meting = {
     id: genId(),
@@ -1558,7 +1588,8 @@ function saveMeting() {
     norm,
     afwijking,
     maatregel,
-    medewerker
+    gemeten_door: gemetenDoor,
+    medewerker  // ingevoerd door (defaults to gemeten_door if not filled)
   };
 
   const koeling = ls.get('klaar_haccp_koeling', []);
@@ -1582,6 +1613,7 @@ function saveMeting() {
 
   document.getElementById('meting-temp').value = '';
   document.getElementById('meting-maatregel').value = '';
+  document.getElementById('meting-gemeten-door').value = '';
   document.getElementById('meting-medewerker').value = '';
   document.getElementById('meting-afwijking-section').style.display = 'none';
   document.getElementById('meting-temp').classList.remove('ok','warn','err');
@@ -1600,14 +1632,15 @@ function renderTempVandaag() {
     el.innerHTML = '<div class="empty"><div class="empty-icon">🌡️</div><div class="empty-title">Nog geen metingen vandaag</div><div class="empty-text">Klik op "+ Nieuwe meting" om te beginnen.</div></div>';
     return;
   }
-  el.innerHTML = '<div class="table-wrap"><table><thead><tr><th>Tijd</th><th>Koeleenheid</th><th>Temp (°C)</th><th>Norm</th><th>Status</th><th>Medewerker</th><th>Maatregel</th></tr></thead><tbody>' +
+  el.innerHTML = '<div class="table-wrap"><table><thead><tr><th>Tijd</th><th>Koeleenheid</th><th>Temp (°C)</th><th>Norm</th><th>Status</th><th>Gemeten door</th><th>Ingevoerd door</th><th>Maatregel</th></tr></thead><tbody>' +
     koeling.map(m => `<tr>
       <td class="td-mono">${m.tijd}</td>
       <td>${m.eenheidNaam}</td>
       <td class="td-mono" style="font-weight:600;color:${m.afwijking ? 'var(--red)' : 'var(--green)'}">${m.temperatuur}°C</td>
       <td class="td-mono">max ${m.norm}°C</td>
       <td>${m.afwijking ? '<span class="chip chip-red">Afwijking</span>' : '<span class="chip chip-green">OK</span>'}</td>
-      <td>${m.medewerker}</td>
+      <td>${escH(m.gemeten_door || m.medewerker || '—')}</td>
+      <td style="color:var(--muted)">${escH(m.medewerker !== (m.gemeten_door || m.medewerker) ? m.medewerker : '—')}</td>
       <td style="font-size:12px;color:var(--muted)">${m.maatregel || '—'}</td>
     </tr>`).join('') +
     '</tbody></table></div>';
@@ -2873,6 +2906,113 @@ function chatFormat(text) {
 function chatScroll() { const el = document.getElementById('chatMessages'); el.scrollTop = el.scrollHeight; }
 function chatKeyDown(e) { if (e.key === 'Enter' && !e.shiftKey) { e.preventDefault(); chatSend(); } }
 function chatAutoResize(el) { el.style.height = 'auto'; el.style.height = Math.min(el.scrollHeight, 110) + 'px'; }
+
+// ════════════════════════════════════════════════════════
+// DAGELIJKSE HERINNERING — browser notifications
+// ════════════════════════════════════════════════════════
+let _reminderTimer = null;
+
+function openReminderModal() {
+  const saved = JSON.parse(localStorage.getItem('klaar_haccp_reminder') || 'null');
+  if (saved) {
+    document.getElementById('reminder-time').value = saved.time || '07:00';
+    document.getElementById('reminder-msg').value  = saved.msg  || '⏰ Vergeet de HACCP-temperatuurmeting niet!';
+  }
+  updateReminderStatus();
+  document.getElementById('modal-reminder').classList.add('open');
+}
+
+function updateReminderStatus() {
+  const saved = JSON.parse(localStorage.getItem('klaar_haccp_reminder') || 'null');
+  const el = document.getElementById('reminder-status');
+  if (!el) return;
+  if (saved?.enabled) {
+    el.innerHTML = `<span style="color:#16a34a">✓ Herinnering actief — dagelijks om <strong>${saved.time}</strong></span>`;
+    document.getElementById('reminder-btn').style.color = '#e8ff47';
+  } else {
+    el.textContent = 'Geen herinnering ingesteld.';
+    document.getElementById('reminder-btn').style.color = '';
+  }
+}
+
+async function saveReminder() {
+  const time = document.getElementById('reminder-time').value || '07:00';
+  const msg  = document.getElementById('reminder-msg').value.trim() || '⏰ Vergeet de HACCP-temperatuurmeting niet!';
+
+  // Vraag toestemming voor notificaties
+  if (Notification && Notification.permission !== 'granted') {
+    const perm = await Notification.requestPermission();
+    if (perm !== 'granted') {
+      alert('Notificaties geblokkeerd. Sta notificaties toe in je browserinstellingen en probeer opnieuw.');
+      return;
+    }
+  }
+
+  localStorage.setItem('klaar_haccp_reminder', JSON.stringify({ enabled: true, time, msg }));
+  scheduleReminder();
+  updateReminderStatus();
+  closeModal('modal-reminder');
+  // Show success via toast-like alert
+  const saved = localStorage.getItem('klaar_haccp_reminder');
+  if (saved) showToastHaccp(`Herinnering ingesteld voor ${time} ✓`);
+}
+
+function disableReminder() {
+  localStorage.setItem('klaar_haccp_reminder', JSON.stringify({ enabled: false }));
+  if (_reminderTimer) { clearTimeout(_reminderTimer); _reminderTimer = null; }
+  updateReminderStatus();
+  closeModal('modal-reminder');
+}
+
+function scheduleReminder() {
+  const saved = JSON.parse(localStorage.getItem('klaar_haccp_reminder') || 'null');
+  if (!saved?.enabled || !saved.time) return;
+  if (_reminderTimer) clearTimeout(_reminderTimer);
+
+  const [h, m] = saved.time.split(':').map(Number);
+  const now = new Date();
+  let target = new Date(now.getFullYear(), now.getMonth(), now.getDate(), h, m, 0);
+  if (target <= now) target.setDate(target.getDate() + 1); // morgen als tijd al voorbij
+
+  const msUntil = target - now;
+  _reminderTimer = setTimeout(() => {
+    if (Notification && Notification.permission === 'granted') {
+      new Notification('HACCP — Klaar.app', {
+        body: saved.msg || '⏰ Vergeet de HACCP-temperatuurmeting niet!',
+        icon: '../favicon.ico'
+      });
+    }
+    // Plan volgende dag
+    _reminderTimer = setTimeout(scheduleReminder, 60 * 1000);
+  }, msUntil);
+}
+
+function showToastHaccp(msg) {
+  // Hergebruik bestaande toast als aanwezig
+  let t = document.getElementById('toast-haccp');
+  if (!t) {
+    t = document.createElement('div');
+    t.id = 'toast-haccp';
+    t.style.cssText = 'position:fixed;bottom:24px;right:24px;background:#1a1a1a;color:#e8ff47;padding:10px 18px;border-radius:6px;font-size:13px;font-family:DM Mono,monospace;z-index:9999;';
+    document.body.appendChild(t);
+  }
+  t.textContent = msg;
+  t.style.display = 'block';
+  setTimeout(() => { t.style.display = 'none'; }, 3000);
+}
+
+// Initieer reminder op pagina-load
+(function initReminder() {
+  const saved = JSON.parse(localStorage.getItem('klaar_haccp_reminder') || 'null');
+  if (saved?.enabled) {
+    scheduleReminder();
+    // Update de knop-kleur als er een actieve reminder is
+    setTimeout(() => {
+      const btn = document.getElementById('reminder-btn');
+      if (btn) btn.style.color = '#e8ff47';
+    }, 500);
+  }
+})();
 </script>
 
 </body>

@@ -388,6 +388,41 @@
     }
     .ob-btn-skip:hover { color: var(--white); }
 
+    /* ── MODULE GRID ── */
+    .module-grid {
+      display: grid;
+      grid-template-columns: repeat(7, 1fr);
+      gap: 1px; background: var(--border);
+      border: 1px solid var(--border);
+    }
+    .module-tile {
+      background: var(--surface); padding: 14px 10px;
+      text-decoration: none; color: var(--white);
+      display: flex; flex-direction: column; align-items: center;
+      gap: 7px; text-align: center;
+      transition: background 0.1s;
+      position: relative;
+    }
+    .module-tile:hover { background: var(--muted); }
+    .module-tile:hover .mt-name { color: var(--accent); }
+    .module-tile .mt-icon { font-size: 22px; }
+    .module-tile .mt-name {
+      font-family: 'DM Mono', monospace; font-size: 9px;
+      letter-spacing: 1px; text-transform: uppercase; color: var(--gray);
+      transition: color 0.1s; line-height: 1.3;
+    }
+    .module-tile .mt-badge {
+      font-family: 'DM Mono', monospace; font-size: 8px;
+      background: rgba(232,255,71,0.1); color: var(--accent);
+      border: 1px solid rgba(232,255,71,0.25); padding: 1px 5px;
+    }
+    @media (max-width: 900px) {
+      .module-grid { grid-template-columns: repeat(4, 1fr); }
+    }
+    @media (max-width: 600px) {
+      .module-grid { grid-template-columns: repeat(2, 1fr); }
+    }
+
     /* ── RESPONSIVE ── */
     @media (max-width: 1100px) {
       :root { --ai: 0px; }
@@ -507,12 +542,16 @@
       <span class="nav-icon">📋</span> Menubuilder
       <span class="nav-badge">Live</span>
     </a>
+    <a href="../02-allergenenkaart/klaar-allergenenkaart.html" class="nav-item">
+      <span class="nav-icon">⚠️</span> Allergenen
+      <span class="nav-badge">Live</span>
+    </a>
     <a href="../07-leveranciers/klaar-leveranciers.html" class="nav-item">
       <span class="nav-icon">📦</span> Leveranciers
       <span class="nav-badge">Live</span>
     </a>
     <a href="../10-catering-events/klaar-catering.html" class="nav-item">
-      <span class="nav-icon">🎪</span> Catering
+      <span class="nav-icon">🎪</span> Catering & Events
       <span class="nav-badge">Live</span>
     </a>
   </div>
@@ -538,6 +577,45 @@
   </div>
 
   <div class="content">
+    <!-- MODULE SNELKOPPELING GRID -->
+    <div class="module-grid">
+      <a href="../01-recept-studio/klaar-recept-studio.html" class="module-tile">
+        <span class="mt-icon">🍳</span>
+        <span class="mt-name">Recept<br>Studio</span>
+        <span class="mt-badge">Live</span>
+      </a>
+      <a href="../02-allergenenkaart/klaar-allergenenkaart.html" class="module-tile">
+        <span class="mt-icon">⚠️</span>
+        <span class="mt-name">Allergenen<br>kaart</span>
+        <span class="mt-badge">Live</span>
+      </a>
+      <a href="../03-haccp/klaar-haccp.html" class="module-tile">
+        <span class="mt-icon">🌡️</span>
+        <span class="mt-name">HACCP<br>Logger</span>
+        <span class="mt-badge">Live</span>
+      </a>
+      <a href="../04-kostprijs/klaar-kostprijs.html" class="module-tile">
+        <span class="mt-icon">💰</span>
+        <span class="mt-name">Kostprijs<br>Calculator</span>
+        <span class="mt-badge">Live</span>
+      </a>
+      <a href="../05-menubuilder/klaar-menubuilder.html" class="module-tile">
+        <span class="mt-icon">📋</span>
+        <span class="mt-name">Menu<br>builder</span>
+        <span class="mt-badge">Live</span>
+      </a>
+      <a href="../07-leveranciers/klaar-leveranciers.html" class="module-tile">
+        <span class="mt-icon">📦</span>
+        <span class="mt-name">Leveran<br>ciers</span>
+        <span class="mt-badge">Live</span>
+      </a>
+      <a href="../10-catering-events/klaar-catering.html" class="module-tile">
+        <span class="mt-icon">🎪</span>
+        <span class="mt-name">Catering<br>& Events</span>
+        <span class="mt-badge">Live</span>
+      </a>
+    </div>
+
     <!-- GREETING -->
     <div class="greeting">
       <div class="greeting-text" id="greetingText">Goedemiddag</div>
