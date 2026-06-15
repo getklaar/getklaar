@@ -147,6 +147,7 @@
   <div class="ctrls">
     <button class="btn btn-p" id="btnRun" onclick="startTest()">▶ Test starten</button>
     <button class="btn btn-d" id="btnStop" onclick="stopTest()" disabled>■ Stop</button>
+    <button class="btn btn-s" onclick="downloadSignalen()">💾 Signalen opslaan</button>
     <button class="btn btn-s" onclick="clearAll()">↺ Reset</button>
     <span class="run-st" id="runSt"></span>
   </div>
@@ -210,7 +211,7 @@
       <div class="rpt-block" id="rptStats"><div class="rpt-block-hdr"><span>📊 Statistieken</span></div></div>
     </div>
     <div class="trs-block">
-      <div class="trs-hdr"><span>📝 Volledig transcript</span><button class="exp-btn" onclick="exportCSV()">Export CSV</button></div>
+      <div class="trs-hdr"><span>📝 Volledig transcript</span><div style="display:flex;gap:8px;"><button class="exp-btn" onclick="downloadSignalen()">💾 Download signalen</button><button class="exp-btn" onclick="exportCSV()">Export CSV</button></div></div>
       <div id="trsBody"></div>
     </div>
   </div>
@@ -284,21 +285,25 @@ Turns 34-40: ALLERGENEN & MENU — allergenenkaart instellen, marge per gerecht
 Turns 41-46: EVENTS — bruiloft 80 personen, kostprijs per persoon berekenen
 Turns 47-50: KRITISCH — druk opvoeren, ontevredenheid uiten, dealbreakers benoemen
 
-KLANTOBSERVATIES — JOUW BIJDRAGE AAN APP-VERBETERING:
-Jij signaleert dingen vanuit KLANTPERSPECTIEF voor de eigenaar van Klaar.
-Als je iets tegenkomt dat:
-- je als betalende klant frustreert of afschrikt
-- ontbreekt terwijl je het van Horeko/Excel gewend bent
-- te ingewikkeld is voor jou of je medewerkers
-- anders werkt dan je verwacht als horeca-ondernemer
-- je zou doen overwegen het abonnement op te zeggen
+KLANTOBSERVATIES — VERPLICHT, ELKE BEURT:
+Je MOET aan het EINDE van ELKE beurt precies 1 observatie loggen vanuit klantperspectief.
+Geen uitzondering — ook als het goed gaat, schrijf dan op wat je verwacht of wat je opvalt.
 
-Voeg dan aan het EINDE van je bericht toe:
-[OBS: klant-signaal — wat de eigenaar van Klaar moet weten]
+Denk vanuit: "Ik betaal voor dit. Wat stoor ik me aan, wat mist er, wat vind ik fijn of juist irritant?"
+
+Voorbeelden van wat je noteert:
+- Iets dat ontbreekt vs. Horeko ("Horeko had directe CSV-import, hier moet ik alles handmatig")
+- Iets dat te complex is voor jou of je medewerkers
+- Iets dat je verwachtte maar er niet is
+- Iets dat goed werkt maar ook wat er beter kan
+- Iets dat je zou doen besluiten dit abonnement op te zeggen
+
+Formaat — exact zo, aan het eind van je bericht:
+[OBS: <jouw klant-signaal in 1-2 zinnen>]
 
 SCHRIJFREGELS:
 - Schrijf ALLEEN Marco's bericht. Niets anders. Geen uitleg, geen meta.
-- Max 2-3 zinnen. Chef typt kort.
+- Max 2-3 zinnen chat + verplichte [OBS: ...] op de laatste regel.
 - Gebruik je echte data als dat relevant is.
 - Reageer concreet op het laatste Klaar-antwoord.`;
 
@@ -507,6 +512,7 @@ function addObs(from, text, turn) {
   observations.push({ from, text, turn });
   document.getElementById('obsCount').textContent = `(${observations.length})`;
   document.getElementById('stObs').textContent = observations.length;
+  saveToStorage();
 }
 
 function addBug(bug) {
@@ -521,6 +527,46 @@ function addBug(bug) {
   bugs.push(bug);
   document.getElementById('bugCount').textContent = `(${bugs.length})`;
   document.getElementById('stBugs').textContent = bugs.length;
+  saveToStorage();
+}
+
+// ══════════════════════════════════════════════════════
+// PERSISTENTIE — localStorage auto-save
+// ══════════════════════════════════════════════════════
+
+function saveToStorage() {
+  try {
+    const data = {
+      savedAt: new Date().toISOString(),
+      observations,
+      bugs
+    };
+    localStorage.setItem('klaar_test_signalen', JSON.stringify(data));
+  } catch(e) {}
+}
+
+function downloadSignalen() {
+  const datum = new Date().toLocaleDateString('nl-NL');
+  let txt = `KLAAR APP — TEST SIGNALEN\n${datum}\n${'═'.repeat(50)}\n\n`;
+
+  const klant = observations.filter(o => o.from === 'marco');
+  const dev   = observations.filter(o => o.from === 'klaar');
+
+  txt += `👤 KLANT-SIGNALEN (${klant.length})\n${'─'.repeat(40)}\n`;
+  klant.forEach((o,i) => { txt += `${i+1}. [turn ${o.turn}] ${o.text}\n`; });
+
+  txt += `\n🛠 DEV-SIGNALEN (${dev.length})\n${'─'.repeat(40)}\n`;
+  dev.forEach((o,i) => { txt += `${i+1}. [turn ${o.turn}] ${o.text}\n`; });
+
+  txt += `\n⚠ AUTO-BUGS (${bugs.length})\n${'─'.repeat(40)}\n`;
+  const smap = {c:'KRITIEK',h:'HOOG',m:'MEDIUM'};
+  bugs.forEach((b,i) => { txt += `${i+1}. [${smap[b.sev]||b.sev}] ${b.text}\n`; });
+
+  const blob = new Blob([txt], { type: 'text/plain;charset=utf-8' });
+  const a = document.createElement('a');
+  a.href = URL.createObjectURL(blob);
+  a.download = `klaar-signalen-${new Date().toISOString().slice(0,10)}.txt`;
+  a.click();
 }
 
 function updateStats(turn, max) {
