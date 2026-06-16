@@ -1293,7 +1293,7 @@
 <!-- ── PRIJSALERT BANNER ── -->
 <div id="prijsalert-banner" style="display:none;position:sticky;top:0;z-index:200;
   background:#fff3e0;border-bottom:2px solid #f97316;padding:10px 24px;
-  display:flex;align-items:center;gap:12px">
+  align-items:center;gap:12px">
   <span style="font-size:16px">⚠️</span>
   <div style="flex:1;font-size:13px;color:#9a3412;font-family:'DM Mono',monospace" id="prijsalert-tekst"></div>
   <button onclick="wistPrijsAlerts()" style="font-family:'DM Mono',monospace;font-size:11px;
@@ -2104,7 +2104,7 @@ function saveReview() {
       const oudeP   = getHuidigePrijs(r._matched_product_id, data.prijzen, reviewState.datum);
       if (oudeP && oudeP > 0) {
         const stijgingPct = ((nieuweP - oudeP) / oudeP) * 100;
-        if (stijgingPct >= 10) {
+        if (stijgingPct >= 5) {
           prijsAlerts.push({
             naam: r.product,
             oud: oudeP,
@@ -4280,6 +4280,7 @@ document.addEventListener('DOMContentLoaded', async () => {
   // Add one empty handmatig line by default
   addHandmatigLine();
   renderAll();
+  renderPrijsAlertBanner();
 });
 </script>
 

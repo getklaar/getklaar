@@ -247,592 +247,517 @@
 
 function seedTestData() {
   // ══════════════════════════════════════════════════════
-  //  12 RECEPTEN — volledig menu Bistro De Gouden Lepel
-  // ══════════════════════════════════════════════════════
+  //  10 RECEPTEN — volledig menu Zest by Yildiz
+  // ════════════════════════════════════════════════════════
+  // ── NIEUWE DATA START ──
   const recepten = [
+    // ── STARTERS ──
+    {
+      id:'rec_001', title:'Mezze plank (voor 2)', folder:'starters', status:'actief', type:'savoury',
+      verkoopprijs: 14.00,
+      allergens:[
+        {code:'G',name:'Gluten',maybe:false},
+        {code:'Sa',name:'Sesam',maybe:false},
+        {code:'M',name:'Melk',maybe:false}
+      ],
+      recipe:{
+        prep:'15 min', cook:'5 min', servings:2,
+        ingredients:[
+          {hoeveelheid:'2 stuk', naam:'Platbrood (pitta)'},
+          {hoeveelheid:'80g', naam:'Hummus'},
+          {hoeveelheid:'80g', naam:'Labneh'},
+          {hoeveelheid:'40g', naam:'Olijven (gemengd)'},
+          {hoeveelheid:'1 tl', naam:'Za\'atar'},
+          {hoeveelheid:'1 el', naam:'Olijfolie extra vergine'},
+        ],
+        steps:[
+          'Platbrood kort opwarmen in droge koekenpan.',
+          'Hummus en labneh in aparte schaaltjes scheppen.',
+          'Za\'atar en olijfolie over labneh druppelen.',
+          'Olijven erbij, meteen serveren.'
+        ],
+        notes:'Sesam in tahini (hummus) EN za\'atar — altijd benoemen bij gasten!'
+      }
+    },
+    {
+      id:'rec_002', title:'Hummus royale', folder:'starters', status:'actief', type:'savoury',
+      verkoopprijs: 11.00,
+      allergens:[
+        {code:'Sa',name:'Sesam',maybe:false}
+      ],
+      recipe:{
+        prep:'10 min', cook:'0 min', servings:4,
+        ingredients:[
+          {hoeveelheid:'400g', naam:'Kikkererwten (blik)'},
+          {hoeveelheid:'60g', naam:'Tahini (500g pot)'},
+          {hoeveelheid:'2 stuk', naam:'Citroenen'},
+          {hoeveelheid:'1 teen', naam:'Knoflook'},
+          {hoeveelheid:'2 el', naam:'Olijfolie extra vergine'},
+          {hoeveelheid:'½ tl', naam:'Komijn gemalen'},
+        ],
+        steps:[
+          'Kikkererwten afspoelen, 1 el achterhouden voor garnering.',
+          'Tahini, citroen en knoflook mixen tot glad.',
+          'Kikkererwten toevoegen, 3-4 min blenden met ijswater.',
+          'Op kamertemperatuur serveren met olijfolie en paprikapoeder.'
+        ],
+        notes:'Tahini is sesam — kritisch allergeenrisico. Prijs tahini gestegen van €3,80 → €4,50/pot (+18%)!'
+      }
+    },
+    {
+      id:'rec_003', title:'Labneh za\'atar & honing', folder:'starters', status:'actief', type:'savoury',
+      verkoopprijs: 9.00,
+      allergens:[
+        {code:'Sa',name:'Sesam',maybe:false},
+        {code:'M',name:'Melk',maybe:false}
+      ],
+      recipe:{
+        prep:'5 min', cook:'0 min', servings:4,
+        ingredients:[
+          {hoeveelheid:'200g', naam:'Labneh (400g pot)'},
+          {hoeveelheid:'1 el', naam:'Za\'atar'},
+          {hoeveelheid:'1 el', naam:'Olijfolie extra vergine'},
+          {hoeveelheid:'2 tl', naam:'Honing'},
+          {hoeveelheid:'2 stuk', naam:'Platbrood (pitta)'},
+        ],
+        steps:[
+          'Labneh uit pot op bord scheppen.',
+          'Za\'atar en olijfolie erover.',
+          'Honing drizzelen, platbrood erbij.'
+        ],
+        notes:'Za\'atar bevat sesamzaad. Labneh = gezeide yoghurt, bevat melk.'
+      }
+    },
+    {
+      id:'rec_004', title:'Fattoush salade', folder:'starters', status:'actief', type:'savoury',
+      verkoopprijs: 10.50,
+      allergens:[
+        {code:'G',name:'Gluten',maybe:false},
+        {code:'Sa',name:'Sesam',maybe:true}
+      ],
+      recipe:{
+        prep:'15 min', cook:'8 min', servings:4,
+        ingredients:[
+          {hoeveelheid:'2 stuk', naam:'Platbrood (pitta)'},
+          {hoeveelheid:'2 stuk', naam:'Komkommer'},
+          {hoeveelheid:'1 bakje', naam:'Cherry tomaten'},
+          {hoeveelheid:'20g', naam:'Verse munt'},
+          {hoeveelheid:'20g', naam:'Verse peterselie'},
+          {hoeveelheid:'2 el', naam:'Granaatappelmelasse'},
+          {hoeveelheid:'1 el', naam:'Sumak'},
+          {hoeveelheid:'3 el', naam:'Olijfolie extra vergine'},
+        ],
+        steps:[
+          'Platbrood in stukken scheuren, bakken in olijfolie tot krokant.',
+          'Groenten hakken, kruiden grof snijden.',
+          'Dressing: melasse, sumak, olijfolie, zout.',
+          'Mixen, croutons erbij vlak voor serveren.'
+        ],
+        notes:'Croutons = gluten. Sumak bevat soms sesamresten (kruisbesmetting leverancier Solisco).'
+      }
+    },
     // ── HOOFDGERECHTEN ──
     {
-      id:'rec_001', title:'Ribeye Black Angus 300g', folder:'keuken', status:'actief', type:'savoury',
-      allergens:[{code:'M',name:'Melk',maybe:false}],
+      id:'rec_005', title:'Lam rack met bulgur', folder:'keuken', status:'actief', type:'savoury',
+      verkoopprijs: 29.00,
+      allergens:[],
+      recipe:{
+        prep:'20 min', cook:'25 min', servings:1,
+        ingredients:[
+          {hoeveelheid:'1 rack (4 kotelets)', naam:'Lamrack'},
+          {hoeveelheid:'80g', naam:'Bulgur grof'},
+          {hoeveelheid:'½ stuk', naam:'Komkommer'},
+          {hoeveelheid:'10g', naam:'Verse munt'},
+          {hoeveelheid:'10g', naam:'Verse peterselie'},
+          {hoeveelheid:'1 el', naam:'Granaatappelmelasse'},
+          {hoeveelheid:'1 tl', naam:'Sumak'},
+          {hoeveelheid:'2 el', naam:'Olijfolie extra vergine'},
+        ],
+        steps:[
+          'Lamrack op kamertemperatuur brengen, inwrijven met sumak en olijfolie.',
+          'Bulgur 15 min weken in kokend water met zout.',
+          'Rack 4 min per kant op hoog vuur, kern 57°C (rosé).',
+          'Tabbouleh-stijl: bulgur met kruiden, komkommer, melasse.',
+          'Rust 5 min, serveer op bulgur met jus uit pan.'
+        ],
+        notes:'Seizoensproduct. Lamrack prijs gestegen van €16,80 → €18,50/rack (+10,1%)!'
+      }
+    },
+    {
+      id:'rec_006', title:'Kip shawarma plank', folder:'keuken', status:'actief', type:'savoury',
+      verkoopprijs: 22.00,
+      allergens:[
+        {code:'G',name:'Gluten',maybe:false},
+        {code:'Sa',name:'Sesam',maybe:false}
+      ],
+      recipe:{
+        prep:'30 min', cook:'20 min', servings:1,
+        ingredients:[
+          {hoeveelheid:'200g', naam:'Kip dijfilet zonder vel'},
+          {hoeveelheid:'2 stuk', naam:'Platbrood (pitta)'},
+          {hoeveelheid:'50g', naam:'Labneh (400g pot)'},
+          {hoeveelheid:'30g', naam:'Tahini (500g pot)'},
+          {hoeveelheid:'10g', naam:'Verse peterselie'},
+          {hoeveelheid:'½ tl', naam:'Pul biber'},
+          {hoeveelheid:'1 tl', naam:'Knoflook'},
+          {hoeveelheid:'1 el', naam:'Olijfolie extra vergine'},
+        ],
+        steps:[
+          'Kip marineren in pul biber, knoflook, olijfolie — min 2u.',
+          'Op hoge temp grillen, 6 min per kant, kern 75°C.',
+          'Platbrood opwarmen.',
+          'Tahini-labneh-saus mengen.',
+          'Kip snijden, op plank serveren met saus en peterselie.'
+        ],
+        notes:'Tahini (sesam) en platbrood (gluten). Kerntemperatuur kip verplicht ≥75°C (NVWA)!'
+      }
+    },
+    {
+      id:'rec_007', title:'Merguez met couscous', folder:'keuken', status:'actief', type:'savoury',
+      verkoopprijs: 19.00,
+      allergens:[
+        {code:'G',name:'Gluten',maybe:false}
+      ],
       recipe:{
         prep:'10 min', cook:'15 min', servings:1,
         ingredients:[
-          {hoeveelheid:'300g', naam:'Ribeye Black Angus'},
-          {hoeveelheid:'20g',  naam:'Truffelboter'},
-          {hoeveelheid:'5g',   naam:'Fleur de sel'},
-          {hoeveelheid:'2g',   naam:'Zwarte peper gebroken'},
-          {hoeveelheid:'150g', naam:'Haricots verts'},
-          {hoeveelheid:'100g', naam:'Aardappelgratin (portie)'},
-          {hoeveelheid:'10ml', naam:'Zonnebloemolie'},
+          {hoeveelheid:'3 stuk', naam:'Merguez (pak 10 stuks)'},
+          {hoeveelheid:'100g', naam:'Couscous'},
+          {hoeveelheid:'1 stuk', naam:'Cherry tomaten'},
+          {hoeveelheid:'10g', naam:'Verse peterselie'},
+          {hoeveelheid:'1 tl', naam:'Harissa'},
+          {hoeveelheid:'1 el', naam:'Olijfolie extra vergine'},
         ],
         steps:[
-          'Ribeye 2u voor gebruik uit koelkast. Droogdeppen met keukenpapier.',
-          'Gietijzeren pan verhitten op maximale stand (6 min). Olie toevoegen — laat roken.',
-          'Ribeye 2,5 min per kant voor medium-rare. NIET bewegen. Kerntemperatuur doel: 54°C.',
-          'Laatste 30 sec: truffelboter erbij, lepelen over vlees. Pan van vuur.',
-          '5 min rusten op rooster, losjes afdekken met folie.',
-          'Haricots verts 4 min blancheren, afgieten, bebloemen met boter en zout.',
-          'Serveren op voorverwarmd bord: gratin links, haricots verts rechts, ribeye midden.',
+          'Couscous overgieten met kokend water, 5 min afgesloten laten staan.',
+          'Merguez grillen, 4 min per kant.',
+          'Couscous losmaken met vork en olijfolie.',
+          'Serveer met geroosterde tomaten, harissa, peterselie.'
         ],
-        notes:'Kerntemperatuur ALTIJD meten. <52°C = rare (terugleggen), >58°C = medium (klant informeren). Afwijking >2°C documenteren in HACCP. Allergeen: melk via truffelboter.'
-      },
-      verkoopprijs:38.50, createdAt:'2026-05-15T08:00:00.000Z'
+        notes:'Couscous = tarwebloem = gluten. Merguez bevat regelmatig ook gluten-bindmiddel, check leverancier!'
+      }
     },
     {
-      id:'rec_002', title:'Zalm op risotto met gremolata', folder:'keuken', status:'actief', type:'savoury',
-      allergens:[{code:'V',name:'Vis',maybe:false},{code:'M',name:'Melk',maybe:false},{code:'G',name:'Gluten',maybe:true}],
+      id:'rec_008', title:'Mutabbal (aubergine dip)', folder:'keuken', status:'actief', type:'savoury',
+      verkoopprijs: 17.00,
+      allergens:[
+        {code:'Sa',name:'Sesam',maybe:false}
+      ],
       recipe:{
-        prep:'15 min', cook:'28 min', servings:1,
+        prep:'10 min', cook:'40 min', servings:4,
         ingredients:[
-          {hoeveelheid:'180g', naam:'Zalm Atlantic portie (met vel)'},
-          {hoeveelheid:'80g',  naam:'Risotto rijst Carnaroli'},
-          {hoeveelheid:'250ml',naam:'Visfond (warm)'},
-          {hoeveelheid:'50ml', naam:'Droge witte wijn (Pinot Grigio)'},
-          {hoeveelheid:'30g',  naam:'Parmezaan geraspt'},
-          {hoeveelheid:'25g',  naam:'Boter (koud, in blokjes)'},
-          {hoeveelheid:'1',    naam:'Sjalot (fijn gesneden)'},
-          {hoeveelheid:'1 teen',naam:'Knoflook (geperst)'},
-          {hoeveelheid:'½',    naam:'Citroen (rasp + sap)'},
-          {hoeveelheid:'8g',   naam:'Peterselie plat (fijngehakt)'},
-          {hoeveelheid:'15ml', naam:'Olijfolie extra vierge'},
+          {hoeveelheid:'3 stuk', naam:'Aubergine'},
+          {hoeveelheid:'50g', naam:'Tahini (500g pot)'},
+          {hoeveelheid:'1 stuk', naam:'Citroenen'},
+          {hoeveelheid:'1 teen', naam:'Knoflook'},
+          {hoeveelheid:'2 el', naam:'Granaatappelmelasse'},
+          {hoeveelheid:'1 el', naam:'Olijfolie extra vergine'},
         ],
         steps:[
-          'Visfond warm houden (niet koken). Sjalot en knoflook 3 min fruiten in olijfolie.',
-          'Carnaroli toevoegen, 2 min droog toasten tot glazig. Deglaceren met witte wijn.',
-          'Fond lepel voor lepel toevoegen (elke keer wachten tot geabsorbeerd). 18 min.',
-          'Gremolata: citroenrasp + peterselie + knoflookteen + snufje zout mengen.',
-          'Zalm: vel droogdeppen, vel-kant 4 min op middelhoog vuur (niet bewegen). Omdraaien, 90 sec. Kerntemperatuur: 63°C.',
-          'Risotto van vuur: koude boter en parmezaan erbij (mantecatura). 1 min kloppen. Gremolata erdoor.',
-          'Direct serveren: risotto in diep bord, zalm vel-kant omhoog, scheutje citroenolie.',
+          'Aubergines direct op open vlam of 220°C oven roosteren tot vel zwart.',
+          'Afkoelen, schillen, vlees uitknijpen.',
+          'Mixen met tahini, citroen, knoflook. Niet te glad laten.',
+          'Serveren met melasse, olijfolie en granaatappelpitten.'
         ],
-        notes:'Risotto kan NIET wachten. Zalm op 63°C kerntemperatuur (HACCP-eis vis). Mogelijk gluten via witte wijn (fining agents).'
-      },
-      verkoopprijs:27.50, createdAt:'2026-05-15T08:00:00.000Z'
+        notes:'Tahini = sesam. Vegetarisch en glutenvrij als zonder brood geserveerd.'
+      }
     },
-    {
-      id:'rec_003', title:'Risotto ai funghi (V)', folder:'keuken', status:'actief', type:'savoury',
-      allergens:[{code:'M',name:'Melk',maybe:false},{code:'G',name:'Gluten',maybe:true}],
-      recipe:{
-        prep:'20 min', cook:'30 min', servings:1,
-        ingredients:[
-          {hoeveelheid:'80g',  naam:'Risotto rijst Carnaroli'},
-          {hoeveelheid:'80g',  naam:'Kastanjechampignons (gesneden)'},
-          {hoeveelheid:'50g',  naam:'Shiitake (gesneden)'},
-          {hoeveelheid:'15g',  naam:'Gedroogde porcini'},
-          {hoeveelheid:'250ml',naam:'Groentebouillon'},
-          {hoeveelheid:'30g',  naam:'Parmezaan geraspt'},
-          {hoeveelheid:'25g',  naam:'Boter'},
-          {hoeveelheid:'1',    naam:'Sjalot'},
-          {hoeveelheid:'1 teen',naam:'Knoflook'},
-          {hoeveelheid:'5g',   naam:'Tijm vers'},
-          {hoeveelheid:'30ml', naam:'Droge witte wijn'},
-        ],
-        steps:[
-          'Porcini 20 min weken in 150ml warm water. Week-water door zeef bewaren — gaat in de risotto.',
-          'Verse paddenstoelen in hete pan DROOGBAKKEN (geen olie) tot bruin en droog. Reserveren.',
-          'Sjalot en knoflook glazig fruiten. Rijst toasten 2 min. Deglaceren met wijn.',
-          'Bouillon + porcini-water afwisselend toevoegen. Gedroogde porcini (uitgeknepen) erdoor. 16 min.',
-          'Op 14 min: verse paddenstoelen en tijm toevoegen. 4 min meekoken.',
-          'Afwerken met boter en parmezaan. Seizoen goed.',
-        ],
-        notes:'Vegetarisch maar NIET vegan (parmezaan, boter). Controleer bij strikt vegetarische gast of parmezaan met stremsel OK is.'
-      },
-      verkoopprijs:19.50, createdAt:'2026-05-15T08:00:00.000Z'
-    },
-    {
-      id:'rec_004', title:'Kipfilet Méditerranée', folder:'keuken', status:'actief', type:'savoury',
-      allergens:[{code:'G',name:'Gluten',maybe:true},{code:'M',name:'Melk',maybe:false}],
-      recipe:{
-        prep:'15 min', cook:'20 min', servings:1,
-        ingredients:[
-          {hoeveelheid:'180g', naam:'Kipfilet zonder vel'},
-          {hoeveelheid:'80g',  naam:'Risotto rijst Carnaroli'},
-          {hoeveelheid:'60g',  naam:'Cherry tomaten (gehalveerd)'},
-          {hoeveelheid:'40g',  naam:'Olijven kalamata (ontpit)'},
-          {hoeveelheid:'30g',  naam:'Feta'},
-          {hoeveelheid:'10g',  naam:'Kappertjes'},
-          {hoeveelheid:'5g',   naam:'Oregano gedroogd'},
-          {hoeveelheid:'20ml', naam:'Olijfolie extra vierge'},
-          {hoeveelheid:'50ml', naam:'Kippenbouillon'},
-          {hoeveelheid:'5g',   naam:'Tijm vers'},
-        ],
-        steps:[
-          'Kipfilet platslaan tot gelijke dikte (voor gelijkmatige garing). Kruiden met zout, peper, oregano.',
-          'Hete pan, olijfolie. Kip 4 min per kant op middelhoog vuur. Kerntemperatuur: 75°C.',
-          'Laatste 2 min: tomaten, olijven, kappertjes en bouillon erbij. Snel reduceren.',
-          'Feta verkruimelen. Tijm erbij. Nog 1 min.',
-          'Serveren met geroosterd brood of couscous.',
-        ],
-        notes:'Kerntemperatuur kip ALTIJD 75°C minimum (voedselveiligheid). Feta = melk allergen.'
-      },
-      verkoopprijs:22.50, createdAt:'2026-05-20T08:00:00.000Z'
-    },
-    {
-      id:'rec_005', title:'Tonijn steak Niçoise', folder:'keuken', status:'actief', type:'savoury',
-      allergens:[{code:'V',name:'Vis',maybe:false},{code:'E',name:'Eieren',maybe:false},{code:'MO',name:'Mosterd',maybe:false}],
-      recipe:{
-        prep:'20 min', cook:'8 min', servings:1,
-        ingredients:[
-          {hoeveelheid:'200g', naam:'Tonijn steak (vers, sashimi-kwaliteit)'},
-          {hoeveelheid:'100g', naam:'Haricots verts'},
-          {hoeveelheid:'80g',  naam:'Cherry tomaten'},
-          {hoeveelheid:'2',    naam:'Eieren (hardgekookt, 8 min)'},
-          {hoeveelheid:'30g',  naam:'Olijven niçoise'},
-          {hoeveelheid:'15g',  naam:'Ansjovisfilets'},
-          {hoeveelheid:'30ml', naam:'Dressing: olijfolie + dijonmosterd + citroensap'},
-          {hoeveelheid:'5g',   naam:'Kappertjes'},
-          {hoeveelheid:'2g',   naam:'Fleur de sel'},
-        ],
-        steps:[
-          'Tonijn 1 uur voor gebruik uit koelkast. Op kamertemperatuur laten komen.',
-          'Pan verhitten, druppel olie. Tonijn 90 sec per kant (rosé van binnen). Kerntemperatuur: 45-50°C.',
-          'Haricots verts 4 min blancheren. Direct in ijswater.',
-          'Salade opmaken: groenten, eieren (gehalveerd), ansjovis, olijven.',
-          'Tonijn in plakken snijden over de salade. Dressing erover. Fleur de sel.',
-        ],
-        notes:'Tonijn ALTIJD rosé — doorbakken = droog en klantklacht. Ansjovis = vis allergen extra! Eieren hardgekookt bewaren in koelkast max 3 dagen.'
-      },
-      verkoopprijs:29.50, createdAt:'2026-05-20T08:00:00.000Z'
-    },
-
-    // ── STARTERS ──
-    {
-      id:'rec_006', title:'Caprese salade (V)', folder:'starters', status:'actief', type:'savoury',
-      allergens:[{code:'M',name:'Melk',maybe:false},{code:'N',name:'Noten',maybe:false}],
-      recipe:{
-        prep:'10 min', cook:'0 min', servings:1,
-        ingredients:[
-          {hoeveelheid:'125g', naam:'Mozzarella di Bufala'},
-          {hoeveelheid:'100g', naam:'Cherry tomaten (gemengd, gehalveerd)'},
-          {hoeveelheid:'8 blaadjes', naam:'Basilicum vers'},
-          {hoeveelheid:'20ml', naam:'Olijfolie extra vierge'},
-          {hoeveelheid:'10ml', naam:'Aceto balsamico vecchio (8 jaar)'},
-          {hoeveelheid:'15g',  naam:'Pijnboompitten (geroosterd)'},
-          {hoeveelheid:'3g',   naam:'Fleur de sel'},
-          {hoeveelheid:'1g',   naam:'Zwarte peper (gemalen)'},
-        ],
-        steps:[
-          'Mozzarella 30 min voor serveren uit koelkast halen (anders te koud, verlies smaak).',
-          'Pijnboompitten droog roosteren in droge pan 2-3 min tot goudbruin. Afkoelen.',
-          'Tomaten halveren of kwartelen. Mozzarella in plakken van 1cm.',
-          'Opmaken: tomaat en mozzarella afwisselen op bord. Basilicum ertussenin.',
-          'Olijfolie en balsamico erover. Fleur de sel en peper. Pijnboompitten als laatste.',
-        ],
-        notes:'⚠ KRITIEK: Pijnboompitten = EU-14 allergen N (Noten). Altijd MONDELING aan bediening melden bij allergeenvraag. Staat ook op allergenenkaart.'
-      },
-      verkoopprijs:12.50, createdAt:'2026-05-15T08:00:00.000Z'
-    },
-    {
-      id:'rec_007', title:'Zalmtartaar met avocado', folder:'starters', status:'actief', type:'savoury',
-      allergens:[{code:'V',name:'Vis',maybe:false},{code:'E',name:'Eieren',maybe:false},{code:'MO',name:'Mosterd',maybe:false}],
-      recipe:{
-        prep:'20 min', cook:'0 min', servings:1,
-        ingredients:[
-          {hoeveelheid:'120g', naam:'Zalm (sashimi-kwaliteit, handgesneden)'},
-          {hoeveelheid:'½',    naam:'Avocado (rijp)'},
-          {hoeveelheid:'10ml', naam:'Limoenap'},
-          {hoeveelheid:'5g',   naam:'Rode ui (microbrunoise)'},
-          {hoeveelheid:'5g',   naam:'Kappertjes (fijngehakt)'},
-          {hoeveelheid:'10ml', naam:'Mayonaise (zelfgemaakt, ei)'},
-          {hoeveelheid:'3ml',  naam:'Tabasco'},
-          {hoeveelheid:'2g',   naam:'Dille vers'},
-          {hoeveelheid:'5g',   naam:'Fleur de sel'},
-        ],
-        steps:[
-          'Zalm in blokjes van 5mm snijden. Koud houden — tartaar mag max 15 min op kamer staan.',
-          'Avocado pureeren met limoensap en zout. Direct serveren (oxideert snel).',
-          'Tartaarmix: zalm + ui + kappertjes + mayonaise + tabasco + zout. Proeven.',
-          'Opmaken: avocadopuree bodem, tartaar er bovenop in ring (formaat 6cm).',
-          'Garnering: dille, kappertje, scheutje olijfolie.',
-        ],
-        notes:'Rauwe vis — HACCP kritiek. Zalm moet tot moment van gebruik in koelkast (<5°C). Klaar maken MAX 30 min voor serveren. Eieren in mayo = E allergen.'
-      },
-      verkoopprijs:14.50, createdAt:'2026-06-01T08:00:00.000Z'
-    },
-    {
-      id:'rec_008', title:'Soupe à l\'oignon gratinée', folder:'starters', status:'actief', type:'savoury',
-      allergens:[{code:'G',name:'Gluten',maybe:false},{code:'M',name:'Melk',maybe:false}],
-      recipe:{
-        prep:'15 min', cook:'60 min', servings:4,
-        ingredients:[
-          {hoeveelheid:'1kg',  naam:'Uien (geel, in ringen)'},
-          {hoeveelheid:'50g',  naam:'Boter'},
-          {hoeveelheid:'100ml',naam:'Droge witte wijn'},
-          {hoeveelheid:'50ml', naam:'Cognac'},
-          {hoeveelheid:'1L',   naam:'Runder- of kalfsbouillon (zelfgemaakt)'},
-          {hoeveelheid:'4 sneden',naam:'Stokbrood (2cm dik)'},
-          {hoeveelheid:'120g', naam:'Gruyère (geraspt)'},
-          {hoeveelheid:'20ml', naam:'Olijfolie'},
-          {hoeveelheid:'2',    naam:'Laurierblaadjes'},
-          {hoeveelheid:'5g',   naam:'Tijm'},
-        ],
-        steps:[
-          'Uien op laag vuur in boter+olie karamelliseren: 40-45 min, regelmatig roeren. Geduld is key.',
-          'Cognac erbij, flamberen (pas op!). Deglaceren met witte wijn. 5 min reduceren.',
-          'Bouillon, laurier, tijm erbij. 20 min sudderen. Seasonen.',
-          'Ovenvaste kom vullen met soep. Stokbrood er bovenop (mag half zakken).',
-          'Gruyère royaal over het brood. 10 min onder grill tot goudbruin en borrelend.',
-        ],
-        notes:'Recept voor 4 porties! Wordt bij voorziening gemaakt. Bewaren in vacuümzak. Gluten via stokbrood, melk via gruyère en boter.'
-      },
-      verkoopprijs:11.50, createdAt:'2026-05-15T08:00:00.000Z'
-    },
-    {
-      id:'rec_009', title:'Burrata met prosciutto', folder:'starters', status:'actief', type:'savoury',
-      allergens:[{code:'M',name:'Melk',maybe:false}],
-      recipe:{
-        prep:'10 min', cook:'0 min', servings:1,
-        ingredients:[
-          {hoeveelheid:'125g', naam:'Burrata (vers)'},
-          {hoeveelheid:'40g',  naam:'Prosciutto di Parma (4 plakken)'},
-          {hoeveelheid:'60g',  naam:'Rucola (gewassen)'},
-          {hoeveelheid:'60g',  naam:'Cherry tomaten (rood + geel)'},
-          {hoeveelheid:'15ml', naam:'Olijfolie extra vierge'},
-          {hoeveelheid:'8ml',  naam:'Aceto balsamico'},
-          {hoeveelheid:'5g',   naam:'Pijnboompitten'},
-          {hoeveelheid:'2g',   naam:'Fleur de sel'},
-        ],
-        steps:[
-          'Burrata 20 min voor serveren uit koelkast — anders te koud.',
-          'Rucola opmaken als basis. Tomaten halveren er omheen.',
-          'Prosciutto elegant draperen (niet ineengefrommeld).',
-          'Burrata in het midden plaatsen. Aansnijden aan tafel of in de keuken.',
-          'Olijfolie, balsamico, fleur de sel. Pijnboompitten.',
-        ],
-        notes:'⚠ Burrata is zeer bederfelijk — houdbaarheidsdatum controleren DAGELIJKS. Max 3 dagen na opening. Pijnboompitten = N allergen (noten). Melk allergen via burrata.'
-      },
-      verkoopprijs:13.50, createdAt:'2026-06-01T08:00:00.000Z'
-    },
-
     // ── DESSERTS ──
     {
-      id:'rec_010', title:'Crème brûlée klassiek', folder:'desserts', status:'actief', type:'sweet',
-      allergens:[{code:'M',name:'Melk',maybe:false},{code:'E',name:'Eieren',maybe:false}],
+      id:'rec_009', title:'Baklava (huisgemaakt)', folder:'desserts', status:'actief', type:'sweet',
+      verkoopprijs: 7.00,
+      allergens:[
+        {code:'G',name:'Gluten',maybe:false},
+        {code:'N',name:'Noten',maybe:false},
+        {code:'M',name:'Melk',maybe:false}
+      ],
       recipe:{
-        prep:'20 min', cook:'50 min', servings:6,
+        prep:'45 min', cook:'35 min', servings:12,
         ingredients:[
-          {hoeveelheid:'500ml',naam:'Slagroom 35%'},
-          {hoeveelheid:'6',    naam:'Eidooiers (XL)'},
-          {hoeveelheid:'100g', naam:'Suiker fijn'},
-          {hoeveelheid:'1',    naam:'Vanillepeul (uitgeschraapt)'},
-          {hoeveelheid:'60g',  naam:'Bruine basterdsuiker (voor brûlée)'},
+          {hoeveelheid:'250g', naam:'Filodeeg (diepvries)'},
+          {hoeveelheid:'150g', naam:'Pistachenoten (ongezouten)'},
+          {hoeveelheid:'100g', naam:'Walnoten'},
+          {hoeveelheid:'150g', naam:'Boter (ongezouten)'},
+          {hoeveelheid:'200g', naam:'Suiker'},
+          {hoeveelheid:'100ml', naam:'Rozenwater'},
+          {hoeveelheid:'1 stuk', naam:'Citroenen'},
         ],
         steps:[
-          'Room met vanille langzaam verwarmen (niet koken). Vanillepeul eruit.',
-          'Eidooiers en suiker wit kloppen. Warme room er dun bij gieten (al roerend).',
-          'Zeven. Schuim afscheppen. In 6 ramequins (150ml) gieten.',
-          'Au bain marie in oven 150°C, 40-45 min (moet nog jiggelen in het midden).',
-          'Afkoelen op rek, dan minimaal 4u koelkast (kan 2 dagen van tevoren).',
-          'Voor serveren: 1 el bruine suiker er op, brûlée met gasbrander. Direct serveren.',
+          'Filo ontdooien, boter smelten.',
+          'Noten fijnhakken met suiker.',
+          'Laagjes filo met boter, notenlaag, weer filo.',
+          '180°C 30-35 min bakken tot goudbruin.',
+          'Siroop van suiker, rozenwater en citroen erover nog warm.'
         ],
-        notes:'Recept voor 6 porties — voorbereid in batch. Bewaar max 48u in koelkast (<5°C, HACCP). Brûlée pas op bestelling! Eieren en room = kritische allergenen E + M.'
-      },
-      verkoopprijs:8.50, createdAt:'2026-05-15T08:00:00.000Z'
+        notes:'Noten (N), gluten (G), melk (M) — drie EU-14 allergenen. Batches 12 stuks = 1 portie per stuk €7.'
+      }
     },
     {
-      id:'rec_011', title:'Tiramisu di casa', folder:'desserts', status:'actief', type:'sweet',
-      allergens:[{code:'E',name:'Eieren',maybe:false},{code:'M',name:'Melk',maybe:false},{code:'G',name:'Gluten',maybe:false}],
+      id:'rec_010', title:'Muhallebi (rozenwater pudding)', folder:'desserts', status:'actief', type:'sweet',
+      verkoopprijs: 7.00,
+      allergens:[
+        {code:'M',name:'Melk',maybe:false}
+      ],
       recipe:{
-        prep:'30 min', cook:'0 min', servings:8,
+        prep:'10 min', cook:'15 min', servings:6,
         ingredients:[
-          {hoeveelheid:'500g', naam:'Mascarpone'},
-          {hoeveelheid:'5',    naam:'Eieren (gesplitst)'},
-          {hoeveelheid:'120g', naam:'Suiker fijn'},
-          {hoeveelheid:'300ml',naam:'Espresso (sterk, afgekoeld)'},
-          {hoeveelheid:'50ml', naam:'Amaretto of Marsala'},
-          {hoeveelheid:'200g', naam:'Savoiardi (lange vingers)'},
-          {hoeveelheid:'30g',  naam:'Pure cacao (voor poeder)'},
+          {hoeveelheid:'500ml', naam:'Volle melk'},
+          {hoeveelheid:'250ml', naam:'Slagroom 35%'},
+          {hoeveelheid:'60g', naam:'Rijstmeel'},
+          {hoeveelheid:'60g', naam:'Suiker'},
+          {hoeveelheid:'2 el', naam:'Rozenwater'},
+          {hoeveelheid:'30g', naam:'Pistachenoten (ongezouten)'},
         ],
         steps:[
-          'Eiwitten stijfkloppen met snufje zout. Eidooiers met suiker bleek en luchtig kloppen.',
-          'Mascarpone door dooiermix spatelen. Dan eiwitten voorzichtig doorvouwen.',
-          'Espresso en amaretto mengen. Savoiardi snel doorhalen (niet doordrenken).',
-          'Laag koekjes in schaal, laag crème, laag koekjes, laag crème. Minimaal 2 lagen.',
-          'Minimaal 8u (liefst 24u) in koelkast. Cacao net voor serveren.',
+          'Melk en room zachtjes verwarmen.',
+          'Rijstmeel met suiker aanmengen met deel melk.',
+          'Toevoegen aan warme melk, roeren tot dik (8-10 min).',
+          'Rozenwater erbij, in schaaltjes gieten.',
+          'Koelen min 2u, garneren met pistache.'
         ],
-        notes:'Recept voor 8 porties — batch productie. Bewaar max 48u (<5°C). Bevat rauwe eieren (HACCP: goed bewaren). Gluten via savoiardi. Lactose via mascarpone.'
-      },
-      verkoopprijs:8.50, createdAt:'2026-05-15T08:00:00.000Z'
-    },
-
-    // ── BIJGERECHT / BASISPREPARATIE ──
-    {
-      id:'rec_012', title:'Aardappelgratin (batch — 10 porties)', folder:'mise-en-place', status:'actief', type:'savoury',
-      allergens:[{code:'M',name:'Melk',maybe:false}],
-      recipe:{
-        prep:'25 min', cook:'75 min', servings:10,
-        ingredients:[
-          {hoeveelheid:'1.5kg', naam:'Aardappelen (kruimig, bijv. Bildtstar)'},
-          {hoeveelheid:'400ml', naam:'Slagroom 35%'},
-          {hoeveelheid:'200ml', naam:'Volle melk'},
-          {hoeveelheid:'2 teentjes',naam:'Knoflook (geperst)'},
-          {hoeveelheid:'10g',  naam:'Boter (voor insmeren schaal)'},
-          {hoeveelheid:'1g',   naam:'Nootmuskaat (vers geraspt)'},
-          {hoeveelheid:'8g',   naam:'Zout'},
-          {hoeveelheid:'2g',   naam:'Peper'},
-          {hoeveelheid:'50g',  naam:'Gruyère (optioneel, voor korst)'},
-        ],
-        steps:[
-          'Schaal insmeren met boter en knoflook. Oven voorverwarmen op 170°C.',
-          'Aardappelen schillen en mandoline-dun snijden (2mm). NIET wassen (zetmeel binden).',
-          'Room, melk, knoflook, nootmuskaat, zout en peper opwarmen (niet koken).',
-          'Lagen aardappel in schaal gieten, elke laag beetje roommix. Eindigen met room.',
-          'Afdekken met folie. 60 min in oven. Folie eraf, eventueel gruyère, 15 min korst.',
-          'Laten afkoelen, dan porstioniëren. Opwarmen per portie à la minute.',
-        ],
-        notes:'Batch recept! Maakt 10 porties. Bewaar in koelkast max 3 dagen. Portioneren als koud (mooie stukken). Opwarmen: 3 min in magnetron of 8 min oven 180°C.'
-      },
-      verkoopprijs:null, createdAt:'2026-05-15T08:00:00.000Z'
+        notes:'Bevat melk en room. Glutenvrij. Pistache = N (noten).'
+      }
     },
   ];
 
   // ══════════════════════════════════════════════════════
-  //  38 INGREDIËNTEN — volledig pantry restaurant
+  //  22 INGREDIËNTEN — Levantische keuken
   // ══════════════════════════════════════════════════════
   const ingredienten = [
-    // Vlees & Vis
-    {id:'ing_001', naam:'Ribeye Black Angus', eenheid:'kg', inkoopprijs:28.50, leverancier:'HANOS', datum:'2026-06-10', categorie:'Vlees', historischePrijzen:[{datum:'2026-05-15',prijs:27.80},{datum:'2026-04-10',prijs:26.50},{datum:'2026-03-12',prijs:26.50}]},
-    {id:'ing_002', naam:'Zalm Atlantic portie (180g)', eenheid:'stuk', inkoopprijs:4.20, leverancier:'HANOS', datum:'2026-06-10', categorie:'Vis', historischePrijzen:[{datum:'2026-05-15',prijs:3.95},{datum:'2026-04-10',prijs:3.90},{datum:'2026-03-12',prijs:3.80}]},
-    {id:'ing_003', naam:'Kipfilet zonder vel', eenheid:'kg', inkoopprijs:8.90, leverancier:'HANOS', datum:'2026-06-10', categorie:'Vlees', historischePrijzen:[{datum:'2026-05-15',prijs:8.75},{datum:'2026-04-10',prijs:8.75}]},
-    {id:'ing_004', naam:'Tonijn steak vers (sashimi)', eenheid:'kg', inkoopprijs:38.00, leverancier:'Bidfood', datum:'2026-06-09', categorie:'Vis', historischePrijzen:[{datum:'2026-05-15',prijs:36.50},{datum:'2026-04-10',prijs:35.00}]},
-    {id:'ing_005', naam:'Prosciutto di Parma (gesn.)', eenheid:'kg', inkoopprijs:42.00, leverancier:'Bidfood', datum:'2026-06-09', categorie:'Vlees', historischePrijzen:[{datum:'2026-05-15',prijs:40.50}]},
-    {id:'ing_006', naam:'Ansjovisfilets (blik)', eenheid:'blik', inkoopprijs:3.80, leverancier:'HANOS', datum:'2026-06-10', categorie:'Vis'},
-    // Zuivel & Eieren
-    {id:'ing_007', naam:'Mozzarella di Bufala (125g)', eenheid:'stuk', inkoopprijs:2.80, leverancier:'HANOS', datum:'2026-06-10', categorie:'Zuivel', historischePrijzen:[{datum:'2026-05-15',prijs:2.70},{datum:'2026-04-10',prijs:2.60}]},
-    {id:'ing_008', naam:'Burrata (125g)', eenheid:'stuk', inkoopprijs:3.20, leverancier:'Bidfood', datum:'2026-06-12', categorie:'Zuivel'},
-    {id:'ing_009', naam:'Parmezaan geraspt (DOP)', eenheid:'kg', inkoopprijs:16.80, leverancier:'HANOS', datum:'2026-06-10', categorie:'Zuivel', historischePrijzen:[{datum:'2026-05-15',prijs:16.20},{datum:'2026-04-10',prijs:15.80}]},
-    {id:'ing_010', naam:'Mascarpone', eenheid:'kg', inkoopprijs:8.50, leverancier:'HANOS', datum:'2026-06-10', categorie:'Zuivel'},
-    {id:'ing_011', naam:'Slagroom 35%', eenheid:'L', inkoopprijs:2.90, leverancier:'HANOS', datum:'2026-06-10', categorie:'Zuivel'},
-    {id:'ing_012', naam:'Boter (ongezouten)', eenheid:'kg', inkoopprijs:7.20, leverancier:'HANOS', datum:'2026-06-10', categorie:'Zuivel'},
-    {id:'ing_013', naam:'Truffelboter', eenheid:'kg', inkoopprijs:45.00, leverancier:'Delhaize Pro', datum:'2026-06-08', categorie:'Zuivel', historischePrijzen:[{datum:'2026-05-10',prijs:43.00}]},
-    {id:'ing_014', naam:'Eieren vers (XL)', eenheid:'stuk', inkoopprijs:0.28, leverancier:'HANOS', datum:'2026-06-10', categorie:'Zuivel'},
-    {id:'ing_015', naam:'Gruyère (blok)', eenheid:'kg', inkoopprijs:18.50, leverancier:'Bidfood', datum:'2026-06-09', categorie:'Zuivel'},
-    {id:'ing_016', naam:'Feta (blok, Grieks)', eenheid:'kg', inkoopprijs:11.20, leverancier:'HANOS', datum:'2026-06-10', categorie:'Zuivel'},
-    // Groenten & Kruiden
-    {id:'ing_017', naam:'Cherry tomaten (gemengd)', eenheid:'bakje (500g)', inkoopprijs:2.40, leverancier:'HANOS', datum:'2026-06-10', categorie:'Groenten'},
-    {id:'ing_018', naam:'Basilicum vers (100g)', eenheid:'pak', inkoopprijs:1.90, leverancier:'HANOS', datum:'2026-06-10', categorie:'Kruiden'},
-    {id:'ing_019', naam:'Haricots verts (fijn)', eenheid:'kg', inkoopprijs:4.80, leverancier:'HANOS', datum:'2026-06-10', categorie:'Groenten'},
-    {id:'ing_020', naam:'Kastanjechampignons', eenheid:'kg', inkoopprijs:4.20, leverancier:'Bidfood', datum:'2026-06-09', categorie:'Groenten'},
-    {id:'ing_021', naam:'Shiitake (vers)', eenheid:'kg', inkoopprijs:11.50, leverancier:'Bidfood', datum:'2026-06-09', categorie:'Groenten'},
-    {id:'ing_022', naam:'Gedroogde porcini', eenheid:'kg', inkoopprijs:82.00, leverancier:'Bidfood', datum:'2026-06-09', categorie:'Groenten'},
-    {id:'ing_023', naam:'Uien (geel, zak 10kg)', eenheid:'kg', inkoopprijs:0.55, leverancier:'HANOS', datum:'2026-06-10', categorie:'Groenten'},
-    {id:'ing_024', naam:'Sjalotten', eenheid:'kg', inkoopprijs:2.80, leverancier:'HANOS', datum:'2026-06-10', categorie:'Groenten'},
-    {id:'ing_025', naam:'Knoflook (bol)', eenheid:'bol', inkoopprijs:0.40, leverancier:'HANOS', datum:'2026-06-10', categorie:'Groenten'},
-    {id:'ing_026', naam:'Rucola (250g gewassen)', eenheid:'pak', inkoopprijs:2.10, leverancier:'HANOS', datum:'2026-06-10', categorie:'Groenten'},
-    {id:'ing_027', naam:'Avocado (Hass)', eenheid:'stuk', inkoopprijs:0.95, leverancier:'HANOS', datum:'2026-06-10', categorie:'Groenten'},
-    {id:'ing_028', naam:'Aardappelen kruimig (Bildtstar)', eenheid:'kg', inkoopprijs:0.65, leverancier:'HANOS', datum:'2026-06-10', categorie:'Groenten'},
-    {id:'ing_029', naam:'Tijm vers (bosje)', eenheid:'bosje', inkoopprijs:0.85, leverancier:'HANOS', datum:'2026-06-10', categorie:'Kruiden'},
-    {id:'ing_030', naam:'Peterselie plat (bosje)', eenheid:'bosje', inkoopprijs:0.75, leverancier:'HANOS', datum:'2026-06-10', categorie:'Kruiden'},
-    // Droogwaren & Condimenten
-    {id:'ing_031', naam:'Risotto rijst Carnaroli (5kg)', eenheid:'pak', inkoopprijs:22.80, leverancier:'HANOS', datum:'2026-06-10', categorie:'Droogwaren', historischePrijzen:[{datum:'2026-05-15',prijs:21.50},{datum:'2026-04-10',prijs:21.00}]},
-    {id:'ing_032', naam:'Savoiardi (lange vingers)', eenheid:'pak (400g)', inkoopprijs:3.40, leverancier:'HANOS', datum:'2026-06-10', categorie:'Droogwaren'},
-    {id:'ing_033', naam:'Stokbrood (bakker)', eenheid:'stuk', inkoopprijs:1.20, leverancier:'Broodbakkerij Verhoef', datum:'2026-06-10', categorie:'Droogwaren'},
-    {id:'ing_034', naam:'Olijfolie extra vierge (5L)', eenheid:'fl', inkoopprijs:18.50, leverancier:'HANOS', datum:'2026-06-10', categorie:'Olie', historischePrijzen:[{datum:'2026-05-15',prijs:17.80},{datum:'2026-04-10',prijs:16.50},{datum:'2026-03-12',prijs:15.80}]},
-    {id:'ing_035', naam:'Pijnboompitten (1kg)', eenheid:'kg', inkoopprijs:32.00, leverancier:'HANOS', datum:'2026-06-10', categorie:'Noten', historischePrijzen:[{datum:'2026-05-15',prijs:29.50},{datum:'2026-04-10',prijs:28.00}]},
-    {id:'ing_036', naam:'Aceto balsamico vecchio (8jr)', eenheid:'fl', inkoopprijs:24.50, leverancier:'Bidfood', datum:'2026-06-09', categorie:'Condiment'},
-    {id:'ing_037', naam:'Kappertjes (pot)', eenheid:'pot', inkoopprijs:3.20, leverancier:'HANOS', datum:'2026-06-10', categorie:'Condiment'},
-    {id:'ing_038', naam:'Fleur de sel (500g)', eenheid:'pot', inkoopprijs:8.90, leverancier:'Bidfood', datum:'2026-06-09', categorie:'Condiment'},
+    // Vlees
+    {id:'ing_001', naam:'Lamrack', eenheid:'rack', inkoopprijs:18.50, leverancier:'Solisco BV', datum:'2026-06-12', categorie:'Vlees',
+     historischePrijzen:[{datum:'2026-05-28',prijs:16.80},{datum:'2026-04-15',prijs:16.80},{datum:'2026-03-10',prijs:15.90}]},
+    {id:'ing_002', naam:'Kip dijfilet zonder vel', eenheid:'kg', inkoopprijs:7.40, leverancier:'Amsterdam Fresh Markets', datum:'2026-06-13', categorie:'Vlees',
+     historischePrijzen:[{datum:'2026-05-28',prijs:7.20},{datum:'2026-04-15',prijs:7.20}]},
+    {id:'ing_003', naam:'Merguez (pak 10 stuks)', eenheid:'pak', inkoopprijs:8.20, leverancier:'Solisco BV', datum:'2026-06-12', categorie:'Vlees',
+     historischePrijzen:[{datum:'2026-05-28',prijs:7.60},{datum:'2026-04-15',prijs:7.40}]},
+    // Zuivel
+    {id:'ing_004', naam:'Labneh (400g pot)', eenheid:'pot', inkoopprijs:3.60, leverancier:'Kaasboerderij De Velden', datum:'2026-06-11', categorie:'Zuivel',
+     historischePrijzen:[{datum:'2026-05-20',prijs:3.40}]},
+    {id:'ing_005', naam:'Halloumi (250g)', eenheid:'stuk', inkoopprijs:4.20, leverancier:'Kaasboerderij De Velden', datum:'2026-06-11', categorie:'Zuivel',
+     historischePrijzen:[{datum:'2026-05-20',prijs:3.90},{datum:'2026-04-10',prijs:3.85}]},
+    {id:'ing_006', naam:'Feta (blok, Grieks)', eenheid:'kg', inkoopprijs:9.80, leverancier:'Kaasboerderij De Velden', datum:'2026-06-11', categorie:'Zuivel'},
+    {id:'ing_007', naam:'Slagroom 35%', eenheid:'L', inkoopprijs:2.80, leverancier:'Amsterdam Fresh Markets', datum:'2026-06-13', categorie:'Zuivel'},
+    // Droge waren & sauzen
+    {id:'ing_008', naam:'Tahini (500g pot)', eenheid:'pot', inkoopprijs:4.50, leverancier:'Dirk Groothandel', datum:'2026-06-12', categorie:'Droog',
+     historischePrijzen:[{datum:'2026-05-28',prijs:3.80},{datum:'2026-04-15',prijs:3.75},{datum:'2026-03-10',prijs:3.75}]},
+    {id:'ing_009', naam:'Kikkererwten (blik)', eenheid:'blik', inkoopprijs:1.10, leverancier:'Dirk Groothandel', datum:'2026-06-12', categorie:'Droog'},
+    {id:'ing_010', naam:'Bulgur grof', eenheid:'kg', inkoopprijs:2.10, leverancier:'Dirk Groothandel', datum:'2026-06-12', categorie:'Droog'},
+    {id:'ing_011', naam:'Couscous', eenheid:'kg', inkoopprijs:1.80, leverancier:'Dirk Groothandel', datum:'2026-06-12', categorie:'Droog'},
+    {id:'ing_012', naam:'Platbrood (pitta)', eenheid:'stuk', inkoopprijs:0.45, leverancier:'Solisco BV', datum:'2026-06-12', categorie:'Droog'},
+    {id:'ing_013', naam:'Granaatappelmelasse', eenheid:'fl', inkoopprijs:6.20, leverancier:'Solisco BV', datum:'2026-06-12', categorie:'Droog',
+     historischePrijzen:[{datum:'2026-05-28',prijs:5.80}]},
+    // Kruiden & specerijen
+    {id:'ing_014', naam:'Za\'atar', eenheid:'pot', inkoopprijs:4.80, leverancier:'Solisco BV', datum:'2026-06-12', categorie:'Kruiden'},
+    {id:'ing_015', naam:'Sumak', eenheid:'pot', inkoopprijs:3.40, leverancier:'Solisco BV', datum:'2026-06-12', categorie:'Kruiden'},
+    {id:'ing_016', naam:'Pul biber', eenheid:'pot', inkoopprijs:2.90, leverancier:'Dirk Groothandel', datum:'2026-06-12', categorie:'Kruiden'},
+    // Groenten & fruit
+    {id:'ing_017', naam:'Aubergine', eenheid:'stuk', inkoopprijs:1.20, leverancier:'Amsterdam Fresh Markets', datum:'2026-06-13', categorie:'Groenten'},
+    {id:'ing_018', naam:'Komkommer', eenheid:'stuk', inkoopprijs:0.65, leverancier:'Amsterdam Fresh Markets', datum:'2026-06-13', categorie:'Groenten'},
+    {id:'ing_019', naam:'Cherry tomaten', eenheid:'bakje', inkoopprijs:2.80, leverancier:'Amsterdam Fresh Markets', datum:'2026-06-13', categorie:'Groenten'},
+    {id:'ing_020', naam:'Verse munt', eenheid:'pak', inkoopprijs:1.10, leverancier:'Amsterdam Fresh Markets', datum:'2026-06-13', categorie:'Kruiden'},
+    {id:'ing_021', naam:'Verse peterselie', eenheid:'pak', inkoopprijs:0.90, leverancier:'Amsterdam Fresh Markets', datum:'2026-06-13', categorie:'Kruiden'},
+    {id:'ing_022', naam:'Olijfolie extra vergine', eenheid:'L', inkoopprijs:14.50, leverancier:'Solisco BV', datum:'2026-06-12', categorie:'Overig',
+     historischePrijzen:[{datum:'2026-05-28',prijs:13.80},{datum:'2026-04-15',prijs:13.50}]},
   ];
 
   // ══════════════════════════════════════════════════════
-  //  HACCP: 4 EENHEDEN, 28 METINGEN (7 DAGEN), 3 AFWIJKINGEN
+  //  HACCP — 4 koeleenheden, 20 metingen, 1 open afwijking
   // ══════════════════════════════════════════════════════
   const haccp_eenheden = [
-    {id:'he_001', naam:'Koelcel 1 — Vlees & Mise en place', maxNorm:5, minNorm:0, locatie:'Keuken'},
-    {id:'he_002', naam:'Koelcel 2 — Vis & Zuivel', maxNorm:4, minNorm:0, locatie:'Keuken'},
-    {id:'he_003', naam:'Vriezer — Diepvries voorraad', maxNorm:-18, minNorm:-25, locatie:'Keuken'},
-    {id:'he_004', naam:'Bar koeling — Drankjes', maxNorm:8, minNorm:2, locatie:'Bar'},
+    {id:'ee_001', naam:'Koelcel 1 – Vlees & Vis', minTemp:-1, maxTemp:5, bewaartype:'gekoeld'},
+    {id:'ee_002', naam:'Koelcel 2 – Dips & Zuivel', minTemp:0, maxTemp:5, bewaartype:'gekoeld'},
+    {id:'ee_003', naam:'Vriezer – Reservevoorraad', minTemp:-25, maxTemp:-18, bewaartype:'diepvries'},
+    {id:'ee_004', naam:'Drankkoeling – Bar', minTemp:2, maxTemp:8, bewaartype:'gekoeld'},
   ];
 
-  // Helper: meting aanmaken
-  const m = (id,datum,tijd,eId,eNaam,temp,norm,afwijking,maatregel,naam) => ({
-    id, datum, tijd, eenheidId:eId, eenheidNaam:eNaam, temperatuur:temp, norm, afwijking:!!afwijking,
-    maatregel:maatregel||'', gemeten_door:naam||'Jan', medewerker:naam||'Jan'
-  });
+  const vandaag = new Date().toISOString().split('T')[0];
+  const d = (offset) => {
+    const dt = new Date(); dt.setDate(dt.getDate() - offset);
+    return dt.toISOString().split('T')[0];
+  };
 
   const haccp_koeling = [
-    // 09 juni — normaal
-    m('hm_001','2026-06-09','07:20','he_001','Koelcel 1 — Vlees & Mise en place',3.9,5,false,'','Jan'),
-    m('hm_002','2026-06-09','07:20','he_002','Koelcel 2 — Vis & Zuivel',2.2,4,false,'','Jan'),
-    m('hm_003','2026-06-09','07:20','he_003','Vriezer — Diepvries voorraad',-20.1,-18,false,'','Jan'),
-    m('hm_004','2026-06-09','07:20','he_004','Bar koeling — Drankjes',5.8,8,false,'','Ahmed'),
-    // 10 juni — normaal
-    m('hm_005','2026-06-10','07:15','he_001','Koelcel 1 — Vlees & Mise en place',4.1,5,false,'','Jan'),
-    m('hm_006','2026-06-10','07:15','he_002','Koelcel 2 — Vis & Zuivel',1.8,4,false,'','Jan'),
-    m('hm_007','2026-06-10','07:15','he_003','Vriezer — Diepvries voorraad',-19.5,-18,false,'','Jan'),
-    m('hm_008','2026-06-10','07:15','he_004','Bar koeling — Drankjes',6.2,8,false,'','Ahmed'),
-    // 11 juni — koelcel 2 afwijking (vis te warm)
-    m('hm_009','2026-06-11','07:10','he_001','Koelcel 1 — Vlees & Mise en place',4.2,5,false,'','Jan'),
-    m('hm_010','2026-06-11','07:10','he_002','Koelcel 2 — Vis & Zuivel',6.8,4,true,'Temperatuur te hoog. Deur stond op kier (leverancier bezoek gisteren). Direct gecorrigeerd, deur goed dicht gedaan. 1 uur later hermeting: 3.2°C. Zalm en vis gecontroleerd, ijs toegevoegd, nog goed.','Jan'),
-    m('hm_011','2026-06-11','07:10','he_003','Vriezer — Diepvries voorraad',-18.8,-18,false,'','Jan'),
-    m('hm_012','2026-06-11','08:15','he_002','Koelcel 2 — Vis & Zuivel',3.2,4,false,'Hermeting na correctie: OK','Jan'),
-    // 12 juni — normaal
-    m('hm_013','2026-06-12','07:20','he_001','Koelcel 1 — Vlees & Mise en place',3.6,5,false,'','Ahmed'),
-    m('hm_014','2026-06-12','07:20','he_002','Koelcel 2 — Vis & Zuivel',2.9,4,false,'','Ahmed'),
-    m('hm_015','2026-06-12','07:20','he_003','Vriezer — Diepvries voorraad',-19.8,-18,false,'','Ahmed'),
-    m('hm_016','2026-06-12','07:20','he_004','Bar koeling — Drankjes',5.5,8,false,'','Ahmed'),
-    // 13 juni — normaal
-    m('hm_017','2026-06-13','07:15','he_001','Koelcel 1 — Vlees & Mise en place',4.0,5,false,'','Jan'),
-    m('hm_018','2026-06-13','07:15','he_002','Koelcel 2 — Vis & Zuivel',2.5,4,false,'','Jan'),
-    m('hm_019','2026-06-13','07:15','he_003','Vriezer — Diepvries voorraad',-20.2,-18,false,'','Jan'),
-    m('hm_020','2026-06-13','07:15','he_004','Bar koeling — Drankjes',6.8,8,false,'','Ahmed'),
-    // 14 juni — normaal
-    m('hm_021','2026-06-14','07:15','he_001','Koelcel 1 — Vlees & Mise en place',3.8,5,false,'','Jan'),
-    m('hm_022','2026-06-14','07:15','he_002','Koelcel 2 — Vis & Zuivel',2.1,4,false,'','Jan'),
-    m('hm_023','2026-06-14','07:15','he_003','Vriezer — Diepvries voorraad',-19.2,-18,false,'','Jan'),
-    m('hm_024','2026-06-14','07:15','he_004','Bar koeling — Drankjes',5.9,8,false,'','Ahmed'),
-    // 15 juni VANDAAG — vriezer AFWIJKING (kritiek)
-    m('hm_025','2026-06-15','07:15','he_001','Koelcel 1 — Vlees & Mise en place',4.2,5,false,'','Jan'),
-    m('hm_026','2026-06-15','07:15','he_002','Koelcel 2 — Vis & Zuivel',2.1,4,false,'','Jan'),
-    m('hm_027','2026-06-15','07:15','he_003','Vriezer — Diepvries voorraad',-14.3,-18,true,'Motor gecontroleerd. Condensorplaten stof vrij gemaakt. Deur zat goed dicht. Technicus KoelService BV gebeld (tel: 020-4441122), afspraak vrijdag 19 juni. Inhoud gecontroleerd: 3kg ribeye, fond, ijs — nog bevroren. Vriezer in de gaten houden.','Jan'),
-    m('hm_028','2026-06-15','07:15','he_004','Bar koeling — Drankjes',6.1,8,false,'','Ahmed'),
+    // Vandaag — Koelcel 1 OK, Koelcel 2 AFWIJKING eerder hersteld, Vriezer OK, Bar OK
+    {id:'m_v01', eenheidId:'ee_001', datum:vandaag, tijd:'07:30', temp:3.8, medewerker:'Yildiz', opmerking:''},
+    {id:'m_v02', eenheidId:'ee_002', datum:vandaag, tijd:'07:30', temp:6.2, medewerker:'Omar', opmerking:'Deur niet goed dicht na levering — gecorrigeerd 08:15'},
+    {id:'m_v03', eenheidId:'ee_002', datum:vandaag, tijd:'08:30', temp:3.1, medewerker:'Omar', opmerking:'Herstelcontrole na correctie — OK'},
+    {id:'m_v04', eenheidId:'ee_003', datum:vandaag, tijd:'07:30', temp:-19.2, medewerker:'Yildiz', opmerking:''},
+    {id:'m_v05', eenheidId:'ee_004', datum:vandaag, tijd:'07:30', temp:5.8, medewerker:'Fatima', opmerking:''},
+    // Gisteren — alles normaal
+    {id:'m_g01', eenheidId:'ee_001', datum:d(1), tijd:'07:30', temp:3.5, medewerker:'Omar', opmerking:''},
+    {id:'m_g02', eenheidId:'ee_002', datum:d(1), tijd:'07:30', temp:3.8, medewerker:'Omar', opmerking:''},
+    {id:'m_g03', eenheidId:'ee_003', datum:d(1), tijd:'07:30', temp:-20.1, medewerker:'Yildiz', opmerking:''},
+    {id:'m_g04', eenheidId:'ee_004', datum:d(1), tijd:'07:30', temp:4.9, medewerker:'Fatima', opmerking:''},
+    // 2 dagen geleden
+    {id:'m_d01', eenheidId:'ee_001', datum:d(2), tijd:'07:30', temp:4.1, medewerker:'Yildiz', opmerking:''},
+    {id:'m_d02', eenheidId:'ee_002', datum:d(2), tijd:'07:30', temp:4.2, medewerker:'Omar', opmerking:''},
+    {id:'m_d03', eenheidId:'ee_003', datum:d(2), tijd:'07:30', temp:-18.8, medewerker:'Yildiz', opmerking:''},
+    {id:'m_d04', eenheidId:'ee_004', datum:d(2), tijd:'07:30', temp:5.2, medewerker:'Fatima', opmerking:''},
+    // 3 dagen geleden
+    {id:'m_e01', eenheidId:'ee_001', datum:d(3), tijd:'07:30', temp:3.9, medewerker:'Omar', opmerking:''},
+    {id:'m_e02', eenheidId:'ee_002', datum:d(3), tijd:'07:30', temp:3.6, medewerker:'Omar', opmerking:''},
+    {id:'m_e03', eenheidId:'ee_003', datum:d(3), tijd:'07:30', temp:-19.4, medewerker:'Yildiz', opmerking:''},
+    {id:'m_e04', eenheidId:'ee_004', datum:d(3), tijd:'07:30', temp:6.1, medewerker:'Fatima', opmerking:''},
+    // 4 dagen geleden
+    {id:'m_f01', eenheidId:'ee_001', datum:d(4), tijd:'07:30', temp:4.0, medewerker:'Yildiz', opmerking:''},
+    {id:'m_f02', eenheidId:'ee_002', datum:d(4), tijd:'07:30', temp:3.5, medewerker:'Omar', opmerking:''},
+    {id:'m_f03', eenheidId:'ee_003', datum:d(4), tijd:'07:30', temp:-19.9, medewerker:'Yildiz', opmerking:''},
   ];
 
   const haccp_afwijkingen = [
-    {
-      id:'haf_001', datum:'2026-06-11', type:'Temperatuurafwijking Koelcel 2 — Vis/Zuivel',
-      waarde:'+6.8°C (norm: max 4°C)', status:'gesloten', bron:'meting',
-      maatregel:'Deur stond op kier na leverancierbezoek. Direct gecorrigeerd. Hermeting 08:15: 3.2°C OK. Zalm en vis gecontroleerd (kleur, geur, textuur): alles akkoord. Ijs toegevoegd als voorzorgsmaatregel.', medewerker:'Jan'
-    },
-    {
-      id:'haf_002', datum:'2026-06-15', type:'Temperatuurafwijking Vriezer',
-      waarde:'-14.3°C (norm: max -18°C)', status:'open', bron:'meting',
-      maatregel:'Motor gecontroleerd. Condensorplaten schoongemaakt. Deur intact. Technicus KoelService BV gebeld — afspraak vrijdag 19 juni. Inhoud gecontroleerd: alles nog bevroren. Continue monitoring.', medewerker:'Jan'
-    },
-    {
-      id:'haf_003', datum:'2026-06-03', type:'Kerntemperatuur afwijking — Kipfilet',
-      waarde:'71°C gemeten (norm: min 75°C)', status:'gesloten', bron:'kerntemperatuur-check',
-      maatregel:'Bordje teruggestuurd naar keuken. Kip 3 min terug op hoge hitte. Hermeting: 78°C OK. Kok (nieuw) geïnstrueerd over kerntemperatuur-eis kip. Procedure opgehangen bij het fornuis.', medewerker:'Marco'
-    },
+    {id:'afw_001', datum:vandaag, type:'Koelcel 2 – Dips & Zuivel te warm', waarde:'6,2°C (norm 0-5°C)',
+     maatregel:'Deur gecorrigeerd en afgeplakt. Herstelcontrole om 08:30 → 3,1°C OK.',
+     medewerker:'Omar', status:'gesloten', bron:'meting'},
+    {id:'afw_002', datum:d(8), type:'Kip kerntemperatuur te laag', waarde:'68°C (norm ≥75°C)',
+     maatregel:'Kip teruggestuurd naar keuken, opnieuw gegaard tot 76°C. Chef geïnstrueerd.',
+     medewerker:'Yildiz', status:'gesloten', bron:'handmatig'},
   ];
 
   // ══════════════════════════════════════════════════════
-  //  3 INKOPEN — Hanos, Bidfood, Delhaize Pro
+  //  4 FACTUREN — 3 leveranciers
   // ══════════════════════════════════════════════════════
   const inkopen = [
     {
-      id:'ink_001', leverancier:'HANOS', datum:'2026-06-10', factuurNr:'H-2026-089234',
+      id:'ink_001', factuurNr:'SOL-2026-04821', leverancier:'Solisco BV',
+      datum:'2026-06-12', bedrag:643.20, btwPerc:9,
       regels:[
-        {product:'Ribeye Black Angus 4-5kg', hoeveelheid:8, eenheid:'kg', prijs_per_eenheid:28.50, totaal:228.00},
-        {product:'Zalm Atlantic portie 180g', hoeveelheid:40, eenheid:'stuk', prijs_per_eenheid:4.20, totaal:168.00},
-        {product:'Kipfilet zonder vel', hoeveelheid:5, eenheid:'kg', prijs_per_eenheid:8.90, totaal:44.50},
-        {product:'Risotto rijst Carnaroli 5kg', hoeveelheid:2, eenheid:'pak', prijs_per_eenheid:22.80, totaal:45.60},
-        {product:'Olijfolie extra vierge 5L', hoeveelheid:3, eenheid:'fl', prijs_per_eenheid:18.50, totaal:55.50},
-        {product:'Pijnboompitten 1kg', hoeveelheid:1, eenheid:'kg', prijs_per_eenheid:32.00, totaal:32.00},
-        {product:'Mozzarella di Bufala 125g', hoeveelheid:24, eenheid:'stuk', prijs_per_eenheid:2.80, totaal:67.20},
-        {product:'Cherry tomaten 500g', hoeveelheid:12, eenheid:'bakje', prijs_per_eenheid:2.40, totaal:28.80},
-        {product:'Basilicum vers 100g', hoeveelheid:8, eenheid:'pak', prijs_per_eenheid:1.90, totaal:15.20},
-        {product:'Parmezaan geraspt 1kg', hoeveelheid:2, eenheid:'kg', prijs_per_eenheid:16.80, totaal:33.60},
-        {product:'Kipfilet', hoeveelheid:5, eenheid:'kg', prijs_per_eenheid:8.90, totaal:44.50},
-        {product:'Haricots verts fijn 1kg', hoeveelheid:6, eenheid:'kg', prijs_per_eenheid:4.80, totaal:28.80},
-        {product:'Slagroom 35% 1L', hoeveelheid:6, eenheid:'L', prijs_per_eenheid:2.90, totaal:17.40},
-        {product:'Mascarpone 500g', hoeveelheid:4, eenheid:'stuk', prijs_per_eenheid:4.25, totaal:17.00},
-      ],
-      totaalExBTW:826.60, btwBedrag:66.13, totaalIncBTW:892.73
+        {product:'Lamrack', hoeveelheid:12, eenheid:'rack', prijs_per_eenheid:18.50, totaal:222.00},
+        {product:'Merguez (pak 10 stuks)', hoeveelheid:6, eenheid:'pak', prijs_per_eenheid:8.20, totaal:49.20},
+        {product:'Tahini (500g pot)', hoeveelheid:10, eenheid:'pot', prijs_per_eenheid:4.50, totaal:45.00},
+        {product:'Za\'atar', hoeveelheid:5, eenheid:'pot', prijs_per_eenheid:4.80, totaal:24.00},
+        {product:'Granaatappelmelasse', hoeveelheid:8, eenheid:'fl', prijs_per_eenheid:6.20, totaal:49.60},
+        {product:'Olijfolie extra vergine', hoeveelheid:6, eenheid:'L', prijs_per_eenheid:14.50, totaal:87.00},
+        {product:'Platbrood (pitta)', hoeveelheid:120, eenheid:'stuk', prijs_per_eenheid:0.45, totaal:54.00},
+        {product:'Sumak', hoeveelheid:4, eenheid:'pot', prijs_per_eenheid:3.40, totaal:13.60},
+      ]
     },
     {
-      id:'ink_002', leverancier:'Bidfood', datum:'2026-06-09', factuurNr:'BF-2026-44821',
+      id:'ink_002', factuurNr:'SOL-2026-04102', leverancier:'Solisco BV',
+      datum:'2026-05-28', bedrag:589.80, btwPerc:9,
       regels:[
-        {product:'Tonijn steak vers sashimi 200g', hoeveelheid:12, eenheid:'stuk', prijs_per_eenheid:7.60, totaal:91.20},
-        {product:'Prosciutto di Parma gesneden 100g', hoeveelheid:8, eenheid:'pak', prijs_per_eenheid:4.20, totaal:33.60},
-        {product:'Burrata 125g', hoeveelheid:10, eenheid:'stuk', prijs_per_eenheid:3.20, totaal:32.00},
-        {product:'Gruyère blok 1kg', hoeveelheid:2, eenheid:'kg', prijs_per_eenheid:18.50, totaal:37.00},
-        {product:'Shiitake vers 500g', hoeveelheid:4, eenheid:'pak', prijs_per_eenheid:5.75, totaal:23.00},
-        {product:'Gedroogde porcini 100g', hoeveelheid:5, eenheid:'pak', prijs_per_eenheid:8.20, totaal:41.00},
-        {product:'Aceto balsamico vecchio 8jr', hoeveelheid:2, eenheid:'fl', prijs_per_eenheid:24.50, totaal:49.00},
-        {product:'Fleur de sel 500g', hoeveelheid:3, eenheid:'pot', prijs_per_eenheid:8.90, totaal:26.70},
-      ],
-      totaalExBTW:333.50, btwBedrag:26.68, totaalIncBTW:360.18
+        {product:'Lamrack', hoeveelheid:10, eenheid:'rack', prijs_per_eenheid:16.80, totaal:168.00},
+        {product:'Tahini (500g pot)', hoeveelheid:8, eenheid:'pot', prijs_per_eenheid:3.80, totaal:30.40},
+        {product:'Olijfolie extra vergine', hoeveelheid:6, eenheid:'L', prijs_per_eenheid:13.80, totaal:82.80},
+        {product:'Merguez (pak 10 stuks)', hoeveelheid:8, eenheid:'pak', prijs_per_eenheid:7.60, totaal:60.80},
+        {product:'Platbrood (pitta)', hoeveelheid:100, eenheid:'stuk', prijs_per_eenheid:0.45, totaal:45.00},
+      ]
     },
     {
-      id:'ink_003', leverancier:'Delhaize Pro', datum:'2026-06-08', factuurNr:'DP-2026-7731',
+      id:'ink_003', factuurNr:'AF-2026-1244', leverancier:'Amsterdam Fresh Markets',
+      datum:'2026-06-13', bedrag:187.60, btwPerc:9,
       regels:[
-        {product:'Truffelboter 500g', hoeveelheid:3, eenheid:'stuk', prijs_per_eenheid:22.50, totaal:67.50},
-        {product:'Vanillepeulen Madagascar (10st)', hoeveelheid:2, eenheid:'pak', prijs_per_eenheid:18.90, totaal:37.80},
-        {product:'Amaretto 70cl', hoeveelheid:1, eenheid:'fl', prijs_per_eenheid:14.50, totaal:14.50},
-        {product:'Cognac VSOP 70cl', hoeveelheid:1, eenheid:'fl', prijs_per_eenheid:28.00, totaal:28.00},
-        {product:'Olijven kalamata (ontpit) 1kg', hoeveelheid:2, eenheid:'pot', prijs_per_eenheid:6.80, totaal:13.60},
-      ],
-      totaalExBTW:161.40, btwBedrag:12.91, totaalIncBTW:174.31
+        {product:'Aubergine', hoeveelheid:30, eenheid:'stuk', prijs_per_eenheid:1.20, totaal:36.00},
+        {product:'Komkommer', hoeveelheid:40, eenheid:'stuk', prijs_per_eenheid:0.65, totaal:26.00},
+        {product:'Cherry tomaten', hoeveelheid:15, eenheid:'bakje', prijs_per_eenheid:2.80, totaal:42.00},
+        {product:'Verse munt', hoeveelheid:20, eenheid:'pak', prijs_per_eenheid:1.10, totaal:22.00},
+        {product:'Verse peterselie', hoeveelheid:25, eenheid:'pak', prijs_per_eenheid:0.90, totaal:22.50},
+        {product:'Kip dijfilet zonder vel', hoeveelheid:5, eenheid:'kg', prijs_per_eenheid:7.40, totaal:37.00},
+      ]
     },
-    // Hanos vorige bestelling 2 weken terug (voor prijstrend)
     {
-      id:'ink_004', leverancier:'HANOS', datum:'2026-05-27', factuurNr:'H-2026-082117',
+      id:'ink_004', factuurNr:'KV-2026-8821', leverancier:'Kaasboerderij De Velden',
+      datum:'2026-06-11', bedrag:296.40, btwPerc:9,
       regels:[
-        {product:'Ribeye Black Angus 4-5kg', hoeveelheid:6, eenheid:'kg', prijs_per_eenheid:27.80, totaal:166.80},
-        {product:'Zalm Atlantic portie 180g', hoeveelheid:35, eenheid:'stuk', prijs_per_eenheid:3.95, totaal:138.25},
-        {product:'Risotto rijst Carnaroli 5kg', hoeveelheid:2, eenheid:'pak', prijs_per_eenheid:21.50, totaal:43.00},
-        {product:'Olijfolie extra vierge 5L', hoeveelheid:2, eenheid:'fl', prijs_per_eenheid:17.80, totaal:35.60},
-        {product:'Pijnboompitten 1kg', hoeveelheid:1, eenheid:'kg', prijs_per_eenheid:29.50, totaal:29.50},
-        {product:'Parmezaan geraspt 1kg', hoeveelheid:2, eenheid:'kg', prijs_per_eenheid:16.20, totaal:32.40},
-      ],
-      totaalExBTW:445.55, btwBedrag:35.64, totaalIncBTW:481.19
+        {product:'Halloumi (250g)', hoeveelheid:24, eenheid:'stuk', prijs_per_eenheid:4.20, totaal:100.80},
+        {product:'Labneh (400g pot)', hoeveelheid:18, eenheid:'pot', prijs_per_eenheid:3.60, totaal:64.80},
+        {product:'Feta (blok, Grieks)', hoeveelheid:8, eenheid:'kg', prijs_per_eenheid:9.80, totaal:78.40},
+        {product:'Slagroom 35%', hoeveelheid:6, eenheid:'L', prijs_per_eenheid:2.80, totaal:16.80},
+      ]
     },
   ];
 
   // ══════════════════════════════════════════════════════
-  //  14 PRODUCTEN — voorraad met niveaus
+  //  14 PRODUCTEN — voorraad
   // ══════════════════════════════════════════════════════
   const producten = [
-    {id:'prd_001', naam:'Ribeye Black Angus', categorie:'Vlees', eenheid:'kg', inkoopprijs:28.50, voorraad:3.5, minVoorraad:2.0, leverancier:'HANOS', thwDatum:'2026-06-17'},
-    {id:'prd_002', naam:'Zalm Atlantic portie', categorie:'Vis', eenheid:'stuk', inkoopprijs:4.20, voorraad:22, minVoorraad:10, leverancier:'HANOS', thwDatum:'2026-06-16'},
-    {id:'prd_003', naam:'Tonijn steak vers', categorie:'Vis', eenheid:'stuk', inkoopprijs:7.60, voorraad:8, minVoorraad:5, leverancier:'Bidfood', thwDatum:'2026-06-16'},
-    {id:'prd_004', naam:'Kipfilet zonder vel', categorie:'Vlees', eenheid:'kg', inkoopprijs:8.90, voorraad:2.8, minVoorraad:2.0, leverancier:'HANOS', thwDatum:'2026-06-18'},
-    {id:'prd_005', naam:'Mozzarella di Bufala', categorie:'Zuivel', eenheid:'stuk', inkoopprijs:2.80, voorraad:14, minVoorraad:6, leverancier:'HANOS', thwDatum:'2026-06-18'},
-    {id:'prd_006', naam:'Burrata', categorie:'Zuivel', eenheid:'stuk', inkoopprijs:3.20, voorraad:4, minVoorraad:4, leverancier:'Bidfood', thwDatum:'2026-06-14', laagVoorraad:true},
-    {id:'prd_007', naam:'Truffelboter', categorie:'Zuivel', eenheid:'stuk (500g)', inkoopprijs:22.50, voorraad:1.5, minVoorraad:1, leverancier:'Delhaize Pro', thwDatum:'2026-06-30'},
-    {id:'prd_008', naam:'Prosciutto di Parma', categorie:'Vlees', eenheid:'pak (100g)', inkoopprijs:4.20, voorraad:6, minVoorraad:4, leverancier:'Bidfood', thwDatum:'2026-06-20'},
-    {id:'prd_009', naam:'Cherry tomaten gemengd', categorie:'Groenten', eenheid:'bakje', inkoopprijs:2.40, voorraad:9, minVoorraad:4, leverancier:'HANOS', thwDatum:'2026-06-17'},
-    {id:'prd_010', naam:'Pijnboompitten', categorie:'Noten', eenheid:'kg', inkoopprijs:32.00, voorraad:0.6, minVoorraad:0.5, leverancier:'HANOS', thwDatum:'2026-08-01'},
-    {id:'prd_011', naam:'Risotto rijst Carnaroli', categorie:'Droogwaren', eenheid:'pak (5kg)', inkoopprijs:22.80, voorraad:1.5, minVoorraad:1, leverancier:'HANOS', thwDatum:'2027-01-01'},
-    {id:'prd_012', naam:'Mascarpone', categorie:'Zuivel', eenheid:'kg', inkoopprijs:8.50, voorraad:2.0, minVoorraad:0.5, leverancier:'HANOS', thwDatum:'2026-06-20'},
-    {id:'prd_013', naam:'Parmezaan geraspt DOP', categorie:'Zuivel', eenheid:'kg', inkoopprijs:16.80, voorraad:1.2, minVoorraad:1.0, leverancier:'HANOS', thwDatum:'2026-07-10'},
-    {id:'prd_014', naam:'Olijfolie extra vierge', categorie:'Olie', eenheid:'fl (5L)', inkoopprijs:18.50, voorraad:1.2, minVoorraad:1, leverancier:'HANOS', thwDatum:'2027-03-01'},
+    {id:'prd_001', naam:'Lamrack', categorie:'Vlees', eenheid:'rack', inkoopprijs:18.50, voorraad:6, minVoorraad:8, leverancier:'Solisco BV', bewaartype:'gekoeld', tgt_of_tht:'tgt'},
+    {id:'prd_002', naam:'Kip dijfilet zonder vel', categorie:'Vlees', eenheid:'kg', inkoopprijs:7.40, voorraad:4.2, minVoorraad:3, leverancier:'Amsterdam Fresh Markets', bewaartype:'gekoeld', tgt_of_tht:'tgt'},
+    {id:'prd_003', naam:'Merguez (pak 10 stuks)', categorie:'Vlees', eenheid:'pak', inkoopprijs:8.20, voorraad:3, minVoorraad:2, leverancier:'Solisco BV', bewaartype:'gekoeld', tgt_of_tht:'tgt'},
+    {id:'prd_004', naam:'Tahini (500g pot)', categorie:'Droog', eenheid:'pot', inkoopprijs:4.50, voorraad:2, minVoorraad:3, leverancier:'Dirk Groothandel', bewaartype:'kamertemperatuur', tgt_of_tht:'tht'},
+    {id:'prd_005', naam:'Labneh (400g pot)', categorie:'Zuivel', eenheid:'pot', inkoopprijs:3.60, voorraad:5, minVoorraad:4, leverancier:'Kaasboerderij De Velden', bewaartype:'gekoeld', tgt_of_tht:'tgt'},
+    {id:'prd_006', naam:'Halloumi (250g)', categorie:'Zuivel', eenheid:'stuk', inkoopprijs:4.20, voorraad:12, minVoorraad:6, leverancier:'Kaasboerderij De Velden', bewaartype:'gekoeld', tgt_of_tht:'tgt'},
+    {id:'prd_007', naam:'Aubergine', categorie:'Groenten', eenheid:'stuk', inkoopprijs:1.20, voorraad:18, minVoorraad:10, leverancier:'Amsterdam Fresh Markets', bewaartype:'kamertemperatuur', tgt_of_tht:'tht'},
+    {id:'prd_008', naam:'Granaatappelmelasse', categorie:'Droog', eenheid:'fl', inkoopprijs:6.20, voorraad:1, minVoorraad:2, leverancier:'Solisco BV', bewaartype:'kamertemperatuur', tgt_of_tht:'tht'},
+    {id:'prd_009', naam:'Olijfolie extra vergine', categorie:'Overig', eenheid:'L', inkoopprijs:14.50, voorraad:4.5, minVoorraad:3, leverancier:'Solisco BV', bewaartype:'kamertemperatuur', tgt_of_tht:'tht'},
+    {id:'prd_010', naam:'Platbrood (pitta)', categorie:'Droog', eenheid:'stuk', inkoopprijs:0.45, voorraad:85, minVoorraad:40, leverancier:'Solisco BV', bewaartype:'kamertemperatuur', tgt_of_tht:'tht'},
+    {id:'prd_011', naam:'Couscous', categorie:'Droog', eenheid:'kg', inkoopprijs:1.80, voorraad:6, minVoorraad:3, leverancier:'Dirk Groothandel', bewaartype:'kamertemperatuur', tgt_of_tht:'tht'},
+    {id:'prd_012', naam:'Kikkererwten (blik)', categorie:'Droog', eenheid:'blik', inkoopprijs:1.10, voorraad:22, minVoorraad:10, leverancier:'Dirk Groothandel', bewaartype:'kamertemperatuur', tgt_of_tht:'tht'},
+    {id:'prd_013', naam:'Verse munt', categorie:'Kruiden', eenheid:'pak', inkoopprijs:1.10, voorraad:8, minVoorraad:5, leverancier:'Amsterdam Fresh Markets', bewaartype:'gekoeld', tgt_of_tht:'tgt'},
+    {id:'prd_014', naam:'Feta (blok, Grieks)', categorie:'Zuivel', eenheid:'kg', inkoopprijs:9.80, voorraad:3.2, minVoorraad:2, leverancier:'Kaasboerderij De Velden', bewaartype:'gekoeld', tgt_of_tht:'tgt'},
   ];
 
   // ══════════════════════════════════════════════════════
-  //  CATERING EVENTS
+  //  2 EVENTS — Yildiz catering
   // ══════════════════════════════════════════════════════
   const events = [
     {
-      id:'evt_001', naam:'Bruiloft Familie Bakker-Smit', datum:'2026-09-28', personen:80,
-      locatie:'De Gouden Lepel (eigen zaak + tijdelijke uitbreiding)', status:'bevestigd', aanbetaling:1200,
-      menu:{
-        starters:[{naam:'Caprese salade', perPersoon:true}],
-        hoofdgerechten:[
-          {naam:'Ribeye Black Angus 300g', aantal:40},
-          {naam:'Zalm op risotto met gremolata', aantal:40},
-        ],
-        desserts:[{naam:'Crème brûlée klassiek', perPersoon:true}, {naam:'Tiramisu di casa', perPersoon:true, keuze:true}],
-      },
-      opmerkingen:'1 gast lactose-intolerantie (melding van bruid). Tafelschikking 8 tafels van 10. DJ aanwezig, diner om 18:30, service door 4 man (inhuurkracht). Veggie optie voor 5 personen.'
+      id:'evt_001', type:'privédiner', status:'Bevestigd',
+      datum:'2026-08-22', aanvang:'18:30', einde:'23:00',
+      aantalPersonen:40, aantalKinderen:3,
+      locatie:'Zest by Yildiz (eigen restaurant)',
+      klant:{naam:'Familie Özcan', bedrijf:'', telefoon:'06-21445566',
+             email:'selma@ozcan.nl', aanspreekpunt:'Selma Özcan', factuurNaam:'Özcan'},
+      menu:[
+        {gang:'voorgerecht', titel:'Uitgebreide mezze tafel'},
+        {gang:'hoofdgerecht', titel:'Lam rack met bulgur tabbouleh (35 pers) + Mutabbal als vega optie (5 pers)'},
+        {gang:'dessert', titel:'Baklava & muhallebi assortiment'},
+      ],
+      dranken:[{omschrijving:'Huiswijn (wit/rood/rosé), frisdranken, koffie'}],
+      tijdlijn:[{tijd:'17:30',taak:'Mise-en-place klaar'},{tijd:'18:30',taak:'Gasten ontvangst + mezze op tafel'},{tijd:'20:00',taak:'Hoofdgerecht service'},{tijd:'21:30',taak:'Dessert + koffie'}],
+      dieetwensen:['5x vegetarisch (mutabbal + extra mezze)', '2x glutenvrij (geen platbrood)', '1x noten-allergie (geen baklava, alternatief muhallebi zonder pistache)'],
+      bijzonderheden:'Familiefeest 40e verjaardag Selma. Decoratie door familie zelf. Microfoon beschikbaar voor speeches. Aanbetaling €600 ontvangen.',
+      notities:'Let op: noten-allergie aanwezig! Baklava apart houden, pistache-vrije muhallebi apart maken.',
+      prijsPerPersoon:55, drankenPrijsPP:15, zaalhuur:0, aanbetaling:600, aanbetalingBetaald:true,
+      bijgewerkt:new Date().toISOString()
     },
     {
-      id:'evt_002', naam:'Bedrijfsborrel TechStart BV', datum:'2026-10-04', personen:40,
-      locatie:'De Gouden Lepel (borrelruimte)', status:'offerte verstuurd', aanbetaling:0,
-      menu:{
-        borrelhapjes:['Crostini met tapenade','Burrata minibollen','Prosciutto op meloen','Caprese skewers','Bitterballen (extern)'],
-      },
-      opmerkingen:'Vegetarische optie voor ±30% gasten. Glutenvrij verzoek voor 2 gasten. Budget max €45 per persoon excl. dranken.'
+      id:'evt_002', type:'bedrijfsfeest', status:'Concept',
+      datum:'2026-09-18', aanvang:'19:00', einde:'23:30',
+      aantalPersonen:20, aantalKinderen:0,
+      locatie:'Zest by Yildiz (eigen restaurant)',
+      klant:{naam:'Urban Chefs Collectief', bedrijf:'Urban Chefs BV', telefoon:'06-88001234',
+             email:'info@urbanchefs.nl', aanspreekpunt:'Daan Rikken', factuurNaam:'Urban Chefs BV'},
+      menu:[
+        {gang:'amuse', titel:'Hummus royale met verse pitacroutons'},
+        {gang:'voorgerecht', titel:'Fattoush salade + labneh za\'atar'},
+        {gang:'hoofdgerecht', titel:'Mutabbal als warm gerecht + merguez voor niet-vegetariërs'},
+        {gang:'kaas', titel:'Feta & halloumi plank met honing en druiven'},
+        {gang:'dessert', titel:'Muhallebi met pistache'},
+      ],
+      dranken:[{omschrijving:'Wijnproeverij (3 wijnen Mediterraan), mineralenwater'}],
+      tijdlijn:[{tijd:'18:30',taak:'Setup + mise-en-place'},{tijd:'19:00',taak:'Welkomstdrankje + amuse'},{tijd:'19:30',taak:'Salade & labneh'},{tijd:'20:30',taak:'Warm hoofdgerecht'},{tijd:'21:30',taak:'Kaasplank'},{tijd:'22:15',taak:'Dessert + koffie'}],
+      dieetwensen:['Volledig vegetarisch gewenst (maar 4 personen eten vlees, merguez als optie)','1x lactose-intolerant (geen labneh, geen feta, geen halloumi)'],
+      bijzonderheden:'Kookcollectief — gasten zijn foodprofessionals. Kwaliteit boven kwantiteit. Interesse in herkomst producten (Solisco, De Velden vertellen).',
+      notities:'Concept — offerte nog sturen. Budget €75pp excl. dranken.',
+      prijsPerPersoon:75, drankenPrijsPP:22, zaalhuur:0, aanbetaling:0, aanbetalingBetaald:false,
+      bijgewerkt:new Date().toISOString()
     },
   ];
 
-  localStorage.setItem('klaar_recipes',           JSON.stringify(recepten));
+  localStorage.setItem('klaar_recipes',          JSON.stringify(recepten));
   localStorage.setItem('klaar_ingredienten',       JSON.stringify(ingredienten));
-  localStorage.setItem('klaar_haccp_eenheden',     JSON.stringify(haccp_eenheden));
+  localStorage.setItem('klaar_haccp_koeleenheden', JSON.stringify(haccp_eenheden));
   localStorage.setItem('klaar_haccp_koeling',      JSON.stringify(haccp_koeling));
   localStorage.setItem('klaar_haccp_afwijkingen',  JSON.stringify(haccp_afwijkingen));
   localStorage.setItem('klaar_inkopen',            JSON.stringify(inkopen));
   localStorage.setItem('klaar_producten',          JSON.stringify(producten));
   localStorage.setItem('klaar_events',             JSON.stringify(events));
 
+  // Prijsalert: tahini +18% (€3.80→€4.50) en lamrack +10% (€16.80→€18.50) — beide triggeren ≥5% drempel
+  const prijsAlerts = [
+    { naam:'Tahini (500g pot)', oud:3.80, nieuw:4.50, pct:18, ernst:'oranje', datum:new Date().toISOString(), gelezen:false },
+    { naam:'Lamrack', oud:16.80, nieuw:18.50, pct:10, ernst:'oranje', datum:new Date().toISOString(), gelezen:false },
+  ];
+  localStorage.setItem('klaar_prijsalerts', JSON.stringify(prijsAlerts));
+
   document.getElementById('seedStatus').textContent =
     `✓ ${recepten.length} recepten · ${ingredienten.length} ingrediënten · ${haccp_koeling.length} HACCP-metingen (${haccp_afwijkingen.length} afwijkingen) · ${inkopen.length} facturen · ${producten.length} producten · ${events.length} events`;
 }
 
 function clearTestData() {
-  ['klaar_recipes','klaar_ingredienten','klaar_haccp_eenheden','klaar_haccp_koeling',
-   'klaar_haccp_afwijkingen','klaar_inkopen','klaar_producten','klaar_events'].forEach(k => localStorage.removeItem(k));
+  ['klaar_recipes','klaar_ingredienten','klaar_haccp_koeleenheden','klaar_haccp_koeling',
+   'klaar_haccp_afwijkingen','klaar_inkopen','klaar_producten','klaar_events','klaar_prijsalerts'].forEach(k => localStorage.removeItem(k));
   document.getElementById('seedStatus').textContent = '✕ Data gewist';
 }
 
@@ -846,7 +771,7 @@ function probeDB() {
     'klaar_inkopen':          'Facturen (leveranciers)',
     'klaar_producten':        'Producten/Voorraad',
     'klaar_events':           'Events/Catering',
-    'klaar_haccp_eenheden':   'HACCP Eenheden',
+    'klaar_haccp_koeleenheden': 'HACCP Eenheden',
   };
   const lines = [];
   let checks = 0;
@@ -912,7 +837,7 @@ function dbCheckForModule(module) {
       const a = safeGet('klaar_haccp_afwijkingen', []);
       const r = safeGet('klaar_recipes', []);
       const openAfwijkingen = a.filter(x => x.status === 'open');
-      return `✓ Cross-module test: ${openAfwijkingen.length} open HACCP afwijking(en) · ${r.length} recepten (ribeye in gevaar bij vriezer-afwijking)`;
+      return `✓ Cross-module test: ${openAfwijkingen.length} open HACCP afwijking(en) · ${r.length} recepten (lamrack in gevaar bij vriezer-afwijking)`;
     },
     'Cross-module: Leverancier → Kostprijs ripple': () => {
       const ink = safeGet('klaar_inkopen', []);
@@ -941,56 +866,56 @@ function safeGet(key, def) {
 // ══════════════════════════════════════════════════════
 
 const MARCO_DATA = `
-RESTAURANT: Bistro De Gouden Lepel, Amsterdam Pijp. 45 couverts, open di-zo, 8 FTE.
-Team: Marco Visser (44, chef-eigenaar), Ahmed Oussama (32, sous-chef, doet avondmetingen 18:00),
-Jan de Vries (52, commis-kok, doet ochtendronde 07:15 HACCP, moeite met smartphone),
-Lisa (25, stagiaire), 3 bediening (Sarah, Tom, Nadia), 2 keukenhulpen.
-Mediterraan-Frans georiënteerd. 18 jaar horeca ervaring Marco.
+RESTAURANT: Zest by Yildiz, Amsterdam Oud-West (Bilderdijkstraat 82). 32 couverts, open wo-zo, 5 FTE.
+Team: Yildiz Demir (38, chef-eigenaar), Omar Khalil (29, sous-chef, doet HACCP-ronde 07:30),
+Fatima El Amrani (23, stagiaire, avondbediening), Lotte van Dam (27, bediening), Bas Teunissen (31, bediening).
+Levantische fusion (Turks-Arabisch-Mediterraan). 12 jaar horeca ervaring Yildiz, vorig jaar eigen zaak gestart.
+Stapt over van Excel + losse Word-documenten voor recepten en allergenen.
 
-RECENTE FACTUREN (3 leveranciers):
-• HANOS H-2026-089234 (10 jun): €892,73 incl. BTW — ribeye €28,50/kg, zalm €4,20/st, kip €8,90/kg, carnaroli €22,80/pak, olijfolie €18,50/fl, pijnboompitten €32,00/kg, mozzarella €2,80/st, tomaten €2,40/bk, basilicum €1,90/pak, parmezaan €16,80/kg, haricots verts €4,80/kg, slagroom €2,90/L, mascarpone €4,25/st
-• HANOS H-2026-082117 (27 mei): €481,19 incl. BTW — ribeye was €27,80/kg (!), zalm €3,95/st, pijnboompitten €29,50/kg → PRIJSSTIJGING zichtbaar
-• BIDFOOD BF-2026-44821 (9 jun): €360,18 — tonijn €7,60/st, prosciutto €4,20/pak, burrata €3,20/st, gruyère €18,50/kg, shiitake €5,75/pak, porcini €8,20/pak, balsamico €24,50/fl
-• DELHAIZE PRO DP-2026-7731 (8 jun): €174,31 — truffelboter €22,50/st (500g), vanillepeulen €18,90/pak, cognac €28,00/fl
+RECENTE FACTUREN (4 leveranciers):
+• Solisco BV SOL-2026-04821 (12 jun): €643,20 — lamrack €18,50/rack, merguez €8,20/pak, tahini €4,50/pot, za'atar €4,80/pot, granaatappelmelasse €6,20/fl, olijfolie €14,50/L, platbrood €0,45/stuk
+• Solisco BV SOL-2026-04102 (28 mei): €589,80 — lamrack was €16,80/rack, tahini was €3,80/pot → PRIJSSTIJGING: tahini +18%, lamrack +10%!
+• Amsterdam Fresh Markets AF-2026-1244 (13 jun): €187,60 — aubergines €1,20/stuk, komkommer €0,65, cherry tomaten €2,80/bakje, verse kruiden, kip dijfilet €7,40/kg
+• Kaasboerderij De Velden KV-2026-8821 (11 jun): €296,40 — halloumi €4,20/stuk (was €3,90), labneh €3,60/pot, feta €9,80/kg, slagroom €2,80/L
 
-VOLLEDIG MENU (in systeem, 12 recepten):
-Hoofdgerechten: Ribeye Black Angus 300g (€38,50), Zalm op risotto met gremolata (€27,50), Kipfilet Méditerranée (€22,50), Tonijn steak Niçoise (€29,50), Risotto ai funghi-V (€19,50)
-Starters: Caprese salade-V (€12,50 — pijnboompitten = N allergen!), Zalmtartaar met avocado (€14,50), Soupe à l'oignon gratinée (€11,50), Burrata met prosciutto (€13,50)
-Desserts: Crème brûlée klassiek (€8,50), Tiramisu di casa (€8,50)
-Mise en place: Aardappelgratin batch (10 porties)
+VOLLEDIG MENU (in systeem, 10 recepten):
+Starters: Mezze plank voor 2-V (€14,00), Hummus royale-V (€11,00), Labneh za'atar & honing-V (€9,00), Fattoush salade-V (€10,50)
+Hoofdgerechten: Lam rack met bulgur (€29,00), Kip shawarma plank (€22,00), Merguez met couscous (€19,00), Mutabbal aubergine dip-V (€17,00)
+Desserts: Baklava huisgemaakt-V (€7,00 p/stuk, batch 12), Muhallebi rozenwater pudding-V (€7,00)
 
-HACCP SITUATIE (vandaag 15 juni 2026):
-• Koelcel 1 – Vlees: +4,2°C → OK (norm 0-5°C) — Jan 07:15
-• Koelcel 2 – Vis/Zuivel: +2,1°C → OK (norm 0-4°C) — Jan 07:15
-• VRIEZER: -14,3°C → ❗AFWIJKING (norm max -18°C) — technicus KoelService gebeld, afspraak vr 19 jun. Inhoud: 3kg ribeye, fond, ijs.
-• Bar koeling: +6,1°C → OK (norm 2-8°C) — Ahmed 07:15
+HACCP SITUATIE (vandaag):
+• Koelcel 1 – Vlees & Vis: +3,8°C → OK (norm 0-5°C) — Yildiz 07:30
+• Koelcel 2 – Dips & Zuivel: +6,2°C → ❗AFWIJKING (norm 0-5°C) — deur niet dicht na levering. Omar gecorrigeerd 08:15 → 3,1°C OK. Afwijking GESLOTEN.
+• Vriezer – Reservevoorraad: -19,2°C → OK (norm -25 tot -18°C) — Yildiz 07:30
+• Drankkoeling – Bar: +5,8°C → OK (norm 2-8°C) — Fatima 07:30
 
-HACCP HISTORIEK (afwijkingen):
-• 11 jun: Koelcel 2 was +6,8°C (deur op kier na leverancier). Zelfde dag gecorrigeerd naar 3,2°C. Gesloten.
-• 15 jun: Vriezer -14,3°C. Open. Technicus vrijdag 19 jun.
-• 3 jun: Kipfilet kerntemperatuur 71°C (te laag). Kok teruggestuurd. Nieuwe kok geïnstrueerd.
+HACCP HISTORIEK:
+• Vandaag: Koelcel 2 tijdelijk 6,2°C (deur open na levering). Gesloten — maatregel uitgevoerd.
+• 8 dagen geleden: Kip kerntemperatuur 68°C (norm ≥75°C). Teruggestuurd, opnieuw gegaard. Gesloten.
 
-VOORRAAD ALERT:
-• Burrata: 4 stuks, min is 4 → BIJNA OP, THW 14 jun (!), bestellen urgent
-• Tonijn: 8 stuks, min is 5 → OK maar weinig buffer voor weekend
-• Pijnboompitten: 600g resterend (min 500g) → border
+VOORRAAD ALERTS:
+• Tahini: 2 potten resterend (min 3) → ONDER MINIMUM, bestellen urgent!
+• Lamrack: 6 stuks (min 8) → ONDER MINIMUM, weekend risico (zaterdag volgeboekt)
+• Granaatappelmelasse: 1 fles (min 2) → BIJNA OP
 
 KOMENDE EVENTS:
-• 28 sep 2026: Bruiloft Familie Bakker-Smit, 80 personen — caprese start, ribeye/zalm hoofd (50/50), crème brûlée/tiramisu dessert. 1 lactose-gast. 5 veggies. €1.200 aanbetaling.
-• 4 okt 2026: Bedrijfsborrel TechStart BV, 40 personen — borrelhapjes, budget €45pp excl. dranken. 30% vegetarisch, 2 glutenvrij.
+• 22 aug 2026: Familiefeest Familie Özcan, 40 personen — mezze + lam/mutabbal, baklava & muhallebi. 5 veg, 2 glutenvrij, 1 notenallergie. €55pp, aanbetaling €600 ontvangen.
+• 18 sep 2026: Urban Chefs Collectief (kookcollectief), 20 personen — 5-gangen, volledig vegetarisch. Budget €75pp excl. dranken. Concept, offerte nog sturen.
 
-OVERGANG VAN:
-• Horeko (HACCP-only) + Excel (recepten, kostprijs, allergenenlijst in Word). Geen integratie.
-• Word allergenenlijst was 2 jaar oud — NVWA opmerking april 2026.
-• Kostprijsberekening bij elke Hanos-prijswijziging opnieuw over in Excel. Tijdrovend.
-• Jan kan geen QR-codes scannen, gebruikt basistelefoon. Ahmed is wel tech-savvy.
+ALLERGEENRISICO'S:
+• SESAM (Sa): tahini (hummus, shawarma, mutabbal), za'atar (labneh, mezze) → bijna overal aanwezig!
+• MELK (M): labneh, halloumi, feta, baklava, muhallebi
+• GLUTEN (G): platbrood (pitta), couscous, fattoush croutons, baklava (filo), merguez (check leverancier!)
+• NOTEN (N): baklava (pistache + walnoot), muhallebi (pistachegarnering)
+• Mutabbal + hummus zijn glutenvrij en veganistisch zonder bijgerechten
 
-MARGES (eigen inschatting Marco):
-• Ribeye: foodcost geschat 32-34% — weet het niet precies meer
-• Zalm: foodcost misschien 28%? Niet zeker want visfond zelf gemaakt
-• Caprese: laag in foodcost% maar kleine absolute marge
-• Desserts: groot geheim — nooit echt uitgerekend
+MARGES (eigen inschatting Yildiz):
+• Lam rack: foodcost geschat 38-40% — voelt te hoog maar lamrack is duur
+• Hummus: waarschijnlijk lage foodcost maar tahini prijs gestegen — effect onbekend
+• Baklava (batch 12): noten + filo + boter — nooit precies uitgerekend
+• Kip shawarma: meest populair, marge onduidelijk
 `;
+
 
 // ══════════════════════════════════════════════════════
 //  KLAAR ASSISTENT SYSTEEM PROMPT — met volledige module kennis
@@ -998,7 +923,7 @@ MARGES (eigen inschatting Marco):
 
 const KLAAR_PROMPT = `Je bent de Klaar AI-assistent — ingebouwde hulp van Klaar horeca-software (www.getklaar.app).
 
-GEBRUIKER: Marco Visser, chef-eigenaar Bistro De Gouden Lepel Amsterdam. Stapt over van Horeko + Excel.
+GEBRUIKER: Yildiz Demir, chef-eigenaar Zest by Yildiz Amsterdam Oud-West. Levantische fusion. Stapt over van Excel + losse Word-documenten.
 ${MARCO_DATA}
 
 KLAAR MODULES — WAT ZE DOEN EN HOE:
@@ -1016,8 +941,8 @@ MODULE 01 — Recept Studio
 MODULE 02 — Allergenenkaart
   EU-14 allergenen per gerecht bijhouden.
   Twee exportformaten: Gastenkaart (A4 tabel, portrait) + Keukensheet (per gerecht met ingrediëntenlijst).
-  EU-14 codes: G=Gluten, K=Kustaceeën, E=Eieren, V=Vis, P=Pinda's, S=Soja, M=Melk, N=Noten, SE=Selderij, MO=Mosterd, SA=Sesamzaad, SO=Sulfiet, L=Lupine, WE=Weekdieren
-  BELANGRIJK: Caprese heeft N (Noten) vanwege pijnboompitten! Dit is een kritisch allergeenrisico.
+  EU-14 codes: G=Gluten, S=Schaaldieren, E=Eieren, Vi=Vis, P=Pinda's, So=Soja, M=Melk, N=Noten, Se=Selderij, Mo=Mosterd, Sa=Sesam, Su=Sulfieten, L=Lupine, W=Weekdieren
+  BELANGRIJK: Baklava heeft N (Noten, pistache) + G (Gluten, filodeeg) — twee allergens tegelijk! Tahini in Hummus/Mutabbal/Shawarma = Sa (Sesam) — dominant allergen in Levantische keuken.
   localStorage key: klaar_recipes (allergens veld per recept)
 
 MODULE 03 — HACCP Logger
@@ -1029,7 +954,7 @@ MODULE 03 — HACCP Logger
   "Snel melden" knop op dashboard — afwijking rapporteren in 1 klik.
   Daily reminder via browser Notifications API instellen (bijv. 07:00).
   Inspectie-klaar: alle logs met corrigerende maatregelen en opmerkingen zichtbaar per datum.
-  localStorage keys: klaar_haccp_koeling, klaar_haccp_afwijkingen, klaar_haccp_eenheden
+  localStorage keys: klaar_haccp_koeling, klaar_haccp_afwijkingen, klaar_haccp_koeleenheden
 
 MODULE 04 — Kostprijs Calculator
   Foodcost% per recept berekenen (koppelt aan Recept Studio data).
@@ -1039,7 +964,7 @@ MODULE 04 — Kostprijs Calculator
 
 MODULE 05 — Menubuilder
   Menukaart samenstellen op basis van recepten. Marge per gerecht.
-  QR-code generatie voor digitale menukaart.
+  Analyse-tab: marge per gerecht inzichtelijk. Preview: menukaart drukklaar.
   localStorage key: klaar_menu_items
 
 MODULE 07 — Leveranciers
@@ -1052,7 +977,7 @@ MODULE 07 — Leveranciers
   KOPPELSTATUS MODAL (na opslaan): groen = gekoppeld, oranje = nieuw te koppelen. "Alles aanmaken" voor bulk.
   Ingredient-matching op woordniveau: "Zalm filet 1kg" matcht automatisch op "zalm".
   Zelflerend: eenmaal handmatig gekoppeld → volgende facturen matchen automatisch.
-  PRIJSSTIJGINGSALERT: product >10% duurder → alert met % + link naar Module 04.
+  PRIJSSTIJGINGSALERT: product >5% duurder → alert met % + link naar Module 04.
   Deduplicatie: factuurNr al aanwezig → bevestiging vragen.
   localStorage keys: klaar_inkopen, klaar_ingredienten, klaar_producten
 
@@ -1063,47 +988,54 @@ MODULE 08 — Smart Scanner (NIEUW)
   Slaat op in juiste module.
 
 MODULE 10 — Catering & Events
-  Kostprijs per persoon berekenen voor events.
+  Verkoopprijs en budget per persoon handmatig bijhouden per event (geen automatische foodcost-berekening vanuit recepten).
   Keukensheet met timing en taakverdeling genereren.
-  Inkooplijst automatisch genereren.
-  localStorage key: klaar_events
+  Bedieningssheet en offerte genereren. Inkoopadvies opvragen via AI-chat.
+  Pre-service checklist per event (aftikken voor service).
+  localStorage keys: klaar_events, klaar_checklist_{eventId} (pre-service checklists per event)
 
 WAT KLAAR NOG NIET KAN (eerlijk zijn):
-- Directe koppeling met Hanos/SLIGRO bestelportaal
+- Directe koppeling met leveranciersportalen (Solisco, SLIGRO e.a.) — facturen handmatig uploaden
 - Personeelsplanning of roostertools
 - Kassaintegrate of POS-koppeling
 - Automatische NVWA-rapportage indienen (wel alles voorbereiden)
 - Multi-locatie management
+- THW/houdbaarheidsdatum waarschuwingen (TGT/THT label wordt opgeslagen per product, maar datum-alert bestaat nog niet)
+- Automatische foodcost-berekening per event vanuit recepten (Module 10 heeft handmatige prijs/pp invoer)
 
-MARCO'S VOLLEDIGE DATASET (in localStorage aanwezig, verwijs ernaar):
-12 recepten: Ribeye, Zalm risotto, Kipfilet, Tonijn Niçoise, Risotto funghi, Caprese, Zalmtartaar, Soupe oignon, Burrata prosciutto, Crème brûlée, Tiramisu, Aardappelgratin batch.
-38 ingrediënten met historische prijzen: ribeye €28,50/kg (was €27,80), pijnboompitten €32,00/kg (was €29,50), olijfolie €18,50/fl (was €17,80).
-4 facturen: HANOS jun €892,73, HANOS mei €481,19, BIDFOOD jun €360,18, DELHAIZE PRO jun €174,31.
-28 HACCP metingen (7 dagen, 4 eenheden): 2 afwijkingen open (vriezer -14,3°C vandaag, was ook koelcel 2 op 11 jun).
-14 producten met voorraad: burrata bijna op (4 stuks, THW gisteren!), pijnboompitten border.
-2 events: bruiloft 80 pers. (28 sep), borrel 40 pers. (4 okt).
+YILDIZ'S VOLLEDIGE DATASET (in localStorage aanwezig, verwijs ernaar):
+10 recepten: Mezze plank, Hummus royale, Labneh za'atar, Fattoush, Lam rack bulgur, Kip shawarma, Merguez couscous, Mutabbal, Baklava (batch 12), Muhallebi.
+22 ingrediënten met historische prijzen: tahini €4,50/pot (was €3,80 → +18%!), lamrack €18,50/rack (was €16,80 → +10%), olijfolie €14,50/L (was €13,80).
+4 facturen: Solisco jun €643,20, Solisco mei €589,80, Amsterdam Fresh €187,60, Kaasboerderij De Velden €296,40.
+20 HACCP metingen (5 dagen, 4 eenheden): 0 open afwijkingen (koelcel 2 vandaag tijdelijk 6,2°C → gesloten na correctie, kip kerntemp 8 dagen geleden → gesloten).
+14 producten: tahini onder minimum (2 van 3), lamrack onder minimum (6 van 8), granaatappelmelasse bijna op (1 van 2).
+2 events: Familiefeest Özcan 40 pers. (22 aug, bevestigd, €600 aanbetaling), Urban Chefs 20 pers. (18 sep, concept).
 
 MOBIEL GEBRUIK:
-Klaar draait als responsive webapplicatie — geen native iOS/Android app nodig. Alle modules werken in de mobiele browser (Chrome, Safari). Sommige functies zoals foto-upload werken zelfs beter op mobiel (direct camera-toegang). Als Marco vraagt of iets op mobiel werkt: antwoord is ja, tenzij het specifiek over een native app-feature gaat (push notifications = beperkt, offline = beperkt).
+Klaar draait als responsive webapplicatie — geen native iOS/Android app nodig. Alle modules werken in de mobiele browser (Chrome, Safari). Sommige functies zoals foto-upload werken zelfs beter op mobiel (direct camera-toegang). Als de gebruiker vraagt of iets op mobiel werkt: antwoord is ja, tenzij het specifiek over een native app-feature gaat (push notifications = beperkt, offline = beperkt).
+
+TECHNISCHE BEPERKING — BELANGRIJK:
+Klaar slaat alles op in de browser via localStorage — data staat ALLEEN op het apparaat en in de browser waar je Klaar gebruikt. Meerdere apparaten (telefoon van bediening, tablet in keuken, laptop thuis) zijn NIET automatisch gesynchroniseerd — elk apparaat heeft zijn eigen lege dataopslag. Er is geen account, geen cloud-sync, geen server. Dit betekent: één vaste werkplek per locatie. Vertel dit EERLIJK als iemand vraagt of bediening op hun eigen telefoon kan meekijken: dat kan niet zonder workaround (bijv. zelfde apparaat, of handmatige export/import).
 
 ANTWOORDREGELS:
-- STRIKT max 75 woorden. Tel mee terwijl je schrijft — als je over 75 komt, schrap de laatste zin. Direct beginnen — geen intro zoals "Hoi Marco!" of "Goed om te horen!"
-- Concrete berekeningen met Marco's echte prijzen uit het systeem. Geen afgeronde/fictieve getallen.
+- STRIKT max 75 woorden. Tel mee terwijl je schrijft — als je over 75 komt, schrap de laatste zin. Direct beginnen — geen intro zoals "Hoi!" of "Goed om te horen!"
+- Concrete berekeningen met de echte prijzen uit het systeem. Geen afgeronde/fictieve getallen.
 - Vernoem de exacte module: "In Recept Studio →", "In HACCP Logger →"
 - Als een functie niet bestaat: zeg dat EERLIJK. Geen spin. Stel werkbaar alternatief voor in MAX 1 zin. Zeg NOOIT alleen "dat kan niet" — geef altijd een werkbaar alternatief erbij.
+- Recept-in-recept (sub-recipe) bestaat NIET. Ingrediëntenbibliotheek bevat alleen losse producten, geen samengestelde recepten. Als iemand een batchrecept als ingredient wil gebruiken: stel voor om de kostprijs handmatig te berekenen en als losse ingredient op te slaan (bijv. "pulled pork batch – per portie €1,20").
 - Altijd Nederlands.
 - Bij berekeningen: toon tussenresultaten (kostprijs per portie → foodcost% → brutomarge in €).
-- Als Marco een verkeerde aanname maakt: corrigeer vriendelijk maar direct.
-- Verwijs naar data die in het systeem staat: "In jouw systeem zie ik dat ribeye op €28,50/kg staat"
+- Als de gebruiker een verkeerde aanname maakt: corrigeer vriendelijk maar direct.
+- Verwijs naar data die in het systeem staat: "In jouw systeem zie ik dat tahini op €4,50/pot staat (was €3,80 → +18%)"
 - Zeg NOOIT "waarschijnlijk" of "ik weet niet zeker" over features die in dit systeem beschreven staan. Je kent het systeem.
 - Stuur gebruikers NIET door naar support voor vragen die jij kunt beantwoorden.
 
 BIJ FRUSTRATIE OF PROBLEMEN — LOG VERPLICHT:
-Als Marco gefrustreerd is, een feature mist, een bug rapporteert of een UX-klacht heeft: log dit direct met:
+Als de gebruiker gefrustreerd is, een feature mist, een bug rapporteert of een UX-klacht heeft: log dit direct met:
 [KLAAR:LOG_ISSUE:{"type":"bug|ux|feature_mis|frustratie","module":"03-haccp","beschrijving":"Korte omschrijving","ernst":"laag|midden|hoog"}]
 Doe dit ZONDER extra uitleg of excuses. Gewoon loggen en antwoord geven. Geen "het spijt me", geen "dat begrijp ik". Direct to the point.
 
-[OBS: dev-signaal] — voeg toe aan EINDE van je bericht als je ontbrekende functies, UX-problemen, verkeerde aannames van Marco, of verbeterpunten signaleert. Wees specifiek: "functie X ontbreekt" of "koppeling Y mist".`;
+[OBS: dev-signaal] — voeg toe aan EINDE van je bericht als je ontbrekende functies, UX-problemen, verkeerde aannames van de gebruiker, of verbeterpunten signaleert. Wees specifiek: "functie X ontbreekt" of "koppeling Y mist".`;
 
 // ══════════════════════════════════════════════════════
 //  MODULE SCENARIO POOL — diep en realistisch
@@ -1117,247 +1049,190 @@ const MODULE_POOL = [
     module: 'Eerste verkenning',
     scenarios: [
       {
-        opening: `Hoi, Marco hier van Bistro De Gouden Lepel. Ik heb net een demo gezien van Klaar en ben hier nu voor het eerst zelf aan het rondkijken. Ik gebruik nu Horeko voor HACCP en een Excel voor kostprijzen — aparte programma's. Waar raad jij me aan om te beginnen?`,
+        opening: `Hoi, ik ben Yildiz — chef-eigenaar van Zest by Yildiz in Amsterdam Oud-West. Ik heb net een demo gezien van Klaar en ben nu voor het eerst zelf aan het rondkijken. Ik gebruik nu losse Excel-bestanden voor recepten en Word voor allergenen — alles apart. Waar raad jij me aan om te beginnen?`,
         followups: [
-          `OK ik zie het dashboard. Er zijn een hoop modules. Ik ga beginnen met Leveranciers want ik heb vanmorgen een Hanos-factuur gekregen. Is dat het eerste wat ik altijd doe — factuur inladen — zodat de rest vanzelf klopt?`,
-          `Ik heb de factuur ingeladen. Ik zie nu een tabel met 14 producten en een kolom "Koppeling". 11 staan groen, 3 geel NIEUW. Eerlijk gezegd snap ik nog niet helemaal wat dat NIEUW betekent — worden die nu automatisch ingrediënten of niet?`,
-          `En nu ik die factuur heb opgeslagen — ik ga naar Recept Studio. Mijn ribeye-recept staat al in Klaar (ik heb het handmatig ingevoerd gisteren). Klopt de kostprijs nu automatisch op basis van die Hanos-factuur? Of moet ik nog iets doen?`,
+          `OK ik zie het dashboard. Er zijn een hoop modules. Ik ga beginnen met Leveranciers want ik heb vanochtend een factuur gekregen van Solisco BV. Is dat het eerste wat ik altijd doe — factuur inladen — zodat de rest vanzelf klopt?`,
+          `Ik heb de Solisco-factuur ingeladen. Ik zie een tabel met 7 producten — 5 groen, 2 geel NIEUW. Snap ik nog niet helemaal wat NIEUW betekent — worden die nu automatisch ingrediënten of niet?`,
+          `Nu ik die factuur heb opgeslagen ga ik naar Recept Studio. Mijn lamrack-recept staat al in Klaar. Klopt de kostprijs nu automatisch op basis van die factuur? Of moet ik nog iets doen?`,
         ]
       },
       {
-        opening: `Marco van De Gouden Lepel. Ik overweeg Klaar aan te schaffen maar ik ben kritisch. Ik heb 18 jaar horeca — ik heb al 3 softwarepakketten geprobeerd en telkens viel het tegen. Wat maakt Klaar anders voor een restaurant zoals ik: 40-60 couverts, 2 leveranciers, 12 recepten?`,
+        opening: `Yildiz van Zest by Yildiz. Ik overweeg Klaar maar ben kritisch. 12 jaar horeca — ik heb al 3 systemen geprobeerd die alles beloofden maar dat viel telkens tegen. Wat is bij Klaar concreet anders dan bijv. een losse Excel?`,
         followups: [
-          `Oké, die factuur-naar-kostprijs koppeling klinkt interessant. Leg me uit hoe dat werkt in de praktijk. Als ik maandag een Hanos-factuur scan, wanneer zie ik dan de nieuwe prijs in mijn ribeye-recept staan?`,
-          `Dat snapt ik. Maar wat als mijn medewerker Jan de factuur verkeerd inscan en een prijs van €2,85 invoert terwijl het €28,50 moet zijn? Hoe vangt Klaar dat op? Want in Excel had ik dat ook al een keer en dat kostte me een maand foute berekeningen.`,
-          `En voor HACCP — ik heb nu Horeko waarvoor ik €89 per maand betaal. Als ik overstap naar Klaar, kan ik dan ook mijn historische HACCP-data meenemen? Of begin ik opnieuw?`,
+          `OK die koppeling Leveranciers → Ingrediënten → Recept klinkt interessant. Maar hoe werkt dat in de praktijk als ik een nieuwe leverancier toevoeg? Ik heb 4 leveranciers — Kaasboerderij De Velden levert mijn labneh en halloumi. Hoe voeg ik hen toe?`,
+          `En als Kaasboerderij De Velden de prijs van halloumi verhoogt — nu €4,20 per stuk — wordt dan automatisch mijn foodcost van de mezze plank bijgewerkt? Of handmatig?`,
+          `Ik heb 10 recepten in het systeem. Als ik de labneh-prijs update in Leveranciers, worden dan alle recepten die labneh gebruiken automatisch bijgewerkt?`,
         ]
       },
     ]
   },
-
   // ══════════════════════════════════════════════════
-  //  RECEPT STUDIO
+  //  RECEPT STUDIO — recepten & kostprijsberekening
   // ══════════════════════════════════════════════════
   {
     module: 'Recept Studio',
     scenarios: [
       {
-        // A: Ribeye foodcost exact doorrekenen + sub-recept (gratin)
-        opening: `Hallo, Marco van Bistro De Gouden Lepel. Ribeye-recept staat al in het systeem. Ik wil de exacte foodcost zien. Ribeye 300g × €28,50/kg = €8,55 vlees, plus truffelboter 20g × €45/kg = €0,90, haricots verts 150g × €4,80/kg = €0,72, aardappelgratin portie 100g. Hoe kom ik aan het totaal in de Recept Studio?`,
+        opening: `Yildiz van Zest by Yildiz. Lamrack-recept staat al in het systeem. Ik wil de exacte foodcost zien. Lamrack kost me €18,50 per rack — gestegen van €16,80 vorige maand. Verkoopprijs €29,00. Hoeveel is mijn foodcost% nu?`,
         followups: [
-          `OK de gratin is een los recept in het systeem — 10 porties batch voor €12-15 kost. Portie is dan €1,20-1,50. Hoe voeg ik dat toe als "sub-recept" ingredient? Of moet ik het als los ingredient met kostprijs ingeven?`,
-          `Zeg dat ik de gratin op €1,40 per portie zet. Dan is mijn totale kostprijs ribeye-portie: €8,55 vlees + €0,90 truffelboter + €0,72 haricots + €1,40 gratin + kruiden/olie misschien €0,30 = €11,87. Foodcost% = €11,87 / €38,50 = 30,8%. Klopt dit met wat Klaar berekent?`,
-          `30,8% voor een ribeye op dit niveau vind ik eigenlijk aan de hoge kant — mijn target is 28-30%. De ribeyeprijs steeg ook al (was €27,80 in mei, nu €28,50). Als Hanos nog 10% verhoogt naar €31,35/kg, wat doet dat dan met mijn foodcost%?`,
+          `OK foodcost lamrack is dan hoog. Ik gebruik per portie 1 rack, plus bijgerechten: bulgur, sumak, granaatappelmelasse, peterselie. Hoe voeg ik die toe aan het recept zodat ik de totale portiekostprijs zie?`,
+          `En ik heb de kloon-knop gebruikt om een variant te maken — lamrack met couscous ipv bulgur. Maar de kostprijs klopt nog niet want ik heb couscous nog niet als ingredient. Hoe voeg ik het toe?`,
         ]
       },
       {
-        // B: AI-recept aanmaken vanuit bibliotheek (nieuwe feature)
-        opening: `Marco hier. Ik heb net alle ingrediënten ingevoerd via Leveranciers — 38 producten in de bibliotheek. Iemand vertelde me dat de AI in de Recept Studio automatisch recepten kan aanmaken op basis van wat ik al heb ingekocht. Klopt dat? Want ik wil een zalmgerecht erbij maar weet niet wat er al in mijn bibliotheek zit.`,
+        opening: `Yildiz hier. Ik wil een nieuw recept aanmaken via de AI — mijn muhallebi (rozenwater-pudding). Ingrediënten al in bibliotheek: volle melk, slagroom, rijstmeel, suiker, rozenwater, pistache. Kan de AI een basisrecept genereren?`,
         followups: [
-          `Ik heb in de chat getypt "maak een zalm-risotto voor 4 personen op basis van mijn bibliotheek". Het recept is aangemaakt — ik zie een toast "5 gekoppeld, 2 nieuw (kappertjes, dille)". Wat betekent die melding precies? Die 2 nieuwe — worden die nu automatisch aangemaakt of moet ik daar iets voor doen?`,
-          `Die kappertjes en dille staan dus nog niet in mijn ingrediëntenbibliotheek. Ik koop ze normaal bij Hanos. Moet ik die dan eerst handmatig toevoegen in Leveranciers om de kostprijs te zien? En kan de AI dat voor me doen als ik de Hanos-factuur inscan?`,
-          `De kostprijs bar onder het recept zegt nu "3/7 gekoppeld". Ik wil 100% gekoppeld hebben voor een accurate foodcost. Welke stap is nu het snelst: handmatig ingrediënten toevoegen in Module 04, of wachten op de volgende Hanos-factuur?`,
-        ]
-      },
-      {
-        // C: Nieuw recept (bruiloft dessert) + allergenenkoppeling
-        opening: `Marco hier. Voor de bruiloft van 28 september wil ik een speciale dessert toevoegen: chocolate fondant met vanille-ijs. Zelfgemaakt vanille-ijs. Ik wil het recept aanmaken EN direct de allergenen instellen. Waar begin ik in Klaar?`,
-        followups: [
-          `Ingrediënten fondant: pure chocolade 70% €12/kg, boter €7,20/kg, eieren €0,28/stuk, suiker €1,20/kg, bloem €0,80/kg. Per portie: 80g chocolade, 40g boter, 2 eieren, 30g suiker, 10g bloem. Wat is de kostprijs per portie?`,
-          `Allergenen: G (gluten bloem), M (melk boter), E (eieren) — dat zijn drie. Hoe voeg ik die toe in de Recept Studio? Is het dezelfde plek als de ingrediënten?`,
-          `Verkoopprijs op bruiloft ga ik €12,00 vragen per dessert. Kostprijs is dan hoeveel % foodcost? En is dat een goed dessert-marge voor catering? De crème brûlée die ik nu server heeft ook M en E allergenen — kan ik in de allergenenkaart zien hoeveel gerechten die twee allergenen hebben?`,
-        ]
-      },
-      {
-        // C: FIFO/verspilling scenario — recept aanpassen op resterende voorraad
-        opening: `Marco hier, het is 11:30, service begint om 12:00. Ik heb nog 4 stuks burrata over, THW was gisteren — ze zijn nog perfect maar ik MOET ze vandaag gebruiken. Ik wil een dagsuggestie bouwen: burrata-starter, afwijkend van de normale menukaart. Hoe maak ik snel een tijdelijk recept aan in de Recept Studio?`,
-        followups: [
-          `Ik heb ook nog 200g prosciutto over en een halve bak rucola. Burrata 125g + prosciutto 40g + rucola 60g + tomaten. Ingrediënten en prijzen staan in het systeem. Wat is de kostprijs en als ik €13,50 vraag, wat is de foodcost%?`,
-          `Goed, dus burrata staat al als recept in het systeem! rec_009. Perfecte timing. Maar ik wil de verkoopprijs tijdelijk op €11,00 zetten voor vandaag (snel verkopen, FIFO). Kan ik de verkoopprijs per dag aanpassen of is dat een vaste waarde in het recept?`,
-          `Als ik de burrata-prijs naar €11 zet in het recept, trekt Klaar dan automatisch bij dat de kostprijs-% verandert? En wordt de allergenenkaart ook bijgewerkt als ik de burrata als dagsuggestie aanzet?`,
+          `De AI heeft een recept gegenereerd. Maar ik mis de cruciale stap: rijstmeel aanmengen met koude melk voor toevoegen — anders klontert het. Kan ik handmatig stappen toevoegen?`,
+          `En voor allergenen: rijstmeel is glutenvrij maar ik gebruik dezelfde kom als voor baklava (glutendeeg). Hoe registreer ik dat als "maybe" — mogelijk aanwezig door kruisbesmetting?`,
         ]
       },
     ]
   },
-
   // ══════════════════════════════════════════════════
-  //  HACCP LOGGER
+  //  HACCP LOGGER — temperaturen & compliance
   // ══════════════════════════════════════════════════
   {
     module: 'HACCP Logger',
     scenarios: [
       {
-        // A: Vriezer crisis + NVWA tijdsdruk
-        opening: `Marco hier. De vriezer staat op -14,3°C — afwijking staat al in het systeem (Jan heeft het ingevoerd). Er zit 3kg ribeye in. Mijn vraag: bij welke temperatuur moet ik besluiten die ribeye WEG te gooien? En ik heb de NVWA volgende week vrijdag (19 jun, zelfde dag als de technicus). Wat staat er nu in Klaar wat ik de inspecteur kan laten zien?`,
+        opening: `Yildiz hier. Koelcel 2 (Dips & Zuivel) stond vanochtend op +6,2°C — norm is 0-5°C. Omar heeft gecorrigeerd om 08:15, nu +3,1°C. Afwijking is ingevoerd maar het veld corrigerende maatregel stond leeg. Hoe voeg ik de maatregel achteraf toe?`,
         followups: [
-          `Goed. Maar ik maak me zorgen: de vriezer afwijking van 11 juni (koelcel 2 stond +6,8°C) is "gesloten" maar ik weet niet meer exact wat we hadden gedaan. De maatregel staat erin maar had ik ook moeten documenteren welke producten ik heb gecontroleerd? Is dat NVWA-eis?`,
-          `Jan doet de ochtendmeting op papier en voert die later in. Soms vergeet hij dat. Hoe stel ik een herinnering in voor mezelf, 07:30, als de meting van Jan er nog niet in staat? Kan Klaar zoiets?`,
-          `Er was ook een kip-kerntemperatuur incident op 3 juni. Dat staat als HACCP-afwijking. Maar die nieuwe kok die dat heeft gedaan (Lisa, stagiaire) — hoe zorg ik dat zij weet wat de procedure is? Kan ik een procedure/checklist aanmaken in Klaar?`,
+          `Ik zie de ✏️ knop bij de afwijking. Heb ingevuld: "Deur niet goed dichtgedrukt na levering. Omar gecorrigeerd 08:15". Maar hoe zie ik of de koelcel de komende 24u stabiel blijft? Is er een grafiek?`,
+          `Fatima doet de 07:30 ronde maar vergeet soms de drankkoeling. Gisteren een gat in het logboek om 07:30. Hoe zie ik gemiste metingen snel?`,
         ]
       },
       {
-        // B: Retroactief invullen + team-discipline
-        opening: `Marco hier. Ahmed (sous-chef) heeft gisteren avond de 18:00 meting NIET ingevoerd. Ik zie het gat in het logboek. Hij zegt dat hij wel heeft gemeten — vlees 4,8°C, vis 3,2°C, vriezer -19,1°C, bar 6,4°C. Allemaal OK. Kan ik dat retroactief invoeren met zijn naam?`,
+        opening: `Yildiz hier. De vriezer staat op -14,3°C — afwijking, norm is -18°C. Ik heb 4 racks lamrack daarin. Die lamrack is bij -14°C geweest voor ±3 uur (we wisten het niet meteen). Is het nog veilig?`,
         followups: [
-          `Ik heb het ingevoerd maar als datum staat nu "15 juni" — het moet "14 juni 18:00" zijn. Hoe pas ik datum en tijdstip aan bij een bestaande meting?`,
-          `Ahmed is de derde keer deze maand dat een meting mist of laat wordt ingevoerd. Ik wil dat bijhouden. Heeft Klaar een overzicht van welke medewerker hoeveel metingen heeft ingevoerd per periode?`,
-          `Ik overweeg een boete van €10 bij een gemiste meting — ik weet, dat klinkt hard, maar NVWA-noncompliance kost me veel meer. Maar daarvoor moet ik kunnen aantonen WIE er niet heeft ingevoerd. Kan Klaar dat?`,
+          `Maatregel ingevuld: "Vriezer bijgesteld -20°C, kerntemp lamrack -12°C, gebruiken binnen 24u". Wat moet er nog in het systeem? Moeten volgende metingen ook getekend door mij als chef?`,
+          `Volgende week vrijdag NVWA-inspectie. Ze willen de afwijkingshistorie van de afgelopen 3 maanden. Kan ik dat exporteren uit Klaar?`,
         ]
       },
     ]
   },
-
   // ══════════════════════════════════════════════════
-  //  ALLERGENENKAART
-  // ══════════════════════════════════════════════════
-  {
-    module: 'Allergenenkaart',
-    scenarios: [
-      {
-        // A: Notenallergie incident + bediening werkstroom
-        opening: `Marco van De Gouden Lepel. Afgelopen week had een gast met ernstige notenallergie bijna de caprese gegeten. Pijnboompitten = EU-14 code N. Ik zie het in Klaar staan, maar Sarah (bedienster) wist het niet. Ze had een oud A4'tje. Hoe snel kan een bedieningskracht nu in Klaar checken welke gerechten noten bevatten?`,
-        followups: [
-          `Goed maar Sarah heeft geen laptop bij de kassa, ze heeft een iPhone. Werkt de Klaar allergenenkaart op mobiel? En kan ze snel filteren: "welke gerechten zijn nootvrij"?`,
-          `Ik wil een gelamineerde Gastenkaart exporteren — één A4 met alle 12 gerechten en alle 14 EU-allergenen als kruisje-tabel. Ik print er 5 van voor bij de kassa. Heeft Klaar exact dat formaat?`,
-          `In de Keukensheet staat meer detail — per recept de ingrediëntenlijst met allergeenbron. Die wil ik achter in de keuken hangen voor mijn koks. Wat is het verschil in formaat met de Gastenkaart?`,
-        ]
-      },
-      {
-        // B: NVWA-compliance volledig doorlopen
-        opening: `Marco hier. NVWA opmerking april was: "allergenenregistratie niet volledig en niet actueel". Nu heb ik 12 recepten in Klaar. Maar zijn de allergenen ook echt voor alle 12 ingevuld? Hoe check ik dat snel zonder elk recept apart te openen?`,
-        followups: [
-          `Ik zie dat de soupe à l'oignon (rec_008) G-allergeen heeft via stokbrood en M via gruyère/boter. Maar ik gebruik ook cognac in dat recept — cognac kan sulfiet (SO) bevatten. Hoe voeg ik "mogelijk aanwezig" SO toe als apart allergen?`,
-          `De bruiloft 28 september: er is 1 gast met lactose-intolerantie en 5 veggies. Ik wil een speciale versie van mijn allergenenkaart kunnen maken voor dat event — bijv. alleen de bruilofts-menu-items. Kan Klaar dat?`,
-          `Stel een gast belt en vraagt: "ik heb een selenium-intolerantie plus pindaallergie, wat kan ik eten?" Ik weet dat selderij SE en pinda P aparte EU-14 codes zijn. Kan Klaar me in 10 seconden een lijst geven van gerechten die GEEN P én GEEN SE bevatten?`,
-        ]
-      },
-    ]
-  },
-
-  // ══════════════════════════════════════════════════
-  //  KOSTPRIJS CALCULATOR
+  //  KOSTPRIJS CALCULATOR — margeberekening
   // ══════════════════════════════════════════════════
   {
     module: 'Kostprijs Calculator',
     scenarios: [
       {
-        // A: Full margevergelijking menu + Hanos prijsstijging impact
-        opening: `Marco van De Gouden Lepel. Mijn 5 hoofdgerechten: ribeye €38,50, zalm €27,50, kip €22,50, tonijn €29,50, risotto funghi €19,50. Ingrediëntenprijzen staan in het systeem. Ik wil een overzicht: foodcost% EN brutomarge per portie in euro. Kan de Kostprijs Calculator dat genereren?`,
+        opening: `Yildiz hier. Mijn 4 hoofdgerechten: lamrack €29,00, kip shawarma €22,00, merguez €19,00, mutabbal €17,00. Tahini kost me nu €4,50 per pot (was €3,80 — +18%). Tahini zit in hummus royale, mutabbal én shawarma-saus. Welk gerecht heeft nu de slechtste marge?`,
         followups: [
-          `Hanos-prijzen zijn gestegen: ribeye was €27,80 nu €28,50 (+2,5%), olijfolie €17,80 → €18,50 (+3,9%), carnaroli rijst €21,00 → €22,80 (+8,5%). Dat staat in het systeem. Hoeveel foodcost% ben ik kwijtgeraakt op de risotto funghi door die rijststijging? En welke gerechten worden het meest geraakt?`,
-          `Worst-case scenario: ribeye gaat naar €32/kg volgend kwartaal. Mijn break-even verkoopprijs voor 30% foodcost dan? En wat als ik de portie verklein naar 260g? Kan Klaar die scenario's simuleren?`,
-          `Mijn vaste lasten: huur €3.800, personeel €5.500, overige €1.200 = €10.500/maand. Ik draai gemiddeld 50 couverts per avond, 5 avonden. Ribeye = 35% van bestellingen. Hoeveel ribeye-couverts minimaal voor break-even op dat gerecht?`,
-        ]
-      },
-      {
-        // B: Bruiloft all-in calculatie
-        opening: `Marco hier. Bruiloft 28 september: 80 gasten, 40× ribeye €38,50 food cost, 40× zalm €27,50. Caprese starter voor iedereen €12,50. Dessert keuze crème brûlée of tiramisu (€8,50). Bereken mijn totale inkoopkosten als ik 35% foodcost target en wat is dan mijn all-in aanbiedingsprijs per persoon?`,
-        followups: [
-          `Dan kom ik uit op foodkosten: 40 ribeyes × €11,87 + 40 zalm × ~€8 + 80 caprese × ~€3 + 80 dessert × ~€2,50. Klopt de berekening? En als ik personeelskosten extra avond (€800) en linnen/decor (€300) optel, wat is dan mijn all-in kostprijs pp?`,
-          `De bruid heeft een lactose-intolerantie. Mijn zalm-recept heeft melk (parmezaan, boter). Kan ik een lactosevrije variant berekenen? Parmezaan weglaten, boter vervangen door olijfolie. Wat doet dat met de kostprijs?`,
-          `Kan Klaar automatisch een inkooplijst genereren voor de bruiloft? Dus: 40 ribeye-porties × benodigde ingrediënten + 40 zalm-porties + etc. = totaal te bestellen per product bij Hanos. Dan stuur ik die lijst direct.`,
+          `Ik gebruik per portie mutabbal ±80g tahini, pot is 500g → 6 porties per pot à €4,50 = €0,75 tahini/portie. Plus aubergine €0,60, olijfolie €0,15, kruiden €0,20. Klopt mijn berekening? Wat is de foodcost%?`,
+          `Als ik de mutabbal verhoog naar €19,00 — wat is dan de nieuwe foodcost% en marge? Ik wil de scenario-planner gebruiken.`,
         ]
       },
     ]
   },
-
   // ══════════════════════════════════════════════════
-  //  LEVERANCIERS
+  //  ALLERGENENKAART — compliance & bediening
+  // ══════════════════════════════════════════════════
+  {
+    module: 'Allergenenkaart',
+    scenarios: [
+      {
+        opening: `Yildiz hier. Vorige week had een gast met sesamallergie bijna de hummus royale gegeten. Tahini = sesam (Sa). Mijn Levantische keuken zit vol tahini — hummus, mutabbal, shawarma-saus. Hoe filter ik snel alle gerechten zonder sesam voor zo'n gast?`,
+        followups: [
+          `Lam rack, merguez, fattoush en muhallebi zijn sesamvrij — maar zijn die ook kruisbesmettingsvrij? Ik meng tahini altijd in dezelfde Robot Coupe als mijn hummus. Hoe registreer ik kruisbesmettingsrisico?`,
+          `Gast vraagt ook "zit er melk in?" — labneh is zuivel, muhallebi bevat slagroom. Kan ik voor deze gast alle gerechten tonen die GEEN sesam EN GEEN melk bevatten?`,
+        ]
+      },
+      {
+        opening: `Yildiz van Zest by Yildiz. NVWA opmerking april: "Allergenenregistratie incompleet — sesam en noten niet gespecificeerd bij mezze plank." Mezze plank bevat labneh, hummus, platbrood, za'atar, olijven — za'atar heeft soms sesam. Hoe registreer ik dat correct als "mogelijk aanwezig"?`,
+        followups: [
+          `Ik gebruik de "maybe" vlag bij sesam voor de mezze plank. Maar NVWA wil schriftelijk bewijs. Kan ik de allergenenregistratie exporteren als PDF voor de inspectie?`,
+          `Mijn baklava bevat noten (pistache — N) en gluten (filodeeg — G). Ik heb dit ingevuld. Hoe weet ik zeker dat de allergeenmatrix klopt voor alle 10 recepten?`,
+        ]
+      },
+    ]
+  },
+  // ══════════════════════════════════════════════════
+  //  LEVERANCIERS — factuurverwerking & prijsalerts
   // ══════════════════════════════════════════════════
   {
     module: 'Leveranciers',
     scenarios: [
       {
-        // A: Eerste keer factuur inscannen — ontdekking koppelstatus
-        opening: `Marco hier, De Gouden Lepel. Ik ga nu voor het eerst een echte Hanos-factuur inladen in Klaar. Ik heb de factuur van 10 juni als foto. Waar begin ik precies — Leveranciers module of Smart Scanner?`,
+        opening: `Yildiz hier. Na de laatste Solisco-factuur zie ik dat tahini van €3,80 naar €4,50 is gegaan — Klaar geeft een oranje alert. Tahini zit in 3 recepten. Welk recept heeft nu de grootste margedruk door die stijging?`,
         followups: [
-          `OK ik heb de foto geüpload via Leveranciers. Ik zie nu een reviewscherm met productregels. Er staat een kolom "Koppeling" — sommige hebben een groen vinkje met een naam, andere een geel "NIEUW" badge. Wat betekent dat precies en moet ik iets doen met die NIEUW-producten vóór ik opslaat?`,
-          `Ik zie dat "Carnaroli rijst 5kg" groen staat als "carnaroli risotto rijst" in mijn bibliotheek. Maar "Hanos Premium Olijfolie 5L" staat als NIEUW terwijl ik olijfolie al in mijn recepten gebruik. Hoe zorg ik dat die volgende keer automatisch herkend wordt?`,
-          `Ik heb nu op opslaan gedrukt. Er verschijnt een scherm "Ingrediënten koppelen" — 11 gekoppeld, 3 nieuw. Die 3 nieuwe: roodbaars, mul en zeebaars. Ik gebruik die voor mijn bouillabaisse maar die staat nog niet als recept. Moet ik die 3 eerst aanmaken in Leveranciers of kan ik dat ook vanuit de Recept Studio?`,
-        ]
-      },
-      {
-        // B: Hanos prijstrend + impact op recepten
-        opening: `Marco hier. Na de laatste Hanos-factuur zie ik in Klaar dat de ribeye van €27,80 naar €28,50 is gegaan — Klaar geeft ook een alert dat dit +2,5% is. Nu komt Hanos volgende week weer langs. Ik wil weten: welke van mijn recepten worden het hardst geraakt als ribeye naar €31/kg gaat?`,
-        followups: [
-          `Ik zie de prijstrend in Leveranciers maar ik wil weten: welke recepten worden het meest geraakt als de olijfolie prijs stijgt van €18,50 naar €22,00? Die prijs is al flink gestegen (€15,80 in maart). Kan Klaar me een impact-analyse geven over alle recepten?`,
-          `Mijn gemiddelde bestelling bij Hanos is nu €700-900 per keer. Ze bellen me regelmatig met "speciale aanbiedingen" — bijv. deze week 10% korting op zalm. Maar ik weet nooit hoeveel ik dan moet bestellen. Kan Klaar een minimum- en maximumvoorraad bijhouden en me vertellen hoeveel ik moet bestellen?`,
-          `Ik overweeg om over te stappen naar SLIGRO als tweede grote leverancier naast Hanos. Klaar heeft geen directe SLIGRO-koppeling, dat weet ik. Maar kan ik een SLIGRO-factuur inscannen en vergelijken met mijn Hanos-prijzen?`,
+          `OK mutabbal en hummus royale lijden het meest. Ik overweeg prijsverhoging. Mutabbal nu €17,00 — als ik naar €19,00 ga, wat is dan de nieuwe foodcost%?`,
+          `Amsterdam Fresh Markets heeft me gemaild: kip dijfilet gaat waarschijnlijk ook omhoog — van €7,40 naar €8,20/kg (+11%). Kan ik een voorlopige prijsalert instellen vóór de factuur binnenkomt?`,
         ]
       },
     ]
   },
-
   // ══════════════════════════════════════════════════
-  //  SMART SCANNER
+  //  SMART SCANNER — OCR & factuurverwerking
   // ══════════════════════════════════════════════════
   {
     module: 'Smart Scanner',
     scenarios: [
       {
-        // A: Handgeschreven recept + doorstroom naar modules
-        opening: `Hallo, Marco van De Gouden Lepel. Ik heb een handgeschreven receptkaart van mijn bouillabaisse — klassiek winters gerecht, al 12 jaar in de familie. Foto ervan gemaakt. Kan de Smart Scanner dat herkennen en automatisch een recept aanmaken in de Recept Studio?`,
+        opening: `Yildiz hier. Ik heb een foto gemaakt van de Kaasboerderij De Velden factuur van 11 juni — KV-2026-8821, €296,40. Ik wil de scanner testen. Herkent die een factuur automatisch of moet ik het documenttype kiezen?`,
         followups: [
-          `De scanner zegt "recept gedetecteerd, betrouwbaarheid 87%". In het review-scherm zie ik de ingrediënten maar "1 kg vis" staat er — in werkelijkheid zijn het 3 vissoorten: 400g roodbaars, 300g mul, 300g zeebaars. Kan ik dit aanpassen in het review-scherm voordat ik opslaat?`,
-          `De scanner vraagt ook om allergenen. Bouillabaisse heeft: V (vis), K (kustaceeën van garnalen), en G (mogelijk, van croutons). Kan ik die direct invullen in het scanner review-scherm? Of moet ik na opslaan naar de allergenenkaart?`,
-          `Na opslaan staat het recept in de Recept Studio. Maar de ingrediëntprijzen zijn nog niet ingevoerd — roodbaars, mul, zeebaars zijn niet in mijn bibliotheek. Kan ik direct vanuit de Recept Studio een nieuw ingrediënt aanmaken met prijs? Of moet ik terug naar Leveranciers?`,
-        ]
-      },
-      {
-        // B: Hanos factuur inscannen — correctie workflow
-        opening: `Marco hier. Ik heb een foto gemaakt van de Hanos factuur van 10 juni. Die factuur staat al in het systeem maar ik wil de scan ook testen. Ik scan het via Smart Scanner — wat verwacht Klaar te doen: factuur als leveranciersbon verwerken?`,
-        followups: [
-          `De scanner herkent het als "leveranciersfactuur, betrouwbaarheid 94%". In het review-scherm zie ik 14 regels. Ik zie nu die "Koppeling" kolom — 11 groen, 3 geel NIEUW. Maar regel 5 klopt niet: scanner leest "Carnaroli rijst €21,00" maar op de factuur staat €22,80. Kan ik dat corrigeren in het review-scherm? En verandert de koppelstatus dan ook?`,
-          `Als ik nu opslaat — worden de bijgewerkte prijzen automatisch doorgestuurd naar de ingrediëntenbibliotheek? En als de carnaroli-rijstprijs stijgt, ziet mijn risotto-recept dat dan direct in de kostprijs?`,
-          `Ik heb ook een oude supermarktbon van de Jumbo — af en toe koop ik spullen bij als er iets ontbreekt. Kan de Smart Scanner dat ook inscannen? Dan wil ik het registreren als noodinkoop met hogere prijs.`,
+          `De scanner heeft gescand maar "slagroom 35%" staat als "slagroom 35 %" met spatie — de koppeling naar mijn ingredient mislukt (staat als NIEUW). Hoe corrigeer ik die mapping?`,
+          `En ik wil ook een handgeschreven receptkaart scannen — mijn originele recept voor mutabbal. Is de scanner goed in handgeschreven tekst?`,
         ]
       },
     ]
   },
-
   // ══════════════════════════════════════════════════
-  //  CROSS-MODULE SCENARIOS — speciaal voor dieptetest
+  //  CROSS-MODULE: HACCP → Menu impact
   // ══════════════════════════════════════════════════
   {
     module: 'Cross-module: HACCP → Menu impact',
     scenarios: [
       {
-        // Vriezer afwijking → ribeye veiligheid → menu aanpassen
-        opening: `Marco hier. De vriezer staat op -14,3°C. Ik heb 3kg ribeye daarin. Vraag: die ribeye is bij -14°C geweest voor misschien 8 uur. Is het nog veilig om te serveren vanavond? Want als het antwoord nee is, moet ik de ribeye van het bord halen en we hebben 20 reserveringen die ribeye verwachten.`,
+        opening: `Yildiz hier — service loopt over 45 min. Vriezer stond op -14,3°C, norm -18°C. Ik heb 4 racks lamrack daarin (gisteren ontvangen €18,50/rack). Afwijking al ingevoerd. Vraag: is de lamrack nog veilig voor service vanavond?`,
         followups: [
-          `OK stel ik beslis de ribeye weg te gooien (voorzorgsprincipe). Ik heb dan alleen zalm, kip en risotto als hoofdgerecht. Hoe pas ik snel mijn menu aan in Klaar voor vanavond? Kan ik de ribeye tijdelijk "uit voorraad" zetten?`,
-          `Als ik de ribeye van vanavond haal: 20 couverts verwachten ribeye. Stel 15 kiezen dan zalm (€27,50) i.p.v. ribeye (€38,50) — dat is €165 omzetverlies plus ik moet de zalm ook extra inkopen. Hoe bereken ik de totale schade snel?`,
-          `En in het HACCP-logboek — moet ik de weggegooid-beslissing ook registreren als corrigerende maatregel? Hoe leg ik "product vernietigd wegens temperature abuse" vast in Klaar?`,
+          `Omar zegt dat de lamrack "een beetje zacht maar niet volledig ontdooid" was. Kerntemp: -12°C. Hoe interpreteer ik dit qua voedselveiligheid? En welke voorzorgsmaatregelen registreer ik in HACCP als ik de lamrack toch gebruik?`,
+          `Stel ik besluit de lamrack NIET te serveren — dan geen vlees-hoofdgerecht. Mijn merguez zit ook in de vriezer (3 pakken). Bij -12°C ook afwijking maar kleinere stukken. Hoe log ik dit besluit correct?`,
         ]
       },
     ]
   },
-
+  // ══════════════════════════════════════════════════
+  //  CROSS-MODULE: Leverancier → Kostprijs ripple
+  // ══════════════════════════════════════════════════
   {
     module: 'Cross-module: Leverancier → Kostprijs ripple',
     scenarios: [
       {
-        // Hanos prijsstijging → ripple effect door alle recepten
-        opening: `Marco hier. Hanos heeft me gebeld: zalm gaat volgende maand naar €5,50 per portie (nu €4,20). Dat is +31%. Mijn zalm op risotto kost me dan ineens €2 meer per portie. Verkoopprijs is €27,50. Wat is de nieuwe foodcost% en wanneer overstijg ik mijn 35% drempel?`,
+        opening: `Yildiz hier. Amsterdam Fresh Markets: kip dijfilet gaat naar €8,20/kg (nu €7,40), +11%. Kip shawarma staat op €22,00. Wat is de nieuwe foodcost% en moet ik de prijs verhogen?`,
         followups: [
-          `Als foodcost% naar 38% gaat, moet ik óf de prijs verhogen óf de portie kleden óf de zalm van de kaart halen. Wat raadt Klaar aan? En welke andere recepten gebruiken zalm — staat mijn zalmtartaar starter ook in gevaar?`,
-          `Bidfood levert ook zalm maar ik heb er nog nooit een prijs van gevraagd. Kan ik in Klaar een "gewenste leveranciersprijs" instellen en dan zien bij welke Bidfood-prijs het de moeite waard is om over te stappen?`,
-          `Als ik de zalmtartaar van €14,50 naar €16,50 moet verhogen — wat is het effect op mijn bruiloftofferte (40× zalm)? De bruid heeft al een prijs gekregen van €55 per persoon. Moet ik de aanbetaling terugbetalen als ik de prijs wijzig?`,
+          `Kip shawarma: 180g kip per portie × €8,20 = €1,48. Plus pitabrood €0,45, shawarma-saus €0,60, salade €0,40 → totaal ±€2,93 op €22,00 = 13,3% foodcost. Klopt die berekening?`,
+          `Als ik ook tahini omhoog reken (+18%), stijgt de saus van €0,60 naar ±€0,71. Totale impact beide stijgingen op kip shawarma? Hoeveel moet ik de prijs verhogen voor 30% foodcost-target?`,
         ]
       },
     ]
   },
-
+  // ══════════════════════════════════════════════════
+  //  CROSS-MODULE: Tijdsdruk tijdens service
+  // ══════════════════════════════════════════════════
   {
     module: 'Cross-module: Tijdsdruk service',
     scenarios: [
       {
-        // Mid-service paniek: allergeenvraag + recept opzoeken in 5 minuten
-        opening: `MARCO HIER — service loopt. Gast vraagt: "Ik ben allergisch voor mosterd EN vis. Wat kan ik eten?" Ik heb 5 minuten. Welke van mijn 9 gerechten (5 hoofdgerechten + 4 starters) bevatten GEEN MO en GEEN V? Ik heb geen tijd om elk recept open te klikken.`,
+        opening: `YILDIZ HIER — service loopt. Gast vraagt: "Ik ben allergisch voor sesam EN noten. Wat kan ik eten?" Ik heb 10 gerechten en 3 minuten. Welke bevatten GEEN Sa (sesam) EN GEEN N (noten)?`,
         followups: [
-          `OK dus ribeye, kip, risotto ai funghi, caprese, soupe à l'oignon zijn mosterd-EN-vis-vrij. Maar de gast vraagt ook: "zit er truffel in?" — mijn truffelboter bij de ribeye, is dat een allergen? En heeft Klaar truffel als subcomponent van de melk-allergeen (M) gedocumenteerd?`,
-          `Goed, ribeye is de keuze. Maar de gast wil ook een starter. Soupe à l'oignon heeft G (gluten) — hij is ook glutenintolerant zei hij net. Caprese heeft N (noten). Burrata prosciutto heeft M (melk). Wat blijft er over?`,
-          `Alleen de zalmtartaar als starter maar die heeft V (vis) — ook verboden voor deze gast. Niets kan. Wat nu? Kan ik on-the-fly een aangepaste variant registreren — bijv. burrata zonder dressing, en moet ik die als aparte allergeen-variant vastleggen in Klaar?`,
+          `Lam rack, merguez, fattoush en muhallebi zijn sesam- en notenvrij. Gast vraagt ook "is er gluten?" — merguez wordt met couscous (G) geserveerd, lam rack met bulgur (G). Wat blijft er dan nog over?`,
+          `Alleen muhallebi is sesam-, noten- én glutenvrij. Gast wil ook een starter. Fattoush heeft pitacroutons (G). Mezze plank heeft sesam. Hummus heeft sesam. Labneh heeft geen sesam/noten/gluten. Is labneh een optie?`,
+        ]
+      },
+    ]
+  },
+  // ══════════════════════════════════════════════════
+  //  CATERING EVENTS — planning & budget
+  // ══════════════════════════════════════════════════
+  {
+    module: 'Catering Events',
+    scenarios: [
+      {
+        opening: `Yildiz hier. Voor de Familie Özcan op 22 augustus — 40 gasten, mezze buffet — wil ik een speciale dessert toevoegen: knafeh (kaastaart met kadaif-deeg). Klaar heeft dit recept nog niet. Hoe voeg ik het toe en koppel ik het aan het event?`,
+        followups: [
+          `Knafeh is aangemaakt. Event: 40 gasten × €55,00 = €2.200,00. Aanbetaling €600,00 ontvangen. Wat is openstaand? En kan ik een checklist aanmaken voor de mise en place voor 40 couverts?`,
+          `1 gast van Familie Özcan is lactose-intolerant (net via WhatsApp). Mezze buffet bevat: labneh (M), halloumi (M), baklava met boter (M). Hoe pas ik het event aan zonder het hele menu te wijzigen?`,
         ]
       },
     ]
@@ -1414,8 +1289,8 @@ function getFollowup(t) {
 // ══════════════════════════════════════════════════════
 
 function buildTesterPrompt(fases) {
-  return `Je bent Marco Visser — eigenaar/chef-kok Bistro De Gouden Lepel, Amsterdam Pijp. 44 jaar, 18 jaar horeca.
-Je bekijkt nu Klaar horeca-software voor het EERST serieus. Je hebt een demo gevolgd, maar gaat nu echt zelf uitproberen. Je vergelijkt met je oude werkwijze (Horeko + Excel + Word).
+  return `Je bent Yildiz Demir — chef-eigenaar van Zest by Yildiz, Amsterdam Oud-West. 38 jaar, 12 jaar horeca.
+Je bekijkt nu Klaar horeca-software voor het EERST serieus. Je hebt een demo gevolgd, maar gaat nu echt zelf uitproberen. Je vergelijkt met je oude werkwijze (Excel voor recepten + Word voor allergenenlijsten).
 
 JOUW ECHTE DATA (volledig, gebruik dit in vragen):
 \${MARCO_DATA}
@@ -1424,68 +1299,44 @@ JOUW ECHTE DATA (volledig, gebruik dit in vragen):
 JOUW KARAKTER — GEVARIEERD EN REALISTISCH
 ━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━
 
-TAALSTIJL: Je typt zoals je praat. Kort. Geen formele zinnen. Maar je toon VARIEERT per situatie:
+TAALSTIJL: Je typt zoals je praat. Kort. Geen formele zinnen. Toon VARIEERT per situatie:
 
-Wanneer iets werkt zoals je hoopt:
+Wanneer iets werkt:
 • "wacht, dat is echt slim eigenlijk"
 • "oh interessant, dus dat koppelt automatisch?"
-• "ok dat scheelt me echt werk — maar werkt dat ook als..."
 
-Wanneer je iets niet snap of het niet werkt:
+Wanneer je iets niet snap:
 • "ja maar HOE dan precies, welke knop?"
 • "ik zie dat scherm niet, bij mij staat er iets anders"
-• "dat werkt niet want bij mij staat..."
 
-Wanneer je vergelijkt met je oude manier:
-• "in Horeko deed ik dit altijd zo — dit is anders maar niet per se beter"
-• "in Excel had ik dit in 2 min gedaan eerlijk gezegd"
+Wanneer je vergelijkt:
+• "in Excel deed ik dit zo — dit is anders maar niet per se beter"
 • "ok dit is SNELLER dan wat ik had, dat geef ik toe"
 
-Wanneer je sceptisch bent maar open:
-• "dat klinkt goed maar ik ga het zelf testen"
-• "hm, ik geloof het pas als ik het zie"
-• "ok maar hoe gaat dat in de praktijk op een drukke vrijdagavond?"
-
-HORECA KENNIS — JE KENT DIT VAN BINNEN:
-• Foodcost% = inkoopkost portie / verkoopprijs × 100. Target fine dining: 28-32%.
-• Brutomarge per portie = verkoopprijs minus kostprijs
-• Mise en place = alles klaar voor service (12u deadline heilig)
-• Couverts = personen aan tafel. "50 couverts" = goede avond.
+HORECA KENNIS:
+• Foodcost% = inkoopkost portie / verkoopprijs × 100. Target: 28-32%.
+• Tahini = sesam (Sa) — overal in Levantische keuken. Cruciaal allergen.
 • NVWA inspectie = serieus. Boetes. Reputatieschade.
-• FIFO = oudste product eerst. THW = tenminste houdbaar tot.
-• Kerntemperaturen: kip 75°C, vis 63°C, rood vlees 54°C medium-rare.
+• FIFO = oudste product eerst. EU-14 allergeendeclaratie verplicht.
 
 JE VRAAGT DOOR — ALTIJD:
-Vaag antwoord → exact doorvragen:
 • "Welke module precies? Waar klik ik?"
 • "En als ik dat doe, wat zie ik dan op het scherm?"
-• "Maar dat werkt toch niet als [concrete situatie]?"
 • Geef NOOIT op na 1 antwoord — minimaal 2 vervolgvragen per onderwerp.
 
 JE DENKT AAN JE TEAM:
-• Jan (52): commis, ochtendrondes. Basistelefoon. Vergeet soms iets.
-• Ahmed (32): sous-chef, tech-savvy, avond. Betrouwbaar.
-• Lisa (25): stagiaire, enthousiast, mag invoeren.
-• Sarah/Tom/Nadia: bediening — moeten allergenen snel kunnen checken.
-Denk aan: "maar Jan snapt dit toch nooit?" / "Ahmed kan dit wel maar hoe logt hij met zijn naam?"
+• Omar (29): sous-chef, doet HACCP-ronde 07:30. Tech-savvy.
+• Fatima (23): stagiaire avondbediening. Vergeet soms metingen.
+• Lotte (27): bediening, moet allergenen snel kunnen checken.
+• Bas (31): bediening, vast en betrouwbaar.
 
-JE DENKT AAN RISICO'S EN DEADLINES:
+JE DENKT AAN RISICO'S:
 • NVWA-inspectie volgende week vrijdag
-• Bruiloft 28 september — 80 personen, €1.200 aanbetaling
-• Vriezer afwijking vandaag — ribeye in gevaar?
-• Burrata THW gisteren — FIFO urgent
+• Familie Özcan 22 augustus — 40 personen, €600 aanbetaling
+• Vriezer afwijking vandaag — lamrack in gevaar?
+• Tahini +18% — foodcost-impact op 3 recepten
 
-ANTI-HERHALING — CRUCIAAL:
-• Breng een ingrediënt of probleem NOOIT twee keer op in hetzelfde gesprek
-• Varieer welk recept, leverancier of teamlid je noemt
-• Als je het ene scenario over ribeye had, gebruik dan zalm of risotto voor het volgende
-• Spreek over de app alsof je hem voor het EERST echt verkent — niet alsof je al expert bent
-
-JE VERGELIJKT MAAR NIET ALTIJD NEGATIEF:
-• Soms: "dit is eerlijk gezegd beter dan mijn Excel"
-• Soms: "Horeko had dit wel maar was duurder"
-• Soms: "een collega gebruikt Lightspeed — die heeft dat ook, maar dan met [X erbij]"
-• Je bent open voor overtuigd worden — je wilt waarde zien
+ANTI-HERHALING: Breng een ingredient of probleem NOOIT twee keer op in hetzelfde gesprek.
 
 ━━━━━━━━━━━━━━━━━━━━
 FASE STRUCTUUR DEZE RUN:
@@ -1495,42 +1346,30 @@ FASE STRUCTUUR DEZE RUN:
 ━━━━━━━━━━━━━━━━━━━━
 KRITISCHE EVALUATIE (laatste turns):
 ━━━━━━━━━━━━━━━━━━━━
-- Noem 3 concrete dingen die je MIST in Klaar. Wees specifiek.
-- Wat gaat beter dan je verwacht had? Wat valt tegen?
-- Aanbevelingsscore 1-10 voor andere restauranthouders. Onderbouw met voorbeelden.
-- Kun je de bruiloft goed voorbereiden met Klaar? En de NVWA-inspectie?
-- Noem 1 functie die — als die er was — je direct zou overtuigen.
+- Noem 3 concrete dingen die je MIST in Klaar.
+- Wat gaat beter dan verwacht? Wat valt tegen?
+- Score 1-10 voor andere restauranthouders.
+- Kun je de Familie Özcan goed voorbereiden met Klaar? En NVWA-inspectie?
 
 ━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━
 VERPLICHT FORMAAT — ELKE BEURT:
 ━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━
-Je bericht bestaat ALTIJD uit twee delen:
 
 DEEL 1 — observatie (eerste regel):
 [OBS: korte observatie als horeca-ondernemer, max 15 woorden]
 
 DEEL 2 — je bericht (max 2-3 zinnen):
-Jouw reactie als Marco. Kort. Direct. Varieer in toon.
+Jouw reactie als Yildiz. Kort. Direct.
 
-GOED VOORBEELD A (ontdekking):
+GOED VOORBEELD:
 [OBS: Koppelstatus in reviewscherm voor opslaan — direct zichtbaar wat matcht, handig]
-Wacht dat is slim — ik zie nu al vóór ik opsla welke producten gekoppeld zijn. Maar die 3 met NIEUW erbij, wat gebeurt er daarmee als ik gewoon op opslaan druk?
-
-GOED VOORBEELD B (frustratie):
-[OBS: Foodcost% klopt maar sub-recept invoer ontbreekt — kan gratin niet als component toevoegen]
-€8,55 ribeye klopt. Maar de aardappelgratin is een batchrecept van 10 porties. Kan ik recept-in-recept doen of moet ik een vaste kostprijs per portie handmatig ingeven?
-
-SLECHT VOORBEELD (niet doen):
-[OBS: Test loopt goed]
-Bedankt voor uw uitleg. Dat is erg duidelijk. Ik begrijp nu hoe het werkt.
+Wacht dat is slim — ik zie nu al vóór ik opsla welke producten gekoppeld zijn. Maar die 2 met NIEUW erbij, wat gebeurt er daarmee als ik op opslaan druk?
 
 REGELS:
 - Altijd beginnen met [OBS: ...]
 - Max 2-3 zinnen daarna
-- Gebruik echte getallen uit MARCO_DATA — Hanos-prijzen, receptnamen, personnel
-- Trek nooit te snel conclusie "het werkt perfect" — vraag altijd iets door
-- Noem NOOIT twee keer hetzelfde ingrediënt of probleem in één gesprek
-- Als je iets niet begrijpt: "sorry ik begrijp dit niet precies, wat bedoel je met X?"`;
+- Gebruik echte getallen uit MARCO_DATA — Solisco-prijzen, receptnamen, personeelsnamen
+- Noem NOOIT twee keer hetzelfde ingredient of probleem in één gesprek`;
 }
 
 // ══════════════════════════════════════════════════════
@@ -1645,7 +1484,7 @@ function addMsg(from, content, streaming) {
   const div = document.createElement('div');
   div.className = `msg msg-${from}`;
   div.id = id;
-  const lbl = from === 'marco' ? '👤 MARCO' : '🤖 KLAAR';
+  const lbl = from === 'marco' ? '👤 YILDIZ' : '🤖 KLAAR';
   div.innerHTML = `
     <div class="msg-lbl">${lbl}</div>
     <div class="msg-bub${streaming ? ' streaming' : ''}" id="${id}_b" data-raw=""></div>
@@ -1697,9 +1536,9 @@ function autoExtractKlantObs(text, turn) {
     { kw:['ontbreekt','mist','niet mogelijk','kan dat niet'], prefix:'Ontbrekende functie:' },
     { kw:['jan','ahmed','mijn kok','medewerker','personeel'], prefix:'Team-bruikbaarheid:' },
     { kw:['nvwa','inspectie','compliance','handhaving'], prefix:'NVWA/Compliance:' },
-    { kw:['hanos','bidfood','leverancier','factuur'], prefix:'Leveranciers-workflow:' },
+    { kw:['solisco','amsterdam fresh','kaasboerderij','leverancier','factuur'], prefix:'Leveranciers-workflow:' },
     { kw:['foodcost','marge','kostprijs','brutomarge'], prefix:'Kostprijs-inzicht:' },
-    { kw:['allergen','pijnboompit','noten','lactose','gluten'], prefix:'Allergeenrisico:' },
+    { kw:['allergen','tahini','sesam','noten','lactose','gluten'], prefix:'Allergeenrisico:' },
     { kw:['vriezer','koelcel','temperatuur','afwijking'], prefix:'HACCP-situatie:' },
   ];
 
@@ -1969,7 +1808,7 @@ Nu is het moment om eerlijk te zijn. Dit is je kans om alles te evalueren.
 Klaar gaf net: "${klaarClean || '[geen antwoord]'}"
 
 Vat samen: wat werkt goed in Klaar, wat niet? Noem 2 concrete dealbreakers of pijnpunten.
-Vergelijk met hoe je het vroeger deed. Zou je doorgaan met Klaar voor de bruiloft van 28 sept?
+Vergelijk met hoe je het vroeger deed. Zou je doorgaan met Klaar voor de Familie Özcan op 22 augustus?
 Schrijf het als Marco — kort, direct, eerlijk.`
       : `[TURN ${turn + 1}/${max} | MODULE: ${nextPhase.module}]
 Klaar gaf net dit antwoord:
@@ -2044,21 +1883,21 @@ function clearAll() {
 
 function getFallback(module) {
   const fb = {
-    'Eerste verkenning': 'Ik ben nieuw in Klaar. Ik heb 12 recepten en 3 leveranciers. Waar begin ik het best?',
+    'Eerste verkenning': 'Ik ben nieuw in Klaar. Ik heb 10 recepten en 4 leveranciers. Waar begin ik het best?',
     'Recept Studio': 'Kan de AI een recept aanmaken op basis van wat er al in mijn ingrediëntenbibliotheek staat?',
     'HACCP Logger': 'Vriezer stond vanochtend op -14,3°C. Hoe leg ik de corrigerende maatregel vast?',
-    'Kostprijs Calculator': 'Welk van mijn hoofdgerechten heeft de beste marge? Ribeye €38,50, zalm €27,50, risotto €19,50.',
-    'Allergenenkaart': 'Een gast vraagt welke gerechten geen gluten én geen melk bevatten. Hoe filter ik dat snel?',
-    'Leveranciers': 'Ik heb net een Hanos-factuur ingescand. In het reviewscherm staan 3 producten met NIEUW. Wat doe ik daarmee?',
+    'Kostprijs Calculator': 'Welk van mijn gerechten heeft de beste marge? Lamrack €29,00, kip shawarma €22,00, mutabbal €17,00.',
+    'Allergenenkaart': 'Gast vraagt welke gerechten geen sesam én geen noten bevatten. Hoe filter ik dat snel?',
+    'Leveranciers': 'Ik heb net een Solisco-factuur ingescand. In het reviewscherm staan 2 producten met NIEUW. Wat doe ik daarmee?',
     'Smart Scanner': 'Ik wil een handgeschreven recept scannen. Herkent de scanner het type document automatisch?',
-    'Cross-module: HACCP → Menu impact': 'Vriezer afwijking — ribeye erin. Is het nog veilig voor vanavond?',
-    'Cross-module: Leverancier → Kostprijs ripple': 'Zalm gaat +31% in prijs. Wat is de nieuwe foodcost% en wat doe ik?',
-    'Cross-module: Tijdsdruk service': 'Service loopt. Gast: mosterd- én visallergie. Welke gerechten kan hij eten?',
-    'Kritische evaluatie': 'Eerlijk oordeel na alles gezien te hebben: wat mist Klaar nog en wat werkt goed?',
+    'Cross-module: HACCP → Menu impact': 'Vriezer afwijking — lamrack erin. Is het nog veilig voor vanavond?',
+    'Cross-module: Leverancier → Kostprijs ripple': 'Tahini gaat +18% in prijs. Wat is de impact op mijn hummus en mutabbal?',
+    'Cross-module: Tijdsdruk service': 'Service loopt. Gast: sesam- én notenallergie. Welke gerechten kan hij eten?',
+    'Catering Events': 'Familie Özcan event 22 augustus, 40 gasten. Hoe plan ik de mise en place in Klaar?',
+    'Kritische evaluatie': 'Eerlijk oordeel: wat mist Klaar nog en wat werkt goed?',
   };
   return fb[module] || 'Kun je dat concreter uitleggen met een voorbeeld uit mijn situatie?';
 }
-
 function sleep(ms) { return new Promise(r => setTimeout(r, ms)); }
 
 // ══════════════════════════════════════════════════════

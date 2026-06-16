@@ -1971,6 +1971,18 @@ function deleteAfwijking(id) {
   initDashboard();
 }
 
+function editMaatregel(id) {
+  const afw = ls.get('klaar_haccp_afwijkingen', []);
+  const a = afw.find(x => x.id === id);
+  if (!a) return;
+  const huidig = a.maatregel || '';
+  const nieuw = prompt('Corrigerende maatregel:\n(Vul in wat er gedaan is — verplicht voor NVWA)', huidig);
+  if (nieuw === null) return; // cancelled
+  a.maatregel = nieuw.trim();
+  ls.set('klaar_haccp_afwijkingen', afw);
+  renderAfwijkingen();
+}
+
 function renderAfwijkingen() {
   let arr = ls.get('klaar_haccp_afwijkingen', []);
   if (afwFilter === 'open') arr = arr.filter(a => a.status === 'open');
@@ -1988,6 +2000,7 @@ function renderAfwijkingen() {
     <td>${a.status === 'open' ? '<span class="chip chip-red afw-open">Open</span>' : '<span class="chip chip-green">Gesloten</span>'}</td>
     <td class="no-print" style="white-space:nowrap">
       ${a.status === 'open' ? `<button class="btn btn-ghost btn-sm" onclick="closeAfwijking('${a.id}')">✓ Sluiten</button>` : ''}
+      <button class="btn btn-ghost btn-sm" onclick="editMaatregel('${a.id}')" title="Maatregel bewerken">✏️</button>
       <button class="btn btn-ghost btn-sm" onclick="deleteAfwijking('${a.id}')">✕</button>
     </td>
   </tr>`).join('');

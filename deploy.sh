@@ -13,7 +13,7 @@ git add \
   tests/klaar-ai-test.html \
   index.html klaar-client.js vercel.json package.json \
   deploy.sh
-git commit -m "fix: batch-scaler recepten + prijsalert banner + empty states + pre-service checklist + allergeenmatrix — Module 01: ×½/×2/×3/×5 scaler voor ingrediënthoeveelheden; Module 07: persistente prijsstijgingsbanner (oranje, dismissable), modal na koppelmodal; Module 04: empty state met directe links naar Recept Studio + Leveranciers; Module 02: A4 kruistabel export + live bediening-tab; Module 10: pre-service checklist + notities op keukensheet; Test: max 75 woorden"
+git commit -m "fix: persona-tests (4x) + KLAAR_PROMPT multi-device beperking + sub-recipe gap; KLAAR_PROMPT: localStorage single-device waarschuwing toegevoegd, recept-in-recept beperking gedocumenteerd, alle Marco-refs verwijderd uit antwoordregels; sim-bevindingen: Reza/Silke/Dante/Fatou — EDI geen ondersteuning, batch-kostprijs workaround, allergen niet per event filterbaar (eerlijk gedocumenteerd)"
 git push
 echo ""
 echo "Klaar! Vercel bouwt nu automatisch (1-2 min)."

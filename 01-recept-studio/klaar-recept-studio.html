@@ -854,6 +854,7 @@
           <div class="unsaved-dot" id="unsavedDot"></div>
           <button class="btn-act save" onclick="saveRecipe()">💾 Opslaan</button>
           <button class="btn-act" onclick="printRecipe()">🖨️ Print</button>
+          <button class="btn-act" onclick="kloonRecept()" title="Dupliceer dit recept als concept">📋 Kloon</button>
           <button class="btn-act danger" onclick="askDelete()">Verwijder</button>
           <button class="btn-status" id="btnStatus" onclick="toggleStatus()">● Concept</button>
         </div>
@@ -1969,6 +1970,23 @@ function confirmDelete() {
   saveRecipes(); closeDelete();
   showGrid();
   showToast('Recept verwijderd');
+}
+
+function kloonRecept() {
+  if (!activeId) return;
+  saveRecipe(); // flush current edits first
+  const r = getRecipe(activeId);
+  if (!r) return;
+  const id = 'rec_' + Date.now() + '_' + Math.random().toString(36).slice(2,6);
+  const kloon = JSON.parse(JSON.stringify(r));
+  kloon.id = id;
+  kloon.title = (r.title || 'Naamloos') + ' (kopie)';
+  kloon.status = 'draft';
+  kloon.createdAt = new Date().toISOString();
+  recipes.unshift(kloon);
+  saveRecipes();
+  openRecipe(id);
+  setTimeout(() => showToast(`"${kloon.title}" aangemaakt`), 50);
 }
 
 // ═══════════════════════════════════════════════════
