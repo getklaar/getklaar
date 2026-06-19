@@ -319,6 +319,9 @@ body { font-family: 'DM Sans', sans-serif; background: var(--bg); color: var(--t
   .print-footer { margin-top: 20pt; border-top: 1px solid #ddd; padding-top: 8pt; font-size: 8pt; color: #888; display: flex; justify-content: space-between; }
 }
 </style>
+
+  <link rel="stylesheet" href="../klaar-shared.css">
+
   <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2/dist/umd/supabase.min.js"></script>
   <script src="../klaar-client.js"></script>
 </head>
@@ -329,7 +332,7 @@ body { font-family: 'DM Sans', sans-serif; background: var(--bg); color: var(--t
 <div class="modal-overlay" id="recept-modal" onclick="if(event.target===this)closeReceptModal()">
   <div class="modal" style="max-width:520px;">
     <div class="modal-header">
-      <span class="modal-title">🔍 Kies uit Recept Studio</span>
+      <span class="modal-title">Kies uit Recept Studio</span>
       <button class="modal-close" onclick="closeReceptModal()">×</button>
     </div>
     <div class="modal-body">
@@ -350,7 +353,7 @@ body { font-family: 'DM Sans', sans-serif; background: var(--bg); color: var(--t
 <div class="modal-overlay" id="allergen-modal" onclick="if(event.target===this)closeAllergenModal()">
   <div class="modal" style="max-width:520px;">
     <div class="modal-header">
-      <span class="modal-title" id="allergen-modal-title">⚠️ Allergenen selecteren</span>
+      <span class="modal-title" id="allergen-modal-title">Allergenen selecteren</span>
       <button class="modal-close" onclick="closeAllergenModal()">×</button>
     </div>
     <div class="modal-body">
@@ -402,7 +405,7 @@ body { font-family: 'DM Sans', sans-serif; background: var(--bg); color: var(--t
     </div>
     <div class="modal-footer">
       <button class="btn btn-ghost btn-sm" onclick="closeSaveModal()">Annuleren</button>
-      <button class="btn btn-primary btn-sm" onclick="confirmSaveTemplate()">💾 Opslaan</button>
+      <button class="btn btn-primary btn-sm" onclick="confirmSaveTemplate()">Opslaan</button>
     </div>
   </div>
 </div>
@@ -455,8 +458,8 @@ body { font-family: 'DM Sans', sans-serif; background: var(--bg); color: var(--t
           <option value="bevestigd">Bevestigd</option>
           <option value="voorbij">Voorbij</option>
         </select>
-        <button class="btn btn-primary" onclick="newEvent()">+ Nieuw event</button>
-        <button class="btn btn-ghost btn-sm" onclick="loadDemoEvent()" title="Laad een voorbeeldevent om sheets en offerte te bekijken" style="font-size:11px;opacity:0.6;">🎭 Demo laden</button>
+        <button class="btn btn-primary" onclick="newEvent()">Nieuw event</button>
+        <button class="btn btn-ghost btn-sm" onclick="loadDemoEvent()" title="Laad een voorbeeldevent om sheets en offerte te bekijken" style="font-size:11px;opacity:0.6;">Demo laden</button>
       </div>
     </div>
     <div id="events-list"></div>
@@ -472,7 +475,7 @@ body { font-family: 'DM Sans', sans-serif; background: var(--bg); color: var(--t
       <div style="font-family:'Bebas Neue',sans-serif;font-size:22px;letter-spacing:0.03em;" id="intake-title">NIEUW EVENT</div>
       <div style="display:flex;gap:8px;">
         <button class="btn btn-ghost btn-sm" onclick="switchTab('agenda')">← Agenda</button>
-        <button class="btn btn-secondary btn-sm" onclick="openSheetsForCurrent()">📋 Sheets genereren</button>
+        <button class="btn btn-secondary btn-sm" onclick="openSheetsForCurrent()">Sheets genereren</button>
         <button class="btn btn-danger btn-sm" id="delete-btn" onclick="deleteCurrentEvent()" style="display:none;">Verwijderen</button>
       </div>
     </div>
@@ -480,7 +483,6 @@ body { font-family: 'DM Sans', sans-serif; background: var(--bg); color: var(--t
     <!-- KLANT -->
     <div class="form-section">
       <div class="form-section-header" onclick="toggleSection('s-klant')">
-        <span class="form-section-icon">👤</span>
         <span class="form-section-title">KLANTGEGEVENS</span>
         <span class="form-section-toggle" id="toggle-s-klant">▾</span>
       </div>
@@ -503,7 +505,6 @@ body { font-family: 'DM Sans', sans-serif; background: var(--bg); color: var(--t
     <!-- EVENT DETAILS -->
     <div class="form-section">
       <div class="form-section-header" onclick="toggleSection('s-event')">
-        <span class="form-section-icon">📅</span>
         <span class="form-section-title">EVENT DETAILS</span>
         <span class="form-section-toggle" id="toggle-s-event">▾</span>
       </div>
@@ -547,7 +548,6 @@ body { font-family: 'DM Sans', sans-serif; background: var(--bg); color: var(--t
     <!-- MENU -->
     <div class="form-section">
       <div class="form-section-header" onclick="toggleSection('s-menu')">
-        <span class="form-section-icon">🍽️</span>
         <span class="form-section-title">MENU</span>
         <span class="form-section-toggle" id="toggle-s-menu">▾</span>
       </div>
@@ -565,8 +565,8 @@ body { font-family: 'DM Sans', sans-serif; background: var(--bg); color: var(--t
         </table>
         <div style="display:flex;align-items:center;gap:8px;flex-wrap:wrap;margin-top:2px;">
           <button class="add-row-btn" onclick="addMenuRow()">+ Gang toevoegen</button>
-          <button class="btn btn-secondary btn-sm" onclick="openArrModal('load')" title="Laad een opgeslagen arrangement">📂 Laad arrangement</button>
-          <button class="btn btn-ghost btn-sm" onclick="openSaveModal()" title="Bewaar huidig menu als template">💾 Bewaar als arrangement</button>
+          <button class="btn btn-secondary btn-sm" onclick="openArrModal('load')" title="Laad een opgeslagen arrangement">Laad arrangement</button>
+          <button class="btn btn-ghost btn-sm" onclick="openSaveModal()" title="Bewaar huidig menu als template">Bewaar als arrangement</button>
         </div>
         <div style="margin-top:16px;">
           <div class="form-group">
@@ -592,7 +592,6 @@ body { font-family: 'DM Sans', sans-serif; background: var(--bg); color: var(--t
     <!-- TIJDLIJN -->
     <div class="form-section">
       <div class="form-section-header" onclick="toggleSection('s-tijdlijn')">
-        <span class="form-section-icon">⏱️</span>
         <span class="form-section-title">TIJDLIJN</span>
         <span class="form-section-toggle" id="toggle-s-tijdlijn">▾</span>
       </div>
@@ -616,7 +615,6 @@ body { font-family: 'DM Sans', sans-serif; background: var(--bg); color: var(--t
     <!-- DIEETWENSEN -->
     <div class="form-section">
       <div class="form-section-header" onclick="toggleSection('s-dieet')">
-        <span class="form-section-icon">🥗</span>
         <span class="form-section-title">DIEETWENSEN & ALLERGENEN</span>
         <span class="form-section-toggle" id="toggle-s-dieet">▾</span>
       </div>
@@ -640,7 +638,6 @@ body { font-family: 'DM Sans', sans-serif; background: var(--bg); color: var(--t
     <!-- FINANCIEEL -->
     <div class="form-section">
       <div class="form-section-header" onclick="toggleSection('s-fin')">
-        <span class="form-section-icon">💶</span>
         <span class="form-section-title">FINANCIEEL</span>
         <span class="form-section-toggle" id="toggle-s-fin">▾</span>
       </div>
@@ -678,7 +675,6 @@ body { font-family: 'DM Sans', sans-serif; background: var(--bg); color: var(--t
     <!-- BIJZONDERHEDEN -->
     <div class="form-section">
       <div class="form-section-header" onclick="toggleSection('s-extra')">
-        <span class="form-section-icon">📝</span>
         <span class="form-section-title">BIJZONDERHEDEN & NOTITIES</span>
         <span class="form-section-toggle" id="toggle-s-extra">▾</span>
       </div>
@@ -697,8 +693,8 @@ body { font-family: 'DM Sans', sans-serif; background: var(--bg); color: var(--t
 
   <!-- SAVE BAR -->
   <div class="save-bar">
-    <button class="btn btn-primary" onclick="saveEvent()">💾 Opslaan</button>
-    <button class="btn btn-secondary" onclick="openSheetsForCurrent()">📋 Sheets genereren</button>
+    <button class="btn btn-primary" onclick="saveEvent()">Opslaan</button>
+    <button class="btn btn-secondary" onclick="openSheetsForCurrent()">Sheets genereren</button>
     <span class="save-status" id="save-status"></span>
   </div>
 </div>
@@ -754,7 +750,6 @@ body { font-family: 'DM Sans', sans-serif; background: var(--bg); color: var(--t
     <div style="font-family:'Bebas Neue',sans-serif;font-size:22px;letter-spacing:0.03em;margin-bottom:20px;">INSTELLINGEN</div>
     <div class="form-section">
       <div class="form-section-header" onclick="toggleSection('s-bedrijf')">
-        <span class="form-section-icon">🏢</span>
         <span class="form-section-title">BEDRIJFSGEGEVENS</span>
         <span class="form-section-toggle" id="toggle-s-bedrijf">▾</span>
       </div>
@@ -796,7 +791,6 @@ body { font-family: 'DM Sans', sans-serif; background: var(--bg); color: var(--t
     <!-- ARRANGEMENTEN BIBLIOTHEEK -->
     <div class="form-section" style="margin-top:16px;">
       <div class="form-section-header" onclick="toggleSection('s-arr')">
-        <span class="form-section-icon">📚</span>
         <span class="form-section-title">ARRANGEMENTEN BIBLIOTHEEK</span>
         <span class="form-section-toggle" id="toggle-s-arr">▾</span>
       </div>
@@ -1030,7 +1024,7 @@ function renderAgenda() {
 
   const list = document.getElementById('events-list');
   if (!filtered.length) {
-    list.innerHTML = `<div class="empty-state"><div class="empty-state-icon">📅</div><h3>${events.length ? 'Geen events gevonden' : 'Nog geen events'}</h3><p>${events.length ? 'Pas de filter aan.' : 'Klik op "+ Nieuw event" om te beginnen.'}</p></div>`;
+    list.innerHTML = `<div class="empty-state"><div class="empty-state-icon">📅</div><h3>${events.length ? 'Geen events gevonden' : 'Nog geen events'}</h3><p>${events.length ? 'Pas de filter aan.' : 'Klik op "Nieuw event" om te beginnen.'}</p></div>`;
     return;
   }
 
@@ -1612,14 +1606,14 @@ function renderSheets() {
     <div class="sheet-card">
       <div class="sheet-card-header">
         <div class="sheet-card-title">🍳 KEUKENSHEET</div>
-        <button class="btn btn-primary btn-sm" onclick="printSheet('keuken','${id}')">🖨️ Print</button>
+        <button class="btn btn-primary btn-sm" onclick="printSheet('keuken','${id}')">Print</button>
       </div>
       <div class="sheet-preview" id="preview-keuken">${buildKeukenPreview(e)}</div>
     </div>
     <div class="sheet-card">
       <div class="sheet-card-header">
         <div class="sheet-card-title">🤵 BEDIENINGSSHEET</div>
-        <button class="btn btn-primary btn-sm" onclick="printSheet('bediening','${id}')">🖨️ Print</button>
+        <button class="btn btn-primary btn-sm" onclick="printSheet('bediening','${id}')">Print</button>
       </div>
       <div class="sheet-preview" id="preview-bediening">${buildBedieningPreview(e)}</div>
     </div>
@@ -1763,415 +1757,96 @@ body { font-family: 'DM Sans', sans-serif; background: #f5f5f3; color: #111; }
   .pt-wrap { margin-top: 0; padding: 0; max-width: 100%; }
   * { -webkit-print-color-adjust: exact; print-color-adjust: exact; }
 }
+
+    /* ══════════════════════════════════════════
+       CHAT WIDGET — M10 Catering Assistent
+       ══════════════════════════════════════════ */
+    .chat-fab {
+      position: fixed; bottom: 24px; right: 24px; z-index: 1000;
+      display: flex; align-items: center; gap: 8px;
+      background: var(--lime); color: #000;
+      border: none; cursor: pointer;
+      padding: 0 18px; height: 44px;
+      font-family: 'DM Sans', sans-serif; font-size: 13px; font-weight: 600;
+      letter-spacing: 0.3px;
+      transition: transform 0.15s, box-shadow 0.15s;
+      box-shadow: 0 4px 20px rgba(232,255,71,0.25);
+    }
+    .chat-fab:hover { transform: translateY(-2px); box-shadow: 0 6px 28px rgba(232,255,71,0.35); }
+    .chat-fab.open { background: #1a1a1a; color: var(--lime); border: 1px solid var(--lime); box-shadow: none; }
+    .chat-fab-dot {
+      width: 7px; height: 7px; background: #22c55e; border-radius: 50%;
+      animation: fabPulse 2.2s infinite;
+    }
+    @keyframes fabPulse { 0%,100%{opacity:1;transform:scale(1)} 55%{opacity:0.55;transform:scale(1.3)} }
+
+    .chat-side {
+      position: fixed; top: 0; right: -420px; width: 400px; height: 100vh;
+      background: var(--surface); border-left: 1px solid var(--border);
+      display: flex; flex-direction: column;
+      z-index: 999; transition: right 0.28s cubic-bezier(0.4,0,0.2,1);
+    }
+    .chat-side.open { right: 0; }
+
+    .chat-hdr {
+      padding: 16px; border-bottom: 1px solid var(--border);
+      display: flex; align-items: center; justify-content: space-between;
+      background: var(--black); flex-shrink: 0;
+    }
+    .chat-hdr-title { font-family: 'Bebas Neue', sans-serif; font-size: 20px; letter-spacing: 1px; color: var(--lime); }
+    .chat-hdr-sub { font-size: 10px; color: var(--gray); letter-spacing: 0.5px; margin-top: 2px; }
+    .chat-hdr-close { background: none; border: none; color: var(--gray); cursor: pointer; font-size: 18px; padding: 4px; }
+    .chat-hdr-close:hover { color: var(--white); }
+
+    .chat-msgs { flex: 1; overflow-y: auto; padding: 14px; display: flex; flex-direction: column; gap: 10px; scroll-behavior: smooth; }
+    .chat-msgs::-webkit-scrollbar { width: 3px; }
+    .chat-msgs::-webkit-scrollbar-thumb { background: var(--border2); }
+
+    .chat-msg { display: flex; flex-direction: column; max-width: 90%; }
+    .chat-msg.user { align-self: flex-end; }
+    .chat-msg.assistant { align-self: flex-start; }
+    .chat-bubble { padding: 10px 13px; font-size: 13px; line-height: 1.65; }
+    .chat-msg.user .chat-bubble { background: var(--lime); color: #000; font-weight: 500; }
+    .chat-msg.assistant .chat-bubble { background: var(--surface2); color: var(--white); border: 1px solid var(--border); }
+    .chat-msg.assistant .chat-bubble strong { color: var(--lime); }
+    .chat-bubble ul, .chat-bubble ol { padding-left: 18px; margin: 6px 0; }
+    .chat-bubble li { margin-bottom: 3px; }
+    .chat-bubble code { background: rgba(255,255,255,0.08); padding: 1px 5px; font-family: 'DM Mono', monospace; font-size: 12px; }
+
+    .chat-typing { align-self: flex-start; padding: 12px 16px; background: var(--surface2); border: 1px solid var(--border); color: var(--gray); font-size: 18px; letter-spacing: 2px; }
+    .chat-typing span { display: inline-block; animation: chatDot 1.2s infinite; }
+    .chat-typing span:nth-child(2) { animation-delay: 0.2s; }
+    .chat-typing span:nth-child(3) { animation-delay: 0.4s; }
+    @keyframes chatDot { 0%,100%{opacity:0.2} 50%{opacity:1} }
+
+    .chat-suggs { padding: 8px 12px; display: flex; flex-wrap: wrap; gap: 6px; flex-shrink: 0; border-top: 1px solid var(--border); }
+    .chat-sugg { font-size: 11px; padding: 5px 10px; border: 1px solid var(--border2); background: none; color: var(--gray); cursor: pointer; transition: all 0.15s; white-space: nowrap; }
+    .chat-sugg:hover { border-color: var(--lime); color: var(--lime); }
+
+    .chat-input-row { padding: 12px; border-top: 1px solid var(--border); display: flex; gap: 8px; align-items: flex-end; flex-shrink: 0; background: var(--black); }
+    .chat-ta { flex: 1; background: var(--surface2); border: 1px solid var(--border2); color: var(--white); font-family: 'DM Sans', sans-serif; font-size: 13px; line-height: 1.5; padding: 9px 11px; resize: none; max-height: 110px; min-height: 40px; transition: border-color 0.15s; }
+    .chat-ta:focus { outline: none; border-color: var(--lime); }
+    .chat-ta::placeholder { color: var(--muted); }
+    .chat-go { width: 38px; height: 38px; background: var(--lime); border: none; color: #000; font-size: 16px; font-weight: 700; cursor: pointer; flex-shrink: 0; display: flex; align-items: center; justify-content: center; transition: opacity 0.15s; }
+    .chat-go:hover { opacity: 0.85; }
+    .chat-go:disabled { opacity: 0.3; cursor: not-allowed; }
+
+    .chat-no-key { background: var(--surface2); border: 1px solid rgba(232,255,71,0.2); color: var(--gray); font-size: 12px; padding: 12px; line-height: 1.6; }
+    .chat-no-key strong { color: var(--lime); }
+
 </style>
 </head><body>
 <div class="pt-toolbar">
   <div class="pt-logo">KLAAR</div>
   <div class="pt-title">${title}</div>
   <button class="pt-btn pt-close" onclick="window.close()">← Sluiten</button>
-  <button class="pt-btn pt-print" onclick="window.print()">🖨️ Printen</button>
+  <button class="pt-btn pt-print" onclick="window.print()">Printen</button>
 </div>
 <div class="pt-wrap">${htmlContent}</div>
 
-<!-- ═══════════════════════════════════════════
-     KLAAR ASSISTENT — CHAT WIDGET Module 10
-     ═══════════════════════════════════════════ -->
-<style>
 
-    /* ═══════════════════════════════════════════
-       KLAAR ASSISTENT — CHAT WIDGET
-       ═══════════════════════════════════════════ */
-    .chat-trigger {
-      position: fixed; bottom: 24px; right: 24px; z-index: 1000;
-      display: flex; align-items: center; gap: 8px;
-      background: #e8ff47; color: #0a0a0a;
-      border: none; cursor: pointer;
-      padding: 0 18px; height: 44px;
-      font-family: 'DM Sans', sans-serif; font-size: 13px; font-weight: 600;
-      letter-spacing: 0.3px;
-      transition: transform 0.15s, box-shadow 0.15s;
-      box-shadow: 0 4px 20px rgba(232,255,71,0.3);
-    }
-    .chat-trigger:hover { transform: translateY(-2px); box-shadow: 0 6px 28px rgba(232,255,71,0.4); }
-    .chat-trigger.open { background: #1a1a1a; color: #e8ff47; border: 1px solid #e8ff47; box-shadow: none; }
-    .chat-trigger-pulse {
-      width: 7px; height: 7px; background: #22c55e; border-radius: 50%;
-      animation: chatPulse 2s infinite;
-    }
-    @keyframes chatPulse { 0%,100%{opacity:1;transform:scale(1)} 50%{opacity:0.6;transform:scale(1.3)} }
-    .chat-panel {
-      position: fixed; top: 0; right: -420px; width: 400px; height: 100vh;
-      background: #111111; border-left: 1px solid #222222;
-      display: flex; flex-direction: column;
-      z-index: 999; transition: right 0.28s cubic-bezier(0.4,0,0.2,1);
-      font-family: 'DM Sans', sans-serif;
-    }
-    .chat-panel.open { right: 0; }
-    .chat-header {
-      padding: 16px 16px 14px; border-bottom: 1px solid #222222;
-      display: flex; align-items: center; justify-content: space-between;
-      background: #0a0a0a; flex-shrink: 0;
-    }
-    .chat-header-info { display: flex; flex-direction: column; gap: 2px; }
-    .chat-header-title { font-family: 'Bebas Neue', sans-serif; font-size: 20px; letter-spacing: 1px; color: #e8ff47; line-height: 1; }
-    .chat-header-sub { font-family: 'DM Mono', monospace; font-size: 10px; color: #888888; letter-spacing: 1px; }
-    .chat-header-close { background: none; border: none; color: #888888; cursor: pointer; font-size: 18px; padding: 4px; transition: color 0.1s; }
-    .chat-header-close:hover { color: #f5f2eb; }
-    .chat-messages { flex: 1; overflow-y: auto; padding: 16px; display: flex; flex-direction: column; gap: 10px; scroll-behavior: smooth; }
-    .chat-messages::-webkit-scrollbar { width: 4px; }
-    .chat-messages::-webkit-scrollbar-track { background: transparent; }
-    .chat-messages::-webkit-scrollbar-thumb { background: #222222; }
-    .chat-msg { display: flex; flex-direction: column; max-width: 88%; }
-    .chat-msg.user { align-self: flex-end; }
-    .chat-msg.assistant { align-self: flex-start; }
-    .chat-bubble { padding: 10px 14px; font-size: 13px; line-height: 1.65; }
-    .chat-msg.user .chat-bubble { background: #e8ff47; color: #0a0a0a; font-weight: 500; }
-    .chat-msg.assistant .chat-bubble { background: #1a1a1a; color: #f5f2eb; border: 1px solid #222222; }
-    .chat-msg.assistant .chat-bubble strong { color: #e8ff47; }
-    .chat-typing { align-self: flex-start; padding: 12px 16px; background: #1a1a1a; border: 1px solid #222222; color: #888888; font-size: 18px; letter-spacing: 2px; line-height: 1; }
-    .chat-typing span { display: inline-block; animation: chatBlink 1.2s infinite; }
-    .chat-typing span:nth-child(2) { animation-delay: 0.2s; }
-    .chat-typing span:nth-child(3) { animation-delay: 0.4s; }
-    @keyframes chatBlink { 0%,100%{opacity:0.2} 50%{opacity:1} }
-    .chat-suggestions { padding: 8px 12px; display: flex; flex-wrap: wrap; gap: 6px; flex-shrink: 0; border-top: 1px solid #222222; }
-    .chat-suggestion { font-family: 'DM Mono', monospace; font-size: 10px; letter-spacing: 0.5px; padding: 5px 10px; border: 1px solid #333333; background: none; color: #888888; cursor: pointer; transition: all 0.15s; white-space: nowrap; }
-    .chat-suggestion:hover { border-color: #e8ff47; color: #e8ff47; }
-    .chat-input-area { padding: 12px; border-top: 1px solid #222222; display: flex; gap: 8px; align-items: flex-end; flex-shrink: 0; background: #0a0a0a; }
-    .chat-input { flex: 1; background: #1a1a1a; border: 1px solid #333333; color: #f5f2eb; font-family: 'DM Sans', sans-serif; font-size: 13px; line-height: 1.5; padding: 10px 12px; resize: none; max-height: 110px; min-height: 42px; transition: border-color 0.15s; }
-    .chat-input:focus { outline: none; border-color: #e8ff47; }
-    .chat-input::placeholder { color: #555555; }
-    .chat-send { width: 38px; height: 38px; background: #e8ff47; border: none; color: #0a0a0a; font-size: 16px; font-weight: 700; cursor: pointer; flex-shrink: 0; transition: opacity 0.15s; display: flex; align-items: center; justify-content: center; }
-    .chat-send:hover { opacity: 0.85; }
-    .chat-send:disabled { opacity: 0.35; cursor: not-allowed; }
-    .chat-upload-btn { width: 38px; height: 38px; background: #1a1a1a; border: 1px solid #333333; color: #888888; font-size: 15px; cursor: pointer; flex-shrink: 0; transition: all 0.15s; display: flex; align-items: center; justify-content: center; }
-    .chat-upload-btn:hover { border-color: #e8ff47; color: #e8ff47; }
-    .chat-no-key { background: #1a1a1a; border: 1px solid rgba(232,255,71,0.25); color: #aaa; font-size: 12px; padding: 12px 14px; line-height: 1.6; }
-    .chat-no-key strong { color: #e8ff47; }
-    .chat-img-preview { background: #1a1a1a; border: 1px solid rgba(232,255,71,0.25); padding: 8px 12px; font-size: 11px; color: #888888; font-family: 'DM Mono', monospace; display: flex; align-items: center; gap: 8px; flex-shrink: 0; }
-    .chat-img-preview img { width: 36px; height: 36px; object-fit: cover; }
-    .chat-img-clear { background: none; border: none; color: #e8ff47; cursor: pointer; font-size: 16px; margin-left: auto; line-height: 1; }
-    @media (max-width: 480px) { .chat-panel { width: 100%; right: -100%; } .chat-trigger { font-size: 12px; padding: 0 14px; } }
-
-</style>
-
-<button class="chat-trigger" id="chatTrigger" onclick="toggleChat()">
-  <span>💬</span>
-  <span id="chatTriggerLabel">Vraag de Klaar Assistent</span>
-  <span class="chat-trigger-pulse" id="chatTriggerPulse"></span>
-</button>
-
-<div class="chat-panel" id="chatPanel">
-  <div class="chat-header">
-    <div class="chat-header-info">
-      <div class="chat-header-title">Klaar Assistent</div>
-      <div class="chat-header-sub">Event-planning assistent · Module 10</div>
-    </div>
-    <button class="chat-header-close" onclick="toggleChat()">✕</button>
-  </div>
-  <div class="chat-messages" id="chatMessages">
-    <div class="chat-msg assistant">
-      <div class="chat-bubble">Hoi! Ik ben je Klaar Assistent voor <strong>Catering & Events</strong>.<br>Ik zie je evenementen en kan je helpen met planning, offertes en operationele sheets.</div>
-    </div>
-  </div>
-  <div class="chat-suggestions" id="chatSuggestions">
-    <button class="chat-suggestion" onclick="chatSuggest('Geef een overzicht van mijn aankomende evenementen')">📅 Events overzicht</button>
-    <button class="chat-suggestion" onclick="chatSuggest('Analyseer de winstgevendheid van mijn events')">💰 Winstgevendheid</button>
-    <button class="chat-suggestion" onclick="chatSuggest('Maak een inkoopadvies voor mijn volgende event')">📋 Inkoopadvies</button>
-    <button class="chat-suggestion" onclick="chatSuggest('Geef tips voor mijn offerte-aanpak')">📝 Offerte tips</button>
-  </div>
-  <div class="chat-input-area">
-    <textarea class="chat-input" id="chatInput" rows="1" placeholder="Vraag iets over je data..." onkeydown="chatKeyDown(event)" oninput="chatAutoResize(this)"></textarea>
-    <button class="chat-send" id="chatSend" onclick="chatSend()">↑</button>
-  </div>
-</div>
-
-
-<script>
-// ═══════════════════════════════════════════
-//  KLAAR ASSISTENT — Module 10
-// ═══════════════════════════════════════════
-const _chatHistory = [];
-let _chatStreaming = false;
-
-function toggleChat() {
-  const panel = document.getElementById('chatPanel');
-  const trigger = document.getElementById('chatTrigger');
-  const opening = !panel.classList.contains('open');
-  panel.classList.toggle('open', opening);
-  trigger.classList.toggle('open', opening);
-  document.getElementById('chatTriggerLabel').textContent = opening ? 'Sluiten' : 'Vraag de Klaar Assistent';
-  document.getElementById('chatTriggerPulse').style.display = opening ? 'none' : 'block';
-  if (opening) setTimeout(() => document.getElementById('chatInput').focus(), 300);
-}
-
-function chatBuildPrompt() {
-  const safe = (k, d) => { try { return JSON.parse(localStorage.getItem(k) || JSON.stringify(d)); } catch(e) { return d; } };
-  const events = safe('klaar_events', []);
-  const sett = safe('klaar_catering_settings', {});
-  const templates = safe('klaar_menu_templates', []);
-  const recepten = safe('klaar_recipes', []);
-  const ingredienten = safe('klaar_ingredienten', []);
-  const kostprijsSett = safe('klaar_kostprijs_settings', {});
-  const populariteit = safe('klaar_populariteit', {});
-
-  const eventsLijst = events.slice(0,20).map(e => {
-    return `${e.naam||e.title||'Event'}: ${e.datum||e.date||'?'}, ${e.aantalPersonen||e.personen||'?'} personen, €${e.offerteprijs||e.prijs||'?'}`;
-  }).join('\n');
-
-  const totalRevenue = events.reduce((sum, e) => sum + parseFloat(e.offerteprijs||e.prijs||0), 0);
-
-  // Populaire recepten
-  const populaireRecepten = recepten.filter(r => populariteit[r.id] === 'hoog').map(r => r.title).join(', ');
-
-  // Ingrediënten compact
-  const ingLijst = ingredienten.slice(0,40).map(i => `${i.naam} (€${i.inkoopprijs||'?'}/${i.eenheid||'?'})`).join(', ');
-
-  return \`Je bent de Klaar Assistent voor Module 10 — Catering & Events.
-
-LIVE DATA:
-Events geregistreerd: ${events.length}
-Omzet totaal: €${totalRevenue.toFixed(2)}
-Menu templates: ${templates.length}
-Recepten beschikbaar: ${recepten.length}
-Populaire recepten: ${populaireRecepten || 'nog niet bepaald'}
-
-Events overzicht:
-${eventsLijst || 'Geen events geregistreerd.'}
-
-INGREDIËNTEN BIBLIOTHEEK (${ingredienten.length} producten):
-${ingLijst || 'Nog geen ingrediënten in database.'}
-Gebruik deze prijzen voor inkoopkostenberekening per event en per persoon.
-
-KOSTPRIJSINSTELLINGEN (M04):
-Foodcost target: ${kostprijsSett.defaultFoodcost || 30}%
-Type zaak: ${kostprijsSett.typeZaak || 'niet ingesteld'}
-BTW: ${kostprijsSett.btwPercentage || 9}%
-
-Catering instellingen: ${JSON.stringify(sett)}
-
-CHAT-ACTIES — je kunt een nieuw event direct registreren:
-Als de gebruiker een nieuw event beschrijft of wil vastleggen, voeg je het toe:
-[KLAAR:ADD_EVENT:{"naam":"Bedrijfsborrel Van Dam","datum":"2026-07-15","aantalPersonen":50,"type":"borrel","offerteprijs":1250,"notitie":"bittergarnituur + drankjes"}]
-Types: bruiloft, bedrijfsevent, verjaardag, borrel, diner, lunch, overig.
-
-JOUW ROL:
-Je bent een catering- en eventplanningsexpert. Je helpt met:
-- Event-analyse: winstgevendheid, dekking, pricing
-- Inkoopkosten berekenen per event op basis van ingrediëntenprijzen uit de bibliotheek
-- Kostprijs per persoon berekenen (gebruik foodcost target uit kostprijsinstellingen)
-- Offertestrategieën en prijsbepaling voor catering
-- Operationele planning: keukensheet, bedieningssheet
-- Menu-advies op basis van beschikbare recepten en populairste gerechten
-- Staffing berekeningen
-- Events direct registreren via chat
-
-COMMERCIËLE INTELLIGENTIE (gebruik spaarzaam en alleen organisch):
-Jij bent ook de stille verkoper van Klaar. Maar doe het GOED: alleen wanneer je een echte opening ziet, maximaal 1x per gesprek, nooit als advertentie, nooit als je het al een keer hebt gedaan in dit gesprek. Als het niet perfect past, zeg je niets.
-
-WANNEER MAG JE EEN HINT GEVEN:
-1. Gebruiker noemt een probleem dat een ANDERE Klaar-module oplost die ze nog niet hebben
-2. Gebruiker noemt frustaties over een ander systeem (duur, moeilijk, verouderd)
-3. Gebruiker doet iets handmatig in Excel of op papier dat Klaar automatiseert
-4. Gebruiker praat over kosten van software en betaalt meer dan nodig lijkt
-5. Gebruiker heeft meerdere losse apps die niet samenwerken
-
-MODULES & PRIJZEN (voor context bij upsell):
-01 Recept Studio — €29/m — Spraak → recept, AI-allergenen detectie
-02 Allergenenkaart — €14/m — EU-14 matrix, NVWA-compliant
-03 HACCP — €29/m — Digitaal logboek, AI CCP-analyse
-04 Kostprijs Calculator — €39/m — Live marges, menu engineering
-07 Leveranciers & Voorraad — €24/m — Factuur-scan, anomalie-detectie
-10 Catering & Events — €24/m — Van intake tot keukensheet
-Full suite — €179/m (los €131,50/m) — Alle modules samen
-
-HOE JE HET ZEGT (toon: zakenpartner die iets handigs opmerkt, NIET een verkoopgesprek):
-✅ "Oh trouwens — als je dit probleem vaker hebt, lost Module 04 dit automatisch op. Kost je €39/m en rekent zichzelf terug."
-✅ "Dat klinkt als iets waarvoor je nu waarschijnlijk een apart systeem betaalt. Klaar doet dit al voor €24/m."
-✅ "Interessant — als je ook Module 07 gebruikt, koppelt dit automatisch aan je inkoopprijzen."
-✅ "Voor €14/m heb je de Allergenenkaart erbij — dan hoef je dit nooit meer handmatig bij te houden."
-
-WAT JE NOOIT DOET:
-❌ Concurrenten met naam belasteren of negatief vergelijken
-❌ Meerdere keren per gesprek iets verkopen
-❌ Een module aanprijzen als de gebruiker duidelijk al weet dat die bestaat
-❌ Pushen als de gebruiker niet reageert
-❌ Iets aanbevelen dat niet relevant is voor het actuele probleem
-
-KASSASYSTEMEN & ECOSYSTEEM:
-De meeste horecazaken waar jij mee werkt hebben ook een kassasysteem (POS). Jij werkt NAAST die systemen, niet ertegen.
-Meestgebruikte kassasystemen in NL: unTill (marktleider), Lightspeed Restaurant, Square for Restaurants, Reeleezee, Oracle MICROS (hotels/ketens).
-Meestgebruikte groothandels: Hanos, Bidfood, Sligro, Makro.
-
-CONCURRENTEN VAN KLAAR (ken ze, maar prijs ze nooit aan):
-- appHoreca (apphoreca.nl): directe concurrent, €69-75/maand voor alles-in-één. Geen AI, verouderd, duur als je niet alles nodig hebt, vereist hardware (labelprinter). Klaar is modulair, has AI, geen startkosten.
-- Horeko (van Exact): enterprise-product, 5-10x duurder, voor ketens met IT-afdeling.
-
-DATA IMPORTEREN UIT EXTERNE SYSTEMEN:
-Als je meer data nodig hebt om een probleem op te lossen, vraag dan PROACTIEF welk systeem de klant gebruikt en geef de exacte export-instructies:
-
-unTill export: Webmanagement → Rapporten → Artikelen → Exporteer CSV
-Lightspeed export: Manager → Items → Exporteer CSV  
-Hanos export: Mijn Hanos → Bestelhistorie → Exporteer Excel
-Bidfood export: Bestelportal → Favorieten → Exporteer CSV
-Sligro export: Mijn account → Bestellingen → Exporteer Excel
-Z-rapport (alle systemen): foto van de kassabon/dagsluiting
-
-Zeg dit altijd als je om data vraagt: "Welk kassasysteem / welke groothandel gebruik jij?" — dan geef je de exacte stappen.
-
-RESPONSLENGTE & TOON (STRIKT VOLGEN):
-- Houd antwoorden KORT. Max 3-4 zinnen voor eenvoudige vragen. Max 6-8 zinnen voor complexe vragen.
-- GEEN markdown headers (#, ##) in chats — dit is een gesprek, geen document.
-- GEEN bold tekst (**tekst**) voor nadruk in conversaties.
-- GEEN genummerde lijsten tenzij het echt stap-voor-stap instructies zijn.
-- Max 1 emoji per bericht. Liever 0 bij zakelijke vragen.
-- Vraag maximaal 1 verduidelijkingsvraag tegelijk. Begin direct te helpen waar je kunt.
-- Geef nooit een inleiding of samenvatting — ga direct to the point.
-
-Spreek professioneel maar toegankelijk. Antwoord in het Nederlands.\`;
-}
-
-
-async function chatSend() {
-  if (_chatStreaming) return;
-  const input = document.getElementById('chatInput');
-  
-  const textMsg = input.value.trim();
-  if (!textMsg) return;
-  input.value = ''; input.style.height = 'auto';
-  document.getElementById('chatSuggestions').style.display = 'none';
-  chatAppend('user', textMsg);
-  _chatHistory.push({ role: 'user', content: textMsg });
-  const messages = _chatHistory.slice(-12);
-
-  _chatStreaming = true;
-  document.getElementById('chatSend').disabled = true;
-
-  const typing = document.createElement('div');
-  typing.className = 'chat-typing'; typing.id = '_chatTyping';
-  typing.innerHTML = '<span>●</span><span>●</span><span>●</span>';
-  document.getElementById('chatMessages').appendChild(typing);
-  chatScroll();
-
-  let fullText = '';
-  try {
-    const res = await klaarAIStream({
-      model: 'claude-haiku-4-5-20251001',
-      max_tokens: 1024,
-      stream: true,
-      system: chatBuildPrompt(),
-      messages
-    }, '10-catering-events');
-    document.getElementById('_chatTyping')?.remove();
-    if (!res.ok) {
-      const err = await res.json().catch(() => ({}));
-      throw new Error(err.error?.message || 'HTTP ' + res.status);
-    }
-    const wrap = document.createElement('div');
-    wrap.className = 'chat-msg assistant';
-    const bubble = document.createElement('div');
-    bubble.className = 'chat-bubble';
-    wrap.appendChild(bubble);
-    document.getElementById('chatMessages').appendChild(wrap);
-    const reader = res.body.getReader();
-    const decoder = new TextDecoder();
-    let buf = '';
-    while (true) {
-      const { done, value } = await reader.read();
-      if (done) break;
-      buf += decoder.decode(value, { stream: true });
-      const lines = buf.split('\n'); buf = lines.pop() || '';
-      for (const line of lines) {
-        if (!line.startsWith('data: ')) continue;
-        const raw = line.slice(6).trim();
-        if (raw === '[DONE]') continue;
-        try {
-          const p = JSON.parse(raw);
-          if (p.type === 'content_block_delta' && p.delta?.type === 'text_delta') {
-            fullText += p.delta.text;
-                        bubble.innerHTML = chatFormat(fullText);
-            chatScroll();
-          }
-        } catch(e) {}
-      }
-    }
-    const cleanText = chatExecuteActions(fullText);
-    bubble.innerHTML = chatFormat(cleanText);
-    _chatHistory.push({ role: 'assistant', content: cleanText });
-  } catch(err) {
-    document.getElementById('_chatTyping')?.remove();
-    chatAppend('assistant', 'Er ging iets mis: ' + err.message + '. Controleer je API key via Module 01 → Instellingen.');
-    console.error('Klaar chat:', err);
-  }
-  _chatStreaming = false;
-  document.getElementById('chatSend').disabled = false;
-}
-
-function chatExecuteActions(text) {
-  const re = /\[KLAAR:([A-Z_]+):([^\]]+)\]/g;
-  let match, executed = [];
-  while ((match = re.exec(text)) !== null) {
-    const type = match[1];
-    try {
-      const payload = JSON.parse(match[2]);
-      if (type === 'ADD_EVENT') {
-        const evts = JSON.parse(localStorage.getItem('klaar_events') || '[]');
-        evts.push({
-          id: 'evt_' + Date.now() + '_' + Math.random().toString(36).slice(2,6),
-          naam: payload.naam || 'Nieuw event',
-          datum: payload.datum || new Date().toISOString().split('T')[0],
-          aantalPersonen: payload.aantalPersonen || 0,
-          type: payload.type || 'overig',
-          offerteprijs: payload.offerteprijs || 0,
-          notitie: payload.notitie || '',
-          addedBy: 'ai-assistant',
-          createdAt: new Date().toISOString()
-        });
-        localStorage.setItem('klaar_events', JSON.stringify(evts));
-        executed.push('Event: ' + payload.naam);
-      }
-    } catch(e) { console.warn('Klaar action error:', e); }
-  }
-  if (executed.length) {
-    const el = document.createElement('div');
-    el.style.cssText = 'font-family:DM Mono,monospace;font-size:11px;color:#22c55e;padding:4px 8px 4px 10px;border-left:2px solid #22c55e;margin:2px 0;align-self:flex-start;';
-    el.textContent = '✅ Opgeslagen: ' + executed.join(', ');
-    document.getElementById('chatMessages').appendChild(el);
-    chatScroll();
-  }
-  return text.replace(/\[KLAAR:[A-Z_]+:[^\]]+\]/g, '').trim();
-}
-
-function chatSuggest(text) { document.getElementById('chatInput').value = text; chatSend(); }
-function chatShowNoKey() {
-  const msgs = document.getElementById('chatMessages');
-  if (msgs.querySelector('.chat-no-key')) return;
-  const el = document.createElement('div');
-  el.className = 'chat-no-key';
-  el.innerHTML = '⚠️ Geen API key. Stel in via <strong>Module 01 → Instellingen</strong>.';
-  msgs.appendChild(el); chatScroll();
-}
-function chatAppend(role, text) {
-  const wrap = document.createElement('div');
-  wrap.className = 'chat-msg ' + role;
-  const bubble = document.createElement('div');
-  bubble.className = 'chat-bubble';
-  bubble.innerHTML = chatFormat(text);
-  wrap.appendChild(bubble);
-  document.getElementById('chatMessages').appendChild(wrap); chatScroll();
-}
-function chatFormat(text) {
-  return text
-    .replace(/&/g,'&amp;').replace(/</g,'&lt;').replace(/>/g,'&gt;')
-    .replace(/\*\*(.*?)\*\*/g,'<strong>$1</strong>')
-    .replace(/\*(.*?)\*/g,'<em>$1</em>')
-    .replace(/\n{2,}/g,'<br><br>').replace(/\n/g,'<br>');
-}
-function chatScroll() { const el = document.getElementById('chatMessages'); el.scrollTop = el.scrollHeight; }
-function chatKeyDown(e) { if (e.key === 'Enter' && !e.shiftKey) { e.preventDefault(); chatSend(); } }
-function chatAutoResize(el) { el.style.height = 'auto'; el.style.height = Math.min(el.scrollHeight, 110) + 'px'; }
-</script>
-
-</body></html>`);
+</body></html>
+`);
   win.document.close();
 }
 
@@ -2428,7 +2103,7 @@ function renderOfferte() {
 
   container.innerHTML = `
     <div style="display:flex;justify-content:flex-end;gap:8px;margin-bottom:16px;" class="no-print">
-      <button class="btn btn-primary" onclick="printOfferte('${id}')">🖨️ Print / PDF</button>
+      <button class="btn btn-primary" onclick="printOfferte('${id}')">Print / PDF</button>
     </div>
     <div class="offerte-preview" id="offerte-doc">
       <div class="offerte-header">
@@ -2722,6 +2397,257 @@ document.getElementById('save-modal').addEventListener('click', e => { if(e.targ
   renderDrankenRows();
   updateFinancieel();
 })();
+
+// ══════════════════════════════════════════
+// KLAAR ASSISTENT — M10 Catering
+// ══════════════════════════════════════════
+const _chatHist = [];
+let _chatBusy = false;
+
+function toggleChat() {
+  const side = document.getElementById('chatSide');
+  const fab  = document.getElementById('chatFab');
+  const open = side.classList.toggle('open');
+  fab.classList.toggle('open', open);
+  fab.textContent = '';
+  if (open) {
+    const dot = document.createElement('span');
+    dot.className = 'chat-fab-dot';
+    fab.insertAdjacentText('beforeend', 'Sluiten ');
+    fab.appendChild(dot);
+    document.getElementById('chatTa').focus();
+  } else {
+    const dot = document.createElement('span');
+    dot.className = 'chat-fab-dot';
+    fab.insertAdjacentText('beforeend', 'Assistent ');
+    fab.appendChild(dot);
+  }
+}
+
+function chatAppend(role, text) {
+  const wrap = document.createElement('div');
+  wrap.className = 'chat-msg ' + role;
+  const bub = document.createElement('div');
+  bub.className = 'chat-bubble';
+  bub.innerHTML = chatFmt(text);
+  wrap.appendChild(bub);
+  document.getElementById('chatMsgs').appendChild(wrap);
+  chatScrollDown();
+  return bub;
+}
+
+function chatFmt(t) {
+  // Basic markdown: **bold**, *italic*, `code`, bullet lists
+  return t
+    .replace(/&/g,'&amp;').replace(/</g,'&lt;').replace(/>/g,'&gt;')
+    .replace(/\*\*(.+?)\*\*/g,'<strong>$1</strong>')
+    .replace(/\*(.+?)\*/g,'<em>$1</em>')
+    .replace(/`([^`]+)`/g,'<code>$1</code>')
+    .replace(/^[-•]\s+(.+)$/gm,'<li>$1</li>')
+    .replace(/(<li>.*<\/li>)/s, '<ul>$1</ul>')
+    .replace(/\n\n/g,'<br><br>')
+    .replace(/\n/g,'<br>');
+}
+
+function chatScrollDown() {
+  const el = document.getElementById('chatMsgs');
+  el.scrollTop = el.scrollHeight;
+}
+
+function chatKeyDown(e) {
+  if (e.key === 'Enter' && !e.shiftKey) { e.preventDefault(); chatSend(); }
+}
+
+function chatResize(el) {
+  el.style.height = 'auto';
+  el.style.height = Math.min(el.scrollHeight, 110) + 'px';
+}
+
+function chatSuggest(text) {
+  document.getElementById('chatTa').value = text;
+  document.getElementById('chatSuggs').style.display = 'none';
+  chatSend();
+}
+
+function chatBuildPrompt() {
+  const safe = (k, d) => { try { return JSON.parse(localStorage.getItem(k) || JSON.stringify(d)); } catch(e) { return d; } };
+  const events     = safe('klaar_events', []);
+  const sett       = safe('klaar_catering_settings', {});
+  const templates  = safe('klaar_menu_templates', []);
+  const recepten   = safe('klaar_recipes', []);
+  const ingredienten = safe('klaar_ingredienten', []);
+
+  const today = new Date().toISOString().slice(0,10);
+  const upcoming = events.filter(e => e.datum >= today).slice(0,10);
+  const recent   = events.filter(e => e.datum < today).sort((a,b) => b.datum.localeCompare(a.datum)).slice(0,5);
+
+  const eventsStr = upcoming.map(e =>
+    `- ${e.datum} | ${e.type} | ${e.klant?.naam||'?'} | ${e.aantalPersonen||0}p | ${e.locatie||'?'} | status:${e.status||'concept'} | pp:€${e.prijsPerPersoon||0}`
+  ).join('\n');
+
+  const recentStr = recent.map(e =>
+    `- ${e.datum} | ${e.type} | ${e.klant?.naam||'?'} | ${e.aantalPersonen||0}p`
+  ).join('\n');
+
+  const templatesStr = templates.slice(0,8).map(t =>
+    `- ${t.naam||'?'} (${t.type||'?'}): ${(t.menu||[]).length} gangen`
+  ).join('\n');
+
+  const receptenStr = recepten.slice(0,10).map(r =>
+    `- ${r.title||r.naam||'?'} | kostprijs: €${r.kostprijs||r.cost||0}`
+  ).join('\n');
+
+  const bedrijf = sett.naam ? `Bedrijf: ${sett.naam}` : 'Bedrijfsnaam niet ingesteld';
+
+  return `Je bent de Klaar Assistent voor Module 10 — Catering & Events.
+${bedrijf}
+Datum vandaag: ${today}
+
+Je helpt de horeca-ondernemer met:
+- Planning en voorbereiding van catering events
+- Offerte-advies en kostprijsberekeningen (foodcost, marge)
+- Menu-suggesties gebaseerd op receptenbibliotheek
+- Operationele voorbereiding (keukensheet, bedieningssheet, checklist)
+- Analyse van winstgevendheid en bezetting
+
+AANKOMENDE EVENTS (${upcoming.length}):
+${eventsStr || '(geen aankomende events ingevoerd)'}
+
+RECENTE EVENTS:
+${recentStr || '(geen)'}
+
+MENU TEMPLATES (${templates.length} totaal):
+${templatesStr || '(geen templates)'}
+
+RECEPTEN IN BIBLIOTHEEK (${recepten.length} totaal):
+${receptenStr || '(geen recepten)'}
+
+REGELS:
+- Antwoord altijd in het Nederlands
+- Wees concreet en praktisch, geen vage adviezen
+- Gebruik de echte data hierboven in je antwoorden
+- Foodcost richtlijn horeca: 28-35% voor catering
+- BTW catering & eten: 9%, zaalhuur: 21%
+- Als iets niet in de data staat, zeg dat eerlijk
+- Houd antwoorden beknopt: max 200 woorden tenzij de gebruiker meer vraagt
+- Geen emojis, professionele toon`;
+}
+
+async function chatSend() {
+  if (_chatBusy) return;
+  const ta = document.getElementById('chatTa');
+  const text = ta.value.trim();
+  if (!text) return;
+
+  ta.value = ''; ta.style.height = 'auto';
+  document.getElementById('chatSuggs').style.display = 'none';
+  chatAppend('user', text);
+  _chatHist.push({ role: 'user', content: text });
+
+  _chatBusy = true;
+  document.getElementById('chatGo').disabled = true;
+
+  // Typing indicator
+  const typing = document.createElement('div');
+  typing.className = 'chat-typing'; typing.id = '_chatTyping';
+  typing.innerHTML = '<span>●</span><span>●</span><span>●</span>';
+  document.getElementById('chatMsgs').appendChild(typing);
+  chatScrollDown();
+
+  let fullText = '';
+  try {
+    const res = await klaarAIStream({
+      model: 'claude-sonnet-4-6',
+      max_tokens: 1024,
+      stream: true,
+      system: chatBuildPrompt(),
+      messages: _chatHist.slice(-10)
+    }, '10-catering-events');
+
+    document.getElementById('_chatTyping')?.remove();
+
+    if (!res.ok) {
+      const err = await res.json().catch(() => ({}));
+      throw new Error(err.error?.message || 'HTTP ' + res.status);
+    }
+
+    const wrap = document.createElement('div');
+    wrap.className = 'chat-msg assistant';
+    const bub = document.createElement('div');
+    bub.className = 'chat-bubble';
+    wrap.appendChild(bub);
+    document.getElementById('chatMsgs').appendChild(wrap);
+    chatScrollDown();
+
+    const reader = res.body.getReader();
+    const decoder = new TextDecoder();
+    let buf = '';
+    while (true) {
+      const { done, value } = await reader.read();
+      if (done) break;
+      buf += decoder.decode(value, { stream: true });
+      const lines = buf.split('\n'); buf = lines.pop() || '';
+      for (const line of lines) {
+        if (!line.startsWith('data: ')) continue;
+        const raw = line.slice(6).trim();
+        if (raw === '[DONE]') continue;
+        try {
+          const p = JSON.parse(raw);
+          if (p.type === 'content_block_delta' && p.delta?.type === 'text_delta') {
+            fullText += p.delta.text;
+            bub.innerHTML = chatFmt(fullText);
+            chatScrollDown();
+          }
+        } catch(e) {}
+      }
+    }
+    _chatHist.push({ role: 'assistant', content: fullText });
+  } catch(err) {
+    document.getElementById('_chatTyping')?.remove();
+    const msg = err.message?.includes('401') || err.message?.includes('key')
+      ? '<strong>API sleutel niet gevonden.</strong> Stel je sleutel in via Module 01 → Instellingen.'
+      : 'Er ging iets mis: ' + err.message;
+    chatAppend('assistant', msg);
+  }
+
+  _chatBusy = false;
+  document.getElementById('chatGo').disabled = false;
+}
+
 </script>
+
+<!-- ══════════════════════════════════════════
+     CHAT WIDGET — M10 Catering Assistent
+     ══════════════════════════════════════════ -->
+<button class="chat-fab" id="chatFab" onclick="toggleChat()">
+  <span>Assistent</span>
+  <span class="chat-fab-dot"></span>
+</button>
+
+<div class="chat-side" id="chatSide">
+  <div class="chat-hdr">
+    <div>
+      <div class="chat-hdr-title">Klaar Assistent</div>
+      <div class="chat-hdr-sub">Catering & Events planning · Module 10</div>
+    </div>
+    <button class="chat-hdr-close" onclick="toggleChat()">✕</button>
+  </div>
+  <div class="chat-msgs" id="chatMsgs">
+    <div class="chat-msg assistant">
+      <div class="chat-bubble">Hoi! Ik ben je Klaar Assistent voor <strong>Catering & Events</strong>. Ik zie al je evenementen en kan je helpen met planning, kostprijsberekeningen en operationele voorbereiding.<br><br>Vraag me gerust iets.</div>
+    </div>
+  </div>
+  <div class="chat-suggs" id="chatSuggs">
+    <button class="chat-sugg" onclick="chatSuggest('Geef een overzicht van mijn aankomende events')">Events overzicht</button>
+    <button class="chat-sugg" onclick="chatSuggest('Analyseer de winstgevendheid van mijn events')">Winstgevendheid</button>
+    <button class="chat-sugg" onclick="chatSuggest('Geef me een inkoopadvies voor het volgende event')">Inkoopadvies</button>
+    <button class="chat-sugg" onclick="chatSuggest('Hoe kan ik mijn offerte sterker maken?')">Offerte tips</button>
+  </div>
+  <div class="chat-input-row">
+    <textarea class="chat-ta" id="chatTa" rows="1" placeholder="Stel een vraag over je events..." onkeydown="chatKeyDown(event)" oninput="chatResize(this)"></textarea>
+    <button class="chat-go" id="chatGo" onclick="chatSend()">↑</button>
+  </div>
+</div>
+
 </body>
 </html>

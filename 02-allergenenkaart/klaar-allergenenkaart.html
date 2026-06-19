@@ -1131,6 +1131,9 @@
       white-space: nowrap;
     }
   </style>
+
+  <link rel="stylesheet" href="../klaar-shared.css">
+
   <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2/dist/umd/supabase.min.js"></script>
   <script src="../klaar-client.js"></script>
 </head>
@@ -1174,15 +1177,21 @@
           </svg>
           Matrix
         </button>
+        <button class="btn-print" onclick="downloadAllergenCSV()" title="Download allergeenmatrix als CSV — importeerbaar in Excel">
+          <svg width="13" height="13" viewBox="0 0 14 14" fill="none">
+            <path d="M7 1v8M4 6l3 3 3-3M2 11h10" stroke="currentColor" stroke-width="1.3" stroke-linecap="round" stroke-linejoin="round"/>
+          </svg>
+          CSV ↓
+        </button>
       </div>
     </div>
   </header>
 
   <!-- ─── TAB BAR ──────────────────────────────────────────────────── -->
   <div class="tab-bar">
-    <button class="tab-btn active" id="tab-allergens" onclick="setMainTab('allergens')">🧾 Allergenenkaart</button>
-    <button class="tab-btn" id="tab-bediening" onclick="setMainTab('bediening')">📱 Bediening</button>
-    <button class="tab-btn" id="tab-assistent" onclick="setMainTab('assistent')">👨‍🍳 Kok Assistent</button>
+    <button class="tab-btn active" id="tab-allergens" onclick="setMainTab('allergens')">Allergenenkaart</button>
+    <button class="tab-btn" id="tab-bediening" onclick="setMainTab('bediening')">Bediening</button>
+    <button class="tab-btn" id="tab-assistent" onclick="setMainTab('assistent')">‍🍳 Kok Assistent</button>
   </div>
 
   <!-- ─── VIEW: ALLERGENENKAART ─────────────────────────────────────── -->
@@ -1301,7 +1310,7 @@
             placeholder="Typ je vraag…"
             onkeydown="chatKeydown(event)"
             oninput="autoGrow(this)"></textarea>
-          <button class="chat-mic-btn" id="mic-btn" onclick="toggleMic()" title="Spreek je vraag in">🎙️</button>
+          <button class="chat-mic-btn" id="mic-btn" onclick="toggleMic()" title="Spreek je vraag in">️</button>
           <button class="chat-speaker-btn" id="speaker-btn" onclick="toggleSpeaker()" title="Spraakuitvoer aan/uit">🔊</button>
           <button class="chat-send-btn" id="send-btn" onclick="sendMessage()" disabled>STUUR</button>
         </div>
@@ -1573,7 +1582,7 @@
         const ids = new Set(p.gerechten.map(g => g.receptId));
         const count = recipes.filter(r => ids.has(r.id)).length;
         const filterId = 'pak:' + p.id;
-        html += `<button class="filter-btn ${activeFilter === filterId ? 'active' : ''}" onclick="setFilter('${filterId}')">📦 ${escapeHtml(p.naam || 'Naamloos pakket')} (${count})</button>`;
+        html += `<button class="filter-btn ${activeFilter === filterId ? 'active' : ''}" onclick="setFilter('${filterId}')">${escapeHtml(p.naam || 'Naamloos pakket')} (${count})</button>`;
       });
     }
 
@@ -1592,7 +1601,7 @@
       html += allergenBtns;
       if (activeAllergenCodes.size > 0) {
         const filtered = getFilteredRecipes();
-        html += `<button class="filter-btn" onclick="clearAllergenFilter()" style="border-color:#ef4444;color:#ef4444" title="Wis allergeenfilter">✕ ${filtered.length} gerecht${filtered.length !== 1 ? 'en' : ''}</button>`;
+        html += `<button class="filter-btn" onclick="clearAllergenFilter()" style="border-color:#ef4444;color:#ef4444" title="Wis allergeenfilter">${filtered.length} gerecht${filtered.length !== 1 ? 'en' : ''}</button>`;
       }
     }
 
@@ -2116,29 +2125,30 @@
   // ──────────────────────────────────────────────────────────────────
   // BEDIENING: Live allergeenzoeker
   // ──────────────────────────────────────────────────────────────────
-  let _bedAllergenFilter = null; // null = geen filter, 'code' = alleen vrij van dit allergen
+  let _bedActiveFilters = new Set(); // Set van allergen-codes die VERMEDEN worden
 
   // Common "vrij van" quick filters
   const BED_QUICK = [
     { label:'Nootvrij',       code:'N',  emoji:'🥜' },
     { label:'Glutenvrij',     code:'G',  emoji:'🌾' },
     { label:'Lactosevrij',    code:'M',  emoji:'🥛' },
-    { label:'Vegan',          code:'E',  emoji:'🥚', extra:'M' },
-    { label:'Schaaldierenvrij', code:'S', emoji:'🦐' },
+    { label:'Sesamvrij',      code:'Sa', emoji:'🫘' },
     { label:'Visvrij',        code:'Vi', emoji:'🐟' },
     { label:'Ei-vrij',        code:'E',  emoji:'🥚' },
+    { label:'Schaaldierenvrij', code:'S', emoji:'🦐' },
+    { label:'Vegan',          code:'E',  emoji:'🌱', extra:'M' },
   ];
 
   function buildBedieningQuickFilters() {
     const bar = document.getElementById('bed-quick-filters');
     if (!bar) return;
     const allR = loadRecipes();
+    const anyActive = _bedActiveFilters.size > 0;
     let html = `<span style="font-family:'DM Mono',monospace;font-size:9px;color:#aaa;letter-spacing:.1em;text-transform:uppercase;align-self:center;padding-right:4px">Vrij van:</span>`;
     BED_QUICK.forEach(f => {
-      // Count recipes that do NOT have this allergen
       const count = allR.filter(r => !hasAllergen(r, f.code) && !hasMaybeAllergen(r, f.code)
         && (!f.extra || (!hasAllergen(r, f.extra) && !hasMaybeAllergen(r, f.extra)))).length;
-      const active = _bedAllergenFilter === f.code;
+      const active = _bedActiveFilters.has(f.code);
       html += `<button onclick="toggleBedFilter('${f.code}','${f.extra||''}')"
         style="padding:7px 14px;border-radius:20px;border:1.5px solid ${active?'#0a0a0a':'#e0e0de'};
         background:${active?'#0a0a0a':'white'};color:${active?'#e8ff47':'#555'};
@@ -2148,16 +2158,30 @@
         ${f.emoji} ${f.label} <span style="opacity:.6">(${count})</span>
       </button>`;
     });
+    if (anyActive) {
+      html += `<button onclick="clearBedFilters()"
+        style="padding:7px 14px;border-radius:20px;border:1.5px solid #e8ff47;
+        background:#e8ff47;color:#0a0a0a;
+        font-family:'DM Mono',monospace;font-size:11px;cursor:pointer;white-space:nowrap;font-weight:700;transition:all .15s;">Wis filters (${_bedActiveFilters.size})
+      </button>`;
+    }
     bar.innerHTML = html;
   }
 
-  let _bedExtraFilter = '';
   function toggleBedFilter(code, extra) {
-    if (_bedAllergenFilter === code) {
-      _bedAllergenFilter = null; _bedExtraFilter = '';
+    if (_bedActiveFilters.has(code)) {
+      _bedActiveFilters.delete(code);
+      if (extra) _bedActiveFilters.delete(extra);
     } else {
-      _bedAllergenFilter = code; _bedExtraFilter = extra || '';
+      _bedActiveFilters.add(code);
+      if (extra) _bedActiveFilters.add(extra);
     }
+    buildBedieningQuickFilters();
+    renderBediening();
+  }
+
+  function clearBedFilters() {
+    _bedActiveFilters.clear();
     buildBedieningQuickFilters();
     renderBediening();
   }
@@ -2189,11 +2213,12 @@
       }
     }
 
-    // Quick filter (vrij van allergen)
-    if (_bedAllergenFilter) {
+    // Quick filter (vrij van alle geselecteerde allergens)
+    if (_bedActiveFilters.size > 0) {
       results = results.filter(r =>
-        !hasAllergen(r, _bedAllergenFilter) && !hasMaybeAllergen(r, _bedAllergenFilter) &&
-        (!_bedExtraFilter || (!hasAllergen(r, _bedExtraFilter) && !hasMaybeAllergen(r, _bedExtraFilter)))
+        [..._bedActiveFilters].every(code =>
+          !hasAllergen(r, code) && !hasMaybeAllergen(r, code)
+        )
       );
     }
 
@@ -2207,7 +2232,7 @@
       return;
     }
 
-    countEl.textContent = `${results.length} van ${allR.length} gerecht${allR.length!==1?'en':''}${_bedAllergenFilter||q?' — gefilterd':''}`;
+    countEl.textContent = `${results.length} van ${allR.length} gerecht${allR.length!==1?'en':''}${(_bedActiveFilters.size>0||q)?' — gefilterd':''}`;
 
     if (!results.length) {
       cardsEl.innerHTML = `<div style="padding:40px;text-align:center;">
@@ -2312,6 +2337,46 @@
     w.document.write(html);
     w.document.close();
     setTimeout(() => w.print(), 400);
+  }
+
+  // ──────────────────────────────────────────────────────────────────
+  // CSV EXPORT
+  // ──────────────────────────────────────────────────────────────────
+  function downloadAllergenCSV() {
+    const filtered = getFilteredRecipes();
+    if (!filtered.length) { alert('Geen gerechten om te exporteren.'); return; }
+
+    const codes = ALLERGENS.map(a => a.code);
+    const names = ALLERGENS.map(a => a.name);
+
+    // Header
+    const header = ['Gerecht', ...names, 'Notities'].join(';');
+
+    // Rows
+    const rows = filtered.map(r => {
+      const cells = codes.map(code => {
+        if (hasAllergen(r, code)) return 'aanwezig';
+        if (hasMaybeAllergen(r, code)) return 'sporen?';
+        return '';
+      });
+      const note = (r.recipe?.notes || r.notities || '').replace(/;/g, ',').replace(/\n/g, ' ');
+      return [escapeCSV(r.title || 'Naamloos'), ...cells, escapeCSV(note)].join(';');
+    });
+
+    const csv = [header, ...rows].join('\n');
+    const blob = new Blob(['﻿' + csv], { type: 'text/csv;charset=utf-8' }); // BOM for Excel
+    const url = URL.createObjectURL(blob);
+    const a = document.createElement('a');
+    a.href = url;
+    a.download = `allergenenmatrix-klaar-${new Date().toISOString().slice(0,10)}.csv`;
+    a.click();
+    URL.revokeObjectURL(url);
+  }
+
+  function escapeCSV(val) {
+    if (!val) return '';
+    const s = String(val);
+    return s.includes(';') || s.includes('"') || s.includes('\n') ? `"${s.replace(/"/g,'""')}"` : s;
   }
 
   // ──────────────────────────────────────────────────────────────────
@@ -2900,10 +2965,10 @@ INSTRUCTIES:
     </div>
   </div>
   <div class="chat-suggestions" id="chatSuggestions">
-    <button class="chat-suggestion" onclick="chatSuggest('Controleer mijn allergenenmatrix op volledigheid')">✅ Matrix check</button>
-    <button class="chat-suggestion" onclick="chatSuggest('Welke gerechten hebben de meeste allergenenrisico's?')">⚠️ Risicoscan</button>
-    <button class="chat-suggestion" onclick="chatSuggest('Wat moet er op mijn menukaart staan (NVWA)?')">📋 NVWA regels</button>
-    <button class="chat-suggestion" onclick="chatSuggest('Hoe communiceer ik allergenen naar gasten?')">💬 Gastcommunicatie</button>
+    <button class="chat-suggestion" onclick="chatSuggest('Controleer mijn allergenenmatrix op volledigheid')">Matrix check</button>
+    <button class="chat-suggestion" onclick="chatSuggest('Welke gerechten hebben de meeste allergenenrisico's?')">Risicoscan</button>
+    <button class="chat-suggestion" onclick="chatSuggest('Wat moet er op mijn menukaart staan (NVWA)?')">NVWA regels</button>
+    <button class="chat-suggestion" onclick="chatSuggest('Hoe communiceer ik allergenen naar gasten?')">Gastcommunicatie</button>
   </div>
   <div class="chat-input-area">
     <textarea class="chat-input" id="chatInput" rows="1" placeholder="Vraag iets over je data..." onkeydown="chatKeyDown(event)" oninput="chatAutoResize(this)"></textarea>
@@ -3066,7 +3131,7 @@ async function chatSend() {
   let fullText = '';
   try {
     const res = await klaarAIStream({
-      model: 'claude-haiku-4-5-20251001',
+      model: 'claude-sonnet-4-6',
       max_tokens: 1024,
       stream: true,
       system: chatBuildPrompt(),

@@ -730,6 +730,9 @@
   .help-card.green { border-left-color: var(--green); }
   .help-card.green .help-card-title { color: #166534; }
 </style>
+
+  <link rel="stylesheet" href="../klaar-shared.css">
+
   <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2/dist/umd/supabase.min.js"></script>
   <script src="../klaar-client.js"></script>
 </head>
@@ -741,6 +744,7 @@
   <div class="header-logo">KLAAR</div>
   <div class="header-module">03 — HACCP & VOEDSELVEILIGHEID</div>
   <div class="header-spacer"></div>
+  <button class="btn-help" onclick="printHACCPRapport()" title="NVWA-rapport exporteren als PDF" style="margin-right:6px;font-size:11px;padding:0 10px;letter-spacing:.03em;">Rapport</button>
   <button class="btn-help" onclick="openReminderModal()" title="Dagelijkse herinnering instellen" id="reminder-btn" style="margin-right:6px;">🔔</button>
   <button class="btn-help" onclick="document.getElementById('helpOverlay').classList.add('open')" title="Uitleg & handleiding">?</button>
   <div class="header-badge">● LIVE</div>
@@ -749,7 +753,7 @@
 <!-- Modal: Dagelijkse herinnering -->
 <div class="modal-overlay" id="modal-reminder" onclick="if(event.target===this)closeModal('modal-reminder')">
   <div class="modal" style="max-width:400px;">
-    <div class="modal-title">🔔 Dagelijkse Herinnering</div>
+    <div class="modal-title">Dagelijkse Herinnering</div>
     <p style="font-size:13px;color:var(--muted);margin-bottom:16px;">
       Stel een dagelijks tijdstip in waarop Klaar je herinnert aan de temperatuurregistratie. De herinnering verschijnt als browser-melding wanneer de pagina open is.
     </p>
@@ -928,7 +932,7 @@
     <div class="btn-group no-print" style="margin-bottom:20px">
       <button class="btn btn-lime" onclick="openModal('modal-meting')">+ Nieuwe meting</button>
       <button class="btn btn-ghost" onclick="openModal('modal-eenheid')">Koeleenheden beheren</button>
-      <button class="btn btn-ghost btn-sm" onclick="printTab()">🖨 Afdrukken</button>
+      <button class="btn btn-ghost btn-sm" onclick="printTab()">Afdrukken</button>
     </div>
 
     <div id="temp-vandaag-section">
@@ -964,7 +968,7 @@
     <div class="btn-group no-print" style="margin-bottom:20px">
       <button class="btn btn-lime" onclick="openModal('modal-levering')">+ Nieuwe levering</button>
       <button class="btn btn-ghost" onclick="openModal('modal-leverancier')">Leveranciers beheren</button>
-      <button class="btn btn-ghost btn-sm" onclick="printTab()">🖨 Afdrukken</button>
+      <button class="btn btn-ghost btn-sm" onclick="printTab()">Afdrukken</button>
     </div>
 
     <!-- ── ONTVANGST-CONTROLES (Module 07) ── -->
@@ -1018,7 +1022,7 @@
 
     <div class="btn-group no-print" style="margin-bottom:20px">
       <button class="btn btn-lime" onclick="openModal('modal-taak')">+ Nieuwe taak</button>
-      <button class="btn btn-ghost btn-sm" onclick="printTab()">🖨 Afdrukken</button>
+      <button class="btn btn-ghost btn-sm" onclick="printTab()">Afdrukken</button>
     </div>
 
     <div id="schoon-dagelijks" class="card" style="margin-bottom:12px">
@@ -1053,7 +1057,7 @@
       <button class="btn btn-lime" onclick="openModal('modal-afwijking')">+ Handmatige afwijking</button>
       <button class="btn btn-ghost btn-sm" onclick="filterAfwijkingen('open')" id="filter-open-btn">Toon open</button>
       <button class="btn btn-ghost btn-sm" onclick="filterAfwijkingen('all')" id="filter-all-btn">Toon alles</button>
-      <button class="btn btn-ghost btn-sm" onclick="printTab()">🖨 Afdrukken</button>
+      <button class="btn btn-ghost btn-sm" onclick="printTab()">Afdrukken</button>
     </div>
 
     <div class="table-wrap">
@@ -1095,7 +1099,7 @@
       <div class="card-title">Instellingen</div>
 
       <div id="ccp-recipe-count" style="font-size:13px;color:var(--muted);margin-bottom:12px"></div>
-      <button class="btn btn-lime" onclick="runCcpAnalysis()" id="ccp-analyse-btn">🔍 Analyseer mijn recepten op CCP's</button>
+      <button class="btn btn-lime" onclick="runCcpAnalysis()" id="ccp-analyse-btn">Analyseer mijn recepten op CCP's</button>
     </div>
 
     <div id="ccp-loading" style="display:none" class="loading"><div class="spinner"></div> Claude analyseert je recepten...</div>
@@ -1148,6 +1152,14 @@
     </div>
     <div id="meting-afwijking-section" style="display:none">
       <div class="alert alert-warn">⚠️ Temperatuur wijkt af van de norm. Noteer een corrigerende maatregel.</div>
+      <div style="display:flex;flex-wrap:wrap;gap:6px;margin-bottom:10px;">
+        <span style="font-family:'DM Mono',monospace;font-size:9px;color:#aaa;letter-spacing:.06em;text-transform:uppercase;align-self:center;">Snelle maatregel:</span>
+        <button type="button" style="padding:5px 10px;border:1px solid #e0e0de;border-radius:4px;font-size:11px;cursor:pointer;background:#fff;" onclick="setMaatregel('Thermostaat gecontroleerd en nagesteld')">Thermostaat nagesteld</button>
+        <button type="button" style="padding:5px 10px;border:1px solid #e0e0de;border-radius:4px;font-size:11px;cursor:pointer;background:#fff;" onclick="setMaatregel('Koelceldeur was niet goed gesloten — gesloten en gecontroleerd')">Deur niet goed dicht</button>
+        <button type="button" style="padding:5px 10px;border:1px solid #e0e0de;border-radius:4px;font-size:11px;cursor:pointer;background:#fff;" onclick="setMaatregel('Product gecontroleerd op kerntemperatuur. Niet veilig bevonden — verwijderd en vernietigd')">Product verwijderd</button>
+        <button type="button" style="padding:5px 10px;border:1px solid #e0e0de;border-radius:4px;font-size:11px;cursor:pointer;background:#fff;" onclick="setMaatregel('Technicus gebeld voor onderhoud — extra meting ingepland om 2 uur')">Technicus gebeld</button>
+        <button type="button" style="padding:5px 10px;border:1px solid #e0e0de;border-radius:4px;font-size:11px;cursor:pointer;background:#fff;" onclick="setMaatregel('Extra controlemeting ingepland. Apparaat tijdelijk verhoogd gemonitord')">Extra meting gepland</button>
+      </div>
       <div class="form-group">
         <label class="form-label">Corrigerende maatregel (verplicht)</label>
         <textarea id="meting-maatregel" class="form-textarea" placeholder="Beschrijf wat je hebt gedaan om de afwijking te corrigeren..."></textarea>
@@ -1243,8 +1255,8 @@
     <div class="form-group">
       <label class="form-label">Acceptatie</label>
       <div class="toggle-group">
-        <button class="toggle-btn active-ok" id="lev-accept-ja" onclick="setLevAccept('ja')">✓ Geaccepteerd</button>
-        <button class="toggle-btn" id="lev-accept-nee" onclick="setLevAccept('nee')">✗ Afgekeurd</button>
+        <button class="toggle-btn active-ok" id="lev-accept-ja" onclick="setLevAccept('ja')">Geaccepteerd</button>
+        <button class="toggle-btn" id="lev-accept-nee" onclick="setLevAccept('nee')">Afgekeurd</button>
       </div>
     </div>
     <div id="lev-reden-section" style="display:none">
@@ -1341,14 +1353,21 @@
 <!-- Modal: Handmatige afwijking -->
 <div class="modal-overlay" id="modal-afwijking">
   <div class="modal">
-    <div class="modal-title">Afwijking Registreren</div>
+    <div class="modal-title">Afwijking / Incident Registreren</div>
     <div class="form-group">
-      <label class="form-label">Type afwijking</label>
-      <input type="text" id="afw-type" class="form-input" placeholder="Bijv. Koeling te warm, Bederf product...">
+      <label class="form-label">Type</label>
+      <select id="afw-type" class="form-input" onchange="afwTypeChange()">
+        <option value="Temperatuurafwijking">🌡️ Temperatuurafwijking</option>
+        <option value="Productkwaliteit">⚠️ Productkwaliteit</option>
+        <option value="THT overschreden">📅 THT overschreden</option>
+        <option value="Besmettingsrisico">🦠 Besmettingsrisico</option>
+        <option value="Ontvangstcontrole afwijking">📦 Ontvangstcontrole afwijking</option>
+        <option value="Anders">📝 Anders</option>
+      </select>
     </div>
     <div class="form-row">
       <div class="form-group">
-        <label class="form-label">Gemeten waarde</label>
+        <label class="form-label" id="afw-waarde-label">Gemeten waarde</label>
         <input type="text" id="afw-waarde" class="form-input" placeholder="Bijv. 12°C">
       </div>
       <div class="form-group">
@@ -1932,9 +1951,39 @@ function filterAfwijkingen(filter) {
   renderAfwijkingen();
 }
 
+function setMaatregel(tekst) {
+  const el = document.getElementById('meting-maatregel');
+  if (el) { el.value = tekst; el.focus(); }
+}
+
+function afwTypeChange() {
+  const type = document.getElementById('afw-type').value;
+  const label = document.getElementById('afw-waarde-label');
+  const input = document.getElementById('afw-waarde');
+  if (type === 'Temperatuurafwijking') {
+    label.textContent = 'Gemeten waarde';
+    input.placeholder = 'Bijv. 12°C';
+  } else if (type === 'Productkwaliteit') {
+    label.textContent = 'Omschrijving product';
+    input.placeholder = 'Bijv. Lamrack gedeeltelijk ontdooid — kerntemp -12°C';
+  } else if (type === 'THT overschreden') {
+    label.textContent = 'Product + THT datum';
+    input.placeholder = 'Bijv. Halloumi 200g — THT 14-06-2026';
+  } else if (type === 'Besmettingsrisico') {
+    label.textContent = 'Omschrijving besmetting';
+    input.placeholder = 'Bijv. Rauwe kip naast kant-en-klaar product';
+  } else if (type === 'Ontvangstcontrole afwijking') {
+    label.textContent = 'Geleverd product / afwijking';
+    input.placeholder = 'Bijv. Kaasboerderij — labneh beschadigd verpakt';
+  } else {
+    label.textContent = 'Omschrijving';
+    input.placeholder = 'Omschrijf de afwijking...';
+  }
+}
+
 function saveAfwijking() {
   const type = document.getElementById('afw-type').value.trim();
-  if (!type) { alert('Vul een type afwijking in'); return; }
+  if (!type) { alert('Kies een type afwijking'); return; }
   const medewerker = document.getElementById('afw-medewerker').value.trim();
   if (!medewerker) { alert('Vul een medewerker in'); return; }
   const afw = ls.get('klaar_haccp_afwijkingen', []);
@@ -1999,8 +2048,8 @@ function renderAfwijkingen() {
     <td>${a.medewerker}</td>
     <td>${a.status === 'open' ? '<span class="chip chip-red afw-open">Open</span>' : '<span class="chip chip-green">Gesloten</span>'}</td>
     <td class="no-print" style="white-space:nowrap">
-      ${a.status === 'open' ? `<button class="btn btn-ghost btn-sm" onclick="closeAfwijking('${a.id}')">✓ Sluiten</button>` : ''}
-      <button class="btn btn-ghost btn-sm" onclick="editMaatregel('${a.id}')" title="Maatregel bewerken">✏️</button>
+      ${a.status === 'open' ? `<button class="btn btn-ghost btn-sm" onclick="closeAfwijking('${a.id}')">Sluiten</button>` : ''}
+      <button class="btn btn-ghost btn-sm" onclick="editMaatregel('${a.id}')" title="Maatregel bewerken">️</button>
       <button class="btn btn-ghost btn-sm" onclick="deleteAfwijking('${a.id}')">✕</button>
     </td>
   </tr>`).join('');
@@ -2050,7 +2099,7 @@ Geef ALLEEN het JSON-array terug, geen markdown codeblokken of uitleg eromheen.`
 
   try {
     const data = await klaarAI({
-      model: 'claude-haiku-4-5-20251001',
+      model: 'claude-sonnet-4-6',
       max_tokens: 2048,
       messages: [{ role: 'user', content: prompt }]
     }, '03-haccp');
@@ -2378,7 +2427,7 @@ function renderOntvangstTaakItem(t) {
       </div>
     </div>
     <div style="margin-top:12px;display:flex;gap:10px;align-items:center;">
-      <button class="btn btn-lime" onclick="bevestigOntvangstTaak('${t.id}')">✓ Bevestigen &amp; opslaan</button>
+      <button class="btn btn-lime" onclick="bevestigOntvangstTaak('${t.id}')">Bevestigen &amp; opslaan</button>
       <button class="btn btn-ghost btn-sm" onclick="verwerpOntvangstTaak('${t.id}')"
         style="color:var(--muted);">Niet van toepassing</button>
     </div>
@@ -2563,6 +2612,149 @@ async function initAll() {
 }
 
 initAll();
+
+// ─────────────────────────────────────────────────────────────
+// NVWA RAPPORT — Print-klaar PDF export
+// ─────────────────────────────────────────────────────────────
+function printHACCPRapport() {
+  const koeling   = ls.get('klaar_haccp_koeling', []);
+  const afwijkingen = ls.get('klaar_haccp_afwijkingen', []);
+  const eenheden  = ls.get('klaar_haccp_koeleenheden', []);
+
+  if (!koeling.length && !afwijkingen.length) {
+    alert('Geen HACCP-data gevonden. Voer eerst metingen in.');
+    return;
+  }
+
+  // Datumrange: vandaag − 90 dagen
+  const nu = new Date();
+  const d90 = new Date(nu); d90.setDate(d90.getDate() - 90);
+  const van = d90.toISOString().slice(0,10);
+  const tot = nu.toISOString().slice(0,10);
+
+  const metingenInRange = koeling.filter(m => m.datum >= van).sort((a,b) => (a.datum+a.tijd).localeCompare(b.datum+b.tijd));
+  const afwijkingenInRange = afwijkingen.filter(a => a.datum >= van).sort((a,b) => a.datum.localeCompare(b.datum));
+
+  const fmtDate = d => {
+    if (!d) return '—';
+    const [y,m,day] = d.split('-');
+    return `${day}-${m}-${y}`;
+  };
+
+  // Koeleenheid normtabel
+  const normTable = eenheden.length ? `
+    <h2 style="margin-top:28pt;">Koeleenheden & Normwaarden</h2>
+    <table>
+      <thead><tr><th>Naam</th><th>Type</th><th>Normtemperatuur</th></tr></thead>
+      <tbody>${eenheden.map(e => `<tr><td>${e.naam||'—'}</td><td>${e.type||'—'}</td><td>max ${e.norm||'?'}°C</td></tr>`).join('')}</tbody>
+    </table>` : '';
+
+  // Metingentabel
+  const metRow = m => {
+    const afw = m.afwijking;
+    const bg = afw ? '#fff3cd' : '#fff';
+    return `<tr style="background:${bg}">
+      <td>${fmtDate(m.datum)}</td>
+      <td>${m.tijd||'—'}</td>
+      <td>${m.eenheidNaam||'—'}</td>
+      <td style="font-weight:600;color:${afw?'#b45309':'inherit'}">${m.temperatuur}°C</td>
+      <td>${m.norm||'—'}°C</td>
+      <td style="color:${afw?'#dc2626':'#16a34a'};font-weight:600">${afw?'⚠ AFWIJKING':'✓ OK'}</td>
+      <td>${m.gemeten_door||m.medewerker||'—'}</td>
+      <td>${m.maatregel||'—'}</td>
+      <td>${m.opmerkingen||'—'}</td>
+    </tr>`;
+  };
+
+  // Afwijkingentabel
+  const afwRow = a => `<tr>
+    <td>${fmtDate(a.datum)}</td>
+    <td>${a.type||'—'}</td>
+    <td>${a.waarde||'—'}</td>
+    <td>${a.maatregel||'—'}</td>
+    <td>${a.medewerker||'—'}</td>
+    <td style="color:${a.status==='open'?'#dc2626':'#16a34a'};font-weight:600">${a.status==='open'?'Open':'Afgehandeld'}</td>
+  </tr>`;
+
+  const printNu = new Date().toLocaleDateString('nl-NL', {day:'numeric',month:'long',year:'numeric',hour:'2-digit',minute:'2-digit'});
+
+  const html = `<!DOCTYPE html><html lang="nl"><head><meta charset="UTF-8">
+  <title>HACCP Rapport — Klaar</title>
+  <style>
+    @page { size: A4; margin: 16mm 18mm 20mm; }
+    body { font-family: 'Helvetica Neue', Helvetica, Arial, sans-serif; font-size: 9pt; color: #111; margin:0; }
+    h1 { font-size: 18pt; font-weight: 900; letter-spacing: 1pt; margin: 0 0 2pt; }
+    h2 { font-size: 11pt; font-weight: 700; margin: 20pt 0 6pt; border-bottom: 1pt solid #ddd; padding-bottom: 3pt; }
+    .header { display:flex; justify-content:space-between; align-items:flex-end; border-bottom: 2pt solid #0a0a0a; padding-bottom: 8pt; margin-bottom: 14pt; }
+    .header-right { text-align:right; font-size: 8pt; color: #666; }
+    .meta { display:grid; grid-template-columns:1fr 1fr 1fr; gap:10pt; background:#f9f9f7; padding:8pt 10pt; margin-bottom:14pt; }
+    .meta-item label { font-size:7pt; color:#888; text-transform:uppercase; letter-spacing:.06em; display:block; margin-bottom:2pt; }
+    .meta-item span { font-weight:600; font-size:9pt; }
+    table { border-collapse:collapse; width:100%; margin-bottom:6pt; font-size:8pt; }
+    th { background:#0a0a0a; color:#fff; padding:4pt 6pt; text-align:left; font-size:7.5pt; }
+    td { padding:4pt 6pt; border-bottom:0.5pt solid #e8e8e6; vertical-align:top; }
+    tr:nth-child(even) td { background:#fafaf8; }
+    .stat { display:inline-block; margin-right:16pt; }
+    .stat-val { font-size:18pt; font-weight:700; display:block; line-height:1; }
+    .stat-label { font-size:7.5pt; color:#888; }
+    .footer { margin-top:20pt; padding-top:8pt; border-top:0.5pt solid #ddd; font-size:7.5pt; color:#888; display:flex; justify-content:space-between; }
+    .badge-ok { color:#16a34a; font-weight:600; }
+    .badge-afw { color:#dc2626; font-weight:600; }
+    .accent { background:#e8ff47; color:#0a0a0a; padding:2pt 6pt; font-weight:700; font-size:8pt; }
+  </style>
+  </head><body>
+
+  <div class="header">
+    <div>
+      <div style="font-size:8pt;color:#888;letter-spacing:.1em;text-transform:uppercase;margin-bottom:4pt;">KLAAR — MODULE 03</div>
+      <h1>HACCP TEMPERATUURREGISTRATIE</h1>
+      <div style="font-size:9pt;color:#555;margin-top:3pt;">Periode: ${fmtDate(van)} t/m ${fmtDate(tot)} · EU Verordening 852/2004 · Hygiënecode KHN</div>
+    </div>
+    <div class="header-right">
+      Gegenereerd op: ${printNu}<br>
+      <span style="font-size:7pt;">Klaar · getklaar.app</span>
+    </div>
+  </div>
+
+  <div class="meta">
+    <div class="meta-item"><label>Totaal metingen</label><span>${metingenInRange.length}</span></div>
+    <div class="meta-item"><label>Afwijkingen</label><span style="color:${afwijkingenInRange.length>0?'#dc2626':'#16a34a'}">${afwijkingenInRange.length}</span></div>
+    <div class="meta-item"><label>Koeleenheden</label><span>${eenheden.length}</span></div>
+  </div>
+
+  ${normTable}
+
+  <h2>Temperatuurmetingen (${metingenInRange.length})</h2>
+  ${metingenInRange.length ? `<table>
+    <thead><tr>
+      <th>Datum</th><th>Tijd</th><th>Koeleenheid</th><th>Temp</th><th>Norm</th>
+      <th>Status</th><th>Gemeten door</th><th>Maatregel</th><th>Opmerkingen</th>
+    </tr></thead>
+    <tbody>${metingenInRange.map(metRow).join('')}</tbody>
+  </table>` : '<p style="color:#888;font-size:8.5pt;">Geen metingen in deze periode.</p>'}
+
+  <h2>Afwijkingen & Maatregelen (${afwijkingenInRange.length})</h2>
+  ${afwijkingenInRange.length ? `<table>
+    <thead><tr>
+      <th>Datum</th><th>Type</th><th>Waarde</th><th>Corrigerende maatregel</th><th>Medewerker</th><th>Status</th>
+    </tr></thead>
+    <tbody>${afwijkingenInRange.map(afwRow).join('')}</tbody>
+  </table>` : '<p style="color:#888;font-size:8.5pt;">Geen afwijkingen geregistreerd. ✓</p>'}
+
+  <div class="footer">
+    <span>Dit rapport is gegenereerd vanuit Klaar (getklaar.app) en dient als aanvullende digitale registratie conform EU Verordening 852/2004.</span>
+    <span>Pagina <span class="pageNumber"></span></span>
+  </div>
+
+  <script>
+    window.onload = () => { window.print(); };
+  </script>
+  </body></html>`;
+
+  const w = window.open('', '_blank', 'width=900,height=700');
+  w.document.write(html);
+  w.document.close();
+}
 </script>
 
 <!-- ═══════════════════════════════════════════
@@ -2666,10 +2858,10 @@ initAll();
     </div>
   </div>
   <div class="chat-suggestions" id="chatSuggestions">
-    <button class="chat-suggestion" onclick="chatSuggest('Analyseer mijn HACCP-logboek op risico's')">📊 Log analyse</button>
-    <button class="chat-suggestion" onclick="chatSuggest('Wat zijn de kritische controlepunten voor mijn keuken?')">🌡️ CCP check</button>
-    <button class="chat-suggestion" onclick="chatSuggest('Hoe staat mijn voedselveiligheidsdocumentatie er voor?')">📋 Documentatie</button>
-    <button class="chat-suggestion" onclick="chatSuggest('Geef me een FIFO en bewaartemperaturen overzicht')">🧊 Bewaaradvies</button>
+    <button class="chat-suggestion" onclick="chatSuggest('Analyseer mijn HACCP-logboek op risico's')">Log analyse</button>
+    <button class="chat-suggestion" onclick="chatSuggest('Wat zijn de kritische controlepunten voor mijn keuken?')">CCP check</button>
+    <button class="chat-suggestion" onclick="chatSuggest('Hoe staat mijn voedselveiligheidsdocumentatie er voor?')">Documentatie</button>
+    <button class="chat-suggestion" onclick="chatSuggest('Geef me een FIFO en bewaartemperaturen overzicht')">Bewaaradvies</button>
   </div>
   <div class="chat-input-area">
     <textarea class="chat-input" id="chatInput" rows="1" placeholder="Vraag iets over je data..." onkeydown="chatKeyDown(event)" oninput="chatAutoResize(this)"></textarea>
@@ -2834,7 +3026,7 @@ async function chatSend() {
   let fullText = '';
   try {
     const res = await klaarAIStream({
-      model: 'claude-haiku-4-5-20251001',
+      model: 'claude-sonnet-4-6',
       max_tokens: 1024,
       stream: true,
       system: chatBuildPrompt(),

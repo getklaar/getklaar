@@ -743,6 +743,9 @@
     font-size: 12px;
   }
 </style>
+
+  <link rel="stylesheet" href="../klaar-shared.css">
+
   <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2/dist/umd/supabase.min.js"></script>
   <script src="../klaar-client.js"></script>
 </head>
@@ -818,7 +821,7 @@
           <div id="spinner-error-msg" style="font-size:13px;color:#dc2626;margin-bottom:10px;"></div>
           <div style="display:flex;gap:10px;justify-content:center;flex-wrap:wrap;">
             <button class="btn btn-ghost btn-sm" onclick="retryOCR()">↺ Opnieuw proberen</button>
-            <button class="btn btn-ghost btn-sm" onclick="hideSpinner();openHandmatig()">✏️ Handmatig invoeren</button>
+            <button class="btn btn-ghost btn-sm" onclick="hideSpinner();openHandmatig()">Handmatig invoeren</button>
           </div>
         </div>
       </div>
@@ -860,7 +863,7 @@
     <div class="card">
       <div class="card-header">
         <span class="card-title">Leveranciers</span>
-        <button class="btn btn-ghost btn-sm" onclick="toggleCollapsible('lev-form')">+ Leverancier toevoegen</button>
+        <button class="btn btn-ghost btn-sm" onclick="toggleCollapsible('lev-form')">Leverancier toevoegen</button>
       </div>
       <div id="lev-form" class="collapsible-body">
         <div class="form-row">
@@ -1073,7 +1076,7 @@
       <div id="opname-actief" style="display:none;">
         <div class="opname-summary" id="opname-summary"></div>
         <div style="display:flex;gap:10px;align-items:center;margin-bottom:12px;flex-wrap:wrap;">
-          <button class="btn btn-ghost btn-sm" onclick="openScannerModal()">📷 Scan barcode</button>
+          <button class="btn btn-ghost btn-sm" onclick="openScannerModal()">Scan barcode</button>
           <input type="text" id="opname-zoek" class="form-input" style="max-width:200px;"
             placeholder="🔍 Product zoeken…" oninput="renderOpnameTable()">
           <select id="opname-filter" class="form-select" style="max-width:160px;" onchange="renderOpnameTable()">
@@ -1131,7 +1134,7 @@
       <div class="dash-empty-title">Nog geen inkoopdata</div>
       <div class="dash-empty-sub">Scan of importeer je eerste factuur via het tabblad <strong>Producten &amp; Prijzen</strong> om het dashboard te activeren. Na de eerste import zie je direct je hardlopers en prijstrends.</div>
       <br>
-      <button class="btn" onclick="goToTab('producten')">📷 Importeer eerste factuur</button>
+      <button class="btn" onclick="goToTab('producten')">Importeer eerste factuur</button>
     </div>
 
     <!-- Dashboard content -->
@@ -1244,7 +1247,7 @@
   </div>
   <div class="scanner-status" id="scanner-status">Richt camera op barcode of QR-code…</div>
   <div class="scanner-product-found" id="scanner-found" style="display:none;"></div>
-  <button class="scanner-close" onclick="closeScannerModal()">✕ Sluiten</button>
+  <button class="scanner-close" onclick="closeScannerModal()">Sluiten</button>
 </div>
 
 <!-- ══ SETTINGS MODAL ══ -->
@@ -2723,7 +2726,7 @@ function renderInkopen() {
           <div class="inkoop-detail-inner">${detailRows}
             <div style="margin-top:10px;padding-top:8px;border-top:1px solid #e5e5e5;">
               <button class="btn btn-ghost btn-sm" style="color:var(--red);border-color:var(--red);"
-                onclick="verwijderInkoop('${ink.id}')">🗑 Inkoop verwijderen</button>
+                onclick="verwijderInkoop('${ink.id}')">Inkoop verwijderen</button>
               <span style="font-size:11px;color:var(--muted);margin-left:8px;">
                 Verwijdert ook de bijbehorende prijsrecords van ${esc(ink.datum)}.
               </span>
@@ -4067,8 +4070,7 @@ function toonKoppelModal(bijgewerkt, ongepaarde) {
         ${ongepaarde.length > 1 ? `
           <button onclick="doAllesAanmaken()"
             style="font-family:'DM Mono',monospace;font-size:11px;padding:8px 16px;border-radius:6px;
-              border:none;background:#e8ff47;color:#111;cursor:pointer;font-weight:600">
-            ✓ Alles aanmaken (${ongepaarde.length})
+              border:none;background:#e8ff47;color:#111;cursor:pointer;font-weight:600">Alles aanmaken (${ongepaarde.length})
           </button>` : '<span></span>'}
         <button onclick="document.getElementById('koppel-overlay').remove()"
           style="font-family:'DM Mono',monospace;font-size:11px;padding:8px 16px;border-radius:6px;
@@ -4387,10 +4389,10 @@ document.addEventListener('DOMContentLoaded', async () => {
     </div>
   </div>
   <div class="chat-suggestions" id="chatSuggestions">
-    <button class="chat-suggestion" onclick="chatSuggest('Analyseer mijn leveranciersprijzen op afwijkingen')">📊 Prijsanalyse</button>
-    <button class="chat-suggestion" onclick="chatSuggest('Ik upload een factuur — extraheer de producten')">📸 Factuur scan</button>
-    <button class="chat-suggestion" onclick="chatSuggest('Welke producten zijn het duurst en waar kan ik besparen?')">💡 Besparen</button>
-    <button class="chat-suggestion" onclick="chatSuggest('Geef een overzicht van mijn productcategorieën')">📦 Overzicht</button>
+    <button class="chat-suggestion" onclick="chatSuggest('Analyseer mijn leveranciersprijzen op afwijkingen')">Prijsanalyse</button>
+    <button class="chat-suggestion" onclick="chatSuggest('Ik upload een factuur — extraheer de producten')">Factuur scan</button>
+    <button class="chat-suggestion" onclick="chatSuggest('Welke producten zijn het duurst en waar kan ik besparen?')">Besparen</button>
+    <button class="chat-suggestion" onclick="chatSuggest('Geef een overzicht van mijn productcategorieën')">Overzicht</button>
   </div>
   <div class="chat-img-preview" id="chatImgPreview" style="display:none"><img id="chatImgThumb" src=""><span id="chatImgName"></span><button class="chat-img-clear" onclick="chatClearImage()">×</button></div>
   <div class="chat-input-area">
@@ -4671,7 +4673,7 @@ async function chatSend() {
   let fullText = '';
   try {
     const res = await klaarAIStream({
-      model: 'claude-haiku-4-5-20251001',
+      model: 'claude-sonnet-4-6',
       max_tokens: 1024,
       stream: true,
       system: chatBuildPrompt(),

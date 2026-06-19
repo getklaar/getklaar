@@ -626,6 +626,9 @@
       .recipe-title-inp{font-size:28px!important;}
     }
   </style>
+
+  <link rel="stylesheet" href="../klaar-shared.css">
+
   <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2/dist/umd/supabase.min.js"></script>
   <script src="../klaar-client.js"></script>
 </head>
@@ -652,14 +655,14 @@
       </div>
       <div style="display:flex;gap:8px;">
         <button class="btn-hdr" onclick="loadDemoData()" style="font-size:10px;">↓ Laad demodata</button>
-        <button class="btn-hdr" onclick="clearAllData()" style="font-size:10px;color:var(--danger);">✕ Wis alle data</button>
+        <button class="btn-hdr" onclick="clearAllData()" style="font-size:10px;color:var(--danger);">Wis alle data</button>
       </div>
     </div>
     <div style="margin-top:18px;border-top:1px solid var(--border);padding-top:14px;">
       <div class="modal-label" style="margin-bottom:8px;">DIAGNOSTIEK</div>
       <div style="display:flex;gap:8px;">
         <button class="btn-hdr" onclick="exportErrorLog()" style="font-size:10px;">↓ Exporteer foutlog</button>
-        <button class="btn-hdr" onclick="clearErrorLog()" style="font-size:10px;color:var(--gray);">✕ Wis log</button>
+        <button class="btn-hdr" onclick="clearErrorLog()" style="font-size:10px;color:var(--gray);">Wis log</button>
         <span id="errLogCount" style="font-size:10px;font-family:'DM Mono',monospace;color:var(--gray);align-self:center;"></span>
       </div>
     </div>
@@ -686,12 +689,12 @@
   <span class="mod-badge">Recepten & Allergenen</span>
   <div class="h-div"></div>
   <div class="h-tabs">
-    <button class="h-tab active" id="tab-gerechten"  onclick="setView('gerechten')">🍽️ Gerechten</button>
-    <button class="h-tab"        id="tab-allergenen" onclick="setView('allergenen')">🧾 Allergenenkaart</button>
+    <button class="h-tab active" id="tab-gerechten"  onclick="setView('gerechten')">Gerechten</button>
+    <button class="h-tab"        id="tab-allergenen" onclick="setView('allergenen')">Allergenenkaart</button>
   </div>
   <div class="h-actions">
     <button class="btn-hdr primary" onclick="newRecipe()">+ Nieuw recept</button>
-    <button class="btn-hdr" onclick="openSettings()">⚙</button>
+    <button class="btn-hdr" onclick="openSettings()"></button>
   </div>
 </header>
 
@@ -734,13 +737,13 @@
 
         <!-- Recording bar -->
         <div class="record-bar">
-          <button class="btn-rec" id="btnRecord" onclick="toggleRecord()">🎙️ Inspreken</button>
+          <button class="btn-rec" id="btnRecord" onclick="toggleRecord()">Inspreken</button>
           <span class="rec-timer" id="recTimer">0:00</span>
           <input type="text" class="prompt-inp" id="promptInp"
             placeholder="Of typ een recept of opdracht hier..."
             onkeydown="if(event.key==='Enter'){event.preventDefault();generateRecipe();}"
             oninput="onPromptInput()">
-          <button class="btn-gen" id="btnGen" onclick="generateRecipe()">✦ Genereer</button>
+          <button class="btn-gen" id="btnGen" onclick="generateRecipe()">Genereer</button>
         </div>
 
         <!-- Editor content -->
@@ -852,11 +855,11 @@
         <!-- Action bar -->
         <div class="action-bar">
           <div class="unsaved-dot" id="unsavedDot"></div>
-          <button class="btn-act save" onclick="saveRecipe()">💾 Opslaan</button>
-          <button class="btn-act" onclick="printRecipe()">🖨️ Print</button>
-          <button class="btn-act" onclick="kloonRecept()" title="Dupliceer dit recept als concept">📋 Kloon</button>
+          <button class="btn-act save" onclick="saveRecipe()">Opslaan</button>
+          <button class="btn-act" onclick="printRecipe()">Print</button>
+          <button class="btn-act" onclick="kloonRecept()" title="Dupliceer dit recept als concept">Kloon</button>
           <button class="btn-act danger" onclick="askDelete()">Verwijder</button>
-          <button class="btn-status" id="btnStatus" onclick="toggleStatus()">● Concept</button>
+          <button class="btn-status" id="btnStatus" onclick="toggleStatus()">Concept</button>
         </div>
 
       </div><!-- /editor -->
@@ -2266,7 +2269,7 @@ async function detectAllergens(silent = false) {
 
   try {
     const d = await klaarAI({
-        model: 'claude-haiku-4-5-20251001', max_tokens: 400,
+        model: 'claude-sonnet-4-6', max_tokens: 400,
         messages: [{ role: 'user', content:
 `Je bent een EU-14 allergeenexpert voor de horeca in Nederland.
 
@@ -2421,7 +2424,7 @@ async function generateRecipe() {
 
   try {
     const d = await klaarAI({
-        model: 'claude-haiku-4-5-20251001', max_tokens: 1800,
+        model: 'claude-sonnet-4-6', max_tokens: 1800,
         system: `Je bent een professionele kok voor de Nederlandse horeca. Je schrijft recepturen voor koks — geen huishoudelijke taal, geen vage hoeveelheden.
 
 ${getActivePersona().context}
@@ -2518,19 +2521,19 @@ function updateSugs(recipe) {
   const el = document.getElementById('chatSugs');
   if (recipe && recipe.id && currentView === 'gerechten') {
     el.innerHTML = `
-      <button class="chat-sug" onclick="chatSuggest('Verbeter de bereidingstechniek in dit recept — meer precisie in temperaturen en timing')">🌡️ Techniek aanscherpen</button>
-      <button class="chat-sug" onclick="chatSuggest('Analyseer de kostprijs van dit recept. Kloppen de hoeveelheden met de ingrediëntenbibliotheek? Wat is een reële verkoopprijs bij 30% food cost?')">💰 Kostprijscheck</button>
-      <button class="chat-sug" onclick="chatSuggest('Geef allergeenvrije alternatieven voor de kritieke ingrediënten in dit recept en geef aan wat dit betekent voor de allergenenkaart')">⚠️ Allergeenvervangers</button>`;
+      <button class="chat-sug" onclick="chatSuggest('Verbeter de bereidingstechniek in dit recept — meer precisie in temperaturen en timing')">Techniek aanscherpen</button>
+      <button class="chat-sug" onclick="chatSuggest('Analyseer de kostprijs van dit recept. Kloppen de hoeveelheden met de ingrediëntenbibliotheek? Wat is een reële verkoopprijs bij 30% food cost?')">Kostprijscheck</button>
+      <button class="chat-sug" onclick="chatSuggest('Geef allergeenvrije alternatieven voor de kritieke ingrediënten in dit recept en geef aan wat dit betekent voor de allergenenkaart')">Allergeenvervangers</button>`;
   } else if (currentView === 'allergenen') {
     el.innerHTML = `
-      <button class="chat-sug" onclick="chatSuggest('Welke recepten zijn veilig voor gasten met glutenintolerantie? Check ook kruisbesmetting.')">🌾 Glutenveilig</button>
-      <button class="chat-sug" onclick="chatSuggest('Welk recept heeft het hoogste allergeenrisico voor service?')">⚠️ Hoogste risico</button>
-      <button class="chat-sug" onclick="chatSuggest('Schrijf een NVWA-conforme allergenendeclaratie voor mijn menukaart')">📋 NVWA-verklaring</button>`;
+      <button class="chat-sug" onclick="chatSuggest('Welke recepten zijn veilig voor gasten met glutenintolerantie? Check ook kruisbesmetting.')">Glutenveilig</button>
+      <button class="chat-sug" onclick="chatSuggest('Welk recept heeft het hoogste allergeenrisico voor service?')">Hoogste risico</button>
+      <button class="chat-sug" onclick="chatSuggest('Schrijf een NVWA-conforme allergenendeclaratie voor mijn menukaart')">NVWA-verklaring</button>`;
   } else {
     el.innerHTML = `
-      <button class="chat-sug" onclick="chatSuggest('Maak een volledig restaurant-recept puur op basis van mijn ingrediëntenbibliotheek. Gebruik zo veel mogelijk ingrediënten die ik al heb en gebruik de exacte namen uit de bibliotheek.')">📚 Recept uit bibliotheek</button>
-      <button class="chat-sug" onclick="chatSuggest('Welke recepten kunnen worden voorbereid (mis en place) voor service zonder kwaliteitsverlies?')">⏱️ Prep-analyse</button>
-      <button class="chat-sug" onclick="chatSuggest('Welke ingrediënten in mijn bibliotheek worden nog niet gebruikt in recepten? Geef suggesties voor wat ik ermee kan maken.')">🔍 Ongebruikte inkoop</button>`;
+      <button class="chat-sug" onclick="chatSuggest('Maak een volledig restaurant-recept puur op basis van mijn ingrediëntenbibliotheek. Gebruik zo veel mogelijk ingrediënten die ik al heb en gebruik de exacte namen uit de bibliotheek.')">Recept uit bibliotheek</button>
+      <button class="chat-sug" onclick="chatSuggest('Welke recepten kunnen worden voorbereid (mis en place) voor service zonder kwaliteitsverlies?')">Prep-analyse</button>
+      <button class="chat-sug" onclick="chatSuggest('Welke ingrediënten in mijn bibliotheek worden nog niet gebruikt in recepten? Geef suggesties voor wat ik ermee kan maken.')">Ongebruikte inkoop</button>`;
   }
 }
 
@@ -2649,7 +2652,7 @@ async function chatSend() {
   let fullText = '';
   try {
     const res = await klaarAIStream({
-      model: 'claude-haiku-4-5-20251001', max_tokens: 1200, stream: true,
+      model: 'claude-sonnet-4-6', max_tokens: 1200, stream: true,
       system: chatBuildPrompt(),
       messages
     }, '01-recept-studio');

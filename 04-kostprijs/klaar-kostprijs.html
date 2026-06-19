@@ -1158,6 +1158,9 @@
     background: var(--lime); border-color: var(--lime); color: var(--black);
   }
 </style>
+
+  <link rel="stylesheet" href="../klaar-shared.css">
+
   <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2/dist/umd/supabase.min.js"></script>
   <script src="../klaar-client.js"></script>
 </head>
@@ -1185,10 +1188,10 @@
 
 <!-- TAB BAR -->
 <div class="tab-bar">
-  <button class="tab-btn active" onclick="switchTab('bereken')">🧮 Bereken</button>
+  <button class="tab-btn active" onclick="switchTab('bereken')">Bereken</button>
   <button class="tab-btn" onclick="switchTab('dashboard')">Overzicht</button>
   <button class="tab-btn" onclick="switchTab('ingredienten')">Ingrediënten</button>
-  <button class="tab-btn" onclick="switchTab('scenario')">📊 Scenario-planner</button>
+  <button class="tab-btn" onclick="switchTab('scenario')">Scenario-planner</button>
   <button class="tab-btn" onclick="switchTab('los')">Losse Berekening</button>
   <button class="tab-btn" onclick="switchTab('instellingen')">Instellingen</button>
 </div>
@@ -1387,11 +1390,9 @@
           <!-- Footer: knoppen -->
           <div class="bereken-footer">
             <div style="display:flex;gap:8px;flex-wrap:wrap">
-              <button class="btn" onclick="switchTab('ingredienten')" style="font-size:11px;padding:7px 14px">
-                🥬 Ingrediëntenprijzen beheren
+              <button class="btn" onclick="switchTab('ingredienten')" style="font-size:11px;padding:7px 14px">Ingrediëntenprijzen beheren
               </button>
-              <button class="btn btn-primary" onclick="printBerekenKaart()" style="font-size:11px;padding:7px 14px">
-                🖨 Print kostprijskaart
+              <button class="btn btn-primary" onclick="printBerekenKaart()" style="font-size:11px;padding:7px 14px">Print kostprijskaart
               </button>
             </div>
           </div>
@@ -1517,7 +1518,7 @@
         <div class="m07-tags" id="m07-tags"></div>
         <div style="display:flex;gap:8px;flex-wrap:wrap;">
           <button class="btn btn-primary" style="font-size:11px;padding:6px 12px" onclick="importAllFromM07()">Alles importeren</button>
-          <button class="sync-btn" onclick="syncM07Prijzen()">🔄 Synchroniseer prijzen</button>
+          <button class="sync-btn" onclick="syncM07Prijzen()">Synchroniseer prijzen</button>
           <button class="btn" style="font-size:11px;padding:6px 12px" onclick="dismissM07Banner()">Negeer</button>
         </div>
       </div>
@@ -1536,7 +1537,7 @@
         <option value="overig">Overig</option>
       </select>
       <button class="btn btn-primary" onclick="openIngModal()">+ Nieuw ingrediënt</button>
-      <button class="sync-btn" onclick="syncM07Prijzen()" title="Prijzen bijwerken vanuit Module 07">🔄 Sync M07</button>
+      <button class="sync-btn" onclick="syncM07Prijzen()" title="Prijzen bijwerken vanuit Module 07">Sync M07</button>
     </div>
 
     <div id="ing-table-wrap">
@@ -1720,6 +1721,15 @@
             <strong id="sc-vp-display">€ —</strong>
           </div>
           <input type="range" id="sc-vp-slider" min="0" max="100" value="0" step="0.5" oninput="scenarioVPUpdate()">
+        </div>
+
+        <!-- DOELFOODCOST -->
+        <div style="display:flex;align-items:center;gap:12px;margin-top:4px;margin-bottom:4px;">
+          <label style="font-family:'DM Mono',monospace;font-size:11px;color:var(--muted);letter-spacing:.04em;white-space:nowrap;">Doelfoodcost %</label>
+          <input type="number" id="sc-doel-fc" value="30" min="5" max="80" step="1"
+            oninput="scenarioUpdate()"
+            style="width:72px;padding:6px 10px;font-family:'DM Mono',monospace;font-size:13px;border:1px solid #e5e5e5;border-radius:4px;text-align:center;">
+          <span style="font-family:'DM Mono',monospace;font-size:11px;color:var(--muted);">→ advies verkoopprijs = kostprijs ÷ doel%</span>
         </div>
 
         <!-- RESULTAAT -->
@@ -2542,8 +2552,8 @@ function renderDashboard() {
     // Inline populariteit toggle
     const popToggle = `
       <div class="pop-toggle">
-        <button class="pop-btn ${vol === 'hoog' ? 'active-hoog' : ''}" onclick="setPopulariteit('${rid}','hoog')">🔥 Hoog</button>
-        <button class="pop-btn ${vol === 'laag' ? 'active-laag' : ''}" onclick="setPopulariteit('${rid}','laag')">📉 Laag</button>
+        <button class="pop-btn ${vol === 'hoog' ? 'active-hoog' : ''}" onclick="setPopulariteit('${rid}','hoog')">Hoog</button>
+        <button class="pop-btn ${vol === 'laag' ? 'active-laag' : ''}" onclick="setPopulariteit('${rid}','laag')">Laag</button>
       </div>`;
 
     tbody.innerHTML += `<tr>
@@ -4180,7 +4190,7 @@ function updateReceptResult(receptId) {
       💡 Prijspsychologie: probeer <strong>${psy.join(', ')}</strong> — psychologische prijspunten
     </div>
     <div style="margin-top:10px">
-      <button class="btn" onclick="printReceptKaart('${receptId}')" style="font-size:11px;padding:6px 12px">🖨 Print kostprijskaart</button>
+      <button class="btn" onclick="printReceptKaart('${receptId}')" style="font-size:11px;padding:6px 12px">Print kostprijskaart</button>
     </div>
   `;
 }
@@ -5001,10 +5011,10 @@ function showSyncToast(msg) {
     </div>
   </div>
   <div class="chat-suggestions" id="chatSuggestions">
-    <button class="chat-suggestion" onclick="chatSuggest('Analyseer mijn marges en geef aanbevelingen')">📊 Margeanalyse</button>
-    <button class="chat-suggestion" onclick="chatSuggest('Welke gerechten zitten boven mijn foodcost-target?')">⚠️ Boven target</button>
-    <button class="chat-suggestion" onclick="chatSuggest('Ik upload een foto van mijn prijsoverzicht — vul het in')">📸 Foto scan</button>
-    <button class="chat-suggestion" onclick="chatSuggest('Pas mijn foodcost target aan naar 28%')">⚙️ Instelling</button>
+    <button class="chat-suggestion" onclick="chatSuggest('Analyseer mijn marges en geef aanbevelingen')">Margeanalyse</button>
+    <button class="chat-suggestion" onclick="chatSuggest('Welke gerechten zitten boven mijn foodcost-target?')">Boven target</button>
+    <button class="chat-suggestion" onclick="chatSuggest('Ik upload een foto van mijn prijsoverzicht — vul het in')">Foto scan</button>
+    <button class="chat-suggestion" onclick="chatSuggest('Pas mijn foodcost target aan naar 28%')">Instelling</button>
   </div>
   <div class="chat-img-preview" id="chatImgPreview" style="display:none"><img id="chatImgThumb" src=""><span id="chatImgName"></span><button class="chat-img-clear" onclick="chatClearImage()">×</button></div>
   <div class="chat-input-area">
@@ -5266,7 +5276,7 @@ async function chatSend() {
   let fullText = '';
   try {
     const res = await klaarAIStream({
-      model: 'claude-haiku-4-5-20251001',
+      model: 'claude-sonnet-4-6',
       max_tokens: 1024,
       stream: true,
       system: chatBuildPrompt(),
@@ -5451,8 +5461,9 @@ function scenarioUpdate() {
 
   const fc  = vp > 0 ? (newKp / vp) * 100 : null;
   const bm  = vp > 0 ? vp - newKp : null;
-  // Target foodcost 30% → advies verkoopprijs
-  const advVp = newKp > 0 ? newKp / 0.30 : null;
+  // Advies verkoopprijs op basis van instelbare doelfoodcost%
+  const doelFc = parseFloat(document.getElementById('sc-doel-fc')?.value) || 30;
+  const advVp = newKp > 0 ? newKp / (doelFc / 100) : null;
 
   document.getElementById('sc-res-kp').textContent = `€ ${newKp.toFixed(2)}`;
   document.getElementById('sc-res-kp').className = 'sc-kpi-val' + (newKp > _scBasisBp * 1.1 ? ' danger' : '');
@@ -5475,10 +5486,10 @@ function scenarioUpdate() {
     document.getElementById('sc-res-adv').textContent = `€ ${advVp.toFixed(2)}`;
     const diff = _scBasisVp > 0 ? advVp - _scBasisVp : 0;
     document.getElementById('sc-advies-tekst').textContent = diff > 0.05
-      ? `Bij deze kostprijs zou je de prijs met € ${diff.toFixed(2)} moeten verhogen om 30% foodcost te halen.`
+      ? `Bij deze kostprijs zou je de prijs met € ${diff.toFixed(2)} moeten verhogen om ${doelFc}% foodcost te halen.`
       : diff < -0.05
-        ? `Bij deze kostprijs kun je zelfs € ${Math.abs(diff).toFixed(2)} lager zitten en toch 30% foodcost halen.`
-        : 'Huidige verkoopprijs klopt bij 30% foodcost-target.';
+        ? `Bij deze kostprijs kun je zelfs € ${Math.abs(diff).toFixed(2)} lager zitten en toch ${doelFc}% foodcost halen.`
+        : `Huidige verkoopprijs klopt bij ${doelFc}% foodcost-target.`;
   }
 }
 

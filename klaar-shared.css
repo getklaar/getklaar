@@ -1,0 +1,368 @@
+/* ════════════════════════════════════════════════════════════════
+   KLAAR — Shared Design System v2.0
+   Geladen NA module-CSS om gerichte overrides toe te passen.
+
+   Wat dit doet:
+   - Vervangt DM Mono in UI-elementen door Inter (professioneler)
+   - DM Mono ALLEEN nog voor prijzen, temperatures, timestamps
+   - Font-sizes omhoog (minimum 13px)
+   - Buttons: meer ruimte, cleaner
+   - Minder agressieve letter-spacing en uppercase
+   - Algemene horeca-professionaliteit
+   ════════════════════════════════════════════════════════════════ */
+
+/* ── Google Fonts ── */
+@import url('https://fonts.googleapis.com/css2?family=Bebas+Neue&family=Inter:wght@400;500;600&family=DM+Mono:wght@400;500&display=swap');
+
+/* ── Design tokens ── */
+:root {
+  /* Brand — ongewijzigd */
+  --black:    #0a0a0a;
+  --surface:  #111111;
+  --surface2: #161616;
+  --border:   #222222;
+  --border2:  #2e2e2e;
+  --lime:     #e8ff47;
+  --white:    #eeeeee;
+  --gray:     #888888;
+  --muted:    #3a3a3a;
+
+  /* Light zone */
+  --lbg:      #f5f3ef;
+  --lsurface: #ffffff;
+  --lborder:  #e4e0d8;
+  --lborder2: #cdc9c0;
+  --ltext:    #1a1a1a;
+  --lmuted:   #888480;
+
+  /* Status */
+  --danger:   #c0392b;
+  --complete: #2d9048;
+  --warning:  #d4820a;
+
+  /* Typography */
+  --font-ui:      'Inter', -apple-system, BlinkMacSystemFont, sans-serif;
+  --font-heading: 'Bebas Neue', sans-serif;
+  --font-mono:    'DM Mono', ui-monospace, monospace;
+
+  /* Layout */
+  --hdr: 54px;
+}
+
+/* ════════════════════════════════════════════════════════════════
+   BASE TYPOGRAPHY
+   Overschrijf DM Mono als standaard UI font.
+   !important is noodzakelijk omdat module-CSS inline styles gebruikt.
+   ════════════════════════════════════════════════════════════════ */
+
+/* Body basis */
+body {
+  font-family: var(--font-ui) !important;
+  font-size: 14px !important;
+  font-weight: 400;
+  line-height: 1.55;
+  -webkit-font-smoothing: antialiased;
+}
+
+/* Headings blijven Bebas Neue */
+h1, h2, h3, h4 {
+  font-family: var(--font-heading) !important;
+}
+
+/* ════════════════════════════════════════════════════════════════
+   HEADER — verfijnd maar structuur gelijk
+   ════════════════════════════════════════════════════════════════ */
+
+.back-link {
+  font-family: var(--font-ui) !important;
+  font-size: 12px !important;
+  font-weight: 500;
+  letter-spacing: 0.01em !important;
+  text-transform: none !important;
+  padding: 5px 12px !important;
+}
+
+.mod-badge {
+  font-family: var(--font-ui) !important;
+  font-size: 10px !important;
+  font-weight: 600;
+  letter-spacing: 0.06em !important;
+  color: var(--gray);
+}
+
+/* ════════════════════════════════════════════════════════════════
+   HEADER TABS — cleaner, minder terminal
+   ════════════════════════════════════════════════════════════════ */
+
+.h-tab, .tab-btn, .h-tabs button {
+  font-family: var(--font-ui) !important;
+  font-size: 12px !important;
+  font-weight: 500;
+  letter-spacing: 0.02em !important;
+  text-transform: none !important;
+  padding: 5px 16px !important;
+}
+
+.h-tab.active, .tab-btn.active {
+  font-weight: 600;
+  letter-spacing: 0.01em !important;
+}
+
+/* ════════════════════════════════════════════════════════════════
+   HEADER BUTTONS
+   ════════════════════════════════════════════════════════════════ */
+
+.btn-hdr, .btn-help, .nav-btn {
+  font-family: var(--font-ui) !important;
+  font-size: 12px !important;
+  font-weight: 500;
+  letter-spacing: 0.01em !important;
+  text-transform: none !important;
+  padding: 0 14px !important;
+  height: 30px !important;
+}
+
+/* ════════════════════════════════════════════════════════════════
+   CONTENT BUTTONS — meer ruimte, cleaner
+   ════════════════════════════════════════════════════════════════ */
+
+.btn, button.btn, input[type="button"].btn {
+  font-family: var(--font-ui) !important;
+  font-size: 13px !important;
+  font-weight: 500;
+  letter-spacing: 0.01em !important;
+  text-transform: none !important;
+  padding: 7px 16px !important;
+  border-radius: 3px !important;
+}
+
+.btn-sm, .btn.btn-sm {
+  font-size: 12px !important;
+  padding: 5px 12px !important;
+}
+
+.btn-lg, .btn.btn-lg {
+  font-size: 14px !important;
+  padding: 9px 20px !important;
+}
+
+/* Primaire knop */
+.btn-primary, .btn-primair, .btn.primary {
+  font-weight: 600;
+}
+
+/* ════════════════════════════════════════════════════════════════
+   FORM ELEMENTEN — leesbaar en professioneel
+   ════════════════════════════════════════════════════════════════ */
+
+input:not([type="checkbox"]):not([type="radio"]),
+select,
+textarea {
+  font-family: var(--font-ui) !important;
+  font-size: 14px !important;
+  letter-spacing: 0 !important;
+  text-transform: none !important;
+}
+
+label, .form-label, .field-label {
+  font-family: var(--font-ui) !important;
+  font-size: 12px !important;
+  font-weight: 600;
+  letter-spacing: 0.03em !important;
+  text-transform: uppercase !important;
+  color: var(--lmuted);
+}
+
+/* ════════════════════════════════════════════════════════════════
+   CARDS & PANELS
+   ════════════════════════════════════════════════════════════════ */
+
+.card, .panel, .module-card {
+  border-radius: 3px !important;
+}
+
+.card-titel, .card-title, .panel-title, .section-title {
+  font-family: var(--font-ui) !important;
+  font-size: 11px !important;
+  font-weight: 700;
+  letter-spacing: 0.05em !important;
+  text-transform: uppercase !important;
+  color: var(--lmuted);
+}
+
+/* ════════════════════════════════════════════════════════════════
+   BADGES & CHIPS
+   ════════════════════════════════════════════════════════════════ */
+
+.badge, .chip, .tag, .allergen-chip, .filter-chip {
+  font-family: var(--font-ui) !important;
+  font-size: 11px !important;
+  font-weight: 600;
+  letter-spacing: 0.02em !important;
+  text-transform: uppercase !important;
+  border-radius: 3px !important;
+}
+
+/* ════════════════════════════════════════════════════════════════
+   TABELLEN
+   ════════════════════════════════════════════════════════════════ */
+
+table, th, td {
+  font-family: var(--font-ui) !important;
+}
+
+th {
+  font-size: 11px !important;
+  font-weight: 700;
+  letter-spacing: 0.04em !important;
+  text-transform: uppercase !important;
+  color: var(--lmuted);
+}
+
+td {
+  font-size: 14px !important;
+  letter-spacing: 0 !important;
+}
+
+/* ════════════════════════════════════════════════════════════════
+   MONO — ALLEEN voor specifieke data-waarden
+   Prijzen, temperatures, codes, timestamps
+   ════════════════════════════════════════════════════════════════ */
+
+.mono,
+.price, .prijs, .cost, .kosten,
+.euro, .currency,
+.temp, .temperature,
+.timestamp, .datum-mono,
+.code, .ean-code,
+.stat-num, .kp-waarde, .cost-value,
+td.numeric, td.prijs-col, td.temp-col {
+  font-family: var(--font-mono) !important;
+  letter-spacing: 0 !important;
+}
+
+/* ════════════════════════════════════════════════════════════════
+   CHAT PANEL
+   ════════════════════════════════════════════════════════════════ */
+
+.chat-bubble, .chat-msg, .bericht-ai, .bericht-user,
+#chatMessages * {
+  font-family: var(--font-ui) !important;
+  font-size: 14px !important;
+  line-height: 1.6 !important;
+  letter-spacing: 0 !important;
+}
+
+#chatInput {
+  font-family: var(--font-ui) !important;
+  font-size: 14px !important;
+}
+
+/* ════════════════════════════════════════════════════════════════
+   EMPTY STATES
+   ════════════════════════════════════════════════════════════════ */
+
+.empty-state h3, .empty-title {
+  font-family: var(--font-heading) !important;
+  font-size: 22px !important;
+  letter-spacing: 0.03em !important;
+}
+
+.empty-state p, .empty-desc {
+  font-family: var(--font-ui) !important;
+  font-size: 14px !important;
+}
+
+/* ════════════════════════════════════════════════════════════════
+   MODAL / DIALOOG
+   ════════════════════════════════════════════════════════════════ */
+
+.modal-title, .modal-header h2, .modal-header h3 {
+  font-family: var(--font-heading) !important;
+  font-size: 20px !important;
+  letter-spacing: 0.03em !important;
+}
+
+.modal-body, .modal-content {
+  font-family: var(--font-ui) !important;
+  font-size: 14px !important;
+}
+
+/* ════════════════════════════════════════════════════════════════
+   ALGEMENE TEKST — nooit kleiner dan 12px
+   ════════════════════════════════════════════════════════════════ */
+
+/* Prevent tiny text (maar overschrijf niet opzettelijk kleine labels) */
+p, span, div, li, td, th, input, select, textarea, button, a {
+  min-font-size: 12px; /* CSS niet standaard, maar signaal */
+}
+
+/* Specifieke kleine teksten verhogen */
+.text-xs  { font-size: 11px !important; }
+.text-sm  { font-size: 12px !important; }
+.text-base{ font-size: 14px !important; }
+
+/* ════════════════════════════════════════════════════════════════
+   NAVIGATIE DROPDOWN (klaar-client.js injectie)
+   ════════════════════════════════════════════════════════════════ */
+
+#klaar-mod-menu, .klaar-nav-dropdown {
+  font-family: var(--font-ui) !important;
+}
+
+#klaar-mod-menu a, #klaar-mod-menu button,
+.klaar-nav-dropdown a {
+  font-family: var(--font-ui) !important;
+  font-size: 13px !important;
+  font-weight: 500;
+  letter-spacing: 0 !important;
+  text-transform: none !important;
+}
+
+/* ════════════════════════════════════════════════════════════════
+   ALERTS & NOTIFICATIONS
+   ════════════════════════════════════════════════════════════════ */
+
+.alert, .notification, .toast, .prijsalert {
+  font-family: var(--font-ui) !important;
+  font-size: 13px !important;
+  border-radius: 3px !important;
+}
+
+/* ════════════════════════════════════════════════════════════════
+   HELP TEXT / TIPS
+   ════════════════════════════════════════════════════════════════ */
+
+.help-tekst, .tip, .hint, .subtext, .form-hint {
+  font-family: var(--font-ui) !important;
+  font-size: 12px !important;
+  line-height: 1.5;
+  color: var(--lmuted);
+}
+
+/* ════════════════════════════════════════════════════════════════
+   PRINT STIJLEN — Professional rapport layout
+   ════════════════════════════════════════════════════════════════ */
+
+@media print {
+  body {
+    font-family: var(--font-ui) !important;
+    font-size: 11pt !important;
+    color: #000 !important;
+  }
+
+  h1, h2, h3 {
+    font-family: var(--font-heading) !important;
+    color: #000 !important;
+  }
+
+  table, th, td {
+    font-family: var(--font-ui) !important;
+    font-size: 10pt !important;
+  }
+
+  th {
+    background: #f0f0f0 !important;
+    color: #000 !important;
+  }
+}
