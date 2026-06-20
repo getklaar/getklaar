@@ -9,9 +9,9 @@
 <link href="https://fonts.googleapis.com/css2?family=Bebas+Neue&family=DM+Mono:wght@400;500&family=DM+Sans:wght@400;500;600&display=swap" rel="stylesheet">
 <style>
   :root {
-    --black: #0a0a0a;
+    --black: #1E1B17;
     --border: #222222;
-    --lime: #e8ff47;
+    --lime: #E8B84B;
     --bg: #f5f5f3;
     --surface: #ffffff;
     --text: #111111;
@@ -75,7 +75,7 @@
   }
   .help-btn:hover, .help-btn.open {
     border-color: var(--lime); color: var(--lime);
-    background: rgba(232,255,71,0.08);
+    background: rgba(232,184,75,0.08);
   }
 
   /* ── HELP DRAWER ── */
@@ -127,10 +127,10 @@
     font-size: 12px; color: #999; line-height: 1.65;
   }
   .help-tip {
-    background: rgba(232,255,71,0.06);
+    background: rgba(232,184,75,0.06);
     border-left: 2px solid var(--lime);
     padding: 8px 12px; margin-top: 12px;
-    font-size: 11px; color: #bbb; line-height: 1.6;
+    font-size: 11px; color: #888; line-height: 1.6;
   }
   .help-tip strong { color: var(--lime); }
   .help-divider {
@@ -297,7 +297,7 @@
   }
   .matrix-item:hover { background: #e5e5e5; }
   .matrix-empty {
-    font-size: 11px; color: #ccc; font-style: italic;
+    font-size: 11px; color: #888; font-style: italic;
   }
 
   /* ── SORTEERBARE KOLOMMEN ── */
@@ -380,7 +380,7 @@
     color: var(--muted); white-space: nowrap;
   }
   .trend-empty {
-    font-size: 11px; color: #ccc; font-style: italic; padding: 4px 0;
+    font-size: 11px; color: #888; font-style: italic; padding: 4px 0;
   }
   .trend-bron {
     grid-column: 1 / -1;
@@ -420,8 +420,8 @@
   .search-input:focus { border-color: var(--text); }
 
   .suggest-banner {
-    background: rgba(232,255,71,0.08);
-    border: 1px solid rgba(232,255,71,0.3);
+    background: rgba(232,184,75,0.08);
+    border: 1px solid rgba(232,184,75,0.3);
     border-left: 3px solid var(--lime);
     padding: 12px 16px; margin-bottom: 16px;
     display: flex; align-items: flex-start; gap: 12px;
@@ -437,12 +437,12 @@
   }
   .suggest-tag {
     font-family: 'DM Mono', monospace; font-size: 10px;
-    background: rgba(232,255,71,0.15); color: #555;
+    background: rgba(232,184,75,0.15); color: #555;
     padding: 3px 8px; border-radius: 3px;
     cursor: pointer; transition: all 0.15s;
-    border: 1px solid rgba(232,255,71,0.3);
+    border: 1px solid rgba(232,184,75,0.3);
   }
-  .suggest-tag:hover { background: rgba(232,255,71,0.3); }
+  .suggest-tag:hover { background: rgba(232,184,75,0.3); }
 
   /* ── MODAL ── */
   .modal-overlay {
@@ -671,8 +671,8 @@
   .result-panel .kpi-sub { color: rgba(255,255,255,0.5); }
 
   .psy-hint {
-    background: rgba(232,255,71,0.08);
-    border: 1px solid rgba(232,255,71,0.2);
+    background: rgba(232,184,75,0.08);
+    border: 1px solid rgba(232,184,75,0.2);
     padding: 10px 14px; margin-top: 12px;
     font-size: 12px;
   }
@@ -725,7 +725,7 @@
     border-bottom: 1px solid #f0f0f0;
   }
   .benchmark-table tr:last-child td { border-bottom: none; }
-  .benchmark-table .active-row td { background: rgba(232,255,71,0.06); }
+  .benchmark-table .active-row td { background: rgba(232,184,75,0.06); }
 
   .warn-block {
     background: rgba(249,115,22,0.06);
@@ -758,7 +758,7 @@
     border-radius: 5px; padding: 3px 9px; cursor: pointer;
     transition: background 0.15s;
   }
-  .m07-tag:hover { background: #e8ff47; }
+  .m07-tag:hover { background: #E8B84B; }
   .m07-tag.imported { background: #dcfce7; border-color: #86efac; color: #166534; cursor: default; }
   .m07-badge {
     display: inline-flex; align-items: center; gap: 3px;
@@ -772,7 +772,7 @@
     font-family: 'DM Mono', monospace; letter-spacing: 0.04em;
     transition: background 0.15s;
   }
-  .sync-btn:hover { background: #e8ff47; }
+  .sync-btn:hover { background: #E8B84B; }
   .m07-koppel-box {
     background: #f9fafb; border: 1px solid #e5e5e5;
     border-radius: 7px; padding: 12px; margin-top: 12px;
@@ -822,15 +822,15 @@
     display: flex; gap: 8px; flex-wrap: wrap; margin-bottom: 16px;
   }
   .rpc-filter-chip {
-    font-family: 'DM Mono', monospace; font-size: 12px;
-    border: 1px solid #e5e5e5; background: var(--surface);
-    padding: 6px 14px; cursor: pointer;
+    font-family: 'Inter', sans-serif; font-size: 12px; font-weight: 500;
+    border: 1px solid #e0dbd5; background: #ffffff;
+    border-radius: 20px; padding: 5px 14px; cursor: pointer;
     transition: all 0.15s; white-space: nowrap;
-    color: var(--text); user-select: none;
+    color: #6b6460; user-select: none;
   }
-  .rpc-filter-chip:hover { border-color: #bbb; }
+  .rpc-filter-chip:hover { border-color: #c4b99a; color: #2c2620; }
   .rpc-filter-chip.active {
-    background: var(--black); border-color: var(--black); color: #fff;
+    background: #E8B84B; border-color: #E8B84B; color: #1a1612; font-weight: 600;
   }
   .rpc-cat-badge {
     display: inline-block; font-size: 10px; font-family: 'DM Mono', monospace;
@@ -999,8 +999,8 @@
   .bereken-psy strong { color: var(--text); }
 
   .bereken-no-prices-tip {
-    background: rgba(232,255,71,0.06);
-    border: 1px solid rgba(232,255,71,0.25);
+    background: rgba(232,184,75,0.06);
+    border: 1px solid rgba(232,184,75,0.25);
     border-left: 3px solid var(--lime);
     padding: 12px 16px; margin-bottom: 20px;
     font-size: 12px; color: #555; line-height: 1.6;
@@ -1158,9 +1158,6 @@
     background: var(--lime); border-color: var(--lime); color: var(--black);
   }
 </style>
-
-  <link rel="stylesheet" href="../klaar-shared.css">
-
   <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2/dist/umd/supabase.min.js"></script>
   <script src="../klaar-client.js"></script>
 </head>
@@ -1168,9 +1165,9 @@
 
 <!-- HEADER -->
 <div class="header">
-  <a class="header-back" href="../index.html">← Klaar</a>
+  <a class="header-back" href="../dashboard/index.html">← Dashboard</a>
   <div class="header-logo">KLAAR</div>
-  <div class="header-module">MODULE 04 — Kostprijs Calculator</div>
+  <div class="header-module">04 — KOSTPRIJS CALCULATOR</div>
   <div class="header-spacer"></div>
   <div class="header-badge">● Live</div>
   <button class="help-btn" id="help-btn" onclick="toggleHelp()" title="Uitleg & hulp">?</button>
@@ -1204,7 +1201,7 @@
 
     <!-- No recipes state -->
     <div id="bereken-no-recipes" class="empty-state" style="display:none">
-      <div class="empty-state-icon">🍳</div>
+      <div class="empty-state-icon"></div>
       <div class="empty-state-text">
         Nog geen recepten gevonden.<br>
         Maak je eerste recept aan in <strong>Recept Studio</strong> — zodra je recepten hebt staan, berekent Klaar hier automatisch je kostprijs en marge.
@@ -1227,14 +1224,14 @@
 
       <!-- Tip als er ingrediënten zonder prijs zijn -->
       <div id="bereken-prices-tip" class="bereken-no-prices-tip" style="display:none">
-        <strong>💡 Vul inkoopprijzen in voor nauwkeurige berekeningen</strong>
+        <strong> Vul inkoopprijzen in voor nauwkeurige berekeningen</strong>
         Ga naar het tabblad <strong>Ingrediënten</strong> om prijzen toe te voegen — of voeg ze direct in de berekening in via de ⚠-velden hieronder.
       </div>
 
       <!-- Search -->
       <div class="bereken-search-wrap">
         <input type="text" class="bereken-search" id="bereken-search"
-          placeholder="🔍  Zoek een gerecht..." oninput="renderReceptPicker()">
+          placeholder="  Zoek een gerecht..." oninput="renderReceptPicker()">
       </div>
 
       <!-- Fase 2 — categorie filterbalk -->
@@ -1311,6 +1308,8 @@
             </button>
           </div>
 
+          <!-- BTW-disclaimer -->
+          <div style="font-size:10.5px;color:var(--muted);font-family:'DM Mono',monospace;padding:4px 0 10px;letter-spacing:.04em;">Alle bedragen excl. BTW · adviesprijs op basis van foodcost% (geen overhead of personeel)</div>
           <!-- Marge-rij — per portie (constante gerechtseconomie) -->
           <div class="bereken-marge-row">
             <div class="bereken-marge-kpi">
@@ -1377,7 +1376,7 @@
 
           <!-- Psychologische prijspunten -->
           <div class="bereken-psycho-wrap" id="bereken-psycho-wrap" style="display:none">
-            <span class="bereken-psycho-label">💡 Prijspunten</span>
+            <span class="bereken-psycho-label"> Prijspunten</span>
             <div id="bereken-psycho-chips"></div>
           </div>
 
@@ -1425,7 +1424,7 @@
     </div>
 
     <div id="dash-no-recipes" class="empty-state" style="display:none">
-      <div class="empty-state-icon">🍳</div>
+      <div class="empty-state-icon"></div>
       <div class="empty-state-text">Geen recepten gevonden. Voeg eerst recepten toe in <strong>Module 01 — Recept Studio</strong>.</div>
     </div>
 
@@ -1497,7 +1496,7 @@
   <div id="tab-ingredienten" class="tab-panel">
 
     <div id="suggest-banner" class="suggest-banner" style="display:none">
-      <div class="suggest-banner-icon">💡</div>
+      <div class="suggest-banner-icon"></div>
       <div class="suggest-banner-text">
         <div class="suggest-banner-title">We herkennen ingrediënten uit je recepten</div>
         <div class="suggest-banner-body">Klik op een ingrediënt om het toe te voegen aan de bibliotheek:</div>
@@ -1511,7 +1510,7 @@
 
     <!-- Module 07 import banner -->
     <div id="m07-banner" class="m07-banner" style="display:none">
-      <div class="m07-banner-icon">📦</div>
+      <div class="m07-banner-icon"></div>
       <div style="flex:1">
         <div class="m07-banner-title">Nieuwe producten beschikbaar vanuit Module 07 — Leveranciers</div>
         <div class="m07-banner-sub">Importeer met één klik — naam, prijs, leverancier en categorie worden automatisch ingevuld.</div>
@@ -1587,7 +1586,7 @@
     <div id="recepten-list"></div>
 
     <div id="recepten-empty" class="empty-state" style="display:none">
-      <div class="empty-state-icon">📋</div>
+      <div class="empty-state-icon"></div>
       <div class="empty-state-text">Geen recepten gevonden in Module 01. Voeg eerst recepten toe in de Recept Studio.</div>
     </div>
 
@@ -1680,7 +1679,7 @@
   <!-- ═══════════════════════ TAB: SCENARIO-PLANNER ═══════════════════════ -->
   <div id="tab-scenario" class="tab-panel">
     <div class="toolbar">
-      <div class="toolbar-title">📊 Scenario-planner</div>
+      <div class="toolbar-title"> Scenario-planner</div>
       <div class="toolbar-sub">Simuleer prijswijzigingen en bereken break-even per gerecht</div>
     </div>
 
@@ -1712,7 +1711,7 @@
             <span>Ingrediënten +/−%</span>
             <strong id="sc-slider-pct">0%</strong>
           </div>
-          <input type="range" id="sc-slider" min="-30" max="50" value="0" step="1" oninput="scenarioUpdate()">
+          <input type="range" id="sc-slider" min="-50" max="100" value="0" step="1" oninput="scenarioUpdate()">
         </div>
 
         <div class="wat-als-slider-wrap">
@@ -1950,7 +1949,7 @@
       </div>
       <!-- Module 07 koppeling -->
       <div class="m07-koppel-box" id="m07-koppel-box" style="display:none">
-        <div class="m07-koppel-title">📦 Module 07 koppeling</div>
+        <div class="m07-koppel-title"> Module 07 koppeling</div>
         <div id="m07-koppel-matches"></div>
       </div>
       <input type="hidden" id="ing-m07-id">
@@ -2006,7 +2005,8 @@ function load(key, def) {
   catch { return def; }
 }
 function save(key, data) {
-  localStorage.setItem(key, JSON.stringify(data));
+  try { localStorage.setItem(key, JSON.stringify(data)); }
+  catch(e) { if (e.name === 'QuotaExceededError') alert('⚠ Opslagruimte vol — exporteer eerst data of verwijder oude ingrediënten.'); }
 }
 
 function getSettings() {
@@ -2140,7 +2140,7 @@ function syncM07Prijzen() {
   saveIngredienten(ings);
   renderIngredients();
   renderDashboard();
-  alert(`🔄 ${updated} ingrediënt${updated !== 1 ? 'en' : ''} bijgewerkt met Module 07-prijzen.`);
+  alert(` ${updated} ingrediënt${updated !== 1 ? 'en' : ''} bijgewerkt met Module 07-prijzen.`);
 }
 
 // Stille auto-sync: bijwerken van M07-ingrediënten met nieuwste prijzen (geen alert)
@@ -2714,7 +2714,7 @@ function renderIngredients() {
       <td style="font-family:'DM Mono',monospace;font-size:11px;color:var(--muted)">${formatPPG(ing.inkoopprijs, ing.eenheid)}</td>
       <td style="color:var(--muted);font-size:12px">${ing.leverancier || '—'}</td>
       <td>${ing.source === 'module_07'
-        ? '<span class="m07-badge">📦 Module 07</span>'
+        ? '<span class="m07-badge"> Module 07</span>'
         : ing.source === 'api'
           ? '<span style="font-family:\'DM Mono\',monospace;font-size:10px;color:var(--green)">● API</span>'
           : '<span style="font-family:\'DM Mono\',monospace;font-size:10px;color:var(--muted)">Handmatig</span>'
@@ -3332,10 +3332,10 @@ let _berekenFolderFilter = 'alles'; // actieve categorie-filter
 
 // Hardcoded folders (zelfde als Module 01)
 const BEREKEN_FOLDERS = [
-  { id: 'keuken',  label: 'Keuken',         icon: '🍳' },
+  { id: 'keuken',  label: 'Keuken',         icon: '' },
   { id: 'bar',     label: 'Bar & Cocktails', icon: '🍸' },
   { id: 'koffie',  label: 'Koffie',          icon: '☕' },
-  { id: 'archief', label: 'Archief',         icon: '🗂️' },
+  { id: 'archief', label: 'Archief',         icon: '' },
 ];
 
 function getAllFolders() {
@@ -3988,7 +3988,7 @@ function buildIngRow(receptId, ing, idx, ingId, hoev, eenheid, autoMatched, libI
     ? `<span style="font-family:'DM Mono',monospace;font-size:11px;color:var(--muted)">—</span>`
     : m07fallback
       ? `<span style="font-size:11px;">
-          <span style="font-family:'DM Mono',monospace;color:var(--muted)">📦 €${parseFloat(m07fallback.prijs).toFixed(2)}/${m07fallback.eenheid||'stuk'}</span>
+          <span style="font-family:'DM Mono',monospace;color:var(--muted)"> €${parseFloat(m07fallback.prijs).toFixed(2)}/${m07fallback.eenheid||'stuk'}</span>
           <button style="font-size:10px;padding:2px 6px;margin-left:4px;background:var(--lime);border:none;border-radius:3px;cursor:pointer;font-weight:600"
             onclick="saveInlinePriceFromM07('${libIng.id}','${receptId}',${parseFloat(m07fallback.prijs)})">
             Koppel</button>
@@ -4187,7 +4187,7 @@ function updateReceptResult(receptId) {
         oninput="watAls('${receptId}',${kostPerPortie},${s.btwPercentage},this.value)">
     </div>
     <div style="margin-top:10px;font-size:11px;color:var(--muted)">
-      💡 Prijspsychologie: probeer <strong>${psy.join(', ')}</strong> — psychologische prijspunten
+       Prijspsychologie: probeer <strong>${psy.join(', ')}</strong> — psychologische prijspunten
     </div>
     <div style="margin-top:10px">
       <button class="btn" onclick="printReceptKaart('${receptId}')" style="font-size:11px;padding:6px 12px">Print kostprijskaart</button>
@@ -4280,8 +4280,7 @@ th{background:#f5f5f5;font-size:11px;text-transform:uppercase;letter-spacing:1px
 <tr><th>Foodcost%</th><td colspan="2">${fc.toFixed(1)}%</td></tr>
 </table>
 <div class="meta" style="margin-top:24px">Gegenereerd door KLAAR — getklaar.app</div>
-<script>window.onload=()=>window.print()<\/script>
-</body></html>`);
+<script>window.onload=()=>window.print()<\/script></body></html>`);
   w.document.close();
 }
 
@@ -4391,7 +4390,7 @@ function calcLos() {
       document.getElementById('result-a-grid').innerHTML = `
         <div style="grid-column:1/-1;padding:12px;background:#fff3cd;border-radius:8px;font-size:13px;color:#856404;">
           ⚠️ <strong>${missingPrijs.length} ingrediënt${missingPrijs.length > 1 ? 'en hebben' : ' heeft'} geen prijs.</strong><br>
-          Ga naar het tabblad <strong>Ingrediënten</strong> en klik <strong>🔄 Sync M07</strong> om prijzen te laden vanuit Module 07, of stel de prijs handmatig in.
+          Ga naar het tabblad <strong>Ingrediënten</strong> en klik <strong> Sync M07</strong> om prijzen te laden vanuit Module 07, of stel de prijs handmatig in.
         </div>`;
       document.getElementById('psy-hint-a').style.display = 'none';
       return;
@@ -4412,7 +4411,7 @@ function calcLos() {
   const psyEl = document.getElementById('psy-hint-a');
   if (psy.length > 0) {
     psyEl.style.display = '';
-    psyEl.innerHTML = `<strong>💡 Prijspsychologie:</strong> Jouw aanbevolen prijs is €${incl.toFixed(2)} — probeer <strong>${psy.join(', ')}</strong> voor een betere beleving bij de gast.`;
+    psyEl.innerHTML = `<strong> Prijspsychologie:</strong> Jouw aanbevolen prijs is €${incl.toFixed(2)} — probeer <strong>${psy.join(', ')}</strong> voor een betere beleving bij de gast.`;
   } else {
     psyEl.style.display = 'none';
   }
@@ -4694,7 +4693,7 @@ const HELP_CONTENT = {
         body: 'Als een ingrediënt nog geen inkoopprijs heeft, zie je een ⚠-veld. Vul de prijs direct in en klik ✓ — de berekening past zich meteen aan.'
       },
       {
-        icon: '💡', title: 'Psychologische prijspunten',
+        icon: '', title: 'Psychologische prijspunten',
         body: 'Onderaan de berekening suggereert de module psychologische prijzen (bijv. €12,95 i.p.v. €13,20). Gasten ervaren dit als goedkoper, terwijl je marge nauwelijks verschilt.'
       },
     ],
@@ -4704,7 +4703,7 @@ const HELP_CONTENT = {
     label: 'Tab 1 — Dashboard',
     sections: [
       {
-        icon: '📊', title: 'De vier cijfers bovenaan',
+        icon: '', title: 'De vier cijfers bovenaan',
         body: 'Een snelle check op je financiële gezondheid. Je ziet je gemiddelde foodcost%, hoeveel gerechten al doorgerekend zijn, je duurste gerecht en hoeveel ingrediënten er in de bibliotheek zitten.'
       },
       {
@@ -4726,7 +4725,7 @@ const HELP_CONTENT = {
         body: 'Hier sla je de inkoopprijs per ingrediënt op. Bijv. kipfilet voor €8,50 per kg. De module rekent zelf uit wat dat per gram kost — zodat berekeningen in de Recepten-tab automatisch kloppen.'
       },
       {
-        icon: '💡', title: 'Importeer vanuit je recepten',
+        icon: '', title: 'Importeer vanuit je recepten',
         body: 'Als je recepten hebt in Module 01, verschijnt er een gele banner met alle herkende ingrediënten. Klik erop om ze direct toe te voegen — je hoeft alleen nog de prijs in te vullen.'
       },
       {
@@ -4740,11 +4739,11 @@ const HELP_CONTENT = {
     label: 'Tab 3 — Recepten doorrekenen',
     sections: [
       {
-        icon: '📋', title: 'Hoe werkt het?',
+        icon: '', title: 'Hoe werkt het?',
         body: 'Je recepten uit Module 01 verschijnen hier automatisch. Klik op een recept om het open te klappen. Per ingrediënt kies je via een dropdown welk bibliotheek-ingrediënt erbij hoort, en hoeveel gram je gebruikt.'
       },
       {
-        icon: '💰', title: 'Wat krijg je te zien?',
+        icon: '', title: 'Wat krijg je te zien?',
         body: 'Zodra je ingrediënten gekoppeld zijn, zie je: kostprijs per portie, aanbevolen verkoopprijs (excl. en incl. BTW), foodcost% en brutomarge. Ook de factor-methode prijs wordt getoond.'
       },
       {
@@ -4865,16 +4864,16 @@ function renderHelp(tab) {
   window.addEventListener('storage', e => {
     if (e.key === 'klaar_recipes') {
       renderReceptPicker();
-      showSyncToast('🔄 Recepten bijgewerkt vanuit Recept Studio');
+      showSyncToast(' Recepten bijgewerkt vanuit Recept Studio');
     }
     if (e.key === 'klaar_folders_custom') {
       renderFilterBar();
-      showSyncToast('🗂️ Categorieën bijgewerkt');
+      showSyncToast(' Categorieën bijgewerkt');
     }
     if (e.key === 'klaar_ingredienten') {
       if (_berekenReceptId) {
         debouncedBereken();
-        showSyncToast('💰 Inkoopprijzen bijgewerkt — herbereken…');
+        showSyncToast(' Inkoopprijzen bijgewerkt — herbereken…');
       }
     }
     if (e.key === 'klaar_voorraad') {
@@ -4889,7 +4888,7 @@ function renderHelp(tab) {
     if (keys.includes('klaar_ingredienten')) {
       autoSyncM07Stil();
       if (_berekenReceptId) debouncedBereken();
-      showSyncToast('💰 Leveranciersprijs bijgewerkt — kostprijzen herberekend');
+      showSyncToast(' Leveranciersprijs bijgewerkt — kostprijzen herberekend');
     }
     if (keys.includes('klaar_producten') || keys.includes('klaar_inkopen')) {
       renderPrijsTrend();
@@ -4920,16 +4919,16 @@ function showSyncToast(msg) {
     .chat-trigger {
       position: fixed; bottom: 24px; right: 24px; z-index: 1000;
       display: flex; align-items: center; gap: 8px;
-      background: #e8ff47; color: #0a0a0a;
+      background: #E8B84B; color: #0a0a0a;
       border: none; cursor: pointer;
       padding: 0 18px; height: 44px;
       font-family: 'DM Sans', sans-serif; font-size: 13px; font-weight: 600;
       letter-spacing: 0.3px;
       transition: transform 0.15s, box-shadow 0.15s;
-      box-shadow: 0 4px 20px rgba(232,255,71,0.3);
+      box-shadow: 0 4px 20px rgba(232,184,75,0.3);
     }
-    .chat-trigger:hover { transform: translateY(-2px); box-shadow: 0 6px 28px rgba(232,255,71,0.4); }
-    .chat-trigger.open { background: #1a1a1a; color: #e8ff47; border: 1px solid #e8ff47; box-shadow: none; }
+    .chat-trigger:hover { transform: translateY(-2px); box-shadow: 0 6px 28px rgba(232,184,75,0.4); }
+    .chat-trigger.open { background: #1E1B17; color: #E8B84B; border: 1px solid #E8B84B; box-shadow: none; }
     .chat-trigger-pulse {
       width: 7px; height: 7px; background: #22c55e; border-radius: 50%;
       animation: chatPulse 2s infinite;
@@ -4946,10 +4945,10 @@ function showSyncToast(msg) {
     .chat-header {
       padding: 16px 16px 14px; border-bottom: 1px solid #222222;
       display: flex; align-items: center; justify-content: space-between;
-      background: #0a0a0a; flex-shrink: 0;
+      background: #1E1B17; flex-shrink: 0;
     }
     .chat-header-info { display: flex; flex-direction: column; gap: 2px; }
-    .chat-header-title { font-family: 'Bebas Neue', sans-serif; font-size: 20px; letter-spacing: 1px; color: #e8ff47; line-height: 1; }
+    .chat-header-title { font-family: 'Bebas Neue', sans-serif; font-size: 20px; letter-spacing: 1px; color: #E8B84B; line-height: 1; }
     .chat-header-sub { font-family: 'DM Mono', monospace; font-size: 10px; color: #888888; letter-spacing: 1px; }
     .chat-header-close { background: none; border: none; color: #888888; cursor: pointer; font-size: 18px; padding: 4px; transition: color 0.1s; }
     .chat-header-close:hover { color: #f5f2eb; }
@@ -4961,38 +4960,38 @@ function showSyncToast(msg) {
     .chat-msg.user { align-self: flex-end; }
     .chat-msg.assistant { align-self: flex-start; }
     .chat-bubble { padding: 10px 14px; font-size: 13px; line-height: 1.65; }
-    .chat-msg.user .chat-bubble { background: #e8ff47; color: #0a0a0a; font-weight: 500; }
-    .chat-msg.assistant .chat-bubble { background: #1a1a1a; color: #f5f2eb; border: 1px solid #222222; }
-    .chat-msg.assistant .chat-bubble strong { color: #e8ff47; }
-    .chat-typing { align-self: flex-start; padding: 12px 16px; background: #1a1a1a; border: 1px solid #222222; color: #888888; font-size: 18px; letter-spacing: 2px; line-height: 1; }
+    .chat-msg.user .chat-bubble { background: #E8B84B; color: #0a0a0a; font-weight: 500; }
+    .chat-msg.assistant .chat-bubble { background: #1E1B17; color: #f5f2eb; border: 1px solid #222222; }
+    .chat-msg.assistant .chat-bubble strong { color: #E8B84B; }
+    .chat-typing { align-self: flex-start; padding: 12px 16px; background: #1E1B17; border: 1px solid #222222; color: #888888; font-size: 18px; letter-spacing: 2px; line-height: 1; }
     .chat-typing span { display: inline-block; animation: chatBlink 1.2s infinite; }
     .chat-typing span:nth-child(2) { animation-delay: 0.2s; }
     .chat-typing span:nth-child(3) { animation-delay: 0.4s; }
     @keyframes chatBlink { 0%,100%{opacity:0.2} 50%{opacity:1} }
     .chat-suggestions { padding: 8px 12px; display: flex; flex-wrap: wrap; gap: 6px; flex-shrink: 0; border-top: 1px solid #222222; }
     .chat-suggestion { font-family: 'DM Mono', monospace; font-size: 10px; letter-spacing: 0.5px; padding: 5px 10px; border: 1px solid #333333; background: none; color: #888888; cursor: pointer; transition: all 0.15s; white-space: nowrap; }
-    .chat-suggestion:hover { border-color: #e8ff47; color: #e8ff47; }
-    .chat-input-area { padding: 12px; border-top: 1px solid #222222; display: flex; gap: 8px; align-items: flex-end; flex-shrink: 0; background: #0a0a0a; }
-    .chat-input { flex: 1; background: #1a1a1a; border: 1px solid #333333; color: #f5f2eb; font-family: 'DM Sans', sans-serif; font-size: 13px; line-height: 1.5; padding: 10px 12px; resize: none; max-height: 110px; min-height: 42px; transition: border-color 0.15s; }
-    .chat-input:focus { outline: none; border-color: #e8ff47; }
+    .chat-suggestion:hover { border-color: #E8B84B; color: #E8B84B; }
+    .chat-input-area { padding: 12px; border-top: 1px solid #222222; display: flex; gap: 8px; align-items: flex-end; flex-shrink: 0; background: #1E1B17; }
+    .chat-input { flex: 1; background: #1E1B17; border: 1px solid #333333; color: #f5f2eb; font-family: 'DM Sans', sans-serif; font-size: 13px; line-height: 1.5; padding: 10px 12px; resize: none; max-height: 110px; min-height: 42px; transition: border-color 0.15s; }
+    .chat-input:focus { outline: none; border-color: #E8B84B; }
     .chat-input::placeholder { color: #555555; }
-    .chat-send { width: 38px; height: 38px; background: #e8ff47; border: none; color: #0a0a0a; font-size: 16px; font-weight: 700; cursor: pointer; flex-shrink: 0; transition: opacity 0.15s; display: flex; align-items: center; justify-content: center; }
+    .chat-send { width: 38px; height: 38px; background: #E8B84B; border: none; color: #0a0a0a; font-size: 16px; font-weight: 700; cursor: pointer; flex-shrink: 0; transition: opacity 0.15s; display: flex; align-items: center; justify-content: center; }
     .chat-send:hover { opacity: 0.85; }
     .chat-send:disabled { opacity: 0.35; cursor: not-allowed; }
-    .chat-upload-btn { width: 38px; height: 38px; background: #1a1a1a; border: 1px solid #333333; color: #888888; font-size: 15px; cursor: pointer; flex-shrink: 0; transition: all 0.15s; display: flex; align-items: center; justify-content: center; }
-    .chat-upload-btn:hover { border-color: #e8ff47; color: #e8ff47; }
-    .chat-no-key { background: #1a1a1a; border: 1px solid rgba(232,255,71,0.25); color: #aaa; font-size: 12px; padding: 12px 14px; line-height: 1.6; }
-    .chat-no-key strong { color: #e8ff47; }
-    .chat-img-preview { background: #1a1a1a; border: 1px solid rgba(232,255,71,0.25); padding: 8px 12px; font-size: 11px; color: #888888; font-family: 'DM Mono', monospace; display: flex; align-items: center; gap: 8px; flex-shrink: 0; }
+    .chat-upload-btn { width: 38px; height: 38px; background: #1E1B17; border: 1px solid #333333; color: #888888; font-size: 15px; cursor: pointer; flex-shrink: 0; transition: all 0.15s; display: flex; align-items: center; justify-content: center; }
+    .chat-upload-btn:hover { border-color: #E8B84B; color: #E8B84B; }
+    .chat-no-key { background: #1E1B17; border: 1px solid rgba(232,184,75,0.25); color: #aaa; font-size: 12px; padding: 12px 14px; line-height: 1.6; }
+    .chat-no-key strong { color: #E8B84B; }
+    .chat-img-preview { background: #1E1B17; border: 1px solid rgba(232,184,75,0.25); padding: 8px 12px; font-size: 11px; color: #888888; font-family: 'DM Mono', monospace; display: flex; align-items: center; gap: 8px; flex-shrink: 0; }
     .chat-img-preview img { width: 36px; height: 36px; object-fit: cover; }
-    .chat-img-clear { background: none; border: none; color: #e8ff47; cursor: pointer; font-size: 16px; margin-left: auto; line-height: 1; }
+    .chat-img-clear { background: none; border: none; color: #E8B84B; cursor: pointer; font-size: 16px; margin-left: auto; line-height: 1; }
     @media (max-width: 480px) { .chat-panel { width: 100%; right: -100%; } .chat-trigger { font-size: 12px; padding: 0 14px; } }
 
 </style>
 
 <input type="file" id="chatFileInput" accept="image/*,.csv,.xlsx,.xls" style="display:none" onchange="chatHandleFile(this)">
 <button class="chat-trigger" id="chatTrigger" onclick="toggleChat()">
-  <span>💬</span>
+  <span></span>
   <span id="chatTriggerLabel">Vraag de Klaar Assistent</span>
   <span class="chat-trigger-pulse" id="chatTriggerPulse"></span>
 </button>
@@ -5000,7 +4999,7 @@ function showSyncToast(msg) {
 <div class="chat-panel" id="chatPanel">
   <div class="chat-header">
     <div class="chat-header-info">
-      <div class="chat-header-title">Klaar Assistent</div>
+      <div class="chat-header-title">KLAAR AI</div>
       <div class="chat-header-sub">Margeanalyse-assistent · Module 04</div>
     </div>
     <button class="chat-header-close" onclick="toggleChat()">✕</button>
@@ -5109,17 +5108,17 @@ MODULES & PRIJZEN (voor context bij upsell):
 Full suite — €179/m (los €131,50/m) — Alle modules samen
 
 HOE JE HET ZEGT (toon: zakenpartner die iets handigs opmerkt, NIET een verkoopgesprek):
-✅ "Oh trouwens — als je dit probleem vaker hebt, lost Module 04 dit automatisch op. Kost je €39/m en rekent zichzelf terug."
-✅ "Dat klinkt als iets waarvoor je nu waarschijnlijk een apart systeem betaalt. Klaar doet dit al voor €24/m."
-✅ "Interessant — als je ook Module 07 gebruikt, koppelt dit automatisch aan je inkoopprijzen."
-✅ "Voor €14/m heb je de Allergenenkaart erbij — dan hoef je dit nooit meer handmatig bij te houden."
+✓ "Oh trouwens — als je dit probleem vaker hebt, lost Module 04 dit automatisch op. Kost je €39/m en rekent zichzelf terug."
+✓ "Dat klinkt als iets waarvoor je nu waarschijnlijk een apart systeem betaalt. Klaar doet dit al voor €24/m."
+✓ "Interessant — als je ook Module 07 gebruikt, koppelt dit automatisch aan je inkoopprijzen."
+✓ "Voor €14/m heb je de Allergenenkaart erbij — dan hoef je dit nooit meer handmatig bij te houden."
 
 WAT JE NOOIT DOET:
-❌ Concurrenten met naam belasteren of negatief vergelijken
-❌ Meerdere keren per gesprek iets verkopen
-❌ Een module aanprijzen als de gebruiker duidelijk al weet dat die bestaat
-❌ Pushen als de gebruiker niet reageert
-❌ Iets aanbevelen dat niet relevant is voor het actuele probleem
+✕ Concurrenten met naam belasteren of negatief vergelijken
+✕ Meerdere keren per gesprek iets verkopen
+✕ Een module aanprijzen als de gebruiker duidelijk al weet dat die bestaat
+✕ Pushen als de gebruiker niet reageert
+✕ Iets aanbevelen dat niet relevant is voor het actuele probleem
 
 KASSASYSTEMEN & ECOSYSTEEM:
 De meeste horecazaken waar jij mee werkt hebben ook een kassasysteem (POS). Jij werkt NAAST die systemen, niet ertegen.
@@ -5185,7 +5184,7 @@ Spreek professioneel maar toegankelijk. Antwoord in het Nederlands.`;
     if (executed.length) {
       const el = document.createElement('div');
       el.style.cssText = 'font-family:DM Mono,monospace;font-size:11px;color:#22c55e;padding:4px 8px 4px 10px;border-left:2px solid #22c55e;margin:2px 0;align-self:flex-start;';
-      el.textContent = '✅ Opgeslagen: ' + executed.join(', ');
+      el.textContent = '✓ Opgeslagen: ' + executed.join(', ');
       document.getElementById('chatMessages').appendChild(el);
       chatScroll();
     }
@@ -5219,7 +5218,7 @@ Spreek professioneel maar toegankelijk. Antwoord in het Nederlands.`;
         const text = e.target.result;
         const preview = text.slice(0, 3000); // max 3000 chars preview
         _chatImage = { text: preview, filename: file.name, type: 'csv', mimeType: 'text/plain' };
-        document.getElementById('chatImgThumb').src = 'data:image/svg+xml,<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 40 40"><rect fill="%23222" width="40" height="40"/><text x="50%" y="55%" font-size="12" fill="%23e8ff47" text-anchor="middle" font-family="monospace">CSV</text></svg>';
+        document.getElementById('chatImgThumb').src = 'data:image/svg+xml,<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 40 40"><rect fill="%23222" width="40" height="40"/><text x="50%" y="55%" font-size="12" fill="%23C8992A" text-anchor="middle" font-family="monospace">CSV</text></svg>';
         document.getElementById('chatImgName').textContent = file.name + ' (' + text.split('\n').length + ' regels)';
         document.getElementById('chatImgPreview').style.display = 'flex';
       };
@@ -5254,7 +5253,7 @@ async function chatSend() {
   } else if (_chatImage && _chatImage.type === 'csv') {
     const csvMsg = (textMsg ? textMsg + '\n\n' : '') + 'CSV/Excel bestand: ' + _chatImage.filename + '\n\nInhoud (eerste 3000 tekens):\n' + _chatImage.text;
     userContent = csvMsg;
-    chatAppend('user', '📊 ' + _chatImage.filename + (textMsg ? ' — ' + textMsg : ''));
+    chatAppend('user', ' ' + _chatImage.filename + (textMsg ? ' — ' + textMsg : ''));
     _chatHistory.push({ role: 'user', content: csvMsg });
     chatClearImage();
   } else {
@@ -5523,5 +5522,6 @@ function scenarioBreakeven() {
 </script>
 </script>
 <div id="sync-toast"></div>
+  <link rel="stylesheet" href="../klaar-shared.css">
 </body>
 </html>

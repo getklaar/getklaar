@@ -8,10 +8,10 @@
   <link href="https://fonts.googleapis.com/css2?family=Bebas+Neue&family=DM+Sans:wght@400;500;600&family=DM+Mono:wght@400;500&display=swap" rel="stylesheet">
   <style>
     :root {
-      --lime:    #e8ff47;
-      --black:   #0a0a0a;
+      --lime:    #E8B84B;
+      --black:   #1E1B17;
       --white:   #ffffff;
-      --surface: #111111;
+      --surface: #282420;
       --border:  #222222;
       --muted:   #666666;
       --text:    #1a1a1a;
@@ -151,7 +151,7 @@
     }
     .review-table input:focus, .review-table select:focus { border-color: var(--text); background: #fff; }
     .review-table .del-btn {
-      width: 26px; height: 26px; border: none; background: none; color: #ccc; cursor: pointer; font-size: 15px; border-radius: 4px;
+      width: 26px; height: 26px; border: none; background: none; color: #aaa; cursor: pointer; font-size: 15px; border-radius: 4px;
     }
     .review-table .del-btn:hover { background: #fee2e2; color: var(--red); }
     .add-row-btn {
@@ -231,14 +231,11 @@
       .preview-wrap { flex-direction: column; }
     }
   </style>
-
-  <link rel="stylesheet" href="../klaar-shared.css">
-
 </head>
 <body>
 
 <header class="header">
-  <a href="../index.html" class="header-back">← TERUG</a>
+  <a href="../dashboard/index.html" class="header-back">← Dashboard</a>
   <div class="header-div"></div>
   <div class="header-logo">KLAAR</div>
   <div class="header-div"></div>
@@ -274,11 +271,11 @@
         <div class="upload-title">Sleep hier je document</div>
         <div class="upload-sub">of klik om een bestand te kiezen</div>
         <div class="upload-types">
-          <span class="upload-type-chip">📦 Factuur / pakbon</span>
-          <span class="upload-type-chip">🍳 Receptenkaart</span>
-          <span class="upload-type-chip">⚠️ Allergenenlijst</span>
-          <span class="upload-type-chip">🌡️ HACCP logboek</span>
-          <span class="upload-type-chip">🛒 Supermarktbon</span>
+          <span class="upload-type-chip"> Factuur / pakbon</span>
+          <span class="upload-type-chip"> Receptenkaart</span>
+          <span class="upload-type-chip">Allergenenlijst</span>
+          <span class="upload-type-chip"> HACCP logboek</span>
+          <span class="upload-type-chip">Supermarktbon</span>
         </div>
       </div>
     </div>
@@ -299,8 +296,8 @@
         <div class="scan-sub" id="scan-sub">Even geduld, dit duurt 5-15 seconden</div>
         <div class="scan-phases" id="scan-phases">
           <div class="scan-phase" id="phase-upload">⬆ Afbeelding uploaden</div>
-          <div class="scan-phase" id="phase-detect">🔍 Documenttype herkennen</div>
-          <div class="scan-phase" id="phase-extract">📋 Data extraheren</div>
+          <div class="scan-phase" id="phase-detect"> Documenttype herkennen</div>
+          <div class="scan-phase" id="phase-extract"> Data extraheren</div>
           <div class="scan-phase" id="phase-prepare">✓ Review voorbereiden</div>
         </div>
       </div>
@@ -317,7 +314,7 @@
 
       <!-- Destination banner -->
       <div class="dest-banner" id="dest-banner">
-        <div class="dest-icon" id="dest-icon">📦</div>
+        <div class="dest-icon" id="dest-icon"></div>
         <div class="dest-info">
           <div class="dest-label">Opslaan in</div>
           <div class="dest-name" id="dest-name">—</div>
@@ -337,7 +334,7 @@
     <!-- ═══ STAP 4: SUCCESS ═══ -->
     <div id="view-success" style="display:none;">
       <div class="success-wrap">
-        <div class="success-icon">✅</div>
+        <div class="success-icon">✓</div>
         <div class="success-title" id="success-title">Opgeslagen!</div>
         <div class="success-sub" id="success-sub"></div>
         <div class="success-links" id="success-links"></div>
@@ -586,11 +583,11 @@ function extractJSON(text) {
 
 // ── REVIEW ──
 const TYPE_META = {
-  leverancier: { icon: '📦', label: 'Leveranciersfactuur / Pakbon', module: 'Leveranciers', url: '../07-leveranciers/klaar-leveranciers.html' },
-  recept:      { icon: '🍳', label: 'Receptenkaart',                module: 'Recept Studio', url: '../01-recept-studio/klaar-recept-studio.html' },
-  allergenen:  { icon: '⚠️', label: 'Allergenenlijst',              module: 'Allergenenkaart', url: '../02-allergenenkaart/klaar-allergenenkaart.html' },
-  haccp:       { icon: '🌡️', label: 'HACCP Temperatuurlogboek',     module: 'HACCP Logger', url: '../03-haccp/klaar-haccp.html' },
-  supermarkt:  { icon: '🛒', label: 'Supermarktbon',                module: 'Ingrediënten (via Leveranciers)', url: '../07-leveranciers/klaar-leveranciers.html' },
+  leverancier: { icon: '', label: 'Leveranciersfactuur / Pakbon', module: 'Leveranciers', url: '../07-leveranciers/klaar-leveranciers.html' },
+  recept:      { icon: '', label: 'Receptenkaart',                module: 'Recept Studio', url: '../01-recept-studio/klaar-recept-studio.html' },
+  allergenen:  { icon: '⚠', label: 'Allergenenlijst',              module: 'Allergenenkaart', url: '../02-allergenenkaart/klaar-allergenenkaart.html' },
+  haccp:       { icon: '', label: 'HACCP Temperatuurlogboek',     module: 'HACCP Logger', url: '../03-haccp/klaar-haccp.html' },
+  supermarkt:  { icon: '', label: 'Supermarktbon',                module: 'Ingrediënten (via Leveranciers)', url: '../07-leveranciers/klaar-leveranciers.html' },
   onbekend:    { icon: '❓', label: 'Onbekend documenttype',         module: '—', url: '' },
 };
 
@@ -758,7 +755,7 @@ function addIngRegel() { addIngRij(document.getElementById('rv-ings-body'), {});
 function addStapRij(div, tekst, num) {
   const d = document.createElement('div');
   d.style.cssText = 'display:flex;gap:8px;margin-bottom:6px;align-items:flex-start;';
-  d.innerHTML = `<div style="width:22px;height:22px;background:#1a1a1a;color:#e8ff47;border-radius:50%;display:flex;align-items:center;justify-content:center;font-size:11px;flex-shrink:0;margin-top:2px;">${num}</div>
+  d.innerHTML = `<div style="width:22px;height:22px;background:#1a1a1a;color:#E8B84B;border-radius:50%;display:flex;align-items:center;justify-content:center;font-size:11px;flex-shrink:0;margin-top:2px;">${num}</div>
     <textarea rows="2" style="flex:1;font-family:'DM Sans',sans-serif;font-size:13px;padding:6px 9px;border:1px solid #e5e5e5;border-radius:5px;resize:vertical;">${esc(tekst)}</textarea>
     <button style="border:none;background:none;color:#ccc;cursor:pointer;font-size:15px;margin-top:4px;" onclick="this.parentElement.remove()">×</button>`;
   div.appendChild(d);
@@ -1212,5 +1209,6 @@ function showToast(msg) {
   setTimeout(() => t.style.display = 'none', 4000);
 }
 </script>
+  <link rel="stylesheet" href="../klaar-shared.css">
 </body>
 </html>

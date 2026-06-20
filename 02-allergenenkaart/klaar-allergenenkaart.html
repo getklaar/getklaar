@@ -12,8 +12,8 @@
     *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
 
     :root {
-      --lime:    #e8ff47;
-      --black:   #0a0a0a;
+      --lime:    #E8B84B;
+      --black:   #1E1B17;
       --border:  #222222;
       --surface: #ffffff;
       --bg:      #f5f5f3;
@@ -47,10 +47,10 @@
     .modal-overlay.open { display: flex; }
     .modal-overlay.open .help-modal { transform: translateY(0); }
     .help-modal-header {
-      background: #0a0a0a; color: white;
+      background: #1E1B17; color: white;
       padding: 22px 28px 18px; position: relative;
     }
-    .help-modal-header h2 { font-size: 20px; margin: 0 0 4px; color: #e8ff47; font-family: 'Bebas Neue', sans-serif; letter-spacing: 0.05em; }
+    .help-modal-header h2 { font-size: 20px; margin: 0 0 4px; color: #E8B84B; font-family: 'Bebas Neue', sans-serif; letter-spacing: 0.05em; }
     .help-modal-header p { font-size: 13px; color: rgba(255,255,255,0.55); margin: 0; }
     .help-modal-close {
       position: absolute; top: 16px; right: 18px;
@@ -64,20 +64,20 @@
     .help-section:last-child { margin-bottom: 0; }
     .help-section-title {
       font-size: 11px; font-weight: 700; text-transform: uppercase;
-      letter-spacing: 0.08em; color: #0a0a0a; margin-bottom: 10px;
-      padding-bottom: 6px; border-bottom: 2px solid #e8ff47; display: inline-block;
+      letter-spacing: 0.08em; color: #1E1B17; margin-bottom: 10px;
+      padding-bottom: 6px; border-bottom: 2px solid #E8B84B; display: inline-block;
     }
     .help-step { display: flex; gap: 12px; margin-bottom: 10px; align-items: flex-start; }
     .help-step-num {
-      min-width: 24px; height: 24px; background: #0a0a0a; color: #e8ff47;
+      min-width: 24px; height: 24px; background: #1E1B17; color: #E8B84B;
       border-radius: 50%; font-size: 11px; font-weight: 800;
       display: flex; align-items: center; justify-content: center; margin-top: 1px;
     }
     .help-step-text { font-size: 13px; line-height: 1.6; color: #333; }
-    .help-step-text strong { color: #0a0a0a; }
+    .help-step-text strong { color: #1E1B17; }
     .help-card {
       background: #f7f7f5; border-radius: 10px; padding: 14px 16px;
-      margin-bottom: 10px; border-left: 3px solid #0a0a0a;
+      margin-bottom: 10px; border-left: 3px solid #1E1B17;
     }
     .help-card-title { font-size: 13px; font-weight: 700; margin-bottom: 4px; }
     .help-card-desc { font-size: 13px; color: #555; line-height: 1.5; }
@@ -92,7 +92,7 @@
       font-family: 'DM Mono', monospace; letter-spacing: 0.06em;
       transition: all 0.15s;
     }
-    .btn-icon:hover { border-color: #e8ff47; color: #e8ff47; }
+    .btn-icon:hover { border-color: #E8B84B; color: #E8B84B; }
 
     /* ─── HEADER ───────────────────────────────────────────────────── */
     .site-header {
@@ -803,7 +803,7 @@
       .ks-two-col { display: grid; grid-template-columns: 1fr 1fr; gap: 12px; }
       .ks-col-label { font-size: 9px; font-family: 'DM Mono', monospace; letter-spacing: .1em; text-transform: uppercase; color: #999; margin-bottom: 5px; }
       .ks-allergen-tag { display: inline-block; font-size: 11px; padding: 2px 7px; border-radius: 3px; margin: 2px 2px 2px 0; }
-      .ks-a-present { background: #1a1a1a; color: #fff; -webkit-print-color-adjust: exact; print-color-adjust: exact; }
+      .ks-a-present { background: #1E1B17; color: #fff; -webkit-print-color-adjust: exact; print-color-adjust: exact; }
       .ks-a-maybe { background: #fef3c7; color: #92400e; -webkit-print-color-adjust: exact; print-color-adjust: exact; }
       .ks-ing { display: block; font-size: 11px; color: #333; padding: 1px 0; }
       .ks-none { font-size: 10px; color: #999; font-style: italic; }
@@ -884,8 +884,8 @@
 
     /* ─── TAB BAR ─────────────────────────────────────────────────── */
     .tab-bar {
-      background: #111111;
-      border-bottom: 1px solid #222222;
+      background: #ffffff;
+      border-bottom: 1px solid #e8e4df;
       display: flex;
       align-items: center;
       padding: 0 20px;
@@ -893,11 +893,12 @@
     }
     .tab-btn {
       padding: 12px 20px;
-      font-family: 'DM Mono', monospace;
-      font-size: 11px;
-      letter-spacing: 0.1em;
-      text-transform: uppercase;
-      color: #555555;
+      font-family: 'Inter', sans-serif;
+      font-size: 13px;
+      font-weight: 500;
+      letter-spacing: 0;
+      text-transform: none;
+      color: #8a8278;
       border: none;
       background: none;
       cursor: pointer;
@@ -906,8 +907,8 @@
       transition: color 0.15s;
       white-space: nowrap;
     }
-    .tab-btn:hover { color: #888888; }
-    .tab-btn.active { color: var(--lime); border-bottom-color: var(--lime); }
+    .tab-btn:hover { color: #2c2620; }
+    .tab-btn.active { color: #2c2620; border-bottom-color: #E8B84B; }
 
     /* ─── KOK ASSISTENT ────────────────────────────────────────────── */
     #view-allergens { display: block; }
@@ -1094,16 +1095,16 @@
       opacity: 0.35;
     }
     .chat-speaker-btn:hover { background: #f0f0ee; opacity: 1; }
-    .chat-speaker-btn.on { opacity: 1; border-color: #0a0a0a; background: #0a0a0a; }
+    .chat-speaker-btn.on { opacity: 1; border-color: #1E1B17; background: #0a0a0a; }
     .chat-speaker-btn.speaking { opacity: 1; border-color: #e53e3e; background: #e53e3e;
       animation: pulse-red 1s infinite; }
     .chat-send-btn {
-      height: 42px; padding: 0 18px;
-      background: var(--black); color: var(--lime);
-      border: none; border-radius: 8px;
-      font-family: 'DM Mono', monospace; font-size: 11px;
-      font-weight: 600; letter-spacing: 0.08em;
+      width: 42px; height: 42px; padding: 0;
+      background: #E8B84B; color: #000;
+      border: none; border-radius: 0;
+      font-size: 17px; font-weight: 700;
       cursor: pointer; transition: opacity 0.15s; flex-shrink: 0;
+      display: flex; align-items: center; justify-content: center;
     }
     .chat-send-btn:hover { opacity: 0.8; }
     .chat-send-btn:disabled { opacity: 0.35; cursor: not-allowed; }
@@ -1131,9 +1132,6 @@
       white-space: nowrap;
     }
   </style>
-
-  <link rel="stylesheet" href="../klaar-shared.css">
-
   <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2/dist/umd/supabase.min.js"></script>
   <script src="../klaar-client.js"></script>
 </head>
@@ -1142,16 +1140,16 @@
   <!-- ─── HEADER ──────────────────────────────────────────────────── -->
   <header class="site-header">
     <div class="header-left">
-      <a href="../index.html" class="btn-back">
+      <a href="../dashboard/index.html" class="btn-back">
         <svg width="14" height="14" viewBox="0 0 14 14" fill="none">
           <path d="M9 2L4 7L9 12" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"/>
         </svg>
-        TERUG
+        Dashboard
       </a>
       <div class="header-divider"></div>
-      <a href="../index.html" class="logo">KLAAR</a>
+      <a href="../dashboard/index.html" class="logo">KLAAR</a>
       <div class="header-divider"></div>
-      <span class="header-label">Allergenenkaart &amp; Kok Assistent</span>
+      <span class="header-label">02 — ALLERGENENKAART</span>
     </div>
     <div class="header-right">
       <button class="btn-icon" onclick="openHelp()" title="Uitleg & handleiding" style="margin-right:6px;">?</button>
@@ -1191,7 +1189,7 @@
   <div class="tab-bar">
     <button class="tab-btn active" id="tab-allergens" onclick="setMainTab('allergens')">Allergenenkaart</button>
     <button class="tab-btn" id="tab-bediening" onclick="setMainTab('bediening')">Bediening</button>
-    <button class="tab-btn" id="tab-assistent" onclick="setMainTab('assistent')">‍🍳 Kok Assistent</button>
+    <button class="tab-btn" id="tab-assistent" onclick="setMainTab('assistent')">‍Kok Assistent</button>
   </div>
 
   <!-- ─── VIEW: ALLERGENENKAART ─────────────────────────────────────── -->
@@ -1207,7 +1205,16 @@
       <span class="recipe-count-badge" id="recipe-count">0 gerechten</span>
     </div>
 
-    <!-- Filter tabs -->
+    <!-- Status filter + filter tabs -->
+    <div style="display:flex;align-items:center;gap:10px;margin-bottom:10px;flex-wrap:wrap;">
+      <label style="font-size:11px;font-family:'DM Mono',monospace;color:var(--muted);letter-spacing:.06em;text-transform:uppercase;">Status:</label>
+      <select id="status-filter" onchange="renderMatrix()" style="padding:4px 10px;border:1px solid #e5e5e5;border-radius:5px;font-size:12px;background:#fff;font-family:'DM Mono',monospace;cursor:pointer;" title="Filter op receptstatus">
+        <option value="all">Alle recepten</option>
+        <option value="complete">Alleen Klaar ✓</option>
+        <option value="draft">Alleen Concept</option>
+      </select>
+      <span style="font-size:10px;color:var(--muted);font-family:'DM Mono',monospace;">— conceptrecepten zijn mogelijk nog niet op de menukaart</span>
+    </div>
     <div class="filter-bar" id="filter-bar">
       <button class="filter-btn active" data-filter="all" onclick="setFilter('all')">Alle</button>
     </div>
@@ -1243,7 +1250,7 @@
       <input type="text" id="bed-search" placeholder="Zoek gerecht of allergen… bv. 'nootvrij' of 'zalm'"
         style="width:100%;padding:13px 16px;font-size:15px;border:2px solid #e0e0de;border-radius:8px;font-family:'DM Sans',sans-serif;outline:none;transition:border-color 0.15s;"
         oninput="renderBediening()" onfocus="this.style.borderColor='#0a0a0a'" onblur="this.style.borderColor='#e0e0de'">
-      <span style="position:absolute;right:14px;top:50%;transform:translateY(-50%);font-size:18px;pointer-events:none;">🔍</span>
+      <span style="position:absolute;right:14px;top:50%;transform:translateY(-50%);font-size:18px;pointer-events:none;"></span>
     </div>
 
     <!-- Results count -->
@@ -1287,23 +1294,23 @@
         <!-- Mode selector -->
         <div class="chat-mode-bar" id="chat-mode-bar">
           <button class="mode-btn active" id="mode-btn-chat" onclick="setChatMode('chat')">
-            👨‍🍳 <span>Kok Assistent</span>
+            👨‍ <span>Kok Assistent</span>
           </button>
           <button class="mode-btn emergency" id="mode-btn-emergency" onclick="setChatMode('emergency')">
-            🚨 <span>Noodoplossing</span>
+            ⚠ <span>Noodoplossing</span>
           </button>
         </div>
 
         <div class="chat-messages" id="chat-messages">
           <div class="chat-empty" id="chat-empty">
-            <div class="chat-empty-icon">👨‍🍳</div>
+            <div class="chat-empty-icon">👨‍</div>
             <p id="chat-empty-text">Stel een vraag over het geselecteerde gerecht.<br><em>"Kan ik dit zonder gluten maken?"</em><br><em>"Welk alternatief is er voor de room?"</em></p>
-            <small>Gebruik 🎙️ voor spraakinvoer</small>
+            <small>Gebruik  voor spraakinvoer</small>
           </div>
         </div>
         <div class="chat-hint" id="chat-hint" style="display:none;">
-          <span id="chat-mode-label">👨‍🍳 Kok Assistent</span> · <strong id="chat-dish-name">—</strong>
-          <span id="speaking-indicator" style="display:none; margin-left:10px; color:#e53e3e; font-size:11px; font-family:'DM Mono',monospace; animation: pulse-text 1s infinite;">🔊 SPREEKT…</span>
+          <span id="chat-mode-label">👨‍Kok Assistent</span> · <strong id="chat-dish-name">—</strong>
+          <span id="speaking-indicator" style="display:none; margin-left:10px; color:#e53e3e; font-size:11px; font-family:'DM Mono',monospace; animation: pulse-text 1s infinite;"> SPREEKT…</span>
         </div>
         <div class="chat-input-bar">
           <textarea class="chat-textarea" id="chat-input" rows="1"
@@ -1311,8 +1318,8 @@
             onkeydown="chatKeydown(event)"
             oninput="autoGrow(this)"></textarea>
           <button class="chat-mic-btn" id="mic-btn" onclick="toggleMic()" title="Spreek je vraag in">️</button>
-          <button class="chat-speaker-btn" id="speaker-btn" onclick="toggleSpeaker()" title="Spraakuitvoer aan/uit">🔊</button>
-          <button class="chat-send-btn" id="send-btn" onclick="sendMessage()" disabled>STUUR</button>
+          <button class="chat-speaker-btn" id="speaker-btn" onclick="toggleSpeaker()" title="Spraakuitvoer aan/uit"></button>
+          <button class="chat-send-btn" id="send-btn" onclick="sendMessage()" disabled>↑</button>
         </div>
       </div>
 
@@ -1353,18 +1360,18 @@
         </div>
 
         <div class="help-section">
-          <div class="help-section-title">👨‍🍳 Kok Assistent</div>
+          <div class="help-section-title">👨‍Kok Assistent</div>
           <p style="font-size:13px;color:#555;margin:0 0 12px;line-height:1.6;">Selecteer een gerecht en stel vragen via tekst of spraak — Claude kent het volledige recept.</p>
           <div class="help-card">
-            <div class="help-card-title">👨‍🍳 Kok Assistent — Vrije chat</div>
+            <div class="help-card-title">👨‍Kok Assistent — Vrije chat</div>
             <div class="help-card-desc">Stel alles wat je wilt: "Kan ik dit zonder lactose maken?", "Wat is de bereidingstijd?", "Welk alternatief ingrediënt kan ik gebruiken?" Claude antwoordt altijd praktisch en kort.</div>
           </div>
           <div class="help-card emergency">
-            <div class="help-card-title">🚨 Noodoplossing — À la minute</div>
+            <div class="help-card-title">⚠ Noodoplossing — À la minute</div>
             <div class="help-card-desc">Een gast heeft een allergie en je kunt het gerecht niet serveren? Selecteer het gerecht, activeer Noodoplossing en vertel welke ingrediënten je bij de hand hebt. Claude stelt direct een alternatief voor — zonder de gevaarlijke allergenen.</div>
           </div>
           <div class="help-step" style="margin-top:12px;">
-            <div class="help-step-num">🎙️</div>
+            <div class="help-step-num"></div>
             <div class="help-step-text">Gebruik de <strong>microfoonknop</strong> voor spraakinvoer — handig als je druk in de keuken staat.</div>
           </div>
         </div>
@@ -1426,7 +1433,7 @@
   ];
 
   const DEFAULT_FOLDERS = [
-    { id: 'keuken',  label: 'Keuken',         icon: '🍳' },
+    { id: 'keuken',  label: 'Keuken',         icon: '' },
     { id: 'bar',     label: 'Bar & Cocktails', icon: '🍸' },
     { id: 'koffie',  label: 'Koffie',          icon: '☕' },
     { id: 'archief', label: 'Archief',          icon: '🗂️' },
@@ -1494,7 +1501,16 @@
   function hasAllergen(r, code) {
     return getAllergens(r).some(a => {
       if (typeof a === 'object' && a.code) {
-        return a.code.toUpperCase() === code.toUpperCase() && !a.maybe;
+        if (a.maybe) return false;
+        // Directe code match (case-insensitief)
+        if (a.code.toUpperCase() === code.toUpperCase()) return true;
+        // Naam-fallback: zoek de M02-definitie op voor zowel de opgeslagen code als de gevraagde code
+        const targetDef = ALLERGENS.find(d => d.code.toUpperCase() === code.toUpperCase());
+        if (targetDef) {
+          // Zoek of de opgeslagen naam overeenkomt met de M02-definitienaam
+          if (a.name && a.name.toLowerCase() === targetDef.name.toLowerCase()) return true;
+        }
+        return false;
       }
       if (typeof a === 'string') {
         const allergenDef = ALLERGENS.find(def => def.name.toLowerCase() === a.toLowerCase());
@@ -1507,10 +1523,14 @@
 
   // Mogelijk aanwezig (maybe: true — sporen/kruisbesmetting)
   function hasMaybeAllergen(r, code) {
-    return getAllergens(r).some(a =>
-      typeof a === 'object' && a.code &&
-      a.code.toUpperCase() === code.toUpperCase() && a.maybe === true
-    );
+    return getAllergens(r).some(a => {
+      if (typeof a !== 'object' || !a.code || a.maybe !== true) return false;
+      if (a.code.toUpperCase() === code.toUpperCase()) return true;
+      // Naam-fallback voor cross-module compatibiliteit
+      const targetDef = ALLERGENS.find(d => d.code.toUpperCase() === code.toUpperCase());
+      if (targetDef && a.name && a.name.toLowerCase() === targetDef.name.toLowerCase()) return true;
+      return false;
+    });
   }
 
   function getAllergenByCode(code) {
@@ -1544,6 +1564,11 @@
       result = recipes.filter(r => ids.has(r.id));
     } else {
       result = recipes.filter(r => getFolder(r) === activeFilter);
+    }
+    // Status filter (Klaar / Concept / Alle)
+    const statusFilter = document.getElementById('status-filter')?.value || 'all';
+    if (statusFilter !== 'all') {
+      result = result.filter(r => (r.status || 'draft') === statusFilter);
     }
     // AND-filter op actieve allergencodes (multi-select)
     if (activeAllergenCodes.size > 0) {
@@ -1596,7 +1621,9 @@
         return `<button class="filter-btn ${isActive ? 'active' : ''}"
           style="${isActive ? `background:${a.color};color:#fff;border-color:${a.color}` : ''}"
           onclick="toggleAllergenFilter('${a.code}')"
-          title="${a.name} — ${count} gerecht${count !== 1 ? 'en' : ''}">${a.code}</button>`;
+          title="${a.name} — ${count} gerecht${count !== 1 ? 'en' : ''}">
+          <span style="font-weight:600">${a.code}</span><span style="font-size:10px;opacity:.7;margin-left:4px">${a.name}</span>
+        </button>`;
       }).join('');
       html += allergenBtns;
       if (activeAllergenCodes.size > 0) {
@@ -1787,7 +1814,7 @@
         const servings = getServings(recipe);
         // Waarschuwing als recipe geen allergeendata heeft (oud recept, nog niet gegenereerd)
         const noDataWarning = noData
-          ? `<span class="no-data-badge" title="Geen allergeendata — hergeneer dit recept in Module 01">⚠ geen data</span>`
+          ? `<a class="no-data-badge" href="../01-recept-studio/klaar-recept-studio.html" title="Geen allergenen gedetecteerd — klik om Recept Studio te openen en allergenen toe te voegen" onclick="event.stopPropagation()" style="cursor:pointer;text-decoration:none;">⚠ geen data — bewerk in M01 →</a>`
           : '';
 
         rows += `<tr class="row-dish${noData ? ' row-no-data' : ''}" onclick="openPanel(${globalIndex})" title="Klik voor details">
@@ -1804,9 +1831,10 @@
 
     const thAllergens = ALLERGENS.map(a =>
       `<th class="th-allergen">
-        <div class="th-allergen-inner" data-tooltip="${a.name}">
+        <div class="th-allergen-inner" title="${a.name}">
           <span class="allergen-code">${a.code}</span>
           ${allergenIcon(a)}
+          <span style="font-size:8px;color:rgba(255,255,255,.55);letter-spacing:0;font-family:'Inter',sans-serif;text-transform:none;margin-top:1px;max-width:48px;overflow:hidden;text-overflow:ellipsis;white-space:nowrap">${a.name}</span>
         </div>
       </th>`
     ).join('');
@@ -1910,14 +1938,15 @@
     metaEl.innerHTML = '';
     const folder = getFolder(recipe);
     const servings = getServings(recipe);
-    if (folder) metaEl.innerHTML += `<span class="meta-badge">${escapeHtml(CATEGORY_LABELS[folder] || folder)}</span>`;
+    if (folder) metaEl.innerHTML += `<span class="meta-badge">${escapeHtml(getFolderLabel(folder) || folder)}</span>`;
     if (servings) metaEl.innerHTML += `<span class="meta-badge">${escapeHtml(servings)}</span>`;
 
     const allergenList = getAllergens(recipe);
     const noData = allergenList.length === 0;
 
     const presentAllergens = ALLERGENS.filter(a => hasAllergen(recipe, a.code));
-    const absentAllergens  = ALLERGENS.filter(a => !hasAllergen(recipe, a.code));
+    const maybeAllergens   = ALLERGENS.filter(a => !hasAllergen(recipe, a.code) && hasMaybeAllergen(recipe, a.code));
+    const absentAllergens  = ALLERGENS.filter(a => !hasAllergen(recipe, a.code) && !hasMaybeAllergen(recipe, a.code));
     const presentExtra     = EXTRA_ALLERGENS.filter(a => hasAllergen(recipe, a.code));
 
     const body = document.getElementById('panel-body');
@@ -1954,6 +1983,16 @@
             </div>`).join('')}
         </div>`;
     } else {
+      const maybeSection = maybeAllergens.length > 0 ? `
+        <p class="panel-section-title">Mogelijk aanwezig — sporen (${maybeAllergens.length})</p>
+        <div class="allergen-list">
+          ${maybeAllergens.map(a => `
+            <div class="allergen-row" style="background:#fef9ec;border-color:#f6d860">
+              <div class="allergen-dot" style="background:transparent;border:2px solid ${a.color};color:${a.color}">${a.code}</div>
+              <span class="allergen-row-name">${a.name}</span>
+              <span class="allergen-row-status" style="color:#b45309">SPOREN (?)</span>
+            </div>`).join('')}
+        </div>` : '';
       body.innerHTML = `
         <p class="panel-section-title" style="margin-top:20px">Aanwezig — EU-14 (${presentAllergens.length})</p>
         <div class="allergen-list">
@@ -1964,6 +2003,7 @@
               <span class="allergen-row-status">AANWEZIG</span>
             </div>`).join('')}
         </div>
+        ${maybeSection}
         ${extraSection}
         <p class="panel-section-title">Niet aanwezig (${absentAllergens.length})</p>
         <div class="allergen-list">
@@ -2018,6 +2058,17 @@
   function escapeHtml(str) {
     if (typeof str !== 'string') return '';
     return str.replace(/&/g,'&amp;').replace(/</g,'&lt;').replace(/>/g,'&gt;').replace(/"/g,'&quot;');
+  }
+
+  function mdToHtml(txt) {
+    return txt
+      .replace(/&/g, '&amp;').replace(/</g, '&lt;').replace(/>/g, '&gt;')
+      .replace(/\*\*(.+?)\*\*/gs, '<strong>$1</strong>')
+      .replace(/\*(.+?)\*/gs, '<em>$1</em>')
+      .replace(/^#{3}\s(.+)$/gm, '<strong>$1</strong>')
+      .replace(/^#{2}\s(.+)$/gm, '<strong>$1</strong>')
+      .replace(/^#\s(.+)$/gm, '<strong>$1</strong>')
+      .replace(/\n/g, '<br>');
   }
 
   // ──────────────────────────────────────────────────────────────────
@@ -2151,7 +2202,7 @@
       const active = _bedActiveFilters.has(f.code);
       html += `<button onclick="toggleBedFilter('${f.code}','${f.extra||''}')"
         style="padding:7px 14px;border-radius:20px;border:1.5px solid ${active?'#0a0a0a':'#e0e0de'};
-        background:${active?'#0a0a0a':'white'};color:${active?'#e8ff47':'#555'};
+        background:${active?'#0a0a0a':'white'};color:${active?'#E8B84B':'#555'};
         font-family:'DM Mono',monospace;font-size:11px;cursor:pointer;white-space:nowrap;
         font-weight:${active?'700':'400'};transition:all .15s;"
         title="${count} gerecht${count!==1?'en':''} vrij van ${f.label.toLowerCase()}">
@@ -2160,8 +2211,8 @@
     });
     if (anyActive) {
       html += `<button onclick="clearBedFilters()"
-        style="padding:7px 14px;border-radius:20px;border:1.5px solid #e8ff47;
-        background:#e8ff47;color:#0a0a0a;
+        style="padding:7px 14px;border-radius:20px;border:1.5px solid #E8B84B;
+        background:#E8B84B;color:#0a0a0a;
         font-family:'DM Mono',monospace;font-size:11px;cursor:pointer;white-space:nowrap;font-weight:700;transition:all .15s;">Wis filters (${_bedActiveFilters.size})
       </button>`;
     }
@@ -2236,7 +2287,7 @@
 
     if (!results.length) {
       cardsEl.innerHTML = `<div style="padding:40px;text-align:center;">
-        <div style="font-size:36px;margin-bottom:12px;">🔍</div>
+        <div style="font-size:36px;margin-bottom:12px;"></div>
         <div style="font-size:16px;font-weight:600;margin-bottom:6px;">Geen gerechten gevonden</div>
         <div style="font-size:13px;color:#888;">Probeer een andere zoekterm of filter</div>
       </div>`;
@@ -2325,13 +2376,12 @@
     </div>
     <table>
       <thead><tr>
-        <th style="background:#0a0a0a;color:#e8ff47;font-family:monospace;font-size:10pt;padding:7pt 8pt;text-align:left;border:0.5pt solid #333;min-width:120pt;">GERECHT</th>
+        <th style="background:#0a0a0a;color:#E8B84B;font-family:monospace;font-size:10pt;padding:7pt 8pt;text-align:left;border:0.5pt solid #333;min-width:120pt;">GERECHT</th>
         ${thCols}
       </tr></thead>
       <tbody>${rows}</tbody>
     </table>
-    ${legend}
-    </body></html>`;
+    ${legend}</body></html>`;
 
     const w = window.open('', '_blank', 'width=1200,height=800');
     w.document.write(html);
@@ -2404,7 +2454,7 @@
     document.getElementById('mode-btn-emergency').classList.toggle('active', mode === 'emergency');
     // Update hint label
     document.getElementById('chat-mode-label').textContent =
-      mode === 'emergency' ? '🚨 Noodoplossing' : '👨‍🍳 Kok Assistent';
+      mode === 'emergency' ? '⚠ Noodoplossing' : '👨‍Kok Assistent';
     // Update empty state text
     document.getElementById('chat-empty-text').innerHTML = mode === 'emergency'
       ? 'Selecteer een gerecht dat je <strong>niet kunt serveren</strong>.<br>Ik vraag wat je bij de hand hebt en kom met een alternatief.<br><em>Allergenen worden automatisch vermeden.</em>'
@@ -2425,7 +2475,7 @@
     const allergens = getDishAllergens(_selectedDish).map(a => a.name || a.code);
     const allergenStr = allergens.length ? allergens.join(', ') : 'geen bekende allergenen';
     addMessage('claude',
-      `🚨 Noodoplossing voor: ${getDishName(_selectedDish)}\n\nDit gerecht bevat: ${allergenStr}.\n\nWelke ingrediënten heb je nu beschikbaar in de keuken? Noem ze gewoon op, dan kom ik met een snel alternatief.`
+      `⚠ Noodoplossing voor: ${getDishName(_selectedDish)}\n\nDit gerecht bevat: ${allergenStr}.\n\nWelke ingrediënten heb je nu beschikbaar in de keuken? Noem ze gewoon op, dan kom ik met een snel alternatief.`
     );
   }
 
@@ -2506,14 +2556,18 @@
       return;
     }
     const r = _selectedDish;
-    // Allergens — array of {code, name, color} objects
-    const allergens = getDishAllergens(r);
-    const allergenHtml = allergens.length
-      ? allergens.map(a => {
-          const bg = a.color || '#e53e3e';
-          const label = a.name || a.code || '';
-          return `<span class="dish-allergen-pill" style="background:${bg}">${label}</span>`;
-        }).join('')
+    // Allergens — split present vs maybe
+    const presentAllergensList = ALLERGENS.filter(a => hasAllergen(r, a.code));
+    const maybeAllergensList   = ALLERGENS.filter(a => !hasAllergen(r, a.code) && hasMaybeAllergen(r, a.code));
+    const allergenHtml = (presentAllergensList.length || maybeAllergensList.length)
+      ? [
+          ...presentAllergensList.map(a =>
+            `<span class="dish-allergen-pill" style="background:${a.color}">${a.name}</span>`
+          ),
+          ...maybeAllergensList.map(a =>
+            `<span class="dish-allergen-pill" style="background:transparent;border:1.5px dashed ${a.color};color:${a.color};">${a.name} <small style="opacity:.7">sporen?</small></span>`
+          )
+        ].join('')
       : '<span class="dish-no-allergens">✓ Geen EU-14 allergenen</span>';
 
     // Ingredients
@@ -2632,7 +2686,11 @@ INSTRUCTIES:
       row.className = `msg-row ${m.role}`;
       const bubble = document.createElement('div');
       bubble.className = `msg-bubble ${m.role === 'user' ? 'user' : (m.thinking ? 'thinking' : 'claude')}`;
-      bubble.textContent = m.content;
+      if (m.role === 'claude' && !m.thinking) {
+        bubble.innerHTML = mdToHtml(m.content);
+      } else {
+        bubble.textContent = m.content;
+      }
       row.appendChild(bubble);
       el.appendChild(row);
     });
@@ -2759,7 +2817,7 @@ INSTRUCTIES:
     _recognition.onend = () => {
       _micActive = false;
       micBtn.classList.remove('recording');
-      micBtn.textContent = '🎙️';
+      micBtn.textContent = '';
       _recognition = null;
       // Auto-send als er iets ingesproken is
       const val = document.getElementById('chat-input').value.trim();
@@ -2771,7 +2829,7 @@ INSTRUCTIES:
     _recognition.onerror = e => {
       _micActive = false;
       micBtn.classList.remove('recording');
-      micBtn.textContent = '🎙️';
+      micBtn.textContent = '';
       _recognition = null;
     };
 
@@ -2840,14 +2898,23 @@ INSTRUCTIES:
       const ind = document.getElementById('speaking-indicator');
       if (ind) ind.style.display = 'inline';
     };
-    utt.onend = utt.onerror = () => {
+    const _endSpeaking = () => {
       _isSpeaking = false;
       document.getElementById('speaker-btn').classList.remove('speaking');
       const ind = document.getElementById('speaking-indicator');
       if (ind) ind.style.display = 'none';
     };
+    utt.onend = utt.onerror = _endSpeaking;
 
     window.speechSynthesis.speak(utt);
+
+    // Fallback: Chrome soms vuurt onend niet — poll en ruim op
+    const _speakGuard = setInterval(() => {
+      if (!window.speechSynthesis.speaking) {
+        clearInterval(_speakGuard);
+        _endSpeaking();
+      }
+    }, 500);
   }
 
   // Initialiseer speaker knop staat
@@ -2875,16 +2942,16 @@ INSTRUCTIES:
     .chat-trigger {
       position: fixed; bottom: 24px; right: 24px; z-index: 1000;
       display: flex; align-items: center; gap: 8px;
-      background: #e8ff47; color: #0a0a0a;
+      background: #E8B84B; color: #1E1B17;
       border: none; cursor: pointer;
       padding: 0 18px; height: 44px;
       font-family: 'DM Sans', sans-serif; font-size: 13px; font-weight: 600;
       letter-spacing: 0.3px;
       transition: transform 0.15s, box-shadow 0.15s;
-      box-shadow: 0 4px 20px rgba(232,255,71,0.3);
+      box-shadow: 0 4px 20px rgba(232,184,75,0.3);
     }
-    .chat-trigger:hover { transform: translateY(-2px); box-shadow: 0 6px 28px rgba(232,255,71,0.4); }
-    .chat-trigger.open { background: #1a1a1a; color: #e8ff47; border: 1px solid #e8ff47; box-shadow: none; }
+    .chat-trigger:hover { transform: translateY(-2px); box-shadow: 0 6px 28px rgba(232,184,75,0.4); }
+    .chat-trigger.open { background: #1E1B17; color: #E8B84B; border: 1px solid #E8B84B; box-shadow: none; }
     .chat-trigger-pulse {
       width: 7px; height: 7px; background: #22c55e; border-radius: 50%;
       animation: chatPulse 2s infinite;
@@ -2904,7 +2971,7 @@ INSTRUCTIES:
       background: #0a0a0a; flex-shrink: 0;
     }
     .chat-header-info { display: flex; flex-direction: column; gap: 2px; }
-    .chat-header-title { font-family: 'Bebas Neue', sans-serif; font-size: 20px; letter-spacing: 1px; color: #e8ff47; line-height: 1; }
+    .chat-header-title { font-family: 'Bebas Neue', sans-serif; font-size: 20px; letter-spacing: 1px; color: #E8B84B; line-height: 1; }
     .chat-header-sub { font-family: 'DM Mono', monospace; font-size: 10px; color: #888888; letter-spacing: 1px; }
     .chat-header-close { background: none; border: none; color: #888888; cursor: pointer; font-size: 18px; padding: 4px; transition: color 0.1s; }
     .chat-header-close:hover { color: #f5f2eb; }
@@ -2916,37 +2983,37 @@ INSTRUCTIES:
     .chat-msg.user { align-self: flex-end; }
     .chat-msg.assistant { align-self: flex-start; }
     .chat-bubble { padding: 10px 14px; font-size: 13px; line-height: 1.65; }
-    .chat-msg.user .chat-bubble { background: #e8ff47; color: #0a0a0a; font-weight: 500; }
-    .chat-msg.assistant .chat-bubble { background: #1a1a1a; color: #f5f2eb; border: 1px solid #222222; }
-    .chat-msg.assistant .chat-bubble strong { color: #e8ff47; }
-    .chat-typing { align-self: flex-start; padding: 12px 16px; background: #1a1a1a; border: 1px solid #222222; color: #888888; font-size: 18px; letter-spacing: 2px; line-height: 1; }
+    .chat-msg.user .chat-bubble { background: #E8B84B; color: #1E1B17; font-weight: 500; }
+    .chat-msg.assistant .chat-bubble { background: #1E1B17; color: #f5f2eb; border: 1px solid #222222; }
+    .chat-msg.assistant .chat-bubble strong { color: #E8B84B; }
+    .chat-typing { align-self: flex-start; padding: 12px 16px; background: #1E1B17; border: 1px solid #222222; color: #888888; font-size: 18px; letter-spacing: 2px; line-height: 1; }
     .chat-typing span { display: inline-block; animation: chatBlink 1.2s infinite; }
     .chat-typing span:nth-child(2) { animation-delay: 0.2s; }
     .chat-typing span:nth-child(3) { animation-delay: 0.4s; }
     @keyframes chatBlink { 0%,100%{opacity:0.2} 50%{opacity:1} }
     .chat-suggestions { padding: 8px 12px; display: flex; flex-wrap: wrap; gap: 6px; flex-shrink: 0; border-top: 1px solid #222222; }
     .chat-suggestion { font-family: 'DM Mono', monospace; font-size: 10px; letter-spacing: 0.5px; padding: 5px 10px; border: 1px solid #333333; background: none; color: #888888; cursor: pointer; transition: all 0.15s; white-space: nowrap; }
-    .chat-suggestion:hover { border-color: #e8ff47; color: #e8ff47; }
+    .chat-suggestion:hover { border-color: #E8B84B; color: #E8B84B; }
     .chat-input-area { padding: 12px; border-top: 1px solid #222222; display: flex; gap: 8px; align-items: flex-end; flex-shrink: 0; background: #0a0a0a; }
-    .chat-input { flex: 1; background: #1a1a1a; border: 1px solid #333333; color: #f5f2eb; font-family: 'DM Sans', sans-serif; font-size: 13px; line-height: 1.5; padding: 10px 12px; resize: none; max-height: 110px; min-height: 42px; transition: border-color 0.15s; }
-    .chat-input:focus { outline: none; border-color: #e8ff47; }
+    .chat-input { flex: 1; background: #1E1B17; border: 1px solid #333333; color: #f5f2eb; font-family: 'DM Sans', sans-serif; font-size: 13px; line-height: 1.5; padding: 10px 12px; resize: none; max-height: 110px; min-height: 42px; transition: border-color 0.15s; }
+    .chat-input:focus { outline: none; border-color: #E8B84B; }
     .chat-input::placeholder { color: #555555; }
-    .chat-send { width: 38px; height: 38px; background: #e8ff47; border: none; color: #0a0a0a; font-size: 16px; font-weight: 700; cursor: pointer; flex-shrink: 0; transition: opacity 0.15s; display: flex; align-items: center; justify-content: center; }
+    .chat-send { width: 38px; height: 38px; background: #E8B84B; border: none; color: #1E1B17; font-size: 16px; font-weight: 700; cursor: pointer; flex-shrink: 0; transition: opacity 0.15s; display: flex; align-items: center; justify-content: center; }
     .chat-send:hover { opacity: 0.85; }
     .chat-send:disabled { opacity: 0.35; cursor: not-allowed; }
-    .chat-upload-btn { width: 38px; height: 38px; background: #1a1a1a; border: 1px solid #333333; color: #888888; font-size: 15px; cursor: pointer; flex-shrink: 0; transition: all 0.15s; display: flex; align-items: center; justify-content: center; }
-    .chat-upload-btn:hover { border-color: #e8ff47; color: #e8ff47; }
-    .chat-no-key { background: #1a1a1a; border: 1px solid rgba(232,255,71,0.25); color: #aaa; font-size: 12px; padding: 12px 14px; line-height: 1.6; }
-    .chat-no-key strong { color: #e8ff47; }
-    .chat-img-preview { background: #1a1a1a; border: 1px solid rgba(232,255,71,0.25); padding: 8px 12px; font-size: 11px; color: #888888; font-family: 'DM Mono', monospace; display: flex; align-items: center; gap: 8px; flex-shrink: 0; }
+    .chat-upload-btn { width: 38px; height: 38px; background: #1E1B17; border: 1px solid #333333; color: #888888; font-size: 15px; cursor: pointer; flex-shrink: 0; transition: all 0.15s; display: flex; align-items: center; justify-content: center; }
+    .chat-upload-btn:hover { border-color: #E8B84B; color: #E8B84B; }
+    .chat-no-key { background: #1E1B17; border: 1px solid rgba(232,184,75,0.25); color: #aaa; font-size: 12px; padding: 12px 14px; line-height: 1.6; }
+    .chat-no-key strong { color: #E8B84B; }
+    .chat-img-preview { background: #1E1B17; border: 1px solid rgba(232,184,75,0.25); padding: 8px 12px; font-size: 11px; color: #888888; font-family: 'DM Mono', monospace; display: flex; align-items: center; gap: 8px; flex-shrink: 0; }
     .chat-img-preview img { width: 36px; height: 36px; object-fit: cover; }
-    .chat-img-clear { background: none; border: none; color: #e8ff47; cursor: pointer; font-size: 16px; margin-left: auto; line-height: 1; }
+    .chat-img-clear { background: none; border: none; color: #E8B84B; cursor: pointer; font-size: 16px; margin-left: auto; line-height: 1; }
     @media (max-width: 480px) { .chat-panel { width: 100%; right: -100%; } .chat-trigger { font-size: 12px; padding: 0 14px; } }
 
 </style>
 
 <button class="chat-trigger" id="chatTrigger" onclick="toggleChat()">
-  <span>💬</span>
+  <span></span>
   <span id="chatTriggerLabel">Vraag de Klaar Assistent</span>
   <span class="chat-trigger-pulse" id="chatTriggerPulse"></span>
 </button>
@@ -3061,17 +3128,17 @@ MODULES & PRIJZEN (voor context bij upsell):
 Full suite — €179/m (los €131,50/m) — Alle modules samen
 
 HOE JE HET ZEGT (toon: zakenpartner die iets handigs opmerkt, NIET een verkoopgesprek):
-✅ "Oh trouwens — als je dit probleem vaker hebt, lost Module 04 dit automatisch op. Kost je €39/m en rekent zichzelf terug."
-✅ "Dat klinkt als iets waarvoor je nu waarschijnlijk een apart systeem betaalt. Klaar doet dit al voor €24/m."
-✅ "Interessant — als je ook Module 07 gebruikt, koppelt dit automatisch aan je inkoopprijzen."
-✅ "Voor €14/m heb je de Allergenenkaart erbij — dan hoef je dit nooit meer handmatig bij te houden."
+✓ "Oh trouwens — als je dit probleem vaker hebt, lost Module 04 dit automatisch op. Kost je €39/m en rekent zichzelf terug."
+✓ "Dat klinkt als iets waarvoor je nu waarschijnlijk een apart systeem betaalt. Klaar doet dit al voor €24/m."
+✓ "Interessant — als je ook Module 07 gebruikt, koppelt dit automatisch aan je inkoopprijzen."
+✓ "Voor €14/m heb je de Allergenenkaart erbij — dan hoef je dit nooit meer handmatig bij te houden."
 
 WAT JE NOOIT DOET:
-❌ Concurrenten met naam belasteren of negatief vergelijken
-❌ Meerdere keren per gesprek iets verkopen
-❌ Een module aanprijzen als de gebruiker duidelijk al weet dat die bestaat
-❌ Pushen als de gebruiker niet reageert
-❌ Iets aanbevelen dat niet relevant is voor het actuele probleem
+✕ Concurrenten met naam belasteren of negatief vergelijken
+✕ Meerdere keren per gesprek iets verkopen
+✕ Een module aanprijzen als de gebruiker duidelijk al weet dat die bestaat
+✕ Pushen als de gebruiker niet reageert
+✕ Iets aanbevelen dat niet relevant is voor het actuele probleem
 
 KASSASYSTEMEN & ECOSYSTEEM:
 De meeste horecazaken waar jij mee werkt hebben ook een kassasysteem (POS). Jij werkt NAAST die systemen, niet ertegen.
@@ -3209,6 +3276,6 @@ function chatScroll() { const el = document.getElementById('chatMessages'); el.s
 function chatKeyDown(e) { if (e.key === 'Enter' && !e.shiftKey) { e.preventDefault(); chatSend(); } }
 function chatAutoResize(el) { el.style.height = 'auto'; el.style.height = Math.min(el.scrollHeight, 110) + 'px'; }
 </script>
-
+  <link rel="stylesheet" href="../klaar-shared.css">
 </body>
 </html>

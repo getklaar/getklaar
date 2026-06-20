@@ -1,368 +1,1081 @@
-/* ════════════════════════════════════════════════════════════════
-   KLAAR — Shared Design System v2.0
-   Geladen NA module-CSS om gerichte overrides toe te passen.
+/* ══════════════════════════════════════════════════════════════════════
+   KLAAR Design System v3.0
+   Geünificeerd component-systeem — alle 9 modules.
+   Geladen NA module-CSS. Gebruikt !important voor gerichte overrides.
 
-   Wat dit doet:
-   - Vervangt DM Mono in UI-elementen door Inter (professioneler)
-   - DM Mono ALLEEN nog voor prijzen, temperatures, timestamps
-   - Font-sizes omhoog (minimum 13px)
-   - Buttons: meer ruimte, cleaner
-   - Minder agressieve letter-spacing en uppercase
-   - Algemene horeca-professionaliteit
-   ════════════════════════════════════════════════════════════════ */
+   Designregels:
+   ▸ Primaire knop     = GOUD (#E8B84B), nooit zwart
+   ▸ Content-tabs      = goud underline (.tab-btn.active)
+   ▸ Header-tabs       = gevulde gold pill — intentioneel (M01/M05)
+   ▸ Inputs/focus      = goud border (#E8B84B)
+   ▸ Font              = Inter voor UI-tekst (geen DM Mono in buttons/labels)
+   ▸ Border-radius     = 4px buttons/inputs, 6px kaarten
+   ▸ Hover accent      = #d4a53a (warm goud, nooit neon groen)
+══════════════════════════════════════════════════════════════════════ */
 
-/* ── Google Fonts ── */
-@import url('https://fonts.googleapis.com/css2?family=Bebas+Neue&family=Inter:wght@400;500;600&family=DM+Mono:wght@400;500&display=swap');
+@import url('https://fonts.googleapis.com/css2?family=Bebas+Neue&family=Inter:wght@400;500;600;700&family=DM+Mono:wght@400;500&display=swap');
 
-/* ── Design tokens ── */
+/* ══════════════════════════════════════════════════════════════════════
+   DESIGN TOKENS
+══════════════════════════════════════════════════════════════════════ */
 :root {
-  /* Brand — ongewijzigd */
-  --black:    #0a0a0a;
-  --surface:  #111111;
-  --surface2: #161616;
-  --border:   #222222;
-  --border2:  #2e2e2e;
-  --lime:     #e8ff47;
-  --white:    #eeeeee;
-  --gray:     #888888;
-  --muted:    #3a3a3a;
+  /* Unified Klaar tokens */
+  --k-gold:      #E8B84B;
+  --k-gold-h:    #d4a53a;      /* hover state */
+  --k-gold-dim:  rgba(232,184,75,.12);
+  --k-dark:      #1E1B17;
+  --k-surface-d: #282420;
+  --k-bg:        #f5f3ef;
+  --k-white:     #ffffff;
+  --k-border:    #e4dfd6;
+  --k-border2:   #ccc8be;
+  --k-text:      #1a1a1a;
+  --k-muted:     #7a7672;
+  --k-ok:        #2d9048;
+  --k-warn:      #d4820a;
+  --k-danger:    #c0392b;
+  --font-ui:     'Inter', -apple-system, BlinkMacSystemFont, sans-serif;
+  --font-hd:     'Bebas Neue', sans-serif;
+  --font-mo:     'DM Mono', ui-monospace, monospace;
 
-  /* Light zone */
-  --lbg:      #f5f3ef;
-  --lsurface: #ffffff;
-  --lborder:  #e4e0d8;
-  --lborder2: #cdc9c0;
-  --ltext:    #1a1a1a;
-  --lmuted:   #888480;
-
-  /* Status */
-  --danger:   #c0392b;
-  --complete: #2d9048;
-  --warning:  #d4820a;
-
-  /* Typography */
-  --font-ui:      'Inter', -apple-system, BlinkMacSystemFont, sans-serif;
-  --font-heading: 'Bebas Neue', sans-serif;
-  --font-mono:    'DM Mono', ui-monospace, monospace;
-
-  /* Layout */
-  --hdr: 54px;
+  /* Backwards-compat aliases (modules gebruiken deze al) */
+  --lime:    #E8B84B;
+  --danger:  #c0392b;
+  --complete:#2d9048;
+  --lbg:     #f5f3ef;
+  --lsurface:#ffffff;
+  --lborder: #e4dfd6;
+  --lborder2:#ccc8be;
+  --ltext:   #1a1a1a;
+  --lmuted:  #7a7672;
 }
 
-/* ════════════════════════════════════════════════════════════════
-   BASE TYPOGRAPHY
-   Overschrijf DM Mono als standaard UI font.
-   !important is noodzakelijk omdat module-CSS inline styles gebruikt.
-   ════════════════════════════════════════════════════════════════ */
+/* ══════════════════════════════════════════════════════════════════════
+   BASE TYPOGRAFIE
+══════════════════════════════════════════════════════════════════════ */
+*, *::before, *::after { box-sizing: border-box; }
 
-/* Body basis */
 body {
   font-family: var(--font-ui) !important;
   font-size: 14px !important;
-  font-weight: 400;
-  line-height: 1.55;
   -webkit-font-smoothing: antialiased;
 }
 
-/* Headings blijven Bebas Neue */
-h1, h2, h3, h4 {
-  font-family: var(--font-heading) !important;
+h1, h2, h3, h4 { font-family: var(--font-hd) !important; }
+
+/* ══════════════════════════════════════════════════════════════════════
+   NAVIGATIE — CONTENT-AREA TABS (lichte achtergrond)
+   .tab-btn = M02/M03/M04/M07/M08/M10
+   NIET: .h-tab (M01) en .nav-tab (M05) — die zitten in donkere header
+         en gebruiken bewust gevulde gold-pill stijl.
+══════════════════════════════════════════════════════════════════════ */
+
+.tab-bar {
+  display: flex !important;
+  align-items: stretch !important;
+  background: #ffffff !important;
+  border-bottom: 1px solid #e8e4df !important;
+  height: 44px !important;
+  flex-shrink: 0 !important;
+  overflow-x: auto;
+  scrollbar-width: none;
+  padding: 0 16px !important;
 }
+.tab-bar::-webkit-scrollbar { display: none; }
 
-/* ════════════════════════════════════════════════════════════════
-   HEADER — verfijnd maar structuur gelijk
-   ════════════════════════════════════════════════════════════════ */
-
-.back-link {
-  font-family: var(--font-ui) !important;
-  font-size: 12px !important;
-  font-weight: 500;
-  letter-spacing: 0.01em !important;
-  text-transform: none !important;
-  padding: 5px 12px !important;
-}
-
-.mod-badge {
-  font-family: var(--font-ui) !important;
-  font-size: 10px !important;
-  font-weight: 600;
-  letter-spacing: 0.06em !important;
-  color: var(--gray);
-}
-
-/* ════════════════════════════════════════════════════════════════
-   HEADER TABS — cleaner, minder terminal
-   ════════════════════════════════════════════════════════════════ */
-
-.h-tab, .tab-btn, .h-tabs button {
-  font-family: var(--font-ui) !important;
-  font-size: 12px !important;
-  font-weight: 500;
-  letter-spacing: 0.02em !important;
-  text-transform: none !important;
-  padding: 5px 16px !important;
-}
-
-.h-tab.active, .tab-btn.active {
-  font-weight: 600;
-  letter-spacing: 0.01em !important;
-}
-
-/* ════════════════════════════════════════════════════════════════
-   HEADER BUTTONS
-   ════════════════════════════════════════════════════════════════ */
-
-.btn-hdr, .btn-help, .nav-btn {
-  font-family: var(--font-ui) !important;
-  font-size: 12px !important;
-  font-weight: 500;
-  letter-spacing: 0.01em !important;
-  text-transform: none !important;
-  padding: 0 14px !important;
-  height: 30px !important;
-}
-
-/* ════════════════════════════════════════════════════════════════
-   CONTENT BUTTONS — meer ruimte, cleaner
-   ════════════════════════════════════════════════════════════════ */
-
-.btn, button.btn, input[type="button"].btn {
+.tab-btn {
   font-family: var(--font-ui) !important;
   font-size: 13px !important;
-  font-weight: 500;
-  letter-spacing: 0.01em !important;
-  text-transform: none !important;
-  padding: 7px 16px !important;
-  border-radius: 3px !important;
-}
-
-.btn-sm, .btn.btn-sm {
-  font-size: 12px !important;
-  padding: 5px 12px !important;
-}
-
-.btn-lg, .btn.btn-lg {
-  font-size: 14px !important;
-  padding: 9px 20px !important;
-}
-
-/* Primaire knop */
-.btn-primary, .btn-primair, .btn.primary {
-  font-weight: 600;
-}
-
-/* ════════════════════════════════════════════════════════════════
-   FORM ELEMENTEN — leesbaar en professioneel
-   ════════════════════════════════════════════════════════════════ */
-
-input:not([type="checkbox"]):not([type="radio"]),
-select,
-textarea {
-  font-family: var(--font-ui) !important;
-  font-size: 14px !important;
+  font-weight: 500 !important;
   letter-spacing: 0 !important;
   text-transform: none !important;
+  padding: 0 18px !important;
+  border: none !important;
+  border-bottom: 2px solid transparent !important;
+  border-radius: 0 !important;
+  background: none !important;
+  color: var(--k-muted) !important;
+  cursor: pointer;
+  white-space: nowrap;
+  transition: color .15s, border-color .15s;
+  display: inline-flex;
+  align-items: center;
+}
+.tab-btn:hover {
+  color: var(--k-text) !important;
+}
+/* ACTIEF TAB — altijd goud underline */
+.tab-btn.active {
+  color: var(--k-text) !important;
+  background: none !important;
+  border-bottom: 2px solid var(--k-gold) !important;
+  font-weight: 600 !important;
 }
 
+/* Dark-header tabs (M01/M05): bewaar pill-stijl maar fix hover-kleur */
+.h-tab:hover { background: rgba(255,255,255,.06) !important; }
+.h-tab.active { background: var(--k-gold) !important; color: #1a1a1a !important; }
+.nav-tab:hover { background: rgba(255,255,255,.06) !important; }
+.nav-tab.actief { background: var(--k-gold) !important; color: #1a1a1a !important; }
+
+/* ══════════════════════════════════════════════════════════════════════
+   KNOPPEN — alle varianten
+══════════════════════════════════════════════════════════════════════ */
+
+/* Base */
+.btn, button.btn {
+  font-family: var(--font-ui) !important;
+  font-size: 13px !important;
+  font-weight: 500 !important;
+  letter-spacing: 0 !important;
+  text-transform: none !important;
+  border-radius: 6px !important;
+  padding: 8px 16px !important;
+  display: inline-flex;
+  align-items: center;
+  gap: 6px;
+  cursor: pointer;
+  transition: background .15s, border-color .15s, opacity .15s;
+  white-space: nowrap;
+  text-decoration: none;
+}
+
+/* ─── PRIMAIRE KNOP: ALTIJD GOUD ─── */
+.btn-primary, .btn-primair, .btn-lime, .btn-gen,
+.btn.primary, .btn-act.save {
+  background: var(--k-gold) !important;
+  color: #1a1a1a !important;
+  border: 1px solid var(--k-gold) !important;
+  font-weight: 600 !important;
+}
+.btn-primary:hover, .btn-primair:hover, .btn-lime:hover,
+.btn-gen:hover, .btn.primary:hover, .btn-act.save:hover {
+  background: var(--k-gold-h) !important;
+  border-color: var(--k-gold-h) !important;
+  opacity: 1 !important;
+}
+.btn-primary:disabled, .btn-primair:disabled, .btn-gen:disabled {
+  opacity: .45 !important; cursor: not-allowed !important;
+}
+
+/* ─── SECONDAIRE KNOP: OMLIJND ─── */
+.btn-secondary, .btn-secundair, .btn-outline {
+  background: #fff !important;
+  color: var(--k-text) !important;
+  border: 1px solid var(--k-border2) !important;
+}
+.btn-secondary:hover, .btn-secundair:hover, .btn-outline:hover {
+  border-color: var(--k-text) !important;
+}
+
+/* ─── GHOST KNOP ─── */
+.btn-ghost {
+  background: transparent !important;
+  color: var(--k-muted) !important;
+  border: 1px solid var(--k-border) !important;
+}
+.btn-ghost:hover {
+  border-color: var(--k-border2) !important;
+  color: var(--k-text) !important;
+}
+
+/* ─── DANGER KNOP ─── */
+.btn-danger, .btn-gevaar {
+  background: transparent !important;
+  color: var(--k-danger) !important;
+  border: 1px solid rgba(192,57,43,.3) !important;
+}
+.btn-danger:hover, .btn-gevaar:hover {
+  background: rgba(192,57,43,.06) !important;
+  border-color: var(--k-danger) !important;
+}
+
+/* Maten */
+.btn-sm, .btn-klein { font-size: 12px !important; padding: 5px 11px !important; }
+.btn-lg             { font-size: 14px !important; padding: 10px 20px !important; }
+
+/* ─── HEADER KNOPPEN (donkere zone) ─── */
+.btn-hdr {
+  font-family: var(--font-ui) !important;
+  font-size: 12px !important;
+  font-weight: 500 !important;
+  letter-spacing: 0 !important;
+  text-transform: none !important;
+  height: 32px !important;
+  padding: 0 14px !important;
+  border-radius: 4px !important;
+  background: transparent !important;
+  color: rgba(255,255,255,.7) !important;
+  border: 1px solid rgba(255,255,255,.2) !important;
+  display: inline-flex; align-items: center; gap: 6px;
+  cursor: pointer; transition: all .15s; white-space: nowrap;
+}
+.btn-hdr:hover {
+  color: #fff !important;
+  border-color: rgba(255,255,255,.5) !important;
+}
+.btn-hdr.primary, .btn-hdr.active {
+  background: var(--k-gold) !important;
+  color: #1a1a1a !important;
+  border-color: var(--k-gold) !important;
+  font-weight: 600 !important;
+}
+.btn-hdr.primary:hover, .btn-hdr.active:hover {
+  background: var(--k-gold-h) !important;
+  border-color: var(--k-gold-h) !important;
+}
+
+/* Actie-knoppen content (M01) */
+.btn-act {
+  font-family: var(--font-ui) !important;
+  font-size: 12px !important;
+  font-weight: 500 !important;
+  letter-spacing: 0 !important;
+  text-transform: none !important;
+  border-radius: 6px !important;
+  padding: 6px 13px !important;
+}
+
+/* ══════════════════════════════════════════════════════════════════════
+   FORM ELEMENTEN
+══════════════════════════════════════════════════════════════════════ */
+
+/* Labels */
 label, .form-label, .field-label {
   font-family: var(--font-ui) !important;
-  font-size: 12px !important;
-  font-weight: 600;
-  letter-spacing: 0.03em !important;
-  text-transform: uppercase !important;
-  color: var(--lmuted);
-}
-
-/* ════════════════════════════════════════════════════════════════
-   CARDS & PANELS
-   ════════════════════════════════════════════════════════════════ */
-
-.card, .panel, .module-card {
-  border-radius: 3px !important;
-}
-
-.card-titel, .card-title, .panel-title, .section-title {
-  font-family: var(--font-ui) !important;
   font-size: 11px !important;
-  font-weight: 700;
-  letter-spacing: 0.05em !important;
-  text-transform: uppercase !important;
-  color: var(--lmuted);
-}
-
-/* ════════════════════════════════════════════════════════════════
-   BADGES & CHIPS
-   ════════════════════════════════════════════════════════════════ */
-
-.badge, .chip, .tag, .allergen-chip, .filter-chip {
-  font-family: var(--font-ui) !important;
-  font-size: 11px !important;
-  font-weight: 600;
-  letter-spacing: 0.02em !important;
-  text-transform: uppercase !important;
-  border-radius: 3px !important;
-}
-
-/* ════════════════════════════════════════════════════════════════
-   TABELLEN
-   ════════════════════════════════════════════════════════════════ */
-
-table, th, td {
-  font-family: var(--font-ui) !important;
-}
-
-th {
-  font-size: 11px !important;
-  font-weight: 700;
+  font-weight: 600 !important;
   letter-spacing: 0.04em !important;
   text-transform: uppercase !important;
-  color: var(--lmuted);
+  color: var(--k-muted) !important;
+  display: block;
+  margin-bottom: 5px;
 }
 
+/* Inputs & selects */
+input:not([type="checkbox"]):not([type="radio"]):not([type="range"]):not([type="color"]):not([type="file"]),
+select, .form-input, .form-select {
+  font-family: var(--font-ui) !important;
+  font-size: 14px !important;
+  font-weight: 400 !important;
+  letter-spacing: 0 !important;
+  color: var(--k-text) !important;
+  background: #fff !important;
+  border: 1.5px solid #d8d3ce !important;
+  border-radius: 6px !important;
+  padding: 8px 12px !important;
+  height: 38px;
+  width: 100%;
+  transition: border-color .15s, box-shadow .15s;
+}
+input:not([type="checkbox"]):not([type="radio"]):not([type="range"]):not([type="color"]):not([type="file"]):focus,
+select:focus, .form-input:focus, .form-select:focus {
+  outline: none !important;
+  border-color: var(--k-gold) !important;
+  box-shadow: 0 0 0 3px rgba(232,184,75,.15) !important;
+}
+.form-input.error, .form-select.error, input.error { border-color: var(--k-danger) !important; }
+
+/* Textareas */
+textarea, .form-textarea {
+  font-family: var(--font-ui) !important;
+  font-size: 14px !important;
+  font-weight: 400 !important;
+  letter-spacing: 0 !important;
+  color: var(--k-text) !important;
+  border-radius: 6px !important;
+  transition: border-color .15s, box-shadow .15s;
+}
+textarea:focus, .form-textarea:focus {
+  outline: none !important;
+  border-color: var(--k-gold) !important;
+  box-shadow: 0 0 0 3px rgba(232,184,75,.15) !important;
+}
+
+/* Form layout */
+.form-group { margin-bottom: 16px; }
+.form-row   { display: grid; grid-template-columns: 1fr 1fr; gap: 14px; }
+.form-row-3 { display: grid; grid-template-columns: 1fr 1fr 1fr; gap: 14px; }
+@media (max-width: 600px) { .form-row, .form-row-3 { grid-template-columns: 1fr; } }
+
+.form-section-label {
+  font-family: var(--font-ui) !important;
+  font-size: 10px !important;
+  font-weight: 700 !important;
+  letter-spacing: 0.08em !important;
+  text-transform: uppercase !important;
+  color: var(--k-muted) !important;
+  border-bottom: 1px solid var(--k-border);
+  padding-bottom: 6px;
+  margin: 20px 0 14px !important;
+}
+
+/* ══════════════════════════════════════════════════════════════════════
+   KAARTEN
+══════════════════════════════════════════════════════════════════════ */
+
+.card, .panel, .module-card, .kpi-card, .ob-card {
+  border-radius: 6px !important;
+}
+
+.form-section {
+  background: #fff;
+  border: 1px solid var(--k-border);
+  border-radius: 6px;
+  margin-bottom: 16px;
+  overflow: hidden;
+}
+.form-section-header {
+  padding: 13px 18px;
+  border-bottom: 1px solid var(--k-border);
+  display: flex; align-items: center; gap: 10px;
+  cursor: pointer; user-select: none;
+}
+.form-section-title {
+  font-family: var(--font-hd) !important;
+  font-size: 16px !important;
+  letter-spacing: 0.04em !important;
+}
+
+/* ══════════════════════════════════════════════════════════════════════
+   TABELLEN
+══════════════════════════════════════════════════════════════════════ */
+
+th {
+  font-family: var(--font-ui) !important;
+  font-size: 11px !important;
+  font-weight: 700 !important;
+  letter-spacing: 0.05em !important;
+  text-transform: uppercase !important;
+  color: var(--k-muted) !important;
+  background: var(--k-bg) !important;
+  border-bottom: 1px solid var(--k-border) !important;
+  padding: 9px 12px !important;
+  white-space: nowrap;
+}
 td {
-  font-size: 14px !important;
-  letter-spacing: 0 !important;
-}
-
-/* ════════════════════════════════════════════════════════════════
-   MONO — ALLEEN voor specifieke data-waarden
-   Prijzen, temperatures, codes, timestamps
-   ════════════════════════════════════════════════════════════════ */
-
-.mono,
-.price, .prijs, .cost, .kosten,
-.euro, .currency,
-.temp, .temperature,
-.timestamp, .datum-mono,
-.code, .ean-code,
-.stat-num, .kp-waarde, .cost-value,
-td.numeric, td.prijs-col, td.temp-col {
-  font-family: var(--font-mono) !important;
-  letter-spacing: 0 !important;
-}
-
-/* ════════════════════════════════════════════════════════════════
-   CHAT PANEL
-   ════════════════════════════════════════════════════════════════ */
-
-.chat-bubble, .chat-msg, .bericht-ai, .bericht-user,
-#chatMessages * {
-  font-family: var(--font-ui) !important;
-  font-size: 14px !important;
-  line-height: 1.6 !important;
-  letter-spacing: 0 !important;
-}
-
-#chatInput {
-  font-family: var(--font-ui) !important;
-  font-size: 14px !important;
-}
-
-/* ════════════════════════════════════════════════════════════════
-   EMPTY STATES
-   ════════════════════════════════════════════════════════════════ */
-
-.empty-state h3, .empty-title {
-  font-family: var(--font-heading) !important;
-  font-size: 22px !important;
-  letter-spacing: 0.03em !important;
-}
-
-.empty-state p, .empty-desc {
-  font-family: var(--font-ui) !important;
-  font-size: 14px !important;
-}
-
-/* ════════════════════════════════════════════════════════════════
-   MODAL / DIALOOG
-   ════════════════════════════════════════════════════════════════ */
-
-.modal-title, .modal-header h2, .modal-header h3 {
-  font-family: var(--font-heading) !important;
-  font-size: 20px !important;
-  letter-spacing: 0.03em !important;
-}
-
-.modal-body, .modal-content {
-  font-family: var(--font-ui) !important;
-  font-size: 14px !important;
-}
-
-/* ════════════════════════════════════════════════════════════════
-   ALGEMENE TEKST — nooit kleiner dan 12px
-   ════════════════════════════════════════════════════════════════ */
-
-/* Prevent tiny text (maar overschrijf niet opzettelijk kleine labels) */
-p, span, div, li, td, th, input, select, textarea, button, a {
-  min-font-size: 12px; /* CSS niet standaard, maar signaal */
-}
-
-/* Specifieke kleine teksten verhogen */
-.text-xs  { font-size: 11px !important; }
-.text-sm  { font-size: 12px !important; }
-.text-base{ font-size: 14px !important; }
-
-/* ════════════════════════════════════════════════════════════════
-   NAVIGATIE DROPDOWN (klaar-client.js injectie)
-   ════════════════════════════════════════════════════════════════ */
-
-#klaar-mod-menu, .klaar-nav-dropdown {
-  font-family: var(--font-ui) !important;
-}
-
-#klaar-mod-menu a, #klaar-mod-menu button,
-.klaar-nav-dropdown a {
   font-family: var(--font-ui) !important;
   font-size: 13px !important;
-  font-weight: 500;
+  padding: 10px 12px !important;
+  border-bottom: 1px solid var(--k-border) !important;
+}
+tr:last-child td { border-bottom: none; }
+tr:hover td { background: rgba(232,184,75,.04) !important; }
+
+/* ══════════════════════════════════════════════════════════════════════
+   BADGES & PILLS
+══════════════════════════════════════════════════════════════════════ */
+
+.badge, .chip, .tag, .pill, .allergen-chip {
+  font-family: var(--font-ui) !important;
+  font-size: 11px !important;
+  font-weight: 600 !important;
+  letter-spacing: 0.03em !important;
+  border-radius: 20px !important;
+  padding: 3px 9px !important;
+}
+
+/* ══════════════════════════════════════════════════════════════════════
+   LEGE STATES
+══════════════════════════════════════════════════════════════════════ */
+
+.empty-state, .leeg-state, .grid-empty {
+  padding: 60px 24px !important;
+  text-align: center !important;
+  color: var(--k-muted) !important;
+  font-family: var(--font-ui) !important;
+  font-size: 14px !important;
+  line-height: 1.8 !important;
+}
+
+/* ══════════════════════════════════════════════════════════════════════
+   SCROLLBARS
+══════════════════════════════════════════════════════════════════════ */
+
+::-webkit-scrollbar { width: 5px; height: 5px; }
+::-webkit-scrollbar-track { background: transparent; }
+::-webkit-scrollbar-thumb { background: rgba(0,0,0,.15); border-radius: 3px; }
+::-webkit-scrollbar-thumb:hover { background: rgba(0,0,0,.25); }
+
+/* ══════════════════════════════════════════════════════════════════════
+   AI CHAT PANEL — uniforme stijl alle modules
+══════════════════════════════════════════════════════════════════════ */
+
+.chat-hdr, .chat-header {
+  padding: 13px 16px !important;
+  border-bottom: 1px solid rgba(255,255,255,.08) !important;
+  background: rgba(255,255,255,.03) !important;
+  flex-shrink: 0;
+}
+.chat-hdr-title, .chat-header-title {
+  font-family: var(--font-hd) !important;
+  font-size: 18px !important;
+  color: var(--k-gold) !important;
+  letter-spacing: 1px !important;
+}
+.chat-hdr-sub {
+  font-family: var(--font-mo) !important;
+  font-size: 10px !important;
+  color: rgba(255,255,255,.35) !important;
+  letter-spacing: 0.04em !important;
+  margin-top: 1px;
+}
+
+/* Invoer-rij */
+.chat-invoer, .chat-input-row {
+  padding: 10px 12px !important;
+  border-top: 1px solid rgba(255,255,255,.08) !important;
+  background: rgba(255,255,255,.04) !important;
+  display: flex !important;
+  align-items: flex-end !important;
+  gap: 8px !important;
+  flex-shrink: 0;
+}
+.chat-invoer textarea, .chat-input-row textarea,
+.chat-input, .bericht-input {
+  font-family: var(--font-ui) !important;
+  font-size: 13px !important;
+  flex: 1 !important;
+  min-height: 40px !important;
+  max-height: 120px;
+  resize: none !important;
+  border: 1px solid rgba(255,255,255,.15) !important;
+  border-radius: 4px !important;
+  background: rgba(255,255,255,.07) !important;
+  color: rgba(255,255,255,.9) !important;
+  padding: 9px 12px !important;
+  height: auto !important;
+  box-shadow: none !important;
+  transition: border-color .15s;
+}
+.chat-invoer textarea:focus, .chat-input-row textarea:focus,
+.chat-input:focus, .bericht-input:focus {
+  outline: none !important;
+  border-color: rgba(232,184,75,.5) !important;
+  box-shadow: none !important;
+}
+.chat-invoer textarea::placeholder, .chat-input-row textarea::placeholder,
+.chat-input::placeholder, .bericht-input::placeholder {
+  color: rgba(255,255,255,.3) !important;
+}
+
+/* Verstuur-knop */
+.chat-send, .chat-send-btn, .chat-go-btn {
+  width: 38px !important; height: 38px !important; min-width: 38px !important;
+  border-radius: 4px !important;
+  background: var(--k-gold) !important;
+  color: #1a1a1a !important;
+  border: none !important;
+  font-size: 17px !important;
+  cursor: pointer !important;
+  display: flex !important; align-items: center !important; justify-content: center !important;
+  transition: background .15s;
+  flex-shrink: 0;
+}
+.chat-send:hover, .chat-send-btn:hover, .chat-go-btn:hover {
+  background: var(--k-gold-h) !important;
+}
+
+/* Berichten */
+.bericht-user {
+  background: var(--k-gold) !important;
+  color: #1a1a1a !important;
+  border-radius: 12px 12px 2px 12px !important;
+}
+.bericht-ai strong, .bericht-ai b { color: var(--k-gold) !important; }
+
+
+/* ══════════════════════════════════════════════════════════════════════
+   DARK-HEADER TABS — font + spacing (kleur/bg al geregeld hierboven)
+══════════════════════════════════════════════════════════════════════ */
+
+.h-tab, .nav-tab {
+  font-family: var(--font-ui) !important;
+  font-size: 12px !important;
+  font-weight: 500 !important;
   letter-spacing: 0 !important;
   text-transform: none !important;
 }
 
-/* ════════════════════════════════════════════════════════════════
-   ALERTS & NOTIFICATIONS
-   ════════════════════════════════════════════════════════════════ */
+/* ══════════════════════════════════════════════════════════════════════
+   SJABLOON-KNOPPEN (M05) & FOLDER HEADERS (M01)
+   Breng deze in lijn qua font — keep DM Mono weg uit navigatie
+══════════════════════════════════════════════════════════════════════ */
 
-.alert, .notification, .toast, .prijsalert {
-  font-family: var(--font-ui) !important;
-  font-size: 13px !important;
-  border-radius: 3px !important;
-}
-
-/* ════════════════════════════════════════════════════════════════
-   HELP TEXT / TIPS
-   ════════════════════════════════════════════════════════════════ */
-
-.help-tekst, .tip, .hint, .subtext, .form-hint {
+.sjabloon-btn {
   font-family: var(--font-ui) !important;
   font-size: 12px !important;
-  line-height: 1.5;
-  color: var(--lmuted);
+  letter-spacing: 0 !important;
+  text-transform: none !important;
 }
 
-/* ════════════════════════════════════════════════════════════════
-   PRINT STIJLEN — Professional rapport layout
-   ════════════════════════════════════════════════════════════════ */
+.folder-hdr-name, .folder-hdr-count {
+  font-family: var(--font-ui) !important;
+  font-size: 11px !important;
+  letter-spacing: 0.02em !important;
+}
 
-@media print {
-  body {
-    font-family: var(--font-ui) !important;
-    font-size: 11pt !important;
-    color: #000 !important;
-  }
+/* Back link + module badge in alle headers */
+.header-back, .header-module, .back-link, .terug-link, .mod-badge {
+  font-family: var(--font-ui) !important;
+  letter-spacing: 0 !important;
+  text-transform: none !important;
+}
 
-  h1, h2, h3 {
-    font-family: var(--font-heading) !important;
-    color: #000 !important;
-  }
+/* Algemene knop-achtige elementen die DM Mono gebruiken */
+.btn-rec, .btn-gen, .btn-act, .btn-koppel, .btn-icon {
+  font-family: var(--font-ui) !important;
+  letter-spacing: 0 !important;
+  text-transform: none !important;
+}
 
-  table, th, td {
-    font-family: var(--font-ui) !important;
-    font-size: 10pt !important;
-  }
+/* ══════════════════════════════════════════════════════════════════════
+   MODULE HEADER LOGO — consistent Bebas Neue + goud
+══════════════════════════════════════════════════════════════════════ */
 
-  th {
-    background: #f0f0f0 !important;
-    color: #000 !important;
-  }
+.hdr-logo, .header-logo, .logo {
+  font-family: var(--font-hd) !important;
+  color: var(--k-gold) !important;
+}
+
+/* ══════════════════════════════════════════════════════════════════════
+   HELP KNOP — consistent
+══════════════════════════════════════════════════════════════════════ */
+
+.help-btn, .btn-help {
+  font-family: var(--font-ui) !important;
+  font-size: 13px !important;
+  letter-spacing: 0 !important;
+}
+
+/* M02 specifiek: btn-back naar Inter font */
+.btn-back {
+  font-family: var(--font-ui) !important;
+  font-size: 12px !important;
+  font-weight: 500 !important;
+  letter-spacing: 0 !important;
+}
+
+/* ══════════════════════════════════════════════════════════════════════
+   MODULE HEADERS — volledige visuele unificatie
+   Targets: header (element M01), .header (M03/M04/M07/M08/M10),
+            .site-header (M02), .nav (M05)
+   
+   Doel: ALLE module-headers identiek qua kleur, hoogte, layout
+══════════════════════════════════════════════════════════════════════ */
+
+header:not(body > * > header:not(.header)):not([class*="modal"]):not([class*="card"]),
+.header,
+.site-header,
+.nav:not(.nav-tabs):not([class*="nav-tab"]) {
+  background: #282420 !important;
+  border-bottom: 1px solid #3a3530 !important;
+  height: 56px !important;
+  min-height: 56px !important;
+  max-height: 56px !important;
+  display: flex !important;
+  align-items: center !important;
+  padding: 0 20px !important;
+  gap: 14px !important;
+  position: sticky !important;
+  top: 0 !important;
+  z-index: 100 !important;
+  flex-shrink: 0 !important;
+}
+
+/* Header logo — altijd Bebas Neue goud 24px */
+.header .header-logo,
+.header .logo,
+.site-header .logo,
+.site-header .header-logo,
+header .logo,
+header .header-logo,
+.nav .logo {
+  font-family: var(--font-hd) !important;
+  font-size: 24px !important;
+  color: var(--k-gold) !important;
+  letter-spacing: 0.04em !important;
+  line-height: 1 !important;
+  text-decoration: none !important;
+  flex-shrink: 0;
+}
+
+/* Module badge/naam — altijd Inter, subtiel grijs */
+.header .header-module,
+.site-header .header-label,
+.site-header .header-module,
+header .mod-badge,
+header .header-module,
+.nav .mod-badge {
+  font-family: var(--font-ui) !important;
+  font-size: 11px !important;
+  font-weight: 400 !important;
+  color: #8a8278 !important;
+  letter-spacing: 0.02em !important;
+  text-transform: none !important;
+  white-space: nowrap;
+}
+
+/* Spacer duwt rechts-elementen naar rechts */
+.header-spacer,
+.header-space,
+.nav .nav-acties {
+  margin-left: auto !important;
+}
+
+/* Badge (● LIVE etc) */
+.header-badge {
+  font-family: var(--font-ui) !important;
+  font-size: 10px !important;
+  font-weight: 600 !important;
+  letter-spacing: 0.05em !important;
+  padding: 3px 9px !important;
+  border-radius: 20px !important;
+}
+
+/* Divider in header */
+.header-divider, .h-div {
+  width: 1px !important;
+  height: 18px !important;
+  background: rgba(255,255,255,.12) !important;
+  flex-shrink: 0;
+}
+
+/* Help / settings knoppen in header */
+.btn-help, .help-btn, .header-settings {
+  font-family: var(--font-ui) !important;
+  font-size: 13px !important;
+  font-weight: 600 !important;
+  width: 30px !important;
+  height: 30px !important;
+  border-radius: 50% !important;
+  border: 1px solid rgba(255,255,255,.18) !important;
+  background: transparent !important;
+  color: rgba(255,255,255,.55) !important;
+  display: flex !important;
+  align-items: center !important;
+  justify-content: center !important;
+  cursor: pointer !important;
+  transition: all .15s;
+  flex-shrink: 0;
+  text-decoration: none;
+}
+.btn-help:hover, .help-btn:hover, .header-settings:hover {
+  border-color: var(--k-gold) !important;
+  color: var(--k-gold) !important;
+}
+
+/* Back link in header — uniform bordered button-stijl */
+.back-link,
+.header-back,
+.btn-back {
+  font-family: var(--font-ui) !important;
+  font-size: 11px !important;
+  font-weight: 500 !important;
+  letter-spacing: 0 !important;
+  text-transform: none !important;
+  text-decoration: none !important;
+  color: rgba(255,255,255,.5) !important;
+  display: inline-flex !important;
+  align-items: center !important;
+  gap: 5px !important;
+  padding: 4px 10px !important;
+  border: 1px solid rgba(255,255,255,.15) !important;
+  border-radius: 4px !important;
+  transition: all .15s !important;
+  white-space: nowrap;
+  flex-shrink: 0;
+}
+.back-link:hover,
+.header-back:hover,
+.btn-back:hover {
+  color: rgba(255,255,255,.9) !important;
+  border-color: rgba(255,255,255,.4) !important;
+}
+
+/* ══════════════════════════════════════════════════════════════════════
+   BUTTON SYSTEM — complete unificatie alle modules
+   Elke module gebruikt andere klassen — hier alles genormaliseerd.
+   
+   BASIS KNOP: Inter 13px/500, border-radius 6px, padding 9px 18px
+   PRIMAIR:    goud fill #E8B84B
+   SECUNDAIR:  wit fill, border 1.5px #d0cbc5
+   GHOST:      transparant, border 1.5px #d0cbc5
+   GEVAAR:     rood tint
+══════════════════════════════════════════════════════════════════════ */
+
+/* ── Basis button reset + uniforme typografie ── */
+button,
+.btn,
+.btn-gen,
+.btn-act,
+.btn-hdr,
+.btn-rec,
+.btn-new,
+.btn-lime,
+.btn-primary,
+.btn-secondary,
+.btn-ghost,
+.btn-outline,
+.btn-koppel,
+.btn-change,
+.btn-row {
+  font-family: var(--font-ui) !important;
+  font-size: 13px !important;
+  font-weight: 500 !important;
+  letter-spacing: 0 !important;
+  text-transform: none !important;
+  border-radius: 6px !important;
+  cursor: pointer !important;
+  transition: all 0.15s !important;
+  white-space: nowrap;
+  display: inline-flex;
+  align-items: center;
+  gap: 6px;
+}
+
+/* ── Primaire knop (goud) ── */
+.btn-primary,
+.btn-lime,
+.btn-gen,
+.btn-act.save,
+.btn-hdr.primary {
+  background: #E8B84B !important;
+  color: #1a1612 !important;
+  border: 1.5px solid #E8B84B !important;
+  padding: 9px 18px !important;
+  font-weight: 600 !important;
+}
+.btn-primary:hover,
+.btn-lime:hover,
+.btn-gen:hover,
+.btn-act.save:hover {
+  background: #d4a53a !important;
+  border-color: #d4a53a !important;
+}
+
+/* ── Secundaire knop (outlined, wit) — content area ── */
+.btn-secondary,
+.btn-ghost,
+.btn-outline,
+.btn-act:not(.save) {
+  background: #ffffff !important;
+  color: #2c2620 !important;
+  border: 1.5px solid #d0cbc5 !important;
+  padding: 9px 18px !important;
+}
+.btn-secondary:hover,
+.btn-ghost:hover,
+.btn-outline:hover,
+.btn-act:not(.save):hover {
+  border-color: #a09688 !important;
+  color: #1a1612 !important;
+}
+
+/* ── Header knoppen (donkere header) ── */
+.btn-hdr {
+  background: transparent !important;
+  color: rgba(255,255,255,.75) !important;
+  border: 1px solid rgba(255,255,255,.25) !important;
+  padding: 6px 14px !important;
+  font-size: 12px !important;
+  height: 32px !important;
+  display: inline-flex !important;
+  align-items: center !important;
+  gap: 6px !important;
+}
+.btn-hdr:hover {
+  color: #fff !important;
+  border-color: rgba(255,255,255,.6) !important;
+  background: rgba(255,255,255,.07) !important;
+}
+.btn-hdr.primary {
+  background: #E8B84B !important;
+  color: #1a1612 !important;
+  border-color: #E8B84B !important;
+  font-weight: 600 !important;
+}
+.btn-hdr.primary:hover {
+  background: #d4a43a !important;
+  border-color: #d4a43a !important;
+}
+
+/* ── Header hulp/export knoppen (btn-help, btn-print) ── */
+.btn-help,
+.btn-print {
+  background: transparent !important;
+  color: rgba(255,255,255,.7) !important;
+  border: 1px solid rgba(255,255,255,.2) !important;
+  padding: 5px 12px !important;
+  font-family: 'Inter', sans-serif !important;
+  font-size: 12px !important;
+  letter-spacing: 0 !important;
+  border-radius: 6px !important;
+}
+.btn-help:hover,
+.btn-print:hover {
+  color: #fff !important;
+  border-color: rgba(255,255,255,.5) !important;
+  background: rgba(255,255,255,.06) !important;
+}
+/* Actieve print mode = goud highlight */
+.btn-print.btn-print-ks {
+  background: rgba(232,184,75,.12) !important;
+  color: #E8B84B !important;
+  border-color: rgba(232,184,75,.4) !important;
+}
+
+/* ── LIVE status badge ── */
+.header-badge {
+  font-family: 'Inter', sans-serif !important;
+  font-size: 11px !important;
+  font-weight: 500 !important;
+  letter-spacing: 0 !important;
+  color: #4ade80 !important;
+  border: 1px solid rgba(74,222,128,.35) !important;
+  background: rgba(74,222,128,.08) !important;
+  padding: 4px 10px !important;
+  border-radius: 20px !important;
+}
+
+/* ── Help icon knop (rondje met ?) ── */
+.help-btn,
+.btn-icon {
+  width: 30px !important;
+  height: 30px !important;
+  border-radius: 50% !important;
+  background: transparent !important;
+  border: 1px solid rgba(255,255,255,.2) !important;
+  color: rgba(255,255,255,.6) !important;
+  font-size: 13px !important;
+  display: inline-flex !important;
+  align-items: center !important;
+  justify-content: center !important;
+  padding: 0 !important;
+}
+.help-btn:hover,
+.btn-icon:hover {
+  border-color: rgba(255,255,255,.5) !important;
+  color: #fff !important;
+}
+
+/* ── Kleine variant ── */
+.btn-sm,
+.btn.btn-sm {
+  padding: 5px 12px !important;
+  font-size: 12px !important;
+}
+
+/* ── Gevaar knop ── */
+.btn-danger {
+  background: #fff4f4 !important;
+  color: #c0392b !important;
+  border: 1.5px solid #f5c6c6 !important;
+  padding: 9px 18px !important;
+}
+.btn-danger:hover {
+  background: #ffe5e5 !important;
+  border-color: #e0a0a0 !important;
+}
+
+/* ── Icon-only knoppen ── */
+.btn-icon,
+.btn-icon-del,
+.btn-del-row,
+.btn-status {
+  padding: 6px 8px !important;
+  border-radius: 4px !important;
+  font-size: 13px !important;
+}
+
+/* ══════════════════════════════════════════════════════════════════════
+   INPUT SYSTEM — uniforme formuliervelden
+══════════════════════════════════════════════════════════════════════ */
+
+input[type="text"],
+input[type="number"],
+input[type="email"],
+input[type="date"],
+input[type="time"],
+input[type="search"],
+input[type="password"],
+input[type="tel"],
+input[type="url"],
+textarea,
+select,
+.form-input,
+.form-select,
+.search-input,
+.input {
+  font-family: var(--font-ui) !important;
+  font-size: 13px !important;
+  font-weight: 400 !important;
+  color: #2c2620 !important;
+  background: #ffffff !important;
+  border: 1.5px solid #d8d3ce !important;
+  border-radius: 6px !important;
+  padding: 8px 12px !important;
+  transition: border-color 0.15s, box-shadow 0.15s !important;
+  outline: none !important;
+  letter-spacing: 0 !important;
+}
+input[type="text"]:focus,
+input[type="number"]:focus,
+input[type="email"]:focus,
+input[type="date"]:focus,
+input[type="time"]:focus,
+input[type="search"]:focus,
+textarea:focus,
+select:focus,
+.form-input:focus,
+.form-select:focus,
+.search-input:focus,
+.input:focus {
+  border-color: #E8B84B !important;
+  box-shadow: 0 0 0 3px rgba(232,184,75,.15) !important;
+}
+
+/* placeholder kleur */
+input::placeholder, textarea::placeholder { color: #b0a89e !important; }
+
+/* select arrow */
+select {
+  appearance: auto !important;
+  cursor: pointer !important;
+}
+
+/* ══════════════════════════════════════════════════════════════════════
+   BUTTON BASE — alle <button> elementen ongeacht klasse
+   Zorgt voor consistente typografie + radius als minimum
+══════════════════════════════════════════════════════════════════════ */
+button {
+  font-family: 'Inter', -apple-system, 'system-ui', sans-serif !important;
+  font-size: 13px !important;
+  font-weight: 500 !important;
+  letter-spacing: 0 !important;
+  text-transform: none !important;
+  border-radius: 6px !important;
+  cursor: pointer !important;
+}
+
+/* ══════════════════════════════════════════════════════════════════════
+   ONTBREKENDE BUTTON-KLASSEN — per module aliases
+══════════════════════════════════════════════════════════════════════ */
+
+/* Primaire actie (goud) — alle varianten */
+.btn-lime,
+.btn-primair,
+.btn-primary {
+  background: #E8B84B !important;
+  color: #1a1612 !important;
+  border: 1.5px solid #E8B84B !important;
+  padding: 9px 18px !important;
+  font-weight: 600 !important;
+  border-radius: 6px !important;
+}
+.btn-lime:hover,
+.btn-primair:hover,
+.btn-primary:hover {
+  background: #d4a43a !important;
+  border-color: #d4a43a !important;
+}
+
+/* Secundaire actie (outlined) — alle varianten */
+.btn-secundair,
+.btn-koppel,
+.btn-change,
+.btn-row,
+.btn-rec,
+.btn-back-grid,
+.btn-back {
+  background: #ffffff !important;
+  color: #2c2620 !important;
+  border: 1.5px solid #d0cbc5 !important;
+  padding: 8px 16px !important;
+  border-radius: 6px !important;
+}
+.btn-secundair:hover,
+.btn-koppel:hover,
+.btn-change:hover,
+.btn-row:hover,
+.btn-rec:hover {
+  border-color: #a09688 !important;
+  color: #1a1612 !important;
+}
+
+/* Gevaar (rood) — alle varianten */
+.btn-gevaar,
+.btn-danger {
+  background: #fff4f4 !important;
+  color: #c0392b !important;
+  border: 1.5px solid #f5c6c6 !important;
+  padding: 9px 18px !important;
+  border-radius: 6px !important;
+}
+.btn-gevaar:hover,
+.btn-danger:hover {
+  background: #ffe5e5 !important;
+  border-color: #e0a0a0 !important;
+}
+
+/* Header export/actie knoppen (donkere header, transparant) */
+.btn-print,
+.btn-icon:not(.btn-danger):not(.btn-primary) {
+  background: transparent !important;
+  color: rgba(255,255,255,.75) !important;
+  border: 1px solid rgba(255,255,255,.2) !important;
+  padding: 6px 12px !important;
+  border-radius: 6px !important;
+  font-size: 12px !important;
+}
+.btn-print:hover,
+.btn-icon:not(.btn-danger):not(.btn-primary):hover {
+  color: #fff !important;
+  border-color: rgba(255,255,255,.5) !important;
+}
+/* Actieve export knop = goud-highlight in header */
+.btn-print.btn-print-ks {
+  background: rgba(232,184,75,.15) !important;
+  color: #E8B84B !important;
+  border-color: rgba(232,184,75,.4) !important;
+}
+
+/* Filter chips (pill stijl) */
+.filter-btn,
+.rpc-filter-chip {
+  background: #ffffff !important;
+  color: #6b6460 !important;
+  border: 1px solid #e0dbd5 !important;
+  border-radius: 20px !important;
+  padding: 5px 14px !important;
+  font-size: 12px !important;
+  font-weight: 500 !important;
+}
+.filter-btn:hover,
+.rpc-filter-chip:hover {
+  border-color: #c4b99a !important;
+  color: #2c2620 !important;
+}
+.filter-btn.active,
+.rpc-filter-chip.active {
+  background: #E8B84B !important;
+  border-color: #E8B84B !important;
+  color: #1a1612 !important;
+  font-weight: 600 !important;
+}
+
+/* Mode toggle knoppen */
+.mode-btn {
+  background: #f5f2ee !important;
+  color: #6b6460 !important;
+  border: 1px solid #e0dbd5 !important;
+  padding: 6px 14px !important;
+  border-radius: 6px !important;
+  font-size: 12px !important;
+}
+.mode-btn.active,
+.mode-btn:is(.active) {
+  background: #2c2620 !important;
+  color: #ffffff !important;
+  border-color: #2c2620 !important;
 }

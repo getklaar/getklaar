@@ -110,6 +110,26 @@ async function klaarRequireAuth() {
  * @returns {Promise<Object>}     - Zelfde response als Anthropic API
  */
 async function klaarAI(anthropicBody, moduleName = 'onbekend') {
+  // Dev mode: directe Anthropic call als dev-API-sleutel beschikbaar is
+  const devKey = localStorage.getItem('klaar_devmode') === 'klaar2026'
+    ? localStorage.getItem('klaar_dev_api_key') : null
+  if (devKey) {
+    const body = { ...anthropicBody }
+    delete body.stream
+    const r = await fetch('https://api.anthropic.com/v1/messages', {
+      method: 'POST',
+      headers: {
+        'Content-Type': 'application/json',
+        'x-api-key': devKey,
+        'anthropic-version': '2023-06-01',
+        'anthropic-dangerous-direct-browser-access': 'true',
+      },
+      body: JSON.stringify(body),
+    })
+    if (!r.ok) { const e = await r.json().catch(() => ({})); throw new Error(e.error?.message || `API fout ${r.status}`) }
+    return r.json()
+  }
+
   const session = await klaarGetSession()
   if (!session) throw new Error('Niet ingelogd — klaarAI vereist authenticatie')
 
@@ -142,6 +162,22 @@ async function klaarAI(anthropicBody, moduleName = 'onbekend') {
  * @returns {Promise<Response>}   - Raw fetch Response voor SSE verwerking
  */
 async function klaarAIStream(anthropicBody, moduleName = 'onbekend') {
+  // Dev mode: directe Anthropic streaming call als dev-API-sleutel beschikbaar is
+  const devKey = localStorage.getItem('klaar_devmode') === 'klaar2026'
+    ? localStorage.getItem('klaar_dev_api_key') : null
+  if (devKey) {
+    return fetch('https://api.anthropic.com/v1/messages', {
+      method: 'POST',
+      headers: {
+        'Content-Type': 'application/json',
+        'x-api-key': devKey,
+        'anthropic-version': '2023-06-01',
+        'anthropic-dangerous-direct-browser-access': 'true',
+      },
+      body: JSON.stringify({ ...anthropicBody, stream: true }),
+    })
+  }
+
   const session = await klaarGetSession()
   if (!session) throw new Error('Niet ingelogd — klaarAIStream vereist authenticatie')
 
@@ -179,16 +215,22 @@ window.addEventListener('DOMContentLoaded', function () {
     b.id = '_klaarDevBanner'
     b.style.cssText = [
       'position:fixed', 'bottom:0', 'left:0', 'right:0', 'z-index:99999',
-      'background:#e8ff47', 'color:#0a0a0a',
+      'background:#E8B84B', 'color:#0a0a0a',
       'font-family:monospace', 'font-size:11px', 'font-weight:700',
       'padding:5px 16px', 'text-align:center', 'letter-spacing:1px',
       'display:flex', 'align-items:center', 'justify-content:center', 'gap:16px'
     ].join(';')
-    b.innerHTML = '⚙ DEV MODUS — Auth uitgeschakeld (AI proxy vereist nog echte login)' +
-      ' <button onclick="localStorage.removeItem(\'klaar_devmode\');location.reload();" ' +
-      'style="background:none;border:1px solid #0a0a0a;color:#0a0a0a;cursor:pointer;' +
-      'font-family:monospace;font-size:11px;font-weight:700;padding:2px 10px;letter-spacing:1px;">' +
-      'Uitschakelen</button>'
+    const hasKey = !!localStorage.getItem('klaar_dev_api_key')
+    b.innerHTML = '⚙ DEV MODUS' +
+      (hasKey ? ' — AI actief ✓' : ' — AI UIT (geen sleutel)') +
+      ' &nbsp;|&nbsp; API-sleutel: ' +
+      '<input id="_devKeyInput" type="password" placeholder="sk-ant-..." value="' +
+      (localStorage.getItem('klaar_dev_api_key') || '') + '"' +
+      ' style="font-family:monospace;font-size:11px;padding:2px 8px;width:240px;border:1px solid #0a0a0a;background:#fff;color:#0a0a0a;" />' +
+      ' <button onclick="var k=document.getElementById(\'_devKeyInput\').value.trim();if(k){localStorage.setItem(\'klaar_dev_api_key\',k);}else{localStorage.removeItem(\'klaar_dev_api_key\');}location.reload();"' +
+      ' style="background:#0a0a0a;border:none;color:#E8B84B;cursor:pointer;font-family:monospace;font-size:11px;font-weight:700;padding:3px 10px;">Opslaan</button>' +
+      ' <button onclick="localStorage.removeItem(\'klaar_devmode\');localStorage.removeItem(\'klaar_dev_api_key\');location.reload();"' +
+      ' style="background:none;border:1px solid #0a0a0a;color:#0a0a0a;cursor:pointer;font-family:monospace;font-size:11px;font-weight:700;padding:2px 10px;">Uitschakelen</button>'
     document.body.appendChild(b)
   }
 })
@@ -228,10 +270,10 @@ window.addEventListener('DOMContentLoaded', function () {
   letter-spacing:.09em; text-transform:uppercase; transition:all .15s;
   white-space:nowrap; flex-shrink:0;
 }
-#_kNavBtn:hover, #_kNavBtn._open { border-color:var(--lime,#e8ff47); color:var(--lime,#e8ff47); }
+#_kNavBtn:hover, #_kNavBtn._open { border-color:var(--lime,#E8B84B); color:var(--lime,#E8B84B); }
 #_kNavPanel {
   position:fixed; top:58px; right:14px; z-index:9100;
-  background:var(--surface,#111); border:1px solid var(--border2,#333);
+  background:var(--surface,#1E1B17); border:1px solid var(--border2,#333);
   min-width:220px; padding:5px 0;
   box-shadow:0 12px 44px rgba(0,0,0,.85);
   display:none;
@@ -244,7 +286,7 @@ window.addEventListener('DOMContentLoaded', function () {
   font-family:'DM Mono',monospace; letter-spacing:.08em; text-transform:uppercase;
   transition:color .1s; text-decoration:none;
 }
-._kHome:hover { color:var(--lime,#e8ff47); }
+._kHome:hover { color:var(--lime,#E8B84B); }
 ._kSep { height:1px; background:var(--border,#222); margin:4px 0; }
 ._kMod {
   display:flex; align-items:center; gap:9px;
@@ -253,10 +295,10 @@ window.addEventListener('DOMContentLoaded', function () {
   font-family:'DM Sans',sans-serif; transition:all .1s;
   border-left:2px solid transparent;
 }
-._kMod:hover { background:rgba(232,255,71,.05); color:var(--white,#eee); border-left-color:rgba(232,255,71,.25); }
-._kMod.cur { color:var(--lime,#e8ff47); border-left-color:var(--lime,#e8ff47); background:rgba(232,255,71,.07); }
+._kMod:hover { background:rgba(232,184,75,.05); color:var(--white,#eee); border-left-color:rgba(232,184,75,.25); }
+._kMod.cur { color:var(--lime,#E8B84B); border-left-color:var(--lime,#E8B84B); background:rgba(232,184,75,.07); }
 ._kNum { font-family:'DM Mono',monospace; font-size:9px; letter-spacing:.1em; color:var(--border2,#444); width:20px; flex-shrink:0; }
-._kMod.cur ._kNum { color:rgba(232,255,71,.5); }
+._kMod.cur ._kNum { color:rgba(232,184,75,.5); }
 `
     document.head.appendChild(sty)
 
@@ -327,7 +369,7 @@ window.addEventListener('DOMContentLoaded', function () {
     sty.textContent = `
 #_kAISide {
   position: fixed; top: 0; right: -320px; bottom: 0; width: 320px;
-  background: #111; border-left: 1px solid rgba(232,255,71,0.18);
+  background: #1E1B17; border-left: 1px solid rgba(232,184,75,0.18);
   display: flex; flex-direction: column; z-index: 8000;
   transition: right 0.25s cubic-bezier(0.2,0,0,1);
   font-family: 'DM Sans', sans-serif;
@@ -335,18 +377,18 @@ window.addEventListener('DOMContentLoaded', function () {
 #_kAISide._open { right: 0; }
 #_kAIHead {
   padding: 0 16px; height: 52px; display: flex; align-items: center;
-  justify-content: space-between; border-bottom: 1px solid rgba(232,255,71,0.15);
+  justify-content: space-between; border-bottom: 1px solid rgba(232,184,75,0.15);
   flex-shrink: 0;
 }
 #_kAIHeadTitle {
   font-family: 'Bebas Neue', 'DM Sans', sans-serif; font-size: 18px;
-  letter-spacing: 1px; color: #e8ff47;
+  letter-spacing: 1px; color: #E8B84B;
 }
 #_kAIClose {
   background: none; border: none; color: #888; cursor: pointer;
   font-size: 18px; padding: 4px 8px; transition: color 0.1s;
 }
-#_kAIClose:hover { color: #e8ff47; }
+#_kAIClose:hover { color: #E8B84B; }
 #_kAIMsgs {
   flex: 1; overflow-y: auto; padding: 14px 14px 8px; display: flex;
   flex-direction: column; gap: 8px; scroll-behavior: smooth;
@@ -354,27 +396,27 @@ window.addEventListener('DOMContentLoaded', function () {
 #_kAIMsgs::-webkit-scrollbar { width: 3px; }
 #_kAIMsgs::-webkit-scrollbar-thumb { background: #333; }
 ._kAIBot {
-  background: #1a1a1a; border: 1px solid #2a2a2a;
+  background: #252220; border: 1px solid #2a2a2a;
   padding: 9px 12px; font-size: 13px; color: #f5f2eb;
   line-height: 1.6; align-self: flex-start; max-width: 92%;
 }
 ._kAIUser {
-  background: #e8ff47; color: #0a0a0a;
+  background: #E8B84B; color: #0a0a0a;
   padding: 8px 12px; font-size: 13px; font-weight: 500;
   align-self: flex-end; max-width: 86%;
 }
 #_kAISuggest {
   padding: 6px 14px 8px; display: flex; flex-wrap: wrap; gap: 5px;
-  border-top: 1px solid rgba(232,255,71,0.08);
+  border-top: 1px solid rgba(232,184,75,0.08);
 }
 ._kAISugg {
   font-family: 'DM Mono', monospace; font-size: 9px; letter-spacing: 0.5px;
   border: 1px solid #2a2a2a; color: #888; background: none;
   padding: 4px 8px; cursor: pointer; transition: all 0.1s;
 }
-._kAISugg:hover { border-color: #e8ff47; color: #e8ff47; }
+._kAISugg:hover { border-color: #E8B84B; color: #E8B84B; }
 #_kAIInputRow {
-  border-top: 1px solid rgba(232,255,71,0.15);
+  border-top: 1px solid rgba(232,184,75,0.15);
   display: flex; flex-shrink: 0;
 }
 #_kAIInput {
@@ -388,11 +430,11 @@ window.addEventListener('DOMContentLoaded', function () {
   color: #888; cursor: pointer; padding: 0 10px; font-size: 15px;
   transition: color 0.1s;
 }
-#_kAIVoice:hover, #_kAIVoice._rec { color: #e8ff47; }
+#_kAIVoice:hover, #_kAIVoice._rec { color: #E8B84B; }
 #_kAIVoice._rec { animation: _kPulse 1s infinite; }
 @keyframes _kPulse { 0%,100%{opacity:1} 50%{opacity:0.4} }
 #_kAISend {
-  background: #e8ff47; border: none; color: #0a0a0a;
+  background: #E8B84B; border: none; color: #0a0a0a;
   font-family: 'DM Mono', monospace; font-size: 11px; font-weight: 700;
   padding: 0 16px; cursor: pointer; letter-spacing: 1px; transition: opacity 0.1s;
 }
@@ -400,13 +442,13 @@ window.addEventListener('DOMContentLoaded', function () {
 #_kAIToggle {
   display: flex; align-items: center; gap: 6px;
   padding: 0 12px; height: 28px;
-  background: none; border: 1px solid rgba(232,255,71,0.35);
-  color: #e8ff47; cursor: pointer;
+  background: none; border: 1px solid rgba(232,184,75,0.35);
+  color: #E8B84B; cursor: pointer;
   font-family: 'DM Mono', monospace; font-size: 10px;
   letter-spacing: .09em; text-transform: uppercase; transition: all .15s;
   white-space: nowrap; flex-shrink: 0;
 }
-#_kAIToggle:hover { background: rgba(232,255,71,0.08); }
+#_kAIToggle:hover { background: rgba(232,184,75,0.08); }
 `
     document.head.appendChild(sty)
 
@@ -584,8 +626,8 @@ function _klaarInjectVoice() {
       rec.lang = 'nl-NL'
       rec.interimResults = true
       rec.maxAlternatives = 1
-      btn.style.color = '#e8ff47'
-      btn.style.borderColor = '#e8ff47'
+      btn.style.color = '#E8B84B'
+      btn.style.borderColor = '#E8B84B'
 
       rec.onresult = function (e) {
         let final = '', interim = ''
@@ -636,6 +678,23 @@ window.klaarAIStream      = klaarAIStream
 // Het Anthropic streaming formaat (SSE) is identiek, dus de modules
 // werken zonder aanpassingen.
 window.klaarAIStream = async function (anthropicBody, moduleName) {
+  // Dev mode: directe Anthropic streaming call (werkt ook lokaal)
+  const devKey = localStorage.getItem('klaar_devmode') === 'klaar2026'
+    ? localStorage.getItem('klaar_dev_api_key') : null
+  if (devKey) {
+    return fetch('https://api.anthropic.com/v1/messages', {
+      method: 'POST',
+      headers: {
+        'Content-Type': 'application/json',
+        'x-api-key': devKey,
+        'anthropic-version': '2023-06-01',
+        'anthropic-dangerous-direct-browser-access': 'true',
+      },
+      body: JSON.stringify({ ...anthropicBody, stream: true }),
+    })
+  }
+
+  // Productie: route via Vercel /api/demo-chat
   const msgs      = anthropicBody.messages || []
   const lastMsg   = msgs[msgs.length - 1]
   const message   = typeof lastMsg?.content === 'string'
@@ -649,9 +708,7 @@ window.klaarAIStream = async function (anthropicBody, moduleName) {
     }
   })
 
-  // Pass the module's own rich system prompt as systemContext
   const systemContext = anthropicBody.system || ''
-  // Pass max_tokens from module (HACCP=2048, Leveranciers=8192, etc.) — demo-chat caps at 1500
   const maxTokens = anthropicBody.max_tokens || 600
 
   return fetch('/api/demo-chat', {

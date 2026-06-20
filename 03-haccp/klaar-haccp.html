@@ -9,9 +9,9 @@
 <link href="https://fonts.googleapis.com/css2?family=Bebas+Neue&family=DM+Mono:wght@400;500&family=DM+Sans:wght@400;500;600&display=swap" rel="stylesheet">
 <style>
   :root {
-    --black: #0a0a0a;
+    --black: #1E1B17;
     --border: #222222;
-    --lime: #e8ff47;
+    --lime: #E8B84B;
     --bg: #f5f5f3;
     --surface: #ffffff;
     --text: #111111;
@@ -100,9 +100,10 @@
   .tab-bar::-webkit-scrollbar { display: none; }
 
   .tab-btn {
-    font-family: 'DM Mono', monospace;
-    font-size: 11px;
-    letter-spacing: 0.06em;
+    font-family: 'Inter', sans-serif;
+    font-size: 13px;
+    font-weight: 500;
+    letter-spacing: 0;
     color: var(--muted);
     background: none;
     border: none;
@@ -112,12 +113,13 @@
     white-space: nowrap;
     cursor: pointer;
     transition: color 0.15s, border-color 0.15s;
-    text-transform: uppercase;
+    text-transform: none;
   }
   .tab-btn:hover { color: var(--text); }
   .tab-btn.active {
     color: var(--text);
-    border-bottom-color: var(--lime);
+    border-bottom-color: #E8B84B;
+    font-weight: 600;
   }
 
   /* ── CONTENT SCROLL ── */
@@ -309,21 +311,21 @@
   }
 
   .dash-stat {
-    background: var(--surface);
-    border: 1px solid #e5e5e5;
-    border-radius: 8px;
-    padding: 18px 20px;
+    background: #fff;
+    border: 1px solid #e8e8e8;
+    border-radius: 6px;
+    padding: 20px 22px;
     display: flex;
-    align-items: center;
-    gap: 16px;
+    flex-direction: column;
+    gap: 0;
     cursor: pointer;
     transition: border-color 0.15s, box-shadow 0.15s;
   }
-  .dash-stat:hover { border-color: var(--text); box-shadow: 0 2px 8px rgba(0,0,0,0.06); }
-  .dash-stat-icon { font-size: 24px; flex-shrink: 0; }
-  .dash-stat-label { font-size: 12px; color: var(--muted); margin-bottom: 2px; }
-  .dash-stat-value { font-size: 18px; font-weight: 600; color: var(--text); }
-  .dash-stat-chip { margin-top: 4px; }
+  .dash-stat:hover { border-color: #111; box-shadow: 0 2px 8px rgba(0,0,0,0.06); }
+  .dash-stat-icon { display: none; }
+  .dash-stat-label { font-size: 11px; font-weight: 600; color: #777; letter-spacing: 0.05em; text-transform: uppercase; margin-bottom: 8px; }
+  .dash-stat-value { font-family: 'Bebas Neue', sans-serif; font-size: 36px; color: #111; line-height: 1; letter-spacing: 0.02em; }
+  .dash-stat-chip { margin-top: 10px; }
 
   /* ── TEMP INPUT (big, tablet-friendly) ── */
   .temp-input-big {
@@ -511,7 +513,7 @@
   .ontvangst-del-btn {
     width: 28px; height: 28px; border-radius: 50%;
     border: 1px solid #e0e0de; background: white;
-    color: #aaa; font-size: 13px; cursor: pointer;
+    color: #888; font-size: 13px; cursor: pointer;
     display: flex; align-items: center; justify-content: center;
     transition: all 0.15s; flex-shrink: 0;
   }
@@ -665,7 +667,7 @@
   /* ── HELP KNOP ── */
   .btn-help {
     background: transparent; border: 1px solid #333;
-    color: #aaa; cursor: pointer; padding: 5px 10px;
+    color: #888; cursor: pointer; padding: 5px 10px;
     border-radius: 4px; font-size: 13px;
     font-family: 'DM Mono', monospace; letter-spacing: 0.06em;
     transition: all 0.15s; margin-right: 8px;
@@ -730,9 +732,6 @@
   .help-card.green { border-left-color: var(--green); }
   .help-card.green .help-card-title { color: #166534; }
 </style>
-
-  <link rel="stylesheet" href="../klaar-shared.css">
-
   <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2/dist/umd/supabase.min.js"></script>
   <script src="../klaar-client.js"></script>
 </head>
@@ -740,7 +739,7 @@
 
 <!-- ── HEADER ── -->
 <header class="header">
-  <a href="../index.html" class="header-back">← TERUG</a>
+  <a href="../dashboard/index.html" class="header-back">← Dashboard</a>
   <div class="header-logo">KLAAR</div>
   <div class="header-module">03 — HACCP & VOEDSELVEILIGHEID</div>
   <div class="header-spacer"></div>
@@ -785,7 +784,7 @@
     <div class="help-modal-body">
 
       <div class="help-section">
-        <div class="help-section-title">📊 Dashboard</div>
+        <div class="help-section-title"> Dashboard</div>
         <div class="help-text" style="margin-bottom:10px;">Het dashboard geeft een dagelijks overzicht: hoeveel temperatuurmetingen zijn gedaan, welke leveringen zijn geregistreerd en hoeveel open afwijkingen er zijn. Klik op een tegel om direct naar die functie te gaan.</div>
         <div class="help-card warn">
           <div class="help-card-title">⚠️ Ontvangst-controles (Module 07)</div>
@@ -794,28 +793,28 @@
       </div>
 
       <div class="help-section">
-        <div class="help-section-title">🌡️ Temperatuurregistratie</div>
+        <div class="help-section-title"> Temperatuurregistratie</div>
         <div class="help-row"><div class="help-num">1</div><div class="help-text">Beheer je <strong>koeleenheden</strong> (koelkast, vriezer, bain-marie) via "Koeleenheden beheren". Stel per eenheid de normtemperatuur in.</div></div>
         <div class="help-row"><div class="help-num">2</div><div class="help-text">Voer dagelijks metingen in. Het systeem vergelijkt automatisch met de norm:<br>Koelkast ≤ 7°C · Vlees/vis ≤ 4°C · Vriezer ≤ −18°C · Warmhoud ≥ 60°C</div></div>
         <div class="help-row"><div class="help-num">3</div><div class="help-text">Bij een afwijking is een <strong>corrigerende maatregel verplicht</strong>. De afwijking wordt automatisch opgeslagen in het Afwijkingenlog.</div></div>
       </div>
 
       <div class="help-section">
-        <div class="help-section-title">🚚 Ingangscontrole Leveranciers</div>
+        <div class="help-section-title"> Ingangscontrole Leveranciers</div>
         <div class="help-row"><div class="help-num">1</div><div class="help-text">Registreer elke levering: leverancier, product, temperatuur bij ontvangst en naam medewerker.</div></div>
         <div class="help-row"><div class="help-num">2</div><div class="help-text">Kies <strong>Geaccepteerd</strong> of <strong>Afgekeurd</strong>. Bij afkeuring is een reden verplicht — dit maakt automatisch een afwijking aan.</div></div>
         <div class="help-row"><div class="help-num">3</div><div class="help-text">Statistieken per leverancier tonen hoeveel leveringen zijn afgekeurd — handig voor evaluaties.</div></div>
       </div>
 
       <div class="help-section">
-        <div class="help-section-title">🧹 Schoonmaakrooster</div>
+        <div class="help-section-title"> Schoonmaakrooster</div>
         <div class="help-row"><div class="help-num">1</div><div class="help-text">Maak taken aan per frequentie: <strong>dagelijks</strong>, <strong>wekelijks</strong> of <strong>maandelijks</strong>.</div></div>
         <div class="help-row"><div class="help-num">2</div><div class="help-text">Vink taken af met naam medewerker. Het tijdstip wordt automatisch geregistreerd.</div></div>
         <div class="help-row"><div class="help-num">3</div><div class="help-text">Voortgangsscores per categorie laten zien hoe goed het schoonmaakschema gevolgd wordt.</div></div>
       </div>
 
       <div class="help-section">
-        <div class="help-section-title">⚡ Afwijkingenlog</div>
+        <div class="help-section-title"> Afwijkingenlog</div>
         <div class="help-text" style="margin-bottom:8px;">Afwijkingen worden automatisch aangemaakt vanuit temperatuurmetingen en afgekeurde leveringen. Je kunt ook handmatig afwijkingen toevoegen.</div>
         <div class="help-row"><div class="help-num">!</div><div class="help-text">Sluit een afwijking zodra de corrigerende maatregel is uitgevoerd. Open afwijkingen zijn zichtbaar op het dashboard.</div></div>
       </div>
@@ -830,7 +829,7 @@
       </div>
 
       <div class="help-section">
-        <div class="help-section-title">🌿 Green Key Checklist</div>
+        <div class="help-section-title"> Green Key Checklist</div>
         <div class="help-text" style="margin-bottom:8px;">12 duurzaamheidsthema's (energie, water, afval, etc.) met Ja / Deels / Nee per norm. Het systeem berekent je score en indicatieniveau:</div>
         <div class="help-card">
           <div class="help-card-title">Scores</div>
@@ -869,7 +868,7 @@
 
     <div class="grid-3" style="margin-bottom:24px">
       <div class="dash-stat" onclick="goTab('temperatuur')">
-        <div class="dash-stat-icon">🌡️</div>
+        <div class="dash-stat-icon"></div>
         <div>
           <div class="dash-stat-label">Temperatuur koeling</div>
           <div class="dash-stat-value" id="dash-temp-value">—</div>
@@ -877,7 +876,7 @@
         </div>
       </div>
       <div class="dash-stat" onclick="goTab('leveranciers')">
-        <div class="dash-stat-icon">🚚</div>
+        <div class="dash-stat-icon"></div>
         <div>
           <div class="dash-stat-label">Ingangscontrole</div>
           <div class="dash-stat-value" id="dash-lev-value">—</div>
@@ -886,7 +885,7 @@
         </div>
       </div>
       <div class="dash-stat" onclick="goTab('schoonmaak')">
-        <div class="dash-stat-icon">🧹</div>
+        <div class="dash-stat-icon"></div>
         <div>
           <div class="dash-stat-label">Schoonmaak vandaag</div>
           <div class="dash-stat-value" id="dash-clean-value">—</div>
@@ -905,7 +904,7 @@
         </div>
         <div id="dash-afw-list">
           <div class="empty">
-            <div class="empty-icon">✅</div>
+            <div class="empty-icon">✓</div>
             <div class="empty-title">Geen open afwijkingen</div>
           </div>
         </div>
@@ -914,7 +913,7 @@
         <div class="card-title">Vandaag geregistreerd</div>
         <div id="dash-today-list">
           <div class="empty">
-            <div class="empty-icon">📋</div>
+            <div class="empty-icon"></div>
             <div class="empty-title">Nog niets geregistreerd</div>
             <div class="empty-text">Voeg temperatuurmetingen en leverancierscontroles toe.</div>
           </div>
@@ -940,7 +939,7 @@
         <div class="card-title">Vandaag</div>
         <div id="temp-vandaag-list">
           <div class="empty">
-            <div class="empty-icon">🌡️</div>
+            <div class="empty-icon"></div>
             <div class="empty-title">Nog geen metingen vandaag</div>
             <div class="empty-text">Klik op "+ Nieuwe meting" om te beginnen.</div>
           </div>
@@ -952,7 +951,7 @@
       <div class="card-title">Geschiedenis</div>
       <div id="temp-history">
         <div class="empty">
-          <div class="empty-icon">📊</div>
+          <div class="empty-icon"></div>
           <div class="empty-title">Geen historische data</div>
         </div>
       </div>
@@ -1000,7 +999,7 @@
             </tr>
           </thead>
           <tbody id="lev-tbody">
-            <tr><td colspan="7"><div class="empty"><div class="empty-icon">🚚</div><div class="empty-title">Nog geen leveringen geregistreerd</div></div></td></tr>
+            <tr><td colspan="7"><div class="empty"><div class="empty-icon"></div><div class="empty-title">Nog geen leveringen geregistreerd</div></div></td></tr>
           </tbody>
         </table>
       </div>
@@ -1074,7 +1073,7 @@
           </tr>
         </thead>
         <tbody id="afw-tbody">
-          <tr><td colspan="7"><div class="empty"><div class="empty-icon">✅</div><div class="empty-title">Geen afwijkingen geregistreerd</div></div></td></tr>
+          <tr><td colspan="7"><div class="empty"><div class="empty-icon">✓</div><div class="empty-title">Geen afwijkingen geregistreerd</div></div></td></tr>
         </tbody>
       </table>
     </div>
@@ -1113,7 +1112,7 @@
     <div class="section-sub">Indicatieve zelfevaluatie — officiële beoordeling via greenkey.nl</div>
 
     <div class="alert alert-info">
-      <span>🌿</span>
+      <span></span>
       <div>Green Key is een internationaal duurzaamheidskeurmerk voor de horeca. Deze checklist is <strong>indicatief</strong> — de officiële beoordeling en certificering verloopt via <a href="https://greenkey.nl" target="_blank" style="color:inherit">greenkey.nl</a>.</div>
     </div>
 
@@ -1124,9 +1123,9 @@
       <div class="progress-bar-wrap"><div class="progress-bar-fill" id="gk-total-bar" style="width:0%"></div></div>
       <div style="display:flex;gap:16px;margin-top:12px;font-size:12px;color:var(--muted);font-family:'DM Mono',monospace">
         <span>&lt;50% = Niet klaar</span>
-        <span>50–75% = 🥉 Brons</span>
-        <span>75–90% = 🥈 Zilver</span>
-        <span>&gt;90% = 🥇 Goud</span>
+        <span>50–75% = 3 Brons</span>
+        <span>75–90% = 2 Zilver</span>
+        <span>&gt;90% = 1 Goud</span>
       </div>
     </div>
 
@@ -1357,11 +1356,11 @@
     <div class="form-group">
       <label class="form-label">Type</label>
       <select id="afw-type" class="form-input" onchange="afwTypeChange()">
-        <option value="Temperatuurafwijking">🌡️ Temperatuurafwijking</option>
+        <option value="Temperatuurafwijking"> Temperatuurafwijking</option>
         <option value="Productkwaliteit">⚠️ Productkwaliteit</option>
-        <option value="THT overschreden">📅 THT overschreden</option>
+        <option value="THT overschreden"> THT overschreden</option>
         <option value="Besmettingsrisico">🦠 Besmettingsrisico</option>
-        <option value="Ontvangstcontrole afwijking">📦 Ontvangstcontrole afwijking</option>
+        <option value="Ontvangstcontrole afwijking"> Ontvangstcontrole afwijking</option>
         <option value="Anders">📝 Anders</option>
       </select>
     </div>
@@ -1477,7 +1476,7 @@ function initDashboard() {
   const afw = ls.get('klaar_haccp_afwijkingen', []).filter(a => a.status === 'open');
   const afwList = document.getElementById('dash-afw-list');
   if (afw.length === 0) {
-    afwList.innerHTML = '<div class="empty"><div class="empty-icon">✅</div><div class="empty-title">Geen open afwijkingen</div></div>';
+    afwList.innerHTML = '<div class="empty"><div class="empty-icon">✓</div><div class="empty-title">Geen open afwijkingen</div></div>';
   } else {
     afwList.innerHTML = afw.slice(0, 5).map(a =>
       `<div style="padding:8px 0;border-bottom:1px solid #f0f0f0;display:flex;justify-content:space-between;align-items:center">
@@ -1490,11 +1489,11 @@ function initDashboard() {
   // Vandaag geregistreerd
   const todayList = document.getElementById('dash-today-list');
   const items = [
-    ...koeling.map(m => ({ icon: '🌡️', label: `${m.eenheidNaam}: ${m.temperatuur}°C`, chip: m.afwijking ? 'red' : 'green', chipLabel: m.afwijking ? 'Afwijking' : 'OK' })),
-    ...leveringen.map(l => ({ icon: '🚚', label: `${l.leverancier}: ${l.product}`, chip: l.status === 'geaccepteerd' ? 'green' : 'red', chipLabel: l.status === 'geaccepteerd' ? 'Geaccepteerd' : 'Afgekeurd' }))
+    ...koeling.map(m => ({ icon: '', label: `${m.eenheidNaam}: ${m.temperatuur}°C`, chip: m.afwijking ? 'red' : 'green', chipLabel: m.afwijking ? 'Afwijking' : 'OK' })),
+    ...leveringen.map(l => ({ icon: '', label: `${l.leverancier}: ${l.product}`, chip: l.status === 'geaccepteerd' ? 'green' : 'red', chipLabel: l.status === 'geaccepteerd' ? 'Geaccepteerd' : 'Afgekeurd' }))
   ];
   if (items.length === 0) {
-    todayList.innerHTML = '<div class="empty"><div class="empty-icon">📋</div><div class="empty-title">Nog niets geregistreerd</div></div>';
+    todayList.innerHTML = '<div class="empty"><div class="empty-icon"></div><div class="empty-title">Nog niets geregistreerd</div></div>';
   } else {
     todayList.innerHTML = items.map(i =>
       `<div style="padding:8px 0;border-bottom:1px solid #f0f0f0;display:flex;justify-content:space-between;align-items:center">
@@ -1575,7 +1574,7 @@ function renderMetingEenheidSelect() {
   if (eenheden.length === 0) {
     sel.innerHTML = '<option value="">Eerst koeleenheden toevoegen</option>';
   } else {
-    sel.innerHTML = eenheden.map(e => `<option value="${e.id}" data-norm="${e.maxNorm}" data-naam="${e.naam}">${e.naam} (max ${e.maxNorm}°C)</option>`).join('');
+    sel.innerHTML = eenheden.map(e => `<option value="${escH(e.id)}" data-norm="${escH(String(e.maxNorm))}" data-naam="${escH(e.naam)}">${escH(e.naam)} (max ${escH(String(e.maxNorm))}°C)</option>`).join('');
   }
   checkMetingTemp();
 }
@@ -1671,7 +1670,7 @@ function renderTempVandaag() {
   const koeling = ls.get('klaar_haccp_koeling', []).filter(m => m.datum === d);
   const el = document.getElementById('temp-vandaag-list');
   if (koeling.length === 0) {
-    el.innerHTML = '<div class="empty"><div class="empty-icon">🌡️</div><div class="empty-title">Nog geen metingen vandaag</div><div class="empty-text">Klik op "+ Nieuwe meting" om te beginnen.</div></div>';
+    el.innerHTML = '<div class="empty"><div class="empty-icon"></div><div class="empty-title">Nog geen metingen vandaag</div><div class="empty-text">Klik op "+ Nieuwe meting" om te beginnen.</div></div>';
     return;
   }
   el.innerHTML = '<div class="table-wrap"><table><thead><tr><th>Tijd</th><th>Koeleenheid</th><th>Temp (°C)</th><th>Norm</th><th>Status</th><th>Gemeten door</th><th>Maatregel</th><th>Opmerkingen</th></tr></thead><tbody>' +
@@ -1693,7 +1692,7 @@ function renderTempHistory() {
   const el = document.getElementById('temp-history');
   const past = koeling.filter(m => m.datum !== today());
   if (past.length === 0) {
-    el.innerHTML = '<div class="empty"><div class="empty-icon">📊</div><div class="empty-title">Geen historische data</div></div>';
+    el.innerHTML = '<div class="empty"><div class="empty-icon"></div><div class="empty-title">Geen historische data</div></div>';
     return;
   }
   const byDate = {};
@@ -1809,7 +1808,7 @@ function renderLeveringenTable() {
   const arr = ls.get('klaar_haccp_leveranciers', []);
   const tbody = document.getElementById('lev-tbody');
   if (arr.length === 0) {
-    tbody.innerHTML = '<tr><td colspan="7"><div class="empty"><div class="empty-icon">🚚</div><div class="empty-title">Nog geen leveringen geregistreerd</div></div></td></tr>';
+    tbody.innerHTML = '<tr><td colspan="7"><div class="empty"><div class="empty-icon"></div><div class="empty-title">Nog geen leveringen geregistreerd</div></div></td></tr>';
     return;
   }
   tbody.innerHTML = [...arr].reverse().map(l => `<tr>
@@ -2037,7 +2036,7 @@ function renderAfwijkingen() {
   if (afwFilter === 'open') arr = arr.filter(a => a.status === 'open');
   const tbody = document.getElementById('afw-tbody');
   if (arr.length === 0) {
-    tbody.innerHTML = '<tr><td colspan="7"><div class="empty"><div class="empty-icon">✅</div><div class="empty-title">Geen afwijkingen</div></div></td></tr>';
+    tbody.innerHTML = '<tr><td colspan="7"><div class="empty"><div class="empty-icon">✓</div><div class="empty-title">Geen afwijkingen</div></div></td></tr>';
     return;
   }
   tbody.innerHTML = [...arr].reverse().map(a => `<tr>
@@ -2130,7 +2129,7 @@ function renderCcpResults(results) {
         <div class="ccp-name">${r.recipeTitle}</div>
         ${(r.ccps || []).map(c => `
           <div class="ccp-point">
-            <div class="ccp-point-icon">${c.emoji || '🎯'}</div>
+            <div class="ccp-point-icon">${c.emoji || ''}</div>
             <div style="flex:1">
               <div class="ccp-point-label">${c.naam}</div>
               <div style="font-size:13px;margin-bottom:4px"><strong>Grenswaarde:</strong> ${c.grenswaarde}</div>
@@ -2147,7 +2146,7 @@ function renderCcpResults(results) {
 //  GREEN KEY
 // ═══════════════════════════════════════════════════
 const GK_THEMES = [
-  { id: 'energie', naam: 'Energie', icon: '⚡', normen: [
+  { id: 'energie', naam: 'Energie', icon: '', normen: [
     'We meten ons energieverbruik (elektriciteit, gas)',
     'We hebben minimaal één energiebesparende maatregel genomen in het afgelopen jaar',
     'We gebruiken energiezuinige verlichting (LED)',
@@ -2187,11 +2186,11 @@ const GK_THEMES = [
     'We hebben minstens één biologisch of Fairtrade product in het assortiment',
     'We beoordelen leveranciers op duurzaamheidscriteria',
   ]},
-  { id: 'fauna', naam: 'Fauna & Flora', icon: '🌿', normen: [
+  { id: 'fauna', naam: 'Fauna & Flora', icon: '', normen: [
     'We vermijden producten van beschermde soorten (CITES)',
     'We hebben geen decoratieve elementen van kwetsbare ecosystemen',
   ]},
-  { id: 'activiteiten', naam: 'Activiteiten', icon: '🎯', normen: [
+  { id: 'activiteiten', naam: 'Activiteiten', icon: '', normen: [
     'We bieden duurzame activiteiten of ervaringen aan',
     'We promoten duurzaam vervoer bij gasten (OV, fiets)',
   ]},
@@ -2298,9 +2297,9 @@ function updateGkScores() {
   bar.className = 'progress-bar-fill' + (total >= 90 ? '' : total >= 75 ? '' : total >= 50 ? ' warn' : ' err');
 
   let level, levelColor;
-  if (total >= 90) { level = '🥇 Goud (indicatief)'; levelColor = '#ca8a04'; }
-  else if (total >= 75) { level = '🥈 Zilver (indicatief)'; levelColor = '#6b7280'; }
-  else if (total >= 50) { level = '🥉 Brons (indicatief)'; levelColor = '#92400e'; }
+  if (total >= 90) { level = '1 Goud (indicatief)'; levelColor = '#ca8a04'; }
+  else if (total >= 75) { level = '2 Zilver (indicatief)'; levelColor = '#6b7280'; }
+  else if (total >= 50) { level = '3 Brons (indicatief)'; levelColor = '#92400e'; }
   else { level = 'Nog niet klaar — werk aan de normen'; levelColor = 'var(--muted)'; }
   const lvlEl = document.getElementById('gk-level');
   lvlEl.textContent = level;
@@ -2317,9 +2316,9 @@ function updateGkScores() {
 const HACCP_ONTVANGST_KEY = 'klaar_haccp_ontvangst_taken';
 
 const CHECK_ICONS = {
-  temperatuur_ontvangst:     '🌡️',
-  verpakking_intact:         '📦',
-  houdbaarheidsdatum:        '📅',
+  temperatuur_ontvangst:     '',
+  verpakking_intact:         '',
+  houdbaarheidsdatum:        '',
   bevroren_bij_ontvangst:    '🧊',
   geen_dooi_sporen:          '❄️',
   allergeen_bewaar_gescheiden:'⚠️'
@@ -2350,7 +2349,7 @@ function renderOntvangstTaken() {
   // Dashboard indicator
   if (open.length > 0) {
     dash.style.display  = 'block';
-    dash.textContent    = `📋 ${open.length} ontvangst-controle${open.length !== 1 ? 's' : ''} open`;
+    dash.textContent    = ` ${open.length} ontvangst-controle${open.length !== 1 ? 's' : ''} open`;
     badge.style.display = 'inline-flex';
     badge.textContent   = open.length;
   } else {
@@ -2376,7 +2375,7 @@ function renderOntvangstTaken() {
 }
 
 function renderOntvangstTaakItem(t) {
-  const icon  = BEWAAR_ICONS[t.bewaartype] || '📦';
+  const icon  = BEWAAR_ICONS[t.bewaartype] || '';
   const done  = t.status !== 'open';
   const datum = t.datum ? new Date(t.datum).toLocaleDateString('nl-NL') : '—';
 
@@ -2685,13 +2684,13 @@ function printHACCPRapport() {
     body { font-family: 'Helvetica Neue', Helvetica, Arial, sans-serif; font-size: 9pt; color: #111; margin:0; }
     h1 { font-size: 18pt; font-weight: 900; letter-spacing: 1pt; margin: 0 0 2pt; }
     h2 { font-size: 11pt; font-weight: 700; margin: 20pt 0 6pt; border-bottom: 1pt solid #ddd; padding-bottom: 3pt; }
-    .header { display:flex; justify-content:space-between; align-items:flex-end; border-bottom: 2pt solid #0a0a0a; padding-bottom: 8pt; margin-bottom: 14pt; }
+    .header { display:flex; justify-content:space-between; align-items:flex-end; border-bottom: 2pt solid #1E1B17; padding-bottom: 8pt; margin-bottom: 14pt; }
     .header-right { text-align:right; font-size: 8pt; color: #666; }
     .meta { display:grid; grid-template-columns:1fr 1fr 1fr; gap:10pt; background:#f9f9f7; padding:8pt 10pt; margin-bottom:14pt; }
     .meta-item label { font-size:7pt; color:#888; text-transform:uppercase; letter-spacing:.06em; display:block; margin-bottom:2pt; }
     .meta-item span { font-weight:600; font-size:9pt; }
     table { border-collapse:collapse; width:100%; margin-bottom:6pt; font-size:8pt; }
-    th { background:#0a0a0a; color:#fff; padding:4pt 6pt; text-align:left; font-size:7.5pt; }
+    th { background:#1E1B17; color:#fff; padding:4pt 6pt; text-align:left; font-size:7.5pt; }
     td { padding:4pt 6pt; border-bottom:0.5pt solid #e8e8e6; vertical-align:top; }
     tr:nth-child(even) td { background:#fafaf8; }
     .stat { display:inline-block; margin-right:16pt; }
@@ -2700,7 +2699,7 @@ function printHACCPRapport() {
     .footer { margin-top:20pt; padding-top:8pt; border-top:0.5pt solid #ddd; font-size:7.5pt; color:#888; display:flex; justify-content:space-between; }
     .badge-ok { color:#16a34a; font-weight:600; }
     .badge-afw { color:#dc2626; font-weight:600; }
-    .accent { background:#e8ff47; color:#0a0a0a; padding:2pt 6pt; font-weight:700; font-size:8pt; }
+    .accent { background:#E8B84B; color:#0a0a0a; padding:2pt 6pt; font-weight:700; font-size:8pt; }
   </style>
   </head><body>
 
@@ -2746,10 +2745,9 @@ function printHACCPRapport() {
     <span>Pagina <span class="pageNumber"></span></span>
   </div>
 
-  <script>
+  <scr' + 'ipt>
     window.onload = () => { window.print(); };
-  </script>
-  </body></html>`;
+  </scr' + 'ipt></body></html>`;
 
   const w = window.open('', '_blank', 'width=900,height=700');
   w.document.write(html);
@@ -2768,16 +2766,16 @@ function printHACCPRapport() {
     .chat-trigger {
       position: fixed; bottom: 24px; right: 24px; z-index: 1000;
       display: flex; align-items: center; gap: 8px;
-      background: #e8ff47; color: #0a0a0a;
+      background: #E8B84B; color: #0a0a0a;
       border: none; cursor: pointer;
       padding: 0 18px; height: 44px;
       font-family: 'DM Sans', sans-serif; font-size: 13px; font-weight: 600;
       letter-spacing: 0.3px;
       transition: transform 0.15s, box-shadow 0.15s;
-      box-shadow: 0 4px 20px rgba(232,255,71,0.3);
+      box-shadow: 0 4px 20px rgba(232,184,75,0.3);
     }
-    .chat-trigger:hover { transform: translateY(-2px); box-shadow: 0 6px 28px rgba(232,255,71,0.4); }
-    .chat-trigger.open { background: #1a1a1a; color: #e8ff47; border: 1px solid #e8ff47; box-shadow: none; }
+    .chat-trigger:hover { transform: translateY(-2px); box-shadow: 0 6px 28px rgba(232,184,75,0.4); }
+    .chat-trigger.open { background: #1E1B17; color: #E8B84B; border: 1px solid #E8B84B; box-shadow: none; }
     .chat-trigger-pulse {
       width: 7px; height: 7px; background: #22c55e; border-radius: 50%;
       animation: chatPulse 2s infinite;
@@ -2794,10 +2792,10 @@ function printHACCPRapport() {
     .chat-header {
       padding: 16px 16px 14px; border-bottom: 1px solid #222222;
       display: flex; align-items: center; justify-content: space-between;
-      background: #0a0a0a; flex-shrink: 0;
+      background: #1E1B17; flex-shrink: 0;
     }
     .chat-header-info { display: flex; flex-direction: column; gap: 2px; }
-    .chat-header-title { font-family: 'Bebas Neue', sans-serif; font-size: 20px; letter-spacing: 1px; color: #e8ff47; line-height: 1; }
+    .chat-header-title { font-family: 'Bebas Neue', sans-serif; font-size: 20px; letter-spacing: 1px; color: #E8B84B; line-height: 1; }
     .chat-header-sub { font-family: 'DM Mono', monospace; font-size: 10px; color: #888888; letter-spacing: 1px; }
     .chat-header-close { background: none; border: none; color: #888888; cursor: pointer; font-size: 18px; padding: 4px; transition: color 0.1s; }
     .chat-header-close:hover { color: #f5f2eb; }
@@ -2809,37 +2807,37 @@ function printHACCPRapport() {
     .chat-msg.user { align-self: flex-end; }
     .chat-msg.assistant { align-self: flex-start; }
     .chat-bubble { padding: 10px 14px; font-size: 13px; line-height: 1.65; }
-    .chat-msg.user .chat-bubble { background: #e8ff47; color: #0a0a0a; font-weight: 500; }
-    .chat-msg.assistant .chat-bubble { background: #1a1a1a; color: #f5f2eb; border: 1px solid #222222; }
-    .chat-msg.assistant .chat-bubble strong { color: #e8ff47; }
-    .chat-typing { align-self: flex-start; padding: 12px 16px; background: #1a1a1a; border: 1px solid #222222; color: #888888; font-size: 18px; letter-spacing: 2px; line-height: 1; }
+    .chat-msg.user .chat-bubble { background: #E8B84B; color: #0a0a0a; font-weight: 500; }
+    .chat-msg.assistant .chat-bubble { background: #1E1B17; color: #f5f2eb; border: 1px solid #222222; }
+    .chat-msg.assistant .chat-bubble strong { color: #E8B84B; }
+    .chat-typing { align-self: flex-start; padding: 12px 16px; background: #1E1B17; border: 1px solid #222222; color: #888888; font-size: 18px; letter-spacing: 2px; line-height: 1; }
     .chat-typing span { display: inline-block; animation: chatBlink 1.2s infinite; }
     .chat-typing span:nth-child(2) { animation-delay: 0.2s; }
     .chat-typing span:nth-child(3) { animation-delay: 0.4s; }
     @keyframes chatBlink { 0%,100%{opacity:0.2} 50%{opacity:1} }
     .chat-suggestions { padding: 8px 12px; display: flex; flex-wrap: wrap; gap: 6px; flex-shrink: 0; border-top: 1px solid #222222; }
     .chat-suggestion { font-family: 'DM Mono', monospace; font-size: 10px; letter-spacing: 0.5px; padding: 5px 10px; border: 1px solid #333333; background: none; color: #888888; cursor: pointer; transition: all 0.15s; white-space: nowrap; }
-    .chat-suggestion:hover { border-color: #e8ff47; color: #e8ff47; }
-    .chat-input-area { padding: 12px; border-top: 1px solid #222222; display: flex; gap: 8px; align-items: flex-end; flex-shrink: 0; background: #0a0a0a; }
-    .chat-input { flex: 1; background: #1a1a1a; border: 1px solid #333333; color: #f5f2eb; font-family: 'DM Sans', sans-serif; font-size: 13px; line-height: 1.5; padding: 10px 12px; resize: none; max-height: 110px; min-height: 42px; transition: border-color 0.15s; }
-    .chat-input:focus { outline: none; border-color: #e8ff47; }
+    .chat-suggestion:hover { border-color: #E8B84B; color: #E8B84B; }
+    .chat-input-area { padding: 12px; border-top: 1px solid #222222; display: flex; gap: 8px; align-items: flex-end; flex-shrink: 0; background: #1E1B17; }
+    .chat-input { flex: 1; background: #1E1B17; border: 1px solid #333333; color: #f5f2eb; font-family: 'DM Sans', sans-serif; font-size: 13px; line-height: 1.5; padding: 10px 12px; resize: none; max-height: 110px; min-height: 42px; transition: border-color 0.15s; }
+    .chat-input:focus { outline: none; border-color: #E8B84B; }
     .chat-input::placeholder { color: #555555; }
-    .chat-send { width: 38px; height: 38px; background: #e8ff47; border: none; color: #0a0a0a; font-size: 16px; font-weight: 700; cursor: pointer; flex-shrink: 0; transition: opacity 0.15s; display: flex; align-items: center; justify-content: center; }
+    .chat-send { width: 38px; height: 38px; background: #E8B84B; border: none; color: #0a0a0a; font-size: 16px; font-weight: 700; cursor: pointer; flex-shrink: 0; transition: opacity 0.15s; display: flex; align-items: center; justify-content: center; }
     .chat-send:hover { opacity: 0.85; }
     .chat-send:disabled { opacity: 0.35; cursor: not-allowed; }
-    .chat-upload-btn { width: 38px; height: 38px; background: #1a1a1a; border: 1px solid #333333; color: #888888; font-size: 15px; cursor: pointer; flex-shrink: 0; transition: all 0.15s; display: flex; align-items: center; justify-content: center; }
-    .chat-upload-btn:hover { border-color: #e8ff47; color: #e8ff47; }
-    .chat-no-key { background: #1a1a1a; border: 1px solid rgba(232,255,71,0.25); color: #aaa; font-size: 12px; padding: 12px 14px; line-height: 1.6; }
-    .chat-no-key strong { color: #e8ff47; }
-    .chat-img-preview { background: #1a1a1a; border: 1px solid rgba(232,255,71,0.25); padding: 8px 12px; font-size: 11px; color: #888888; font-family: 'DM Mono', monospace; display: flex; align-items: center; gap: 8px; flex-shrink: 0; }
+    .chat-upload-btn { width: 38px; height: 38px; background: #1E1B17; border: 1px solid #333333; color: #888888; font-size: 15px; cursor: pointer; flex-shrink: 0; transition: all 0.15s; display: flex; align-items: center; justify-content: center; }
+    .chat-upload-btn:hover { border-color: #E8B84B; color: #E8B84B; }
+    .chat-no-key { background: #1E1B17; border: 1px solid rgba(232,184,75,0.25); color: #aaa; font-size: 12px; padding: 12px 14px; line-height: 1.6; }
+    .chat-no-key strong { color: #E8B84B; }
+    .chat-img-preview { background: #1E1B17; border: 1px solid rgba(232,184,75,0.25); padding: 8px 12px; font-size: 11px; color: #888888; font-family: 'DM Mono', monospace; display: flex; align-items: center; gap: 8px; flex-shrink: 0; }
     .chat-img-preview img { width: 36px; height: 36px; object-fit: cover; }
-    .chat-img-clear { background: none; border: none; color: #e8ff47; cursor: pointer; font-size: 16px; margin-left: auto; line-height: 1; }
+    .chat-img-clear { background: none; border: none; color: #E8B84B; cursor: pointer; font-size: 16px; margin-left: auto; line-height: 1; }
     @media (max-width: 480px) { .chat-panel { width: 100%; right: -100%; } .chat-trigger { font-size: 12px; padding: 0 14px; } }
 
 </style>
 
 <button class="chat-trigger" id="chatTrigger" onclick="toggleChat()">
-  <span>💬</span>
+  <span></span>
   <span id="chatTriggerLabel">Vraag de Klaar Assistent</span>
   <span class="chat-trigger-pulse" id="chatTriggerPulse"></span>
 </button>
@@ -2847,7 +2845,7 @@ function printHACCPRapport() {
 <div class="chat-panel" id="chatPanel">
   <div class="chat-header">
     <div class="chat-header-info">
-      <div class="chat-header-title">Klaar Assistent</div>
+      <div class="chat-header-title">KLAAR AI</div>
       <div class="chat-header-sub">Voedselveiligheids-assistent · Module 03</div>
     </div>
     <button class="chat-header-close" onclick="toggleChat()">✕</button>
@@ -2955,17 +2953,17 @@ MODULES & PRIJZEN (voor context bij upsell):
 Full suite — €179/m (los €131,50/m) — Alle modules samen
 
 HOE JE HET ZEGT (toon: zakenpartner die iets handigs opmerkt, NIET een verkoopgesprek):
-✅ "Oh trouwens — als je dit probleem vaker hebt, lost Module 04 dit automatisch op. Kost je €39/m en rekent zichzelf terug."
-✅ "Dat klinkt als iets waarvoor je nu waarschijnlijk een apart systeem betaalt. Klaar doet dit al voor €24/m."
-✅ "Interessant — als je ook Module 07 gebruikt, koppelt dit automatisch aan je inkoopprijzen."
-✅ "Voor €14/m heb je de Allergenenkaart erbij — dan hoef je dit nooit meer handmatig bij te houden."
+✓ "Oh trouwens — als je dit probleem vaker hebt, lost Module 04 dit automatisch op. Kost je €39/m en rekent zichzelf terug."
+✓ "Dat klinkt als iets waarvoor je nu waarschijnlijk een apart systeem betaalt. Klaar doet dit al voor €24/m."
+✓ "Interessant — als je ook Module 07 gebruikt, koppelt dit automatisch aan je inkoopprijzen."
+✓ "Voor €14/m heb je de Allergenenkaart erbij — dan hoef je dit nooit meer handmatig bij te houden."
 
 WAT JE NOOIT DOET:
-❌ Concurrenten met naam belasteren of negatief vergelijken
-❌ Meerdere keren per gesprek iets verkopen
-❌ Een module aanprijzen als de gebruiker duidelijk al weet dat die bestaat
-❌ Pushen als de gebruiker niet reageert
-❌ Iets aanbevelen dat niet relevant is voor het actuele probleem
+✕ Concurrenten met naam belasteren of negatief vergelijken
+✕ Meerdere keren per gesprek iets verkopen
+✕ Een module aanprijzen als de gebruiker duidelijk al weet dat die bestaat
+✕ Pushen als de gebruiker niet reageert
+✕ Iets aanbevelen dat niet relevant is voor het actuele probleem
 
 KASSASYSTEMEN & ECOSYSTEEM:
 De meeste horecazaken waar jij mee werkt hebben ook een kassasysteem (POS). Klaar werkt NAAST die systemen, niet ertegen.
@@ -3070,7 +3068,12 @@ async function chatSend() {
     _chatHistory.push({ role: 'assistant', content: cleanText });
   } catch(err) {
     document.getElementById('_chatTyping')?.remove();
-    chatAppend('assistant', 'Er ging iets mis: ' + err.message + '. Controleer je API key via Module 01 → Instellingen.');
+    const em = err?.message || '';
+    const aiMsg = em.includes('ingelogd') || em.includes('401') ? 'Niet ingelogd — herlaad de pagina.'
+      : em.includes('429') ? 'AI tijdelijk bezet — probeer over een minuut opnieuw.'
+      : em.includes('fetch') || em.includes('offline') ? 'Geen internetverbinding — AI vereist internet.'
+      : 'Er ging iets mis: ' + em.slice(0, 80);
+    chatAppend('assistant', aiMsg);
     console.error('Klaar chat:', err);
   }
   _chatStreaming = false;
@@ -3117,7 +3120,8 @@ function chatExecuteActions(text) {
           notitie: payload.notitie || '',
           addedBy: 'ai-assistant'
         });
-        localStorage.setItem('klaar_haccp_log', JSON.stringify(log));
+        try { localStorage.setItem('klaar_haccp_log', JSON.stringify(log)); }
+        catch(e) { if (e.name === 'QuotaExceededError') alert('⚠ Opslagruimte vol — exporteer het HACCP-log als CSV en verwijder oude metingen.'); }
       }
     } catch(e) { console.warn('KLAAR action parse error', e); }
   }
@@ -3156,7 +3160,7 @@ function updateReminderStatus() {
   if (!el) return;
   if (saved?.enabled) {
     el.innerHTML = `<span style="color:#16a34a">✓ Herinnering actief — dagelijks om <strong>${saved.time}</strong></span>`;
-    document.getElementById('reminder-btn').style.color = '#e8ff47';
+    document.getElementById('reminder-btn').style.color = '#E8B84B';
   } else {
     el.textContent = 'Geen herinnering ingesteld.';
     document.getElementById('reminder-btn').style.color = '';
@@ -3221,7 +3225,7 @@ function showToastHaccp(msg) {
   if (!t) {
     t = document.createElement('div');
     t.id = 'toast-haccp';
-    t.style.cssText = 'position:fixed;bottom:24px;right:24px;background:#1a1a1a;color:#e8ff47;padding:10px 18px;border-radius:6px;font-size:13px;font-family:DM Mono,monospace;z-index:9999;';
+    t.style.cssText = 'position:fixed;bottom:24px;right:24px;background:#1E1B17;color:#E8B84B;padding:10px 18px;border-radius:6px;font-size:13px;font-family:DM Mono,monospace;z-index:9999;';
     document.body.appendChild(t);
   }
   t.textContent = msg;
@@ -3237,11 +3241,11 @@ function showToastHaccp(msg) {
     // Update de knop-kleur als er een actieve reminder is
     setTimeout(() => {
       const btn = document.getElementById('reminder-btn');
-      if (btn) btn.style.color = '#e8ff47';
+      if (btn) btn.style.color = '#E8B84B';
     }, 500);
   }
 })();
 </script>
-
+  <link rel="stylesheet" href="../klaar-shared.css">
 </body>
 </html>

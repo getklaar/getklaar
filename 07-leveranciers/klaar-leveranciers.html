@@ -9,9 +9,9 @@
 <link href="https://fonts.googleapis.com/css2?family=Bebas+Neue&family=DM+Mono:wght@400;500&family=DM+Sans:wght@300;400;500;600&display=swap" rel="stylesheet">
 <style>
   :root {
-    --black: #0a0a0a;
+    --black: #1E1B17;
     --border: #222222;
-    --lime: #e8ff47;
+    --lime: #E8B84B;
     --bg: #f5f5f3;
     --surface: #ffffff;
     --text: #111111;
@@ -74,16 +74,16 @@
   }
   .tab-bar::-webkit-scrollbar { display: none; }
   .tab-btn {
-    font-family: 'DM Mono', monospace; font-size: 11px;
-    letter-spacing: 0.06em; color: var(--muted);
+    font-family: 'Inter', sans-serif; font-size: 13px; font-weight: 500;
+    letter-spacing: 0; color: var(--muted);
     background: none; border: none;
     border-bottom: 2px solid transparent;
     padding: 0 20px; height: 48px; white-space: nowrap;
     cursor: pointer; transition: color 0.15s, border-color 0.15s;
-    text-transform: uppercase;
+    text-transform: none;
   }
   .tab-btn:hover { color: var(--text); }
-  .tab-btn.active { color: var(--text); border-bottom-color: var(--lime); }
+  .tab-btn.active { color: var(--text); border-bottom-color: #E8B84B; font-weight: 600; }
 
   /* ── CONTENT SCROLL ── */
   .content-scroll {
@@ -109,9 +109,9 @@
     border-radius: 8px; padding: 20px; margin-bottom: 16px;
   }
   .card-title {
-    font-family: 'DM Mono', monospace; font-size: 11px;
-    letter-spacing: 0.08em; text-transform: uppercase;
-    color: var(--muted); margin-bottom: 16px;
+    font-family: 'Inter', sans-serif; font-size: 11px; font-weight: 700;
+    letter-spacing: 0.05em; text-transform: uppercase;
+    color: #777; margin-bottom: 16px;
   }
   .card-header {
     display: flex; align-items: center;
@@ -220,7 +220,7 @@
     text-align: center; padding: 48px 24px; color: var(--muted);
   }
   .empty-state-icon { font-size: 40px; margin-bottom: 12px; }
-  .empty-state-text { font-family: 'DM Mono', monospace; font-size: 12px; letter-spacing: 0.05em; }
+  .empty-state-text { font-family: 'Inter', sans-serif; font-size: 13px; color: #999; }
   .action-btn {
     background: none; border: none; cursor: pointer;
     font-size: 14px; padding: 4px 6px; border-radius: 4px;
@@ -639,13 +639,9 @@
   .import-route-btn.active-drop {
     border-color: var(--lime); background: #f7ffe0;
   }
-  .import-route-icon { font-size: 28px; line-height: 1; }
-  .import-route-label {
-    font-family: 'DM Mono', monospace; font-size: 11px;
-    letter-spacing: 0.06em; color: var(--text); font-weight: 500;
-    text-transform: uppercase;
-  }
-  .import-route-sub { font-size: 11px; color: var(--muted); }
+  .import-route-icon { font-family: 'Bebas Neue', sans-serif; font-size: 42px; color: #0a0a0a; opacity: 0.15; line-height: 1; letter-spacing: 0.02em; }
+  .import-route-label { font-family: 'Inter', sans-serif; font-size: 13px; font-weight: 600; letter-spacing: 0.01em; color: #111; text-transform: none; margin-top: 8px; }
+  .import-route-sub { font-family: 'Inter', sans-serif; font-size: 12px; color: #999; margin-top: 4px; }
 
   /* ── SCANNING SPINNER ── */
   .scan-spinner {
@@ -743,9 +739,6 @@
     font-size: 12px;
   }
 </style>
-
-  <link rel="stylesheet" href="../klaar-shared.css">
-
   <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2/dist/umd/supabase.min.js"></script>
   <script src="../klaar-client.js"></script>
 </head>
@@ -753,9 +746,9 @@
 
 <!-- ── HEADER ── -->
 <header class="header">
-  <a href="../index.html" class="header-back">← TERUG</a>
+  <a href="../dashboard/index.html" class="header-back">← Dashboard</a>
   <span class="header-logo">KLAAR</span>
-  <span class="header-module">MODULE 07 — LEVERANCIERS &amp; VOORRAAD</span>
+  <span class="header-module">07 — LEVERANCIERS &amp; VOORRAAD</span>
   <span class="header-spacer"></span>
   <button class="header-settings" onclick="openSettings()" title="API-sleutel instellen">⚙</button>
 </header>
@@ -783,7 +776,7 @@
       <div class="import-routes">
         <!-- Route A: Foto -->
         <div class="import-route-btn" onclick="document.getElementById('foto-input').click()" id="route-foto">
-          <div class="import-route-icon">📷</div>
+          <div class="import-route-icon">01</div>
           <div class="import-route-label">Scan pakbon</div>
           <div class="import-route-sub">Foto of afbeelding</div>
         </div>
@@ -794,14 +787,14 @@
              ondragleave="this.classList.remove('active-drop')"
              ondrop="handleDrop(event)"
              onclick="document.getElementById('bestand-input').click()">
-          <div class="import-route-icon">📄</div>
+          <div class="import-route-icon">02</div>
           <div class="import-route-label">Bestand droppen</div>
           <div class="import-route-sub">PDF · Excel · CSV</div>
         </div>
 
         <!-- Route C: Handmatig -->
         <div class="import-route-btn" onclick="toggleCollapsible('handmatig-form')">
-          <div class="import-route-icon">✏️</div>
+          <div class="import-route-icon">03</div>
           <div class="import-route-label">Handmatig invoeren</div>
           <div class="import-route-sub">Regel voor regel</div>
         </div>
@@ -1000,7 +993,7 @@
         <span id="prod-count" class="chip chip-gray">0 producten</span>
       </div>
       <div style="display:flex;gap:10px;margin-bottom:16px;flex-wrap:wrap;">
-        <input type="text" id="prod-search" class="form-input" style="max-width:220px;margin-bottom:0;" placeholder="🔍 Zoeken…" oninput="renderProductList()">
+        <input type="text" id="prod-search" class="form-input" style="max-width:220px;margin-bottom:0;" placeholder=" Zoeken…" oninput="renderProductList()">
         <select id="prod-filter-cat" class="form-select" style="max-width:180px;" onchange="renderProductList()">
           <option value="">Alle categorieën</option>
           <option value="vlees">Vlees &amp; gevogelte</option>
@@ -1043,7 +1036,7 @@
       </div>
       <div style="display:flex;gap:10px;margin-bottom:12px;flex-wrap:wrap;">
         <input type="text" id="theor-zoek" class="form-input" style="max-width:220px;"
-          placeholder="🔍 Zoek product…" oninput="renderTheorOvzicht()">
+          placeholder=" Zoek product…" oninput="renderTheorOvzicht()">
         <select id="theor-cat-filter" class="form-select" style="max-width:160px;" onchange="renderTheorOvzicht()">
           <option value="">Alle categorieën</option>
         </select>
@@ -1078,7 +1071,7 @@
         <div style="display:flex;gap:10px;align-items:center;margin-bottom:12px;flex-wrap:wrap;">
           <button class="btn btn-ghost btn-sm" onclick="openScannerModal()">Scan barcode</button>
           <input type="text" id="opname-zoek" class="form-input" style="max-width:200px;"
-            placeholder="🔍 Product zoeken…" oninput="renderOpnameTable()">
+            placeholder=" Product zoeken…" oninput="renderOpnameTable()">
           <select id="opname-filter" class="form-select" style="max-width:160px;" onchange="renderOpnameTable()">
             <option value="all">Alle producten</option>
             <option value="open">Nog niet ingevuld</option>
@@ -1130,7 +1123,7 @@
 
     <!-- Geen data: lege staat -->
     <div id="dash-empty" class="dash-empty" style="display:none">
-      <div class="dash-empty-icon">📊</div>
+      <div class="dash-empty-icon"></div>
       <div class="dash-empty-title">Nog geen inkoopdata</div>
       <div class="dash-empty-sub">Scan of importeer je eerste factuur via het tabblad <strong>Producten &amp; Prijzen</strong> om het dashboard te activeren. Na de eerste import zie je direct je hardlopers en prijstrends.</div>
       <br>
@@ -1145,7 +1138,7 @@
 
       <!-- Laatste scan banner -->
       <div id="dash-scan-banner" class="scan-banner" style="display:none">
-        <div class="scan-banner-icon">🔍</div>
+        <div class="scan-banner-icon"></div>
         <div class="scan-banner-text">
           <strong>LAATSTE FACTUUR — </strong>
           <span id="dash-banner-lev"></span> · <span id="dash-banner-datum"></span>
@@ -1193,7 +1186,7 @@
 
         <!-- Voorraadwaarde per categorie -->
         <div class="card" id="dash-stock-card">
-          <div class="section-title" style="margin-bottom:4px">📦 Voorraad indicatie</div>
+          <div class="section-title" style="margin-bottom:4px"> Voorraad indicatie</div>
           <div class="section-sub" style="margin-bottom:14px">Theoretische waarde per categorie. Indicatie — geen exacte boekhouding.</div>
           <div id="dash-stock-cats"></div>
           <div style="border-top:1px solid #f0f0f0;margin-top:12px;padding-top:10px;display:flex;justify-content:space-between;align-items:center">
@@ -1226,7 +1219,7 @@
 
       <!-- ④ Lage voorraad -->
       <div class="card" id="dash-low-card" style="margin-bottom:16px;display:none">
-        <div class="section-title" style="margin-bottom:4px">🔴 Lage voorraad</div>
+        <div class="section-title" style="margin-bottom:4px">● Lage voorraad</div>
         <div class="section-sub" style="margin-bottom:12px">Producten onder het ingestelde minimum.</div>
         <div id="dash-low-list"></div>
       </div>
@@ -1870,7 +1863,7 @@ function renderReview() {
 
     const rowClass = hasBlock ? 'review-row-block' : (hasWarn ? 'review-row-warn' : '');
     const anomalyBadges = r._anomalies.map(a =>
-      `<div class="anomaly-badge anomaly-${a.type}">${a.type === 'block' ? '🔴' : a.type === 'warn' ? '⚠️' : 'ℹ️'} ${esc(a.msg)}</div>`
+      `<div class="anomaly-badge anomaly-${a.type}">${a.type === 'block' ? '●' : a.type === 'warn' ? '⚠️' : 'ℹ️'} ${esc(a.msg)}</div>`
     ).join('');
 
     const confirmCell = hasBlock ? `
@@ -1886,7 +1879,7 @@ function renderReview() {
     const koppelingCell = r._include
       ? (_matchedIng
           ? `<div style="color:#6fcf97;font-size:11px;font-weight:600;white-space:nowrap;">✓ ${esc(_matchedIng.naam)}</div>`
-          : `<div><span style="background:rgba(232,255,71,.12);color:#e8ff47;border:1px solid rgba(232,255,71,.4);border-radius:4px;padding:1px 7px;font-size:10px;font-weight:700;white-space:nowrap;">+ NIEUW</span></div>`)
+          : `<div><span style="background:rgba(232,184,75,.12);color:#E8B84B;border:1px solid rgba(232,184,75,.4);border-radius:4px;padding:1px 7px;font-size:10px;font-weight:700;white-space:nowrap;">+ NIEUW</span></div>`)
       : `<div style="color:var(--muted);font-size:10px;">—</div>`;
 
     return `<tr class="${rowClass}">
@@ -1947,7 +1940,7 @@ function renderReview() {
 
   // Summary
   const parts = [];
-  if (blockCount) parts.push(`🔴 ${blockCount} geblokkeerde regel(s) — bevestig handmatig`);
+  if (blockCount) parts.push(`● ${blockCount} geblokkeerde regel(s) — bevestig handmatig`);
   if (warnCount)  parts.push(`⚠️ ${warnCount} waarschuwing(en)`);
   if (newCount)   parts.push(`ℹ️ ${newCount} nieuw product(en)`);
   document.getElementById('review-anomaly-summary').textContent = parts.join(' · ') || '';
@@ -2134,7 +2127,7 @@ function saveReview() {
   // Toast met directe actieknop naar Voorraad tab
   showToastActie(
     `✓ Inkoop opgeslagen — ${n} product${n !== 1 ? 'en' : ''}${haccpMsg}`,
-    '📦 Bekijk voorraad',
+    ' Bekijk voorraad',
     () => {
       const btn = document.querySelector('.tab-btn[onclick*="voorraad"]');
       if (btn) switchTab('voorraad', btn);
@@ -2625,7 +2618,7 @@ function renderProductList() {
 
   if (!data.producten.length) {
     el.innerHTML = `<div class="empty-state">
-      <div class="empty-state-icon">📦</div>
+      <div class="empty-state-icon"></div>
       <div class="empty-state-text">Nog geen producten. Voeg er een toe of importeer een pakbon.</div>
     </div>`;
     return;
@@ -4070,7 +4063,7 @@ function toonKoppelModal(bijgewerkt, ongepaarde) {
         ${ongepaarde.length > 1 ? `
           <button onclick="doAllesAanmaken()"
             style="font-family:'DM Mono',monospace;font-size:11px;padding:8px 16px;border-radius:6px;
-              border:none;background:#e8ff47;color:#111;cursor:pointer;font-weight:600">Alles aanmaken (${ongepaarde.length})
+              border:none;background:#E8B84B;color:#111;cursor:pointer;font-weight:600">Alles aanmaken (${ongepaarde.length})
           </button>` : '<span></span>'}
         <button onclick="document.getElementById('koppel-overlay').remove()"
           style="font-family:'DM Mono',monospace;font-size:11px;padding:8px 16px;border-radius:6px;
@@ -4298,16 +4291,16 @@ document.addEventListener('DOMContentLoaded', async () => {
     .chat-trigger {
       position: fixed; bottom: 24px; right: 24px; z-index: 1000;
       display: flex; align-items: center; gap: 8px;
-      background: #e8ff47; color: #0a0a0a;
+      background: #E8B84B; color: #0a0a0a;
       border: none; cursor: pointer;
       padding: 0 18px; height: 44px;
       font-family: 'DM Sans', sans-serif; font-size: 13px; font-weight: 600;
       letter-spacing: 0.3px;
       transition: transform 0.15s, box-shadow 0.15s;
-      box-shadow: 0 4px 20px rgba(232,255,71,0.3);
+      box-shadow: 0 4px 20px rgba(232,184,75,0.3);
     }
-    .chat-trigger:hover { transform: translateY(-2px); box-shadow: 0 6px 28px rgba(232,255,71,0.4); }
-    .chat-trigger.open { background: #1a1a1a; color: #e8ff47; border: 1px solid #e8ff47; box-shadow: none; }
+    .chat-trigger:hover { transform: translateY(-2px); box-shadow: 0 6px 28px rgba(232,184,75,0.4); }
+    .chat-trigger.open { background: #1E1B17; color: #E8B84B; border: 1px solid #E8B84B; box-shadow: none; }
     .chat-trigger-pulse {
       width: 7px; height: 7px; background: #22c55e; border-radius: 50%;
       animation: chatPulse 2s infinite;
@@ -4324,10 +4317,10 @@ document.addEventListener('DOMContentLoaded', async () => {
     .chat-header {
       padding: 16px 16px 14px; border-bottom: 1px solid #222222;
       display: flex; align-items: center; justify-content: space-between;
-      background: #0a0a0a; flex-shrink: 0;
+      background: #1E1B17; flex-shrink: 0;
     }
     .chat-header-info { display: flex; flex-direction: column; gap: 2px; }
-    .chat-header-title { font-family: 'Bebas Neue', sans-serif; font-size: 20px; letter-spacing: 1px; color: #e8ff47; line-height: 1; }
+    .chat-header-title { font-family: 'Bebas Neue', sans-serif; font-size: 20px; letter-spacing: 1px; color: #E8B84B; line-height: 1; }
     .chat-header-sub { font-family: 'DM Mono', monospace; font-size: 10px; color: #888888; letter-spacing: 1px; }
     .chat-header-close { background: none; border: none; color: #888888; cursor: pointer; font-size: 18px; padding: 4px; transition: color 0.1s; }
     .chat-header-close:hover { color: #f5f2eb; }
@@ -4339,38 +4332,38 @@ document.addEventListener('DOMContentLoaded', async () => {
     .chat-msg.user { align-self: flex-end; }
     .chat-msg.assistant { align-self: flex-start; }
     .chat-bubble { padding: 10px 14px; font-size: 13px; line-height: 1.65; }
-    .chat-msg.user .chat-bubble { background: #e8ff47; color: #0a0a0a; font-weight: 500; }
-    .chat-msg.assistant .chat-bubble { background: #1a1a1a; color: #f5f2eb; border: 1px solid #222222; }
-    .chat-msg.assistant .chat-bubble strong { color: #e8ff47; }
-    .chat-typing { align-self: flex-start; padding: 12px 16px; background: #1a1a1a; border: 1px solid #222222; color: #888888; font-size: 18px; letter-spacing: 2px; line-height: 1; }
+    .chat-msg.user .chat-bubble { background: #E8B84B; color: #0a0a0a; font-weight: 500; }
+    .chat-msg.assistant .chat-bubble { background: #1E1B17; color: #f5f2eb; border: 1px solid #222222; }
+    .chat-msg.assistant .chat-bubble strong { color: #E8B84B; }
+    .chat-typing { align-self: flex-start; padding: 12px 16px; background: #1E1B17; border: 1px solid #222222; color: #888888; font-size: 18px; letter-spacing: 2px; line-height: 1; }
     .chat-typing span { display: inline-block; animation: chatBlink 1.2s infinite; }
     .chat-typing span:nth-child(2) { animation-delay: 0.2s; }
     .chat-typing span:nth-child(3) { animation-delay: 0.4s; }
     @keyframes chatBlink { 0%,100%{opacity:0.2} 50%{opacity:1} }
     .chat-suggestions { padding: 8px 12px; display: flex; flex-wrap: wrap; gap: 6px; flex-shrink: 0; border-top: 1px solid #222222; }
     .chat-suggestion { font-family: 'DM Mono', monospace; font-size: 10px; letter-spacing: 0.5px; padding: 5px 10px; border: 1px solid #333333; background: none; color: #888888; cursor: pointer; transition: all 0.15s; white-space: nowrap; }
-    .chat-suggestion:hover { border-color: #e8ff47; color: #e8ff47; }
-    .chat-input-area { padding: 12px; border-top: 1px solid #222222; display: flex; gap: 8px; align-items: flex-end; flex-shrink: 0; background: #0a0a0a; }
-    .chat-input { flex: 1; background: #1a1a1a; border: 1px solid #333333; color: #f5f2eb; font-family: 'DM Sans', sans-serif; font-size: 13px; line-height: 1.5; padding: 10px 12px; resize: none; max-height: 110px; min-height: 42px; transition: border-color 0.15s; }
-    .chat-input:focus { outline: none; border-color: #e8ff47; }
+    .chat-suggestion:hover { border-color: #E8B84B; color: #E8B84B; }
+    .chat-input-area { padding: 12px; border-top: 1px solid #222222; display: flex; gap: 8px; align-items: flex-end; flex-shrink: 0; background: #1E1B17; }
+    .chat-input { flex: 1; background: #1E1B17; border: 1px solid #333333; color: #f5f2eb; font-family: 'DM Sans', sans-serif; font-size: 13px; line-height: 1.5; padding: 10px 12px; resize: none; max-height: 110px; min-height: 42px; transition: border-color 0.15s; }
+    .chat-input:focus { outline: none; border-color: #E8B84B; }
     .chat-input::placeholder { color: #555555; }
-    .chat-send { width: 38px; height: 38px; background: #e8ff47; border: none; color: #0a0a0a; font-size: 16px; font-weight: 700; cursor: pointer; flex-shrink: 0; transition: opacity 0.15s; display: flex; align-items: center; justify-content: center; }
+    .chat-send { width: 38px; height: 38px; background: #E8B84B; border: none; color: #0a0a0a; font-size: 16px; font-weight: 700; cursor: pointer; flex-shrink: 0; transition: opacity 0.15s; display: flex; align-items: center; justify-content: center; }
     .chat-send:hover { opacity: 0.85; }
     .chat-send:disabled { opacity: 0.35; cursor: not-allowed; }
-    .chat-upload-btn { width: 38px; height: 38px; background: #1a1a1a; border: 1px solid #333333; color: #888888; font-size: 15px; cursor: pointer; flex-shrink: 0; transition: all 0.15s; display: flex; align-items: center; justify-content: center; }
-    .chat-upload-btn:hover { border-color: #e8ff47; color: #e8ff47; }
-    .chat-no-key { background: #1a1a1a; border: 1px solid rgba(232,255,71,0.25); color: #aaa; font-size: 12px; padding: 12px 14px; line-height: 1.6; }
-    .chat-no-key strong { color: #e8ff47; }
-    .chat-img-preview { background: #1a1a1a; border: 1px solid rgba(232,255,71,0.25); padding: 8px 12px; font-size: 11px; color: #888888; font-family: 'DM Mono', monospace; display: flex; align-items: center; gap: 8px; flex-shrink: 0; }
+    .chat-upload-btn { width: 38px; height: 38px; background: #1E1B17; border: 1px solid #333333; color: #888888; font-size: 15px; cursor: pointer; flex-shrink: 0; transition: all 0.15s; display: flex; align-items: center; justify-content: center; }
+    .chat-upload-btn:hover { border-color: #E8B84B; color: #E8B84B; }
+    .chat-no-key { background: #1E1B17; border: 1px solid rgba(232,184,75,0.25); color: #aaa; font-size: 12px; padding: 12px 14px; line-height: 1.6; }
+    .chat-no-key strong { color: #E8B84B; }
+    .chat-img-preview { background: #1E1B17; border: 1px solid rgba(232,184,75,0.25); padding: 8px 12px; font-size: 11px; color: #888888; font-family: 'DM Mono', monospace; display: flex; align-items: center; gap: 8px; flex-shrink: 0; }
     .chat-img-preview img { width: 36px; height: 36px; object-fit: cover; }
-    .chat-img-clear { background: none; border: none; color: #e8ff47; cursor: pointer; font-size: 16px; margin-left: auto; line-height: 1; }
+    .chat-img-clear { background: none; border: none; color: #E8B84B; cursor: pointer; font-size: 16px; margin-left: auto; line-height: 1; }
     @media (max-width: 480px) { .chat-panel { width: 100%; right: -100%; } .chat-trigger { font-size: 12px; padding: 0 14px; } }
 
 </style>
 
 <input type="file" id="chatFileInput" accept="image/*,.csv,.xlsx,.xls" style="display:none" onchange="chatHandleFile(this)">
 <button class="chat-trigger" id="chatTrigger" onclick="toggleChat()">
-  <span>💬</span>
+  <span></span>
   <span id="chatTriggerLabel">Vraag de Klaar Assistent</span>
   <span class="chat-trigger-pulse" id="chatTriggerPulse"></span>
 </button>
@@ -4378,7 +4371,7 @@ document.addEventListener('DOMContentLoaded', async () => {
 <div class="chat-panel" id="chatPanel">
   <div class="chat-header">
     <div class="chat-header-info">
-      <div class="chat-header-title">Klaar Assistent</div>
+      <div class="chat-header-title">KLAAR AI</div>
       <div class="chat-header-sub">Inkoopanalyse-assistent · Module 07</div>
     </div>
     <button class="chat-header-close" onclick="toggleChat()">✕</button>
@@ -4492,17 +4485,17 @@ MODULES & PRIJZEN (voor context bij upsell):
 Full suite — €179/m (los €131,50/m) — Alle modules samen
 
 HOE JE HET ZEGT (toon: zakenpartner die iets handigs opmerkt, NIET een verkoopgesprek):
-✅ "Oh trouwens — als je dit probleem vaker hebt, lost Module 04 dit automatisch op. Kost je €39/m en rekent zichzelf terug."
-✅ "Dat klinkt als iets waarvoor je nu waarschijnlijk een apart systeem betaalt. Klaar doet dit al voor €24/m."
-✅ "Interessant — als je ook Module 07 gebruikt, koppelt dit automatisch aan je inkoopprijzen."
-✅ "Voor €14/m heb je de Allergenenkaart erbij — dan hoef je dit nooit meer handmatig bij te houden."
+✓ "Oh trouwens — als je dit probleem vaker hebt, lost Module 04 dit automatisch op. Kost je €39/m en rekent zichzelf terug."
+✓ "Dat klinkt als iets waarvoor je nu waarschijnlijk een apart systeem betaalt. Klaar doet dit al voor €24/m."
+✓ "Interessant — als je ook Module 07 gebruikt, koppelt dit automatisch aan je inkoopprijzen."
+✓ "Voor €14/m heb je de Allergenenkaart erbij — dan hoef je dit nooit meer handmatig bij te houden."
 
 WAT JE NOOIT DOET:
-❌ Concurrenten met naam belasteren of negatief vergelijken
-❌ Meerdere keren per gesprek iets verkopen
-❌ Een module aanprijzen als de gebruiker duidelijk al weet dat die bestaat
-❌ Pushen als de gebruiker niet reageert
-❌ Iets aanbevelen dat niet relevant is voor het actuele probleem
+✕ Concurrenten met naam belasteren of negatief vergelijken
+✕ Meerdere keren per gesprek iets verkopen
+✕ Een module aanprijzen als de gebruiker duidelijk al weet dat die bestaat
+✕ Pushen als de gebruiker niet reageert
+✕ Iets aanbevelen dat niet relevant is voor het actuele probleem
 
 KASSASYSTEMEN & ECOSYSTEEM:
 De meeste horecazaken waar jij mee werkt hebben ook een kassasysteem (POS). Jij werkt NAAST die systemen, niet ertegen.
@@ -4582,7 +4575,7 @@ Spreek professioneel maar toegankelijk. Antwoord in het Nederlands.`;
     if (executed.length) {
       const el = document.createElement('div');
       el.style.cssText = 'font-family:DM Mono,monospace;font-size:11px;color:#22c55e;padding:4px 8px 4px 10px;border-left:2px solid #22c55e;margin:2px 0;align-self:flex-start;';
-      el.textContent = '✅ Opgeslagen: ' + executed.join(', ');
+      el.textContent = '✓ Opgeslagen: ' + executed.join(', ');
       document.getElementById('chatMessages').appendChild(el);
       chatScroll();
     }
@@ -4616,7 +4609,7 @@ Spreek professioneel maar toegankelijk. Antwoord in het Nederlands.`;
         const text = e.target.result;
         const preview = text.slice(0, 3000); // max 3000 chars preview
         _chatImage = { text: preview, filename: file.name, type: 'csv', mimeType: 'text/plain' };
-        document.getElementById('chatImgThumb').src = 'data:image/svg+xml,<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 40 40"><rect fill="%23222" width="40" height="40"/><text x="50%" y="55%" font-size="12" fill="%23e8ff47" text-anchor="middle" font-family="monospace">CSV</text></svg>';
+        document.getElementById('chatImgThumb').src = 'data:image/svg+xml,<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 40 40"><rect fill="%23222" width="40" height="40"/><text x="50%" y="55%" font-size="12" fill="%23C8992A" text-anchor="middle" font-family="monospace">CSV</text></svg>';
         document.getElementById('chatImgName').textContent = file.name + ' (' + text.split('\n').length + ' regels)';
         document.getElementById('chatImgPreview').style.display = 'flex';
       };
@@ -4651,7 +4644,7 @@ async function chatSend() {
   } else if (_chatImage && _chatImage.type === 'csv') {
     const csvMsg = (textMsg ? textMsg + '\n\n' : '') + 'CSV/Excel bestand: ' + _chatImage.filename + '\n\nInhoud (eerste 3000 tekens):\n' + _chatImage.text;
     userContent = csvMsg;
-    chatAppend('user', '📊 ' + _chatImage.filename + (textMsg ? ' — ' + textMsg : ''));
+    chatAppend('user', ' ' + _chatImage.filename + (textMsg ? ' — ' + textMsg : ''));
     _chatHistory.push({ role: 'user', content: csvMsg });
     chatClearImage();
   } else {
@@ -4751,6 +4744,6 @@ function chatScroll() { const el = document.getElementById('chatMessages'); el.s
 function chatKeyDown(e) { if (e.key === 'Enter' && !e.shiftKey) { e.preventDefault(); chatSend(); } }
 function chatAutoResize(el) { el.style.height = 'auto'; el.style.height = Math.min(el.scrollHeight, 110) + 'px'; }
 </script>
-
+  <link rel="stylesheet" href="../klaar-shared.css">
 </body>
 </html>

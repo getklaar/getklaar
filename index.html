@@ -11,7 +11,7 @@
       --surface: #111111;
       --muted:   #1a1a1a;
       --border:  #222222;
-      --accent:  #e8ff47;
+      --accent:  #E8B84B;
       --white:   #f5f2eb;
       --gray:    #888888;
     }
@@ -109,7 +109,7 @@
       padding: 3px 8px; border-radius: 20px;
       text-transform: uppercase; letter-spacing: 1px;
     }
-    .status-live { background: rgba(232,255,71,0.12); color: var(--accent); border: 1px solid rgba(232,255,71,0.3); }
+    .status-live { background: rgba(232,184,75,0.12); color: var(--accent); border: 1px solid rgba(232,184,75,0.3); }
     .status-next { background: rgba(255,165,0,0.1); color: #ffa500; border: 1px solid rgba(255,165,0,0.3); }
     .status-soon { background: rgba(136,136,136,0.1); color: var(--gray); border: 1px solid var(--border); }
 
@@ -138,7 +138,7 @@
     .flow-num { font-family: 'DM Mono', monospace; font-size: 10px; color: var(--accent); margin-bottom: 6px; letter-spacing: 2px; }
     .flow-name { font-size: 13px; font-weight: 600; margin-bottom: 3px; }
     .flow-desc { font-size: 11px; color: var(--gray); line-height: 1.4; }
-    .flow-step.active-flow { background: rgba(232,255,71,0.04); }
+    .flow-step.active-flow { background: rgba(232,184,75,0.04); }
     .flow-step.active-flow .flow-name { color: var(--accent); }
 
     /* FOOTER */
@@ -189,7 +189,7 @@
       background: var(--surface); padding: 20px;
       display: flex; flex-direction: column; gap: 6px;
     }
-    .price-card.price-live { background: rgba(232,255,71,0.03); }
+    .price-card.price-live { background: rgba(232,184,75,0.03); }
     .price-num { font-family: 'DM Mono', monospace; font-size: 10px; color: var(--gray); letter-spacing: 2px; }
     .price-name { font-size: 13px; font-weight: 600; }
     .price-card.price-live .price-name { color: var(--white); }
@@ -223,7 +223,7 @@
       font-weight: 500;
     }
     .compare-table thead th.col-klaar {
-      background: rgba(232,255,71,0.08);
+      background: rgba(232,184,75,0.08);
       color: var(--accent);
       border-bottom: 2px solid var(--accent);
     }
@@ -233,7 +233,7 @@
       white-space: nowrap;
     }
     .compare-table td { background: var(--surface); font-size: 13px; color: var(--gray); }
-    .compare-table td.col-klaar { background: rgba(232,255,71,0.03); color: var(--white); }
+    .compare-table td.col-klaar { background: rgba(232,184,75,0.03); color: var(--white); }
     .compare-table .val-good { color: var(--accent); font-weight: 500; }
     .compare-table .val-bad { color: #ff6b6b; }
     .compare-table .val-neutral { color: var(--gray); }
@@ -250,8 +250,8 @@
     .founder-section { display: none; }
     .founder-label {
       font-family: 'DM Mono', monospace; font-size: 10px;
-      color: var(--accent); background: rgba(232,255,71,0.08);
-      border: 1px solid rgba(232,255,71,0.2); padding: 3px 10px;
+      color: var(--accent); background: rgba(232,184,75,0.08);
+      border: 1px solid rgba(232,184,75,0.2); padding: 3px 10px;
       letter-spacing: 2px; text-transform: uppercase;
     }
     .progress-list { display: flex; flex-direction: column; gap: 12px; margin-top: 4px; }
@@ -293,10 +293,10 @@
       display: flex; align-items: center; gap: 10px;
       font-family: 'DM Sans', sans-serif; font-weight: 600; font-size: 13px;
       transition: transform 0.15s, background 0.15s;
-      box-shadow: 0 4px 24px rgba(232,255,71,0.3);
+      box-shadow: 0 4px 24px rgba(232,184,75,0.3);
       white-space: nowrap;
     }
-    .chat-trigger:hover { transform: translateY(-2px); box-shadow: 0 6px 28px rgba(232,255,71,0.4); }
+    .chat-trigger:hover { transform: translateY(-2px); box-shadow: 0 6px 28px rgba(232,184,75,0.4); }
     .chat-trigger.open { background: var(--muted); color: var(--accent); border: 1px solid var(--accent); box-shadow: none; }
     .chat-trigger-icon { font-size: 18px; }
     .chat-trigger-label { letter-spacing: 0.3px; }
@@ -438,7 +438,7 @@
       padding: 14px 28px; cursor: pointer; font-weight: 600;
       letter-spacing: 0.5px; transition: all 0.15s; line-height: 1.3;
     }
-    .hero-cta-primary:hover { opacity: 0.9; transform: translateY(-1px); box-shadow: 0 4px 20px rgba(232,255,71,0.3); }
+    .hero-cta-primary:hover { opacity: 0.9; transform: translateY(-1px); box-shadow: 0 4px 20px rgba(232,184,75,0.3); }
     .hero-cta-secondary {
       font-family: 'DM Mono', monospace; font-size: 12px;
       color: var(--gray); text-decoration: none; letter-spacing: 1px;
@@ -461,7 +461,7 @@
     .demo-pair.active { display: flex; }
     .demo-user {
       font-size: 13px; color: var(--white);
-      background: rgba(232,255,71,0.06); border: 1px solid rgba(232,255,71,0.15);
+      background: rgba(232,184,75,0.06); border: 1px solid rgba(232,184,75,0.15);
       padding: 8px 12px; align-self: flex-end; max-width: 85%;
       font-style: italic;
     }
@@ -568,7 +568,7 @@
       display: flex;
     }
     .splash-letter {
-      display: inline-block; color: #e8ff47;
+      display: inline-block; color: #E8B84B;
       opacity: 0; transform: translateY(55px);
       animation: letterDrop 0.48s cubic-bezier(0.16,1,0.3,1) forwards;
     }
@@ -580,7 +580,7 @@
     @keyframes letterDrop { to { opacity:1; transform:translateY(0); } }
 
     .splash-underline {
-      height: 2px; background: #e8ff47; width: 0;
+      height: 2px; background: #E8B84B; width: 0;
       margin: 18px 0 26px;
       animation: lineGrow 0.4s cubic-bezier(0.4,0,0.2,1) 0.52s forwards;
     }
@@ -596,7 +596,7 @@
     .splash-nocc {
       font-family: 'DM Mono', monospace;
       font-size: clamp(8px, 1.1vw, 10px);
-      letter-spacing: 0.18em; color: #e8ff47;
+      letter-spacing: 0.18em; color: #E8B84B;
       opacity: 0; margin-top: 6px;
       animation: fadeUp 0.4s ease 1s forwards;
     }
@@ -604,7 +604,7 @@
       margin-top: 52px;
       font-family: 'DM Mono', monospace; font-size: 12px;
       letter-spacing: 0.1em; text-transform: uppercase;
-      color: #0a0a0a; background: #e8ff47;
+      color: #0a0a0a; background: #E8B84B;
       border: none; padding: 14px 36px; cursor: pointer;
       opacity: 0;
       animation: fadeUp 0.4s ease 1.2s forwards;
@@ -675,7 +675,7 @@
     .demo-chat-wrap {
       border: 1px solid var(--accent);
       background: var(--surface);
-      box-shadow: 0 0 40px rgba(232,255,71,0.06);
+      box-shadow: 0 0 40px rgba(232,184,75,0.06);
     }
     .demo-chat-msgs {
       min-height: 260px; max-height: 400px; overflow-y: auto;
@@ -706,7 +706,7 @@
     .ldm-cursor { animation: blink 1s infinite; }
     .ldm-gate {
       align-self: stretch;
-      background: rgba(232,255,71,0.05); border: 1px solid rgba(232,255,71,0.25);
+      background: rgba(232,184,75,0.05); border: 1px solid rgba(232,184,75,0.25);
       padding: 16px 20px; font-size: 14px; color: var(--white);
       line-height: 1.6; text-align: center;
     }
@@ -746,7 +746,7 @@
       border: 1px solid var(--border); color: var(--gray); background: none;
       padding: 6px 12px; cursor: pointer; transition: all 0.15s;
     }
-    .demo-sugg:hover { border-color: var(--accent); color: var(--accent); background: rgba(232,255,71,0.04); }
+    .demo-sugg:hover { border-color: var(--accent); color: var(--accent); background: rgba(232,184,75,0.04); }
     @media (max-width: 600px) {
       .demo-section { padding: 48px 20px 60px; }
       .demo-section-title { font-size: 40px; }
@@ -794,7 +794,7 @@
       font-family: 'DM Mono', monospace; font-size: 10px;
       padding: 3px 8px; letter-spacing: 1px; text-transform: uppercase;
     }
-    .mc-badge-live { background: rgba(232,255,71,0.12); color: var(--accent); border: 1px solid rgba(232,255,71,0.3); }
+    .mc-badge-live { background: rgba(232,184,75,0.12); color: var(--accent); border: 1px solid rgba(232,184,75,0.3); }
     .mc-badge-soon { background: rgba(136,136,136,0.1); color: var(--gray); border: 1px solid var(--border); }
     .mc-num {
       font-family: 'DM Mono', monospace; font-size: 10px;
@@ -863,9 +863,9 @@
 
     /* AI BANNER */
     .ai-banner {
-      border-top: 1px solid rgba(232,255,71,0.2);
-      border-bottom: 1px solid rgba(232,255,71,0.2);
-      background: rgba(232,255,71,0.03);
+      border-top: 1px solid rgba(232,184,75,0.2);
+      border-bottom: 1px solid rgba(232,184,75,0.2);
+      background: rgba(232,184,75,0.03);
       padding: 28px 32px;
       margin: 0 -32px 32px;
       display: grid;
@@ -876,7 +876,7 @@
       padding: 0 28px 0 0;
       display: flex; flex-direction: column; gap: 6px;
     }
-    .ai-banner-item:not(:first-child) { border-left: 1px solid rgba(232,255,71,0.15); padding-left: 28px; }
+    .ai-banner-item:not(:first-child) { border-left: 1px solid rgba(232,184,75,0.15); padding-left: 28px; }
     .ai-banner-label {
       font-family: 'DM Mono', monospace; font-size: 10px;
       color: var(--accent); letter-spacing: 2px; text-transform: uppercase;
@@ -893,7 +893,7 @@
       .mc-name { font-size: 26px; }
       .ai-banner { grid-template-columns: 1fr; }
       .ai-banner { margin: 0 -20px 28px; padding: 24px 20px; }
-      .ai-banner-item:not(:first-child) { border-left: none; border-top: 1px solid rgba(232,255,71,0.15); padding-left: 0; padding-top: 20px; }
+      .ai-banner-item:not(:first-child) { border-left: none; border-top: 1px solid rgba(232,184,75,0.15); padding-left: 0; padding-top: 20px; }
     }
   </style>
   <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2/dist/umd/supabase.min.js"></script>
@@ -1239,7 +1239,7 @@
     </div>
     <div style="display:flex; flex-direction:column; align-items:flex-end; gap:4px;">
       <div class="price-total-amount">€89 / maand</div>
-      <div style="font-family:'DM Mono',monospace; font-size:11px; background:rgba(232,255,71,0.12); color:var(--accent); border:1px solid rgba(232,255,71,0.3); padding:2px 10px; letter-spacing:1px;">
+      <div style="font-family:'DM Mono',monospace; font-size:11px; background:rgba(232,184,75,0.12); color:var(--accent); border:1px solid rgba(232,184,75,0.3); padding:2px 10px; letter-spacing:1px;">
         JE BESPAART €21/M — €252/JAAR
       </div>
     </div>
@@ -1525,7 +1525,7 @@
 </div>
 
 <!-- KLAAR ASSISTENT SECTIE -->
-<div class="section" style="background: rgba(232,255,71,0.03); border-top: 1px solid rgba(232,255,71,0.15);">
+<div class="section" style="background: rgba(232,184,75,0.03); border-top: 1px solid rgba(232,184,75,0.15);">
   <div style="display:grid; grid-template-columns: 1fr 1fr; gap: 40px; align-items: center;">
     <div>
       <div class="hero-label" style="margin-bottom:16px;">Ingebouwde AI-assistent</div>
@@ -1550,7 +1550,7 @@
         <div style="font-size:11px; color:var(--gray); font-family:'DM Mono',monospace; margin-bottom:5px;">VOORBEELD VRAAG</div>
         <div style="font-size:13px; color:var(--white);">"Waarom is mijn marge op de biefstuk gedaald?"</div>
       </div>
-      <div style="background:rgba(232,255,71,0.04); padding:14px 18px; border-bottom:1px solid var(--border);">
+      <div style="background:rgba(232,184,75,0.04); padding:14px 18px; border-bottom:1px solid var(--border);">
         <div style="font-size:11px; color:var(--accent); font-family:'DM Mono',monospace; margin-bottom:5px;">KLAAR ASSISTENT</div>
         <div style="font-size:13px; color:var(--white); line-height:1.6;">Je inkoopprijs voor rundvlees is gestegen van €16 naar €19/kg. Bij je huidige verkoopprijs is je foodcost 34% — boven je target van 30%. Oplossing: prijs €1,50 omhoog of portie 20g kleiner.</div>
       </div>
@@ -1558,7 +1558,7 @@
         <div style="font-size:11px; color:var(--gray); font-family:'DM Mono',monospace; margin-bottom:5px;">VOORBEELD VRAAG</div>
         <div style="font-size:13px; color:var(--white);">"Welke modules gebruik ik nog niet optimaal?"</div>
       </div>
-      <div style="background:rgba(232,255,71,0.04); padding:14px 18px;">
+      <div style="background:rgba(232,184,75,0.04); padding:14px 18px;">
         <div style="font-size:11px; color:var(--accent); font-family:'DM Mono',monospace; margin-bottom:5px;">KLAAR ASSISTENT</div>
         <div style="font-size:13px; color:var(--white); line-height:1.6;">Module 07 heeft 0 producten gekoppeld aan Module 04 — je inkoopprijzen worden dus niet automatisch bijgewerkt. Koppel je Hanos-producten en je kostprijs klopt altijd live.</div>
       </div>
@@ -2259,7 +2259,7 @@ document.addEventListener('DOMContentLoaded', () => {
         <div class="gate-benefit">Scan facturen, spreek recepten in, log HACCP direct via chat</div>
         <div class="gate-benefit">Werkt op elke browser, ook tablet en telefoon</div>
       </div>
-      <div style="display:flex;gap:12px;align-items:center;margin-bottom:16px;padding:10px 12px;background:rgba(232,255,71,0.06);border:1px solid rgba(232,255,71,0.15);">
+      <div style="display:flex;gap:12px;align-items:center;margin-bottom:16px;padding:10px 12px;background:rgba(232,184,75,0.06);border:1px solid rgba(232,184,75,0.15);">
         <span style="font-size:18px;">✉️</span>
         <span style="font-family:'DM Mono',monospace;font-size:10px;color:var(--accent);letter-spacing:1px;line-height:1.5;">GEEN CREDITCARD NODIG<br><span style="color:var(--gray);">Geen automatische afschrijving. Ooit.</span></span>
       </div>

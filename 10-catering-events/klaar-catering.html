@@ -9,7 +9,7 @@
 <link href="https://fonts.googleapis.com/css2?family=Bebas+Neue&family=DM+Mono:wght@400;500&family=DM+Sans:wght@400;500;600&display=swap" rel="stylesheet">
 <style>
 :root {
-  --black: #0a0a0a; --border: #222222; --lime: #e8ff47;
+  --black: #1E1B17; --border: #222222; --lime: #E8B84B;
   --bg: #f5f5f3; --surface: #ffffff; --text: #111111; --muted: #888888;
   --green: #22c55e; --orange: #f97316; --red: #ef4444; --blue: #3b82f6;
   --purple: #a855f7;
@@ -26,7 +26,7 @@ body { font-family: 'DM Sans', sans-serif; background: var(--bg); color: var(--t
 .header-spacer { flex: 1; }
 .header-badge { font-family: 'DM Mono', monospace; font-size: 10px; color: var(--green); border: 1px solid var(--green); padding: 3px 8px; border-radius: 4px; letter-spacing: 0.08em; }
 .help-btn { width: 28px; height: 28px; border-radius: 50%; border: 1px solid #444; background: none; color: #888; font-size: 13px; font-weight: 600; cursor: pointer; display: flex; align-items: center; justify-content: center; transition: all 0.15s; font-family: 'DM Mono', monospace; flex-shrink: 0; }
-.help-btn:hover, .help-btn.open { border-color: var(--lime); color: var(--lime); background: rgba(232,255,71,0.08); }
+.help-btn:hover, .help-btn.open { border-color: var(--lime); color: var(--lime); background: rgba(232,184,75,0.08); }
 
 /* HELP DRAWER */
 .help-drawer { position: fixed; top: 60px; right: 0; width: 300px; height: calc(100vh - 60px); background: var(--black); color: #fff; border-left: 1px solid var(--border); z-index: 200; transform: translateX(100%); transition: transform 0.22s cubic-bezier(0.4,0,0.2,1); display: flex; flex-direction: column; overflow: hidden; }
@@ -39,13 +39,13 @@ body { font-family: 'DM Sans', sans-serif; background: var(--bg); color: var(--t
 .help-section { margin-bottom: 18px; }
 .help-section-title { font-size: 12px; font-weight: 600; color: var(--lime); text-transform: uppercase; letter-spacing: 0.08em; margin-bottom: 6px; font-family: 'DM Mono', monospace; }
 .help-section p { font-size: 13px; color: #ccc; line-height: 1.6; margin-bottom: 6px; }
-.help-tip { background: rgba(232,255,71,0.08); border-left: 2px solid var(--lime); padding: 8px 12px; border-radius: 2px; font-size: 12px; color: #ddd; line-height: 1.5; margin-top: 8px; }
+.help-tip { background: rgba(232,184,75,0.08); border-left: 2px solid var(--lime); padding: 8px 12px; border-radius: 2px; font-size: 12px; color: #ddd; line-height: 1.5; margin-top: 8px; }
 
 /* TABS */
 .tab-bar { height: 48px; background: var(--surface); border-bottom: 1px solid #e5e5e5; display: flex; align-items: stretch; padding: 0 24px; gap: 4px; overflow-x: auto; flex-shrink: 0; }
-.tab-btn { font-family: 'DM Mono', monospace; font-size: 11px; letter-spacing: 0.06em; text-transform: uppercase; color: var(--muted); background: none; border: none; border-bottom: 2px solid transparent; padding: 0 14px; cursor: pointer; transition: all 0.15s; white-space: nowrap; }
+.tab-btn { font-family: 'Inter', sans-serif; font-size: 13px; font-weight: 500; letter-spacing: 0; text-transform: none; color: var(--muted); background: none; border: none; border-bottom: 2px solid transparent; padding: 0 14px; cursor: pointer; transition: all 0.15s; white-space: nowrap; }
 .tab-btn:hover { color: var(--text); }
-.tab-btn.active { color: var(--text); border-bottom-color: var(--black); font-weight: 600; }
+.tab-btn.active { color: var(--text); border-bottom-color: #E8B84B; font-weight: 600; }
 
 /* PANELS */
 .tab-panel { display: none; height: calc(100vh - 60px - 48px); overflow-y: auto; }
@@ -56,17 +56,17 @@ body { font-family: 'DM Sans', sans-serif; background: var(--bg); color: var(--t
 
 /* CARDS & GRID */
 .stats-row { display: grid; grid-template-columns: repeat(4, 1fr); gap: 16px; margin-bottom: 28px; }
-.stat-card { background: var(--surface); border: 1px solid #e5e5e5; border-radius: 8px; padding: 18px 20px; }
-.stat-label { font-family: 'DM Mono', monospace; font-size: 10px; color: var(--muted); letter-spacing: 0.08em; text-transform: uppercase; margin-bottom: 6px; }
-.stat-value { font-family: 'Bebas Neue', sans-serif; font-size: 32px; color: var(--text); line-height: 1; }
-.stat-sub { font-size: 12px; color: var(--muted); margin-top: 4px; }
+.stat-card { background: #fff; border: 1px solid #e8e8e8; border-radius: 6px; padding: 20px 22px; }
+.stat-label { font-family: 'Inter', sans-serif; font-size: 11px; font-weight: 600; color: #888; letter-spacing: 0.05em; text-transform: uppercase; margin-bottom: 8px; }
+.stat-value { font-family: 'Bebas Neue', sans-serif; font-size: 44px; color: var(--black); line-height: 1; letter-spacing: 0.01em; }
+.stat-sub { font-family: 'Inter', sans-serif; font-size: 12px; color: #999; margin-top: 6px; }
 
 /* EVENT LIST */
 .events-header { display: flex; align-items: center; justify-content: space-between; margin-bottom: 16px; }
 .events-title { font-family: 'Bebas Neue', sans-serif; font-size: 22px; letter-spacing: 0.03em; }
 .btn { display: inline-flex; align-items: center; gap: 7px; font-family: 'DM Sans', sans-serif; font-size: 13px; font-weight: 600; padding: 9px 18px; border-radius: 6px; border: none; cursor: pointer; transition: all 0.15s; text-decoration: none; }
 .btn-primary { background: var(--black); color: var(--lime); }
-.btn-primary:hover { background: #1a1a1a; }
+.btn-primary:hover { background: #1E1B17; }
 .btn-secondary { background: var(--surface); color: var(--text); border: 1px solid #e5e5e5; }
 .btn-secondary:hover { background: #f0f0ee; }
 .btn-danger { background: #fef2f2; color: var(--red); border: 1px solid #fecaca; }
@@ -112,10 +112,10 @@ body { font-family: 'DM Sans', sans-serif; background: var(--bg); color: var(--t
 .event-date-block.edb-today {
   background:var(--black); border-color:var(--black);
 }
-.event-date-block.edb-today .edb-dow   { color:#e8ff47; opacity:0.65; }
-.event-date-block.edb-today .edb-day   { color:#e8ff47; }
-.event-date-block.edb-today .edb-month { color:#e8ff47; opacity:0.75; }
-.event-date-block.edb-today .edb-year  { color:#e8ff47; opacity:0.45; }
+.event-date-block.edb-today .edb-dow   { color:#E8B84B; opacity:0.65; }
+.event-date-block.edb-today .edb-day   { color:#E8B84B; }
+.event-date-block.edb-today .edb-month { color:#E8B84B; opacity:0.75; }
+.event-date-block.edb-today .edb-year  { color:#E8B84B; opacity:0.45; }
 .event-date-block.edb-past { opacity:0.5; }
 /* ── Reminder flag ── */
 .reminder-flag {
@@ -158,7 +158,7 @@ body { font-family: 'DM Sans', sans-serif; background: var(--bg); color: var(--t
 .dyn-table td { padding: 6px 4px; vertical-align: middle; }
 .dyn-table td input, .dyn-table td select { width: 100%; padding: 7px 10px; border: 1px solid #e5e5e5; border-radius: 5px; font-size: 13px; font-family: 'DM Sans', sans-serif; background: #fafafa; }
 .dyn-table td input:focus, .dyn-table td select:focus { outline: none; border-color: var(--black); background: #fff; }
-.dyn-table .del-btn { background: none; border: none; color: #ccc; cursor: pointer; font-size: 16px; padding: 4px 8px; border-radius: 4px; transition: color 0.15s; }
+.dyn-table .del-btn { background: none; border: none; color: #aaa; cursor: pointer; font-size: 16px; padding: 4px 8px; border-radius: 4px; transition: color 0.15s; }
 .dyn-table .del-btn:hover { color: var(--red); }
 .add-row-btn { display: inline-flex; align-items: center; gap: 6px; font-size: 12px; color: var(--muted); background: none; border: 1px dashed #d5d5d5; padding: 7px 14px; border-radius: 6px; cursor: pointer; transition: all 0.15s; font-family: 'DM Mono', monospace; }
 .add-row-btn:hover { border-color: var(--black); color: var(--text); }
@@ -176,10 +176,10 @@ body { font-family: 'DM Sans', sans-serif; background: var(--bg); color: var(--t
   margin-bottom:8px; transition:background 0.1s, border-color 0.1s, box-shadow 0.1s;
   background:#f8f8f6; user-select:none; display:flex; flex-direction:column; gap:4px;
 }
-.recept-item:hover { border-color:#0a0a0a; background:#fff; box-shadow:0 2px 8px rgba(0,0,0,0.10); }
+.recept-item:hover { border-color:#1E1B17; background:#fff; box-shadow:0 2px 8px rgba(0,0,0,0.10); }
 .recept-item:active { background:#f0f0ee; box-shadow:none; }
 .recept-item, .recept-item * { cursor:pointer !important; }
-.recept-item .ri-title { font-size:14px; font-weight:700; color:#0a0a0a; line-height:1.3; pointer-events:none; }
+.recept-item .ri-title { font-size:14px; font-weight:700; color:#1E1B17; line-height:1.3; pointer-events:none; }
 .recept-item .ri-meta { font-size:10px; font-family:'DM Mono',monospace; color:#999; letter-spacing:0.5px; text-transform:uppercase; pointer-events:none; }
 
 /* SAVE BAR */
@@ -203,7 +203,7 @@ body { font-family: 'DM Sans', sans-serif; background: var(--bg); color: var(--t
 .sheet-preview .highlight-row { background: #fffbeb; }
 .empty-state { text-align: center; padding: 60px 20px; color: var(--muted); }
 .empty-state-icon { font-size: 48px; margin-bottom: 12px; }
-.empty-state h3 { font-family: 'Bebas Neue', sans-serif; font-size: 22px; color: #ccc; margin-bottom: 6px; letter-spacing: 0.03em; }
+.empty-state h3 { font-family: 'Bebas Neue', sans-serif; font-size: 22px; color: #aaa; margin-bottom: 6px; letter-spacing: 0.03em; }
 .empty-state p { font-size: 13px; }
 
 /* OFFERTE PREVIEW */
@@ -244,7 +244,7 @@ body { font-family: 'DM Sans', sans-serif; background: var(--bg); color: var(--t
 .template-name { font-weight: 600; font-size: 14px; margin-bottom: 2px; }
 .template-meta { font-size: 11px; color: var(--muted); font-family: 'DM Mono', monospace; }
 .template-actions { display: flex; gap: 6px; flex-shrink: 0; }
-.template-del { background: none; border: none; color: #ccc; cursor: pointer; font-size: 15px; padding: 4px 6px; border-radius: 4px; transition: color 0.15s; }
+.template-del { background: none; border: none; color: #aaa; cursor: pointer; font-size: 15px; padding: 4px 6px; border-radius: 4px; transition: color 0.15s; }
 .template-del:hover { color: var(--red); }
 .save-template-form { background: #f9f9f7; border: 1px solid #e5e5e5; border-radius: 8px; padding: 14px 16px; margin-top: 6px; }
 .arr-type-badges { display: flex; gap: 6px; margin-top: 8px; flex-wrap: wrap; }
@@ -291,12 +291,12 @@ body { font-family: 'DM Sans', sans-serif; background: var(--bg); color: var(--t
     padding:8px 4px; border:1px solid #e5e5e5; border-radius:6px; cursor:pointer;
     transition:all 0.12s;
   }
-  .allergen-picker-item:hover { border-color:#0a0a0a; background:#f9f9f9; }
-  .allergen-picker-item.selected { border-color:#0a0a0a; background:#0a0a0a; }
+  .allergen-picker-item:hover { border-color:#1E1B17; background:#f9f9f9; }
+  .allergen-picker-item.selected { border-color:#1E1B17; background:#1E1B17; }
   .allergen-picker-item.selected .ap-icon { filter:none; }
   .allergen-picker-item .ap-icon { font-size:18px; line-height:1; }
   .allergen-picker-item .ap-name { font-size:9px; font-family:'DM Mono',monospace; text-align:center; color:#555; }
-  .allergen-picker-item.selected .ap-name { color:#e8ff47; }
+  .allergen-picker-item.selected .ap-name { color:#E8B84B; }
   body.printing-bediening .print-block-bediening { display: block !important; }
   body.printing-offerte .print-block-offerte { display: block !important; }
 
@@ -319,9 +319,6 @@ body { font-family: 'DM Sans', sans-serif; background: var(--bg); color: var(--t
   .print-footer { margin-top: 20pt; border-top: 1px solid #ddd; padding-top: 8pt; font-size: 8pt; color: #888; display: flex; justify-content: space-between; }
 }
 </style>
-
-  <link rel="stylesheet" href="../klaar-shared.css">
-
   <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2/dist/umd/supabase.min.js"></script>
   <script src="../klaar-client.js"></script>
 </head>
@@ -417,7 +414,7 @@ body { font-family: 'DM Sans', sans-serif; background: var(--bg); color: var(--t
 
 <!-- HEADER -->
 <div class="header">
-  <a href="../index.html" class="header-back">← KLAAR</a>
+  <a href="../dashboard/index.html" class="header-back">← Dashboard</a>
   <div class="header-logo">KLAAR</div>
   <div class="header-module">10 — CATERING &amp; EVENTS</div>
   <div class="header-spacer"></div>
@@ -451,14 +448,25 @@ body { font-family: 'DM Sans', sans-serif; background: var(--bg); color: var(--t
     <div class="stats-row" id="stats-row"></div>
     <div class="events-header">
       <div class="events-title">AANKOMENDE EVENTS</div>
-      <div style="display:flex;gap:8px;align-items:center;">
+      <div style="display:flex;gap:8px;align-items:center;flex-wrap:wrap;">
         <select id="agenda-filter" onchange="renderAgenda()" style="padding:7px 12px;border:1px solid #e5e5e5;border-radius:6px;font-size:13px;background:#fff;">
           <option value="all">Alle events</option>
           <option value="concept">Concept</option>
           <option value="bevestigd">Bevestigd</option>
           <option value="voorbij">Voorbij</option>
+          <option value="geannuleerd">Geannuleerd</option>
         </select>
-        <button class="btn btn-primary" onclick="newEvent()">Nieuw event</button>
+        <!-- Datumfilter -->
+        <select id="agenda-periode" onchange="renderAgenda()" style="padding:7px 12px;border:1px solid #e5e5e5;border-radius:6px;font-size:13px;background:#fff;" title="Filter op periode">
+          <option value="all">Alle data</option>
+          <option value="30">Komende 30 dagen</option>
+          <option value="60">Komende 60 dagen</option>
+          <option value="90">Komende 90 dagen</option>
+          <option value="month">Deze maand</option>
+          <option value="next_month">Volgende maand</option>
+          <option value="year">Dit jaar</option>
+        </select>
+        <button class="btn btn-primary" onclick="newEvent()">+ Nieuw event</button>
         <button class="btn btn-ghost btn-sm" onclick="loadDemoEvent()" title="Laad een voorbeeldevent om sheets en offerte te bekijken" style="font-size:11px;opacity:0.6;">Demo laden</button>
       </div>
     </div>
@@ -513,18 +521,18 @@ body { font-family: 'DM Sans', sans-serif; background: var(--bg); color: var(--t
           <div class="form-group">
             <label>Type event *</label>
             <select id="f-type">
-              <option value="bruiloft">💒 Bruiloft</option>
+              <option value="bruiloft"> Bruiloft</option>
               <option value="koffietafel">☕ Koffietafel</option>
               <option value="verjaardag">🎂 Verjaardag / Jubileum</option>
               <option value="bedrijfsfeest">🏢 Bedrijfsfeest</option>
               <option value="borrel">🍾 Borrel / Receptie</option>
-              <option value="diner">🍽️ Privédiner</option>
+              <option value="diner"> Privédiner</option>
               <option value="catering">🚚 Catering extern</option>
               <option value="kerstdiner">🎄 Kerstdiner</option>
               <option value="anders">📌 Anders</option>
             </select>
           </div>
-          <div class="form-group"><label>Datum *</label><input type="date" id="f-datum"></div>
+          <div class="form-group"><label>Datum *</label><input type="date" id="f-datum" onchange="checkDateConflict(this.value, _currentEventId)"></div>
           <div class="form-group">
             <label>Status</label>
             <select id="f-status">
@@ -726,11 +734,12 @@ body { font-family: 'DM Sans', sans-serif; background: var(--bg); color: var(--t
 ══════════════════════════════════════ -->
 <div class="tab-panel" id="tab-offerte">
   <div class="panel-inner">
-    <div class="sheet-selector no-print">
+    <div class="sheet-selector no-print" style="display:flex;align-items:center;gap:12px;flex-wrap:wrap;">
       <label>EVENT:</label>
       <select id="offerte-event-select" onchange="renderOfferte()">
         <option value="">— Kies een event —</option>
       </select>
+      <button class="btn btn-primary btn-sm" onclick="printOfferte()" id="btn-print-offerte" style="display:none;" title="Offerte afdrukken of opslaan als PDF">↓ Offerte PDF</button>
     </div>
     <div id="offerte-container">
       <div class="empty-state">
@@ -774,13 +783,13 @@ body { font-family: 'DM Sans', sans-serif; background: var(--bg); color: var(--t
         </div>
         <div class="form-row" style="margin-top:8px;">
           <div class="form-group">
-            <label>🚩 Agenda reminder — vlaggetje tonen</label>
+            <label> Agenda reminder — vlaggetje tonen</label>
             <div style="display:flex;align-items:center;gap:10px;margin-top:6px;">
               <input type="number" id="s-reminder-dagen" min="1" max="60" value="7"
                 style="width:72px;padding:8px 10px;border:1px solid #e5e5e5;border-radius:6px;font-size:14px;text-align:center;">
               <span style="font-size:13px;color:var(--muted);">dagen van tevoren</span>
             </div>
-            <p style="font-size:11px;color:var(--muted);margin-top:5px;">Events binnen dit aantal dagen krijgen een 🚩 vlaggetje in de agenda.</p>
+            <p style="font-size:11px;color:var(--muted);margin-top:5px;">Events binnen dit aantal dagen krijgen een  vlaggetje in de agenda.</p>
           </div>
         </div>
         <button class="btn btn-primary" onclick="saveSettings()">Opslaan</button>
@@ -813,15 +822,18 @@ function loadEvents() {
   try { return JSON.parse(localStorage.getItem('klaar_events') || '[]'); } catch(e) { return []; }
 }
 function saveEventsToStorage(arr) {
-  localStorage.setItem('klaar_events', JSON.stringify(arr));
+  try { localStorage.setItem('klaar_events', JSON.stringify(arr)); }
+  catch(e) { if (e.name === 'QuotaExceededError') alert('⚠ Opslagruimte vol — verwijder eerst afgeronde events om ruimte vrij te maken.'); }
 }
 function loadCateringSettings() {
   try { return JSON.parse(localStorage.getItem('klaar_catering_settings') || '{}'); } catch(e) { return {}; }
 }
 function saveCateringSettings(s) {
-  localStorage.setItem('klaar_catering_settings', JSON.stringify(s));
+  try { localStorage.setItem('klaar_catering_settings', JSON.stringify(s)); }
+  catch(e) { /* settings zijn klein, zelden vol */ }
 }
 function genId() { return 'evt_' + Date.now().toString(36) + Math.random().toString(36).substr(2,5); }
+function esc(s) { return String(s||'').replace(/&/g,'&amp;').replace(/</g,'&lt;').replace(/>/g,'&gt;').replace(/"/g,'&quot;'); }
 
 function loadDemoEvent() {
   if (!confirm('Demo-event laden? Dit voegt een voorbeeldbruiloft toe aan je agenda.')) return;
@@ -847,11 +859,11 @@ function loadDemoEvent() {
       factuurNaam: 'R. Vermeer'
     },
     menu: [
-      { gang:'amuse',         omschrijving:'Garnalencocktail op bedje van rucola met aioli',        tijdstip:'16:30', receptId:null, allergenen:[{code:'S',name:'Schaaldieren',icon:'🦐'},{code:'E',name:'Eieren',icon:'🥚'},{code:'M',name:'Melk',icon:'🥛'}] },
-      { gang:'soep',          omschrijving:'Tomatensoep met basilicumolie en croutons',              tijdstip:'17:30', receptId:null, allergenen:[{code:'G',name:'Gluten',icon:'🌾'},{code:'SE',name:'Selderij',icon:'🌿'}] },
-      { gang:'voorgerecht',   omschrijving:'Gemarineerde zalmfilet met komkommer-dillecreme',       tijdstip:'18:15', receptId:null, allergenen:[{code:'V',name:'Vis',icon:'🐟'},{code:'M',name:'Melk',icon:'🥛'},{code:'E',name:'Eieren',icon:'🥚'}] },
-      { gang:'hoofdgerecht',  omschrijving:'Lamsrack met aardappelgratin, haricots verts en jus',  tijdstip:'19:30', receptId:null, allergenen:[{code:'M',name:'Melk',icon:'🥛'},{code:'SE',name:'Selderij',icon:'🌿'},{code:'SU',name:'Sulfieten',icon:'🍷'}] },
-      { gang:'dessert',       omschrijving:'Crème brûlée met verse aardbeien en amandeltuile',     tijdstip:'21:00', receptId:null, allergenen:[{code:'E',name:'Eieren',icon:'🥚'},{code:'M',name:'Melk',icon:'🥛'},{code:'N',name:'Noten',icon:'🌰'},{code:'G',name:'Gluten',icon:'🌾'}] }
+      { gang:'amuse',         omschrijving:'Garnalencocktail op bedje van rucola met aioli',        tijdstip:'16:30', receptId:null, allergenen:[{code:'S',name:'Schaaldieren',icon:'🦐'},{code:'E',name:'Eieren',icon:''},{code:'M',name:'Melk',icon:''}] },
+      { gang:'soep',          omschrijving:'Tomatensoep met basilicumolie en croutons',              tijdstip:'17:30', receptId:null, allergenen:[{code:'G',name:'Gluten',icon:''},{code:'SE',name:'Selderij',icon:''}] },
+      { gang:'voorgerecht',   omschrijving:'Gemarineerde zalmfilet met komkommer-dillecreme',       tijdstip:'18:15', receptId:null, allergenen:[{code:'V',name:'Vis',icon:'🐟'},{code:'M',name:'Melk',icon:''},{code:'E',name:'Eieren',icon:''}] },
+      { gang:'hoofdgerecht',  omschrijving:'Lamsrack met aardappelgratin, haricots verts en jus',  tijdstip:'19:30', receptId:null, allergenen:[{code:'M',name:'Melk',icon:''},{code:'SE',name:'Selderij',icon:''},{code:'SU',name:'Sulfieten',icon:''}] },
+      { gang:'dessert',       omschrijving:'Crème brûlée met verse aardbeien en amandeltuile',     tijdstip:'21:00', receptId:null, allergenen:[{code:'E',name:'Eieren',icon:''},{code:'M',name:'Melk',icon:''},{code:'N',name:'Noten',icon:'🌰'},{code:'G',name:'Gluten',icon:''}] }
     ],
     dranken: [
       {moment:'Ontvangst',      drank:'Cava Brut Naturé & fruitsap'},
@@ -924,9 +936,9 @@ function typeLabel(t) {
   return m[t] || t;
 }
 function typeIcon(t) {
-  const m = { bruiloft:'💒', koffietafel:'☕', verjaardag:'🎂', bedrijfsfeest:'🏢',
-    borrel:'🍾', diner:'🍽️', catering:'🚚', kerstdiner:'🎄', anders:'📌' };
-  return m[t] || '📅';
+  const m = { bruiloft:'', koffietafel:'☕', verjaardag:'🎂', bedrijfsfeest:'🏢',
+    borrel:'🍾', diner:'', catering:'🚚', kerstdiner:'🎄', anders:'📌' };
+  return m[t] || '';
 }
 function gangLabel(g) {
   const m = { amuse:'Amuse', soep:'Soep', voorgerecht:'Voorgerecht', tussengerecht:'Tussengerecht',
@@ -971,10 +983,10 @@ function toggleHelp() {
 }
 function renderHelp(tab) {
   const content = {
-    agenda: `<div class="help-section"><div class="help-section-title">Agenda</div><p>Overzicht van alle events. Klik op een event om het te bewerken in de Intake.</p><div class="help-tip">💡 Gebruik de filter om snel bevestigde events of events die al voorbij zijn te zien.</div></div>`,
-    intake: `<div class="help-section"><div class="help-section-title">Intake</div><p>Leg hier alles vast wat je met de klant bespreekt. Vul stap voor stap de secties in.</p></div><div class="help-section"><div class="help-section-title">Tijdlijn</div><p>De tijdlijn is de ruggengraat van de bedieningssheet. Voeg elk moment toe: ontvangst, aperitief, gangen, taart, afsluiting.</p><div class="help-tip">💡 Voeg tijden toe bij de menugangen — deze verschijnen automatisch als suggestie in de tijdlijn.</div></div>`,
+    agenda: `<div class="help-section"><div class="help-section-title">Agenda</div><p>Overzicht van alle events. Klik op een event om het te bewerken in de Intake.</p><div class="help-tip"> Gebruik de filter om snel bevestigde events of events die al voorbij zijn te zien.</div></div>`,
+    intake: `<div class="help-section"><div class="help-section-title">Intake</div><p>Leg hier alles vast wat je met de klant bespreekt. Vul stap voor stap de secties in.</p></div><div class="help-section"><div class="help-section-title">Tijdlijn</div><p>De tijdlijn is de ruggengraat van de bedieningssheet. Voeg elk moment toe: ontvangst, aperitief, gangen, taart, afsluiting.</p><div class="help-tip"> Voeg tijden toe bij de menugangen — deze verschijnen automatisch als suggestie in de tijdlijn.</div></div>`,
     sheets: `<div class="help-section"><div class="help-section-title">Sheets genereren</div><p>Kies een event en genereer direct de keuken- of bedieningssheet. Klik op "Print" om te printen of op te slaan als PDF.</p></div><div class="help-section"><div class="help-section-title">Keukensheet</div><p>Voor de keuken: menu met tijden, dieetwensen en allergenen per gast.</p></div><div class="help-section"><div class="help-section-title">Bedieningssheet</div><p>Voor de zaal: tijdlijn, klantcontact, menu, dranken, bijzonderheden en financieel.</p></div>`,
-    offerte: `<div class="help-section"><div class="help-section-title">Offerte</div><p>Genereer een professionele offerte voor de klant op basis van de intake. Print of sla op als PDF.</p><div class="help-tip">💡 Vul je bedrijfsgegevens in bij Instellingen zodat ze op de offerte verschijnen.</div></div>`,
+    offerte: `<div class="help-section"><div class="help-section-title">Offerte</div><p>Genereer een professionele offerte voor de klant op basis van de intake. Print of sla op als PDF.</p><div class="help-tip"> Vul je bedrijfsgegevens in bij Instellingen zodat ze op de offerte verschijnen.</div></div>`,
     instellingen: `<div class="help-section"><div class="help-section-title">Bedrijfsgegevens</div><p>Jouw naam, telefoon en adres verschijnen als header op elke sheet en offerte. Vul dit één keer in.</p></div>`
   };
   document.getElementById('help-body').innerHTML = content[tab] || '';
@@ -1015,16 +1027,46 @@ function renderAgenda() {
     <div class="stat-card"><div class="stat-label">Verwachte omzet</div><div class="stat-value" style="font-size:24px;">${fmtEuro(totalRevenue)}</div><div class="stat-sub">excl. BTW</div></div>
   `;
 
+  // Periode-filter
+  const periodeFilter = document.getElementById('agenda-periode')?.value || 'all';
+  const now = new Date(); now.setHours(0,0,0,0);
+  const endOfPeriode = (() => {
+    if (periodeFilter === '30') { const d = new Date(now); d.setDate(d.getDate()+30); return d; }
+    if (periodeFilter === '60') { const d = new Date(now); d.setDate(d.getDate()+60); return d; }
+    if (periodeFilter === '90') { const d = new Date(now); d.setDate(d.getDate()+90); return d; }
+    if (periodeFilter === 'month') { return new Date(now.getFullYear(), now.getMonth()+1, 0); }
+    if (periodeFilter === 'next_month') { return new Date(now.getFullYear(), now.getMonth()+2, 0); }
+    if (periodeFilter === 'year') { return new Date(now.getFullYear(), 11, 31); }
+    return null;
+  })();
+  const startOfPeriode = (() => {
+    if (periodeFilter === 'next_month') return new Date(now.getFullYear(), now.getMonth()+1, 1);
+    return null;
+  })();
+
   // Filter & sort
   const sorted = [...events].sort((a,b) => (a.datum||'').localeCompare(b.datum||''));
-  const filtered = filter === 'all' ? sorted : sorted.filter(e => {
+  let filtered = sorted;
+  // Status filter
+  filtered = filter === 'all' ? filtered : filtered.filter(e => {
     if (filter === 'voorbij') return e.datum && new Date(e.datum) < today;
-    return e.status === filter && !(e.datum && new Date(e.datum) < today);
+    return e.status === filter;
   });
+  // Periode filter
+  if (periodeFilter !== 'all') {
+    filtered = filtered.filter(e => {
+      if (!e.datum) return false;
+      const d = new Date(e.datum + 'T00:00:00');
+      if (endOfPeriode && d > endOfPeriode) return false;
+      if (startOfPeriode && d < startOfPeriode) return false;
+      if (!startOfPeriode) return d >= now;
+      return true;
+    });
+  }
 
   const list = document.getElementById('events-list');
   if (!filtered.length) {
-    list.innerHTML = `<div class="empty-state"><div class="empty-state-icon">📅</div><h3>${events.length ? 'Geen events gevonden' : 'Nog geen events'}</h3><p>${events.length ? 'Pas de filter aan.' : 'Klik op "Nieuw event" om te beginnen.'}</p></div>`;
+    list.innerHTML = `<div class="empty-state"><div class="empty-state-icon"></div><h3>${events.length ? 'Geen events gevonden' : 'Nog geen events'}</h3><p>${events.length ? 'Pas de filter aan.' : 'Klik op "Nieuw event" om te beginnen.'}</p></div>`;
     return;
   }
 
@@ -1061,7 +1103,7 @@ function renderAgenda() {
     // Reminder vlaggetje
     let reminderHtml = '';
     if (!isPast && days >= 0 && days <= reminderDagen) {
-      const label = days === 0 ? 'VANDAAG 🚩' : days === 1 ? 'MORGEN 🚩' : `OVER ${days} DAGEN 🚩`;
+      const label = days === 0 ? 'VANDAAG ' : days === 1 ? 'MORGEN ' : `OVER ${days} DAGEN `;
       reminderHtml = `<div class="reminder-flag">${label}</div>`;
     }
 
@@ -1173,11 +1215,13 @@ function loadIntoForm(e) {
   document.getElementById('f-aanbetaling-betaald').checked = !!e.aanbetalingBetaald;
   document.getElementById('f-bijzonder').value = s(e.bijzonderheden);
   document.getElementById('f-notities').value = s(e.notities);
-  _menu = (e.menu || []).map(m => ({ ...m, allergenen: m.allergenen || [], receptId: m.receptId || null }));
+  _menu = (e.menu || []).map(m => ({ ...m, allergenen: m.allergenen || [], receptId: m.receptId || null, receptImportDatum: m.receptImportDatum || null, receptBijgewerkt: m.receptBijgewerkt || null }));
   _tijdlijn = e.tijdlijn || [];
   _dieet = e.dieetwensen || [];
   renderMenuRows(); renderTijdlijnRows(); renderDieetRows(); renderDrankenRows();
   updateFinancieel();
+  // Check of recepten in M01 bijgewerkt zijn na de import
+  setTimeout(checkReceptUpdates, 100);
 }
 
 function collectForm() {
@@ -1192,7 +1236,7 @@ function collectForm() {
     aantalKinderen: parseInt(document.getElementById('f-kinderen').value) || 0,
     locatie: document.getElementById('f-locatie').value,
     klant: {
-      naam: document.getElementById('f-naam').value,
+      naam: document.getElementById('f-naam').value.trim(),
       bedrijf: document.getElementById('f-bedrijf').value,
       telefoon: document.getElementById('f-telefoon').value,
       email: document.getElementById('f-email').value,
@@ -1228,6 +1272,28 @@ function saveEvent() {
   st.textContent = '✓ Opgeslagen';
   st.style.color = 'var(--green)';
   setTimeout(() => st.textContent = '', 2500);
+  // Controleer op datumconflict na opslaan
+  if (data.datum) checkDateConflict(data.datum, data.id);
+}
+
+function checkDateConflict(datum, currentId) {
+  const events = loadEvents();
+  const conflicts = events.filter(e => e.datum === datum && e.id !== currentId && e.status !== 'geannuleerd');
+  let banner = document.getElementById('conflict-banner');
+  if (!banner) {
+    banner = document.createElement('div');
+    banner.id = 'conflict-banner';
+    banner.style.cssText = 'background:#FEF3C7;border:1px solid #F59E0B;border-radius:6px;padding:10px 14px;margin:0 0 14px;font-size:12.5px;color:#92400E;display:flex;align-items:center;gap:8px;';
+    const saveBar = document.querySelector('.save-bar');
+    if (saveBar) saveBar.parentNode.insertBefore(banner, saveBar);
+  }
+  if (conflicts.length > 0) {
+    const namen = conflicts.map(e => esc(e.klant?.naam || 'Naamloos')).join(', ');
+    banner.innerHTML = `⚠ <strong>Datumconflict:</strong> Er ${conflicts.length === 1 ? 'staat' : 'staan'} al <strong>${conflicts.length}</strong> ander event${conflicts.length > 1 ? 's' : ''} op <strong>${esc(datum)}</strong>: ${namen}. Controleer je planning.`;
+    banner.style.display = 'flex';
+  } else {
+    banner.style.display = 'none';
+  }
 }
 
 function deleteCurrentEvent() {
@@ -1257,18 +1323,18 @@ function openSheetsForCurrent() {
 // EU-14 ALLERGENEN
 // ══════════════════════════════════════════
 const EU14 = [
-  { code:'G',   name:'Gluten',       icon:'🌾' },
+  { code:'G',   name:'Gluten',       icon:'' },
   { code:'S',   name:'Schaaldieren', icon:'🦐' },
-  { code:'E',   name:'Eieren',       icon:'🥚' },
+  { code:'E',   name:'Eieren',       icon:'' },
   { code:'V',   name:'Vis',          icon:'🐟' },
   { code:'P',   name:'Pinda',        icon:'🥜' },
   { code:'SO',  name:'Soja',         icon:'🫘' },
-  { code:'M',   name:'Melk',         icon:'🥛' },
+  { code:'M',   name:'Melk',         icon:'' },
   { code:'N',   name:'Noten',        icon:'🌰' },
-  { code:'SE',  name:'Selderij',     icon:'🌿' },
+  { code:'SE',  name:'Selderij',     icon:'' },
   { code:'MO',  name:'Mosterd',      icon:'🟡' },
   { code:'SES', name:'Sesam',        icon:'🌱' },
-  { code:'SU',  name:'Sulfieten',    icon:'🍷' },
+  { code:'SU',  name:'Sulfieten',    icon:'' },
   { code:'L',   name:'Lupine',       icon:'🌸' },
   { code:'W',   name:'Weekdieren',   icon:'🐚' },
 ];
@@ -1429,8 +1495,40 @@ function selectRecept(id) {
   const rawAllergens = r.recipe?.allergens || r.allergens || [];
   _menu[_receptPickerIdx].allergenen = rawAllergens.map(normalizeAllergen).filter(Boolean);
   _menu[_receptPickerIdx].receptId = id;
+  // Sla importdatum op voor versiecheck
+  _menu[_receptPickerIdx].receptImportDatum = new Date().toISOString();
+  _menu[_receptPickerIdx].receptBijgewerkt = r.bijgewerkt || r.updatedAt || null;
   renderMenuRows();
   closeReceptModal();
+}
+
+// Check of geïmporteerde recepten bijgewerkt zijn in M01 na de import
+function checkReceptUpdates() {
+  let recepten = [];
+  try { recepten = JSON.parse(localStorage.getItem('klaar_recipes') || '[]'); } catch(e) {}
+  const verouderd = (_menu || []).filter(m => {
+    if (!m.receptId || !m.receptImportDatum) return false;
+    const r = recepten.find(x => x.id === m.receptId);
+    if (!r) return false;
+    const bijgewerkt = r.bijgewerkt || r.updatedAt || null;
+    if (!bijgewerkt) return false;
+    return new Date(bijgewerkt) > new Date(m.receptImportDatum);
+  });
+  let banner = document.getElementById('recept-update-banner');
+  if (!banner) {
+    banner = document.createElement('div');
+    banner.id = 'recept-update-banner';
+    banner.style.cssText = 'background:#FEF3C7;border:1px solid #F59E0B;border-radius:6px;padding:10px 14px;margin:0 0 14px;font-size:12.5px;color:#92400E;';
+    const panelInner = document.querySelector('#tab-intake .panel-inner');
+    if (panelInner) panelInner.insertBefore(banner, panelInner.firstChild);
+  }
+  if (verouderd.length > 0) {
+    const namen = verouderd.map(m => `<strong>${esc(m.omschrijving || m.receptId)}</strong>`).join(', ');
+    banner.innerHTML = `⚠ <strong>Recept gewijzigd in Recept Studio:</strong> ${namen} ${verouderd.length === 1 ? 'is' : 'zijn'} bijgewerkt na de import in dit event — controleer de allergenen op de keukensheet.`;
+    banner.style.display = 'block';
+  } else {
+    banner.style.display = 'none';
+  }
 }
 
 // ══════════════════════════════════════════
@@ -1605,14 +1703,14 @@ function renderSheets() {
   grid.innerHTML = `
     <div class="sheet-card">
       <div class="sheet-card-header">
-        <div class="sheet-card-title">🍳 KEUKENSHEET</div>
+        <div class="sheet-card-title"> KEUKENSHEET</div>
         <button class="btn btn-primary btn-sm" onclick="printSheet('keuken','${id}')">Print</button>
       </div>
       <div class="sheet-preview" id="preview-keuken">${buildKeukenPreview(e)}</div>
     </div>
     <div class="sheet-card">
       <div class="sheet-card-header">
-        <div class="sheet-card-title">🤵 BEDIENINGSSHEET</div>
+        <div class="sheet-card-title"> BEDIENINGSSHEET</div>
         <button class="btn btn-primary btn-sm" onclick="printSheet('bediening','${id}')">Print</button>
       </div>
       <div class="sheet-preview" id="preview-bediening">${buildBedieningPreview(e)}</div>
@@ -1699,7 +1797,7 @@ function buildBedieningPreview(e) {
       ${e.drankenPrijsPP  ? `<div>Dranken: ${fmtEuro(e.drankenPrijsPP)} p.p.</div>` : ''}
       ${_z3               ? `<div>Zaalhuur: ${fmtEuro(_z3)}</div>` : ''}
       <div>Totaal incl. BTW: <strong>${fmtEuro(_tot3)}</strong></div>
-      <div>Aanbetaling: ${fmtEuro(e.aanbetaling||0)} ${e.aanbetalingBetaald ? '✅ betaald' : '⏳ open'}</div>
+      <div>Aanbetaling: ${fmtEuro(e.aanbetaling||0)} ${e.aanbetalingBetaald ? '✓ betaald' : '⏳ open'}</div>
     </div>`;
   return html;
 }
@@ -1724,16 +1822,16 @@ function openPrintWindow(htmlContent, title) {
 body { font-family: 'DM Sans', sans-serif; background: #f5f5f3; color: #111; }
 .pt-toolbar {
   position: fixed; top: 0; left: 0; right: 0; z-index: 9999;
-  background: #0a0a0a; padding: 0 24px; height: 54px;
+  background: #1E1B17; padding: 0 24px; height: 54px;
   display: flex; align-items: center; gap: 16px;
-  border-bottom: 2px solid #e8ff47;
+  border-bottom: 2px solid #E8B84B;
 }
-.pt-logo { font-family: 'Bebas Neue', sans-serif; font-size: 24px; color: #e8ff47; letter-spacing: 0.02em; }
+.pt-logo { font-family: 'Bebas Neue', sans-serif; font-size: 24px; color: #E8B84B; letter-spacing: 0.02em; }
 .pt-title { font-size: 12px; color: #aaa; font-family: 'DM Mono', monospace; flex: 1; }
 .pt-btn { display: inline-flex; align-items: center; gap: 6px; font-family: 'DM Sans', sans-serif; font-size: 13px; font-weight: 600; padding: 7px 16px; border-radius: 6px; border: none; cursor: pointer; }
 .pt-close { background: #2a2a2a; color: #ccc; }
 .pt-close:hover { background: #3a3a3a; color: #fff; }
-.pt-print { background: #e8ff47; color: #0a0a0a; }
+.pt-print { background: #E8B84B; color: #0a0a0a; }
 .pt-print:hover { background: #d4eb3e; }
 .pt-wrap { margin-top: 54px; padding: 28pt 32pt; max-width: 880px; background: #fff; min-height: calc(100vh - 54px); }
 .print-header { display: flex; justify-content: space-between; align-items: flex-start; border-bottom: 2pt solid #000; padding-bottom: 10pt; margin-bottom: 14pt; }
@@ -1770,10 +1868,10 @@ body { font-family: 'DM Sans', sans-serif; background: #f5f5f3; color: #111; }
       font-family: 'DM Sans', sans-serif; font-size: 13px; font-weight: 600;
       letter-spacing: 0.3px;
       transition: transform 0.15s, box-shadow 0.15s;
-      box-shadow: 0 4px 20px rgba(232,255,71,0.25);
+      box-shadow: 0 4px 20px rgba(232,184,75,0.25);
     }
-    .chat-fab:hover { transform: translateY(-2px); box-shadow: 0 6px 28px rgba(232,255,71,0.35); }
-    .chat-fab.open { background: #1a1a1a; color: var(--lime); border: 1px solid var(--lime); box-shadow: none; }
+    .chat-fab:hover { transform: translateY(-2px); box-shadow: 0 6px 28px rgba(232,184,75,0.35); }
+    .chat-fab.open { background: #1E1B17; color: var(--lime); border: 1px solid var(--lime); box-shadow: none; }
     .chat-fab-dot {
       width: 7px; height: 7px; background: #22c55e; border-radius: 50%;
       animation: fabPulse 2.2s infinite;
@@ -1789,11 +1887,11 @@ body { font-family: 'DM Sans', sans-serif; background: #f5f5f3; color: #111; }
     .chat-side.open { right: 0; }
 
     .chat-hdr {
-      padding: 16px; border-bottom: 1px solid var(--border);
+      padding: 14px 16px; border-bottom: 1px solid var(--border);
       display: flex; align-items: center; justify-content: space-between;
-      background: var(--black); flex-shrink: 0;
+      background: #1E1B17; flex-shrink: 0;
     }
-    .chat-hdr-title { font-family: 'Bebas Neue', sans-serif; font-size: 20px; letter-spacing: 1px; color: var(--lime); }
+    .chat-hdr-title { font-family: 'Bebas Neue', sans-serif; font-size: 20px; letter-spacing: 1px; color: var(--accent); }
     .chat-hdr-sub { font-size: 10px; color: var(--gray); letter-spacing: 0.5px; margin-top: 2px; }
     .chat-hdr-close { background: none; border: none; color: var(--gray); cursor: pointer; font-size: 18px; padding: 4px; }
     .chat-hdr-close:hover { color: var(--white); }
@@ -1806,9 +1904,9 @@ body { font-family: 'DM Sans', sans-serif; background: #f5f5f3; color: #111; }
     .chat-msg.user { align-self: flex-end; }
     .chat-msg.assistant { align-self: flex-start; }
     .chat-bubble { padding: 10px 13px; font-size: 13px; line-height: 1.65; }
-    .chat-msg.user .chat-bubble { background: var(--lime); color: #000; font-weight: 500; }
+    .chat-msg.user .chat-bubble { background: var(--accent); color: #000; font-weight: 500; }
     .chat-msg.assistant .chat-bubble { background: var(--surface2); color: var(--white); border: 1px solid var(--border); }
-    .chat-msg.assistant .chat-bubble strong { color: var(--lime); }
+    .chat-msg.assistant .chat-bubble strong { color: var(--accent); }
     .chat-bubble ul, .chat-bubble ol { padding-left: 18px; margin: 6px 0; }
     .chat-bubble li { margin-bottom: 3px; }
     .chat-bubble code { background: rgba(255,255,255,0.08); padding: 1px 5px; font-family: 'DM Mono', monospace; font-size: 12px; }
@@ -1821,18 +1919,18 @@ body { font-family: 'DM Sans', sans-serif; background: #f5f5f3; color: #111; }
 
     .chat-suggs { padding: 8px 12px; display: flex; flex-wrap: wrap; gap: 6px; flex-shrink: 0; border-top: 1px solid var(--border); }
     .chat-sugg { font-size: 11px; padding: 5px 10px; border: 1px solid var(--border2); background: none; color: var(--gray); cursor: pointer; transition: all 0.15s; white-space: nowrap; }
-    .chat-sugg:hover { border-color: var(--lime); color: var(--lime); }
+    .chat-sugg:hover { border-color: var(--accent); color: var(--accent); }
 
-    .chat-input-row { padding: 12px; border-top: 1px solid var(--border); display: flex; gap: 8px; align-items: flex-end; flex-shrink: 0; background: var(--black); }
-    .chat-ta { flex: 1; background: var(--surface2); border: 1px solid var(--border2); color: var(--white); font-family: 'DM Sans', sans-serif; font-size: 13px; line-height: 1.5; padding: 9px 11px; resize: none; max-height: 110px; min-height: 40px; transition: border-color 0.15s; }
-    .chat-ta:focus { outline: none; border-color: var(--lime); }
-    .chat-ta::placeholder { color: var(--muted); }
-    .chat-go { width: 38px; height: 38px; background: var(--lime); border: none; color: #000; font-size: 16px; font-weight: 700; cursor: pointer; flex-shrink: 0; display: flex; align-items: center; justify-content: center; transition: opacity 0.15s; }
+    .chat-input-row { padding: 12px; border-top: 1px solid var(--border); display: flex; gap: 8px; align-items: flex-end; flex-shrink: 0; background: var(--surface2); }
+    .chat-ta { flex: 1; background: var(--muted); border: 1px solid var(--border2); color: var(--white); font-family: 'DM Sans', sans-serif; font-size: 13px; line-height: 1.5; padding: 9px 11px; resize: none; max-height: 110px; min-height: 40px; transition: border-color 0.15s; }
+    .chat-ta:focus { outline: none; border-color: var(--accent); }
+    .chat-ta::placeholder { color: var(--gray); }
+    .chat-go { width: 38px; height: 38px; background: var(--accent); border: none; color: #000; font-size: 16px; font-weight: 700; cursor: pointer; flex-shrink: 0; display: flex; align-items: center; justify-content: center; transition: opacity 0.15s; }
     .chat-go:hover { opacity: 0.85; }
     .chat-go:disabled { opacity: 0.3; cursor: not-allowed; }
 
-    .chat-no-key { background: var(--surface2); border: 1px solid rgba(232,255,71,0.2); color: var(--gray); font-size: 12px; padding: 12px; line-height: 1.6; }
-    .chat-no-key strong { color: var(--lime); }
+    .chat-no-key { background: var(--surface2); border: 1px solid rgba(232,184,75,0.2); color: var(--gray); font-size: 12px; padding: 12px; line-height: 1.6; }
+    .chat-no-key strong { color: var(--accent); }
 
 </style>
 </head><body>
@@ -1842,10 +1940,7 @@ body { font-family: 'DM Sans', sans-serif; background: #f5f5f3; color: #111; }
   <button class="pt-btn pt-close" onclick="window.close()">← Sluiten</button>
   <button class="pt-btn pt-print" onclick="window.print()">Printen</button>
 </div>
-<div class="pt-wrap">${htmlContent}</div>
-
-
-</body></html>
+<div class="pt-wrap">${htmlContent}</div></body></html>
 `);
   win.document.close();
 }
@@ -1880,7 +1975,7 @@ function printSheet(type, id) {
     const content = `
       <div class="print-header">
         <div><div class="print-company">${companyName}</div><div style="font-size:9pt;color:#666;">${companyInfo}</div></div>
-        <div class="print-doc-type">🍳 KEUKENSHEET<br><span style="font-size:10pt;font-weight:400;color:#666;">Aangemaakt ${today}</span></div>
+        <div class="print-doc-type"> KEUKENSHEET<br><span style="font-size:10pt;font-weight:400;color:#666;">Aangemaakt ${today}</span></div>
       </div>
       <div class="print-meta-bar">
         <div><div class="print-meta-label">Event</div><div class="print-meta-val">${typeLabel(e.type)}</div></div>
@@ -1905,7 +2000,7 @@ function printSheet(type, id) {
       ${e.notities ? `<div class="print-section-title">📝 INTERNE NOTITIES</div><div class="print-note-box" style="border-color:#f59e0b;background:#fffdf0;">${e.notities}</div>` : ''}
       <div class="print-footer"><span>KLAAR Catering & Events</span><span>${companyName} · ${today}</span></div>
     `;
-    openPrintWindow(content, `🍳 Keukensheet — ${e.klant?.naam||'?'} · ${fmtDate(e.datum)}`);
+    openPrintWindow(content, ` Keukensheet — ${e.klant?.naam||'?'} · ${fmtDate(e.datum)}`);
 
   } else {
     const sorted = [...(e.tijdlijn||[])].sort((a,b)=>(a.tijd||'').localeCompare(b.tijd||''));
@@ -1925,7 +2020,7 @@ function printSheet(type, id) {
     const content = `
       <div class="print-header">
         <div><div class="print-company">${companyName}</div><div style="font-size:9pt;color:#666;">${companyInfo}</div></div>
-        <div class="print-doc-type">🤵 BEDIENINGSSHEET<br><span style="font-size:10pt;font-weight:400;color:#666;">Aangemaakt ${today}</span></div>
+        <div class="print-doc-type"> BEDIENINGSSHEET<br><span style="font-size:10pt;font-weight:400;color:#666;">Aangemaakt ${today}</span></div>
       </div>
       <div class="print-meta-bar">
         <div><div class="print-meta-label">Event</div><div class="print-meta-val">${typeLabel(e.type)}</div></div>
@@ -1952,12 +2047,12 @@ function printSheet(type, id) {
         <tr><td>BTW 9% (catering & dranken)</td><td>${fmtEuro(_btw9_2)}</td></tr>
         ${_zaal2            ? `<tr><td>BTW 21% (zaalhuur)</td><td>${fmtEuro(_btw21_2)}</td></tr>` : ''}
         <tr><td><strong>Totaal incl. BTW</strong></td><td><strong>${fmtEuro(totaal)}</strong></td></tr>
-        <tr><td>Aanbetaling</td><td>${fmtEuro(e.aanbetaling||0)} ${e.aanbetalingBetaald?'✅ ontvangen':'⏳ open'}</td></tr>
+        <tr><td>Aanbetaling</td><td>${fmtEuro(e.aanbetaling||0)} ${e.aanbetalingBetaald?'✓ ontvangen':'⏳ open'}</td></tr>
         <tr><td><strong>Restant</strong></td><td><strong>${fmtEuro(Math.max(0,totaal-(e.aanbetaling||0)))}</strong></td></tr>
       </tbody></table>
       <div class="print-footer"><span>KLAAR Catering & Events</span><span>${companyName} · ${today}</span></div>
     `;
-    openPrintWindow(content, `🤵 Bedieningssheet — ${e.klant?.naam||'?'} · ${fmtDate(e.datum)}`);
+    openPrintWindow(content, ` Bedieningssheet — ${e.klant?.naam||'?'} · ${fmtDate(e.datum)}`);
   }
 }
 
@@ -2002,19 +2097,19 @@ function buildChecklistHtml(e) {
   }).join('');
 
   return `<div style="background:white;border:1px solid #e5e5e5;border-radius:10px;overflow:hidden;">
-    <div style="background:#0a0a0a;padding:14px 20px;display:flex;align-items:center;justify-content:space-between;gap:12px;">
+    <div style="background:#1E1B17;padding:14px 20px;display:flex;align-items:center;justify-content:space-between;gap:12px;">
       <div>
-        <div style="font-family:'Bebas Neue',sans-serif;font-size:18px;color:#e8ff47;letter-spacing:0.05em;">✅ PRE-SERVICE CHECKLIST</div>
+        <div style="font-family:'Bebas Neue',sans-serif;font-size:18px;color:#E8B84B;letter-spacing:0.05em;">✓ PRE-SERVICE CHECKLIST</div>
         <div style="font-family:'DM Mono',monospace;font-size:10px;color:#666;margin-top:2px;">Afvinken vóór service — ${e.klant?.naam||'?'}</div>
       </div>
       <div style="text-align:right;">
-        <div style="font-family:'Bebas Neue',sans-serif;font-size:28px;color:${pct===100?'#22c55e':'#e8ff47'};line-height:1;">${done}/${total}</div>
+        <div style="font-family:'Bebas Neue',sans-serif;font-size:28px;color:${pct===100?'#22c55e':'#E8B84B'};line-height:1;">${done}/${total}</div>
         <div style="font-size:10px;color:#666;font-family:'DM Mono',monospace;">${allReqDone ? '✓ alle vereiste checks ok' : '⚠ verplichte checks open'}</div>
       </div>
     </div>
     <div style="padding:6px 16px 16px;">
       <div style="margin:10px 0 14px;height:6px;background:#f0f0ee;border-radius:3px;overflow:hidden;">
-        <div style="height:100%;width:${pct}%;background:${pct===100?'#22c55e':'#e8ff47'};border-radius:3px;transition:width .3s;"></div>
+        <div style="height:100%;width:${pct}%;background:${pct===100?'#22c55e':'#E8B84B'};border-radius:3px;transition:width .3s;"></div>
       </div>
       <div style="display:flex;flex-direction:column;gap:6px;">${items}</div>
       <div style="margin-top:12px;display:flex;gap:8px;justify-content:flex-end;">
@@ -2054,13 +2149,24 @@ function populateOfferteSelect() {
     events.map(e => `<option value="${e.id}"${e.id===cur?' selected':''}>${fmtDate(e.datum)} · ${typeIcon(e.type)} ${e.klant?.naam||'?'}</option>`).join('');
 }
 
+function printOfferte() {
+  const id = document.getElementById('offerte-event-select').value;
+  if (!id) return;
+  document.body.classList.add('printing-offerte');
+  window.print();
+  setTimeout(() => document.body.classList.remove('printing-offerte'), 500);
+}
+
 function renderOfferte() {
   const id = document.getElementById('offerte-event-select').value;
   const container = document.getElementById('offerte-container');
+  const pdfBtn = document.getElementById('btn-print-offerte');
   if (!id) {
     container.innerHTML = `<div class="empty-state"><div class="empty-state-icon">📄</div><h3>Kies een event</h3><p>Selecteer een event om de offerte te bekijken.</p></div>`;
+    if (pdfBtn) pdfBtn.style.display = 'none';
     return;
   }
+  if (pdfBtn) pdfBtn.style.display = 'inline-flex';
   const e = loadEvents().find(x => x.id === id);
   if (!e) return;
   const settings = loadCateringSettings();
@@ -2097,7 +2203,7 @@ function renderOfferte() {
   if (zaalhuur) prijsRows += `<div class="offerte-totaal-row"><span>BTW 21% (zaalhuur)</span><span>${fmtEuro(btw21)}</span></div>`;
   prijsRows += `<div class="offerte-totaal-row main"><span>TOTAAL INCL. BTW</span><span>${fmtEuro(totaal)}</span></div>`;
   if (e.aanbetaling) {
-    prijsRows += `<div class="offerte-totaal-row" style="color:var(--muted);"><span>Aanbetaling ${e.aanbetalingBetaald ? '✅ ontvangen' : '⏳ nog te ontvangen'}</span><span>− ${fmtEuro(e.aanbetaling)}</span></div>`;
+    prijsRows += `<div class="offerte-totaal-row" style="color:var(--muted);"><span>Aanbetaling ${e.aanbetalingBetaald ? '✓ ontvangen' : '⏳ nog te ontvangen'}</span><span>− ${fmtEuro(e.aanbetaling)}</span></div>`;
     prijsRows += `<div class="offerte-totaal-row" style="font-weight:600;"><span>RESTANT TE BETALEN</span><span>${fmtEuro(Math.max(0, totaal - e.aanbetaling))}</span></div>`;
   }
 
@@ -2187,7 +2293,7 @@ function saveTemplates(arr) {
 function tmplGenId() { return 'tmpl_' + Date.now().toString(36) + Math.random().toString(36).substr(2,5); }
 
 function typeIconForTemplate(type) {
-  return type === 'dranken' ? '🍷' : type === 'menu' ? '🍽️' : '🎉';
+  return type === 'dranken' ? '' : type === 'menu' ? '' : '🎉';
 }
 function typeLabelForTemplate(type) {
   return type === 'dranken' ? 'Alleen dranken' : type === 'menu' ? 'Alleen menu' : 'Menu + Dranken';
@@ -2228,7 +2334,7 @@ function openArrModal(mode) {
             <div style="margin-top:5px;display:flex;gap:5px;flex-wrap:wrap;">
               ${t.menu.map(m => `<span style="font-size:10px;background:#f5f5f3;border:1px solid #e5e5e5;border-radius:4px;padding:2px 7px;font-family:'DM Mono',monospace;">${gangLabel(m.gang)}</span>`).join('')}
             </div>` : ''}
-          ${t.type !== 'menu' && t.dranken ? `<div style="margin-top:4px;font-size:11px;color:var(--muted);">🍷 ${t.dranken}</div>` : ''}
+          ${t.type !== 'menu' && t.dranken ? `<div style="margin-top:4px;font-size:11px;color:var(--muted);"> ${t.dranken}</div>` : ''}
         </div>
         <div class="template-actions">
           <button class="template-del" onclick="event.stopPropagation();deleteTemplate('${t.id}')" title="Verwijderen">🗑</button>
@@ -2346,7 +2452,7 @@ function renderArrLibrary() {
           <div style="margin-top:5px;display:flex;gap:5px;flex-wrap:wrap;">
             ${t.menu.map(m => `<span style="font-size:10px;background:#f5f5f3;border:1px solid #e5e5e5;border-radius:4px;padding:2px 7px;font-family:'DM Mono',monospace;">${gangLabel(m.gang)}: ${m.omschrijving||'—'}</span>`).join('')}
           </div>` : ''}
-        ${t.type !== 'menu' && t.dranken ? `<div style="margin-top:4px;font-size:11px;color:var(--muted);">🍷 ${t.dranken}</div>` : ''}
+        ${t.type !== 'menu' && t.dranken ? `<div style="margin-top:4px;font-size:11px;color:var(--muted);"> ${t.dranken}</div>` : ''}
       </div>
       <div class="template-actions">
         <button class="btn btn-secondary btn-sm" onclick="loadTemplateDirectly('${t.id}')" title="Laden in huidig event">Laden</button>
@@ -2627,7 +2733,7 @@ async function chatSend() {
 <div class="chat-side" id="chatSide">
   <div class="chat-hdr">
     <div>
-      <div class="chat-hdr-title">Klaar Assistent</div>
+      <div class="chat-hdr-title">KLAAR AI</div>
       <div class="chat-hdr-sub">Catering & Events planning · Module 10</div>
     </div>
     <button class="chat-hdr-close" onclick="toggleChat()">✕</button>
@@ -2648,6 +2754,6 @@ async function chatSend() {
     <button class="chat-go" id="chatGo" onclick="chatSend()">↑</button>
   </div>
 </div>
-
+  <link rel="stylesheet" href="../klaar-shared.css">
 </body>
 </html>
